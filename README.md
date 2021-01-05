@@ -43,7 +43,7 @@ interface {
   type: "state",
   state: {
     controller: Partial<ZWaveController>;
-    nodes: Record<number, Partial<ZWaveNode>>;
+    nodes: Partial<ZWaveNode>[];
   }
 }
 ```

@@ -2,7 +2,7 @@ import { Driver, ZWaveController, ZWaveNode } from "zwave-js";
 
 export interface ZwaveState {
   controller: Partial<ZWaveController>;
-  nodes: Record<number, Partial<ZWaveNode>>;
+  nodes: Partial<ZWaveNode>[];
 }
 
 export const dumpNode = (node: ZWaveNode): Partial<ZWaveNode> => ({
@@ -39,10 +39,9 @@ export const dumpNode = (node: ZWaveNode): Partial<ZWaveNode> => ({
   interviewAttempts: node.interviewAttempts,
 });
 
-export const dumpState = (driver: Driver) => {
+export const dumpState = (driver: Driver): ZwaveState => {
   const controller = driver.controller;
-
-  const state: ZwaveState = {
+  return {
     controller: {
       libraryVersion: controller.libraryVersion,
       type: controller.type,
@@ -62,12 +61,6 @@ export const dumpState = (driver: Driver) => {
       sucNodeId: controller.sucNodeId,
       supportsTimers: controller.supportsTimers,
     },
-    nodes: {},
+    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node)),
   };
-
-  controller.nodes.forEach((node) => {
-    state.nodes[node.nodeId] = dumpNode(node);
-  });
-
-  return state;
 };
