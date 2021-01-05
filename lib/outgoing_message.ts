@@ -8,7 +8,7 @@ export interface OutgoingEvent {
 
 export interface OutgoingEventMessage {
   type: "event";
-  data: OutgoingEvent;
+  event: OutgoingEvent;
 }
 
 export interface OutgoingStateMessage {

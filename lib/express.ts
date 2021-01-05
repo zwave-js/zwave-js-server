@@ -81,10 +81,10 @@ class Client {
     });
   }
 
-  sendEvent(data: OutgoingEvent) {
+  sendEvent(event: OutgoingEvent) {
     this.sendData({
       type: "event",
-      data,
+      event,
     });
   }
 

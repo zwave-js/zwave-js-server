@@ -1,6 +1,6 @@
 import { Driver } from "zwave-js";
 import express from "express";
-import { addAPItoExpress } from "./lib/express";
+import { addAPItoExpress } from "../lib/express";
 
 (async () => {
   if (process.argv.length < 3) {
