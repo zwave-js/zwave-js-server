@@ -15,7 +15,9 @@ class Clients {
 
   addSocket(socket: WebSocket) {
     console.debug("New client");
-    this.clients.push(new Client(socket));
+    const client = new Client(socket);
+    client.sendState(this.driver);
+    this.clients.push(client);
 
     if (this.pingInterval === undefined) {
       this.pingInterval = setInterval(() => {
