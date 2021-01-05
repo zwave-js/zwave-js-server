@@ -37,6 +37,7 @@ class Clients {
           client.sendEvent(data);
         }
       });
+      this.eventForwarder.start();
     }
   }
 
