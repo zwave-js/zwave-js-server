@@ -46,19 +46,16 @@ export class EventForwarder {
       })
     );
 
-    const nodeAdded = (node: ZWaveNode) => {
+    // Bind to all controller events
+    // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
+    this.driver.controller.on("node added", (node: ZWaveNode) => {
       this.forwardEvent({
         source: "controller",
         event: "node added",
         node: dumpNode(node),
       });
       this.setupNode(node);
-    };
-    this.driver.controller.nodes.forEach(nodeAdded);
-
-    // Bind to all controller events
-    // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
-    this.driver.controller.on("node added", nodeAdded);
+    });
 
     for (const event of [
       "inclusion failed",
@@ -84,21 +81,21 @@ export class EventForwarder {
     this.driver.controller.on("node removed", (node) =>
       this.forwardEvent({
         source: "controller",
-        event: "inclusion started",
+        event: "node removed",
         node: dumpNode(node),
       })
     );
     this.driver.controller.on("heal network progress", (progress) =>
       this.forwardEvent({
         source: "controller",
-        event: "inclusion started",
+        event: "heal network progress",
         progress,
       })
     );
-    this.driver.controller.on("inclusion started", (result) =>
+    this.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
-        event: "inclusion started",
+        event: "heal network done",
         result,
       })
     );
