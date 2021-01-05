@@ -3,7 +3,6 @@ import express from "express";
 import { addAPItoExpress } from "./lib/express";
 
 (async () => {
-  console.log(process.argv);
   if (process.argv.length < 3) {
     console.error("Error: Missing path to serial port");
     return;
