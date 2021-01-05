@@ -46,6 +46,8 @@ export class EventForwarder {
       })
     );
 
+    this.driver.controller.nodes.forEach((node) => this.setupNode(node));
+
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
     this.driver.controller.on("node added", (node: ZWaveNode) => {
