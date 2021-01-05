@@ -3,6 +3,8 @@ import ws from "ws";
 import type WebSocket from "ws";
 import type { Driver } from "zwave-js";
 import { EventForwarder } from "./forward";
+import { OutgoingEvent, OutgoingMessage } from "./outgoing_message";
+import { dumpState } from "./state";
 
 class Clients {
   private clients: Array<Client> = [];
@@ -20,7 +22,7 @@ class Clients {
         const newClients = [];
 
         for (const client of this.clients) {
-          if (client.isAlive) {
+          if (client._respondedPing) {
             newClients.push(client);
           } else {
             client.destroy();
@@ -50,36 +52,49 @@ class Clients {
 }
 
 class Client {
-  public isAlive = true;
+  public _respondedPing = true;
 
   constructor(private socket: WebSocket) {
     socket.on("pong", () => {
-      this.isAlive = true;
+      this._respondedPing = true;
     });
     socket.on("close", () => {
-      this.isAlive = false;
+      this._respondedPing = false;
     });
     socket.on("message", (data: string) => this.receiveMessage(data));
+  }
+
+  get isAlive(): boolean {
+    return this._respondedPing && this.socket.readyState == this.socket.OPEN;
   }
 
   receiveMessage(data: string) {
     console.log("Receiving message not implemented yet:", data);
   }
 
-  sendEvent(data: object) {
-    if (!this.isAlive) {
+  sendState(driver: Driver) {
+    this.sendData({
+      type: "state",
+      state: dumpState(driver),
+    });
+  }
+
+  sendEvent(data: OutgoingEvent) {
+    this.sendData({
+      type: "event",
+      data,
+    });
+  }
+
+  sendData(data: OutgoingMessage) {
+    if (!this._respondedPing) {
       return;
     }
-    this.socket.send(
-      JSON.stringify({
-        type: "event",
-        data,
-      })
-    );
+    this.socket.send(JSON.stringify(data));
   }
 
   checkAlive() {
-    this.isAlive = false;
+    this._respondedPing = false;
     this.socket.ping();
   }
 

@@ -1,13 +1,7 @@
 import { Driver, HealNodeStatus, ZWaveNode } from "zwave-js";
 import { ZWaveNodeEvents } from "zwave-js/build/lib/node/Types";
-
-function dumpNode(node: ZWaveNode) {
-  // Should contain all the info we know.
-  return {
-    nodeId: node.nodeId,
-    nodeType: node.nodeType,
-  };
-}
+import { OutgoingEvent } from "./outgoing_message";
+import { dumpNode } from "./state";
 
 // TODO This should be exported in zwave-js and we import it
 interface ControllerEventCallbacks {
@@ -35,7 +29,7 @@ export class EventForwarder {
    */
   constructor(
     public driver: Driver,
-    public forwardEvent: (data: Record<string, any>) => void
+    public forwardEvent: (data: OutgoingEvent) => void
   ) {}
 
   start() {
