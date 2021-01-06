@@ -21,10 +21,10 @@ interface ValueState extends Partial<TranslatedValueID> {
 function getNodeValues (node: ZWaveNode): ValueState[] {
   const result = [];
   for (const valueId of node.getDefinedValueIDs()) {
-    result.push({
-      metadata: node.getValueMetadata(valueId),
-      value: node.getValue(valueId)
-    });
+    const valueState = valueId as ValueState;
+    valueState.metadata = node.getValueMetadata(valueId);
+    valueState.value = node.getValue(valueId)
+    result.push(valueState);
   }
   return result
 }
