@@ -29,7 +29,7 @@ const expectedConfig = ["_", "config"];
   const serialPort = args._[0];
 
   let configPath = args.config;
-  if (configPath.substring(0, 1) !== "/") {
+  if (configPath && configPath.substring(0, 1) !== "/") {
     configPath = resolve(process.cwd(), configPath);
   }
 
