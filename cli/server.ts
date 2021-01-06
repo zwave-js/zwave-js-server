@@ -39,7 +39,16 @@ const expectedConfig = ["_", "config"];
     try {
       options = require(configPath);
       // make sure that networkKey is passed as buffer.
-      options.networkKey = Buffer.from(options.networkKey);
+      // accept both zwave2mqtt format as ozw format
+      if (options.networkKey && options.networkKey.length === 32) {
+        options.networkKey = Buffer.from(options.networkKey, 'hex')
+      } else if (options.networkKey && options.networkKey.includes('0x')) {
+        options.networkKey = options.networkKey.replace('0x', '').replace(', ', '')
+        options.networkKey = Buffer.from(options.networkKey, 'hex')
+      } else {
+        console.warn('Invalid networkKey defined');
+        delete options.networkKey
+      }
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
       console.error(err);
