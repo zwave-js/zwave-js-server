@@ -12,6 +12,8 @@ ts-node cli/server.ts /dev/tty0
 
 Opens server on `ws://localhost:3000/zjs`.
 
+You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
+
 ### Start client
 
 Requires server to be running.
