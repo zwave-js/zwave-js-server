@@ -1,11 +1,36 @@
-import { Driver, ZWaveController, ZWaveNode } from "zwave-js";
+import { Driver, ZWaveController, ZWaveNode, Endpoint, TranslatedValueID, ValueMetadata } from "zwave-js";
 
 export interface ZwaveState {
   controller: Partial<ZWaveController>;
   nodes: Partial<ZWaveNode>[];
 }
 
-export const dumpNode = (node: ZWaveNode): Partial<ZWaveNode> => ({
+interface NodeState extends Partial<ZWaveNode> {
+  endpoints: EndpointState[];
+  values: ValueState[];
+}
+
+interface EndpointState extends Partial<Endpoint> {
+}
+
+interface ValueState extends Partial<TranslatedValueID> {
+  metadata: ValueMetadata;
+  value: any;
+}
+
+function getNodeValues (node: ZWaveNode): ValueState[] {
+  const result = [];
+  for (const valueId of node.getDefinedValueIDs()) {
+    result.push({
+      metadata = node.getValueMetadata(valueId),
+      value = node.getValue(valueId)
+    });
+  }
+  return result
+}
+
+
+export const dumpNode = (node: ZWaveNode): NodeState => ({
   nodeId: node.nodeId,
   index: node.index,
   installerIcon: node.installerIcon,
@@ -37,7 +62,17 @@ export const dumpNode = (node: ZWaveNode): Partial<ZWaveNode> => ({
   individualEndpointCount: node.individualEndpointCount,
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
+  endpoints: Array.from(node.getAllEndpoints(), (endpoint) => dumpEndpoint(endpoint)),
+  values: getNodeValues(node)
 });
+
+export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
+  nodeId: endpoint.nodeId,
+  index: endpoint.index,
+  installerIcon: endpoint.installerIcon,
+  userIcon: endpoint.userIcon
+});
+
 
 export const dumpState = (driver: Driver): ZwaveState => {
   const controller = driver.controller;
