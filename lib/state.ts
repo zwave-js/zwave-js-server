@@ -22,8 +22,8 @@ function getNodeValues (node: ZWaveNode): ValueState[] {
   const result = [];
   for (const valueId of node.getDefinedValueIDs()) {
     result.push({
-      metadata = node.getValueMetadata(valueId),
-      value = node.getValue(valueId)
+      metadata: node.getValueMetadata(valueId),
+      value: node.getValue(valueId)
     });
   }
   return result
