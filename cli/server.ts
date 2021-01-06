@@ -38,6 +38,8 @@ const expectedConfig = ["_", "config"];
   if (configPath) {
     try {
       options = require(configPath);
+      // make sure that networkKey is passed as buffer.
+      options.networkKey = Buffer.from(options.networkKey);
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
       console.error(err);
