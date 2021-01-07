@@ -2,7 +2,7 @@ import mininist from "minimist";
 import { resolve } from "path";
 import { Driver } from "zwave-js";
 import express from "express";
-import { addAPItoExpress } from "../lib/server";
+import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 
 interface Args {
@@ -72,10 +72,14 @@ const expectedConfig = ["_", "config", "mock-driver"];
     console.error("Error in driver", e);
   });
 
-  driver.on("driver ready", () => {
-    const app = express();
-    addAPItoExpress(app.listen(3000), driver);
-    console.info("Started listening on port 3000");
+  driver.on("driver ready", async () => {
+    try {
+      const server = new ZwavejsServer(driver, { port: 3000 });
+      await server.start()
+      console.info("Server listening on port 3000")
+    } catch (error) {
+      console.error('Unable to start Server', error)
+    }
   });
 
   await driver.start();

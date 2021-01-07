@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
     "minimist": "^1.2.5",
     "ws": "^7.4.2",
     "zwave-js": "^6.0.0-alpha.3"

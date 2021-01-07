@@ -1,11 +1,42 @@
-import ws from "ws";
+import { URL } from "url";
+import ws, { ServerOptions } from "ws";
 import type WebSocket from "ws";
 import type { Driver } from "zwave-js";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
 import { dumpState } from "./state";
+import { Server as HttpServer, ServerOptions as HttpServerOptions, createServer } from 'http'
+import { once } from 'events'
 import { version } from "./const";
+
+interface ZwavejsServerOptions {
+  port: number
+}
+
+export class ZwavejsServer {
+  private server: HttpServer;
+  private wsServer: ws.Server;
+  private sockets: Clients;
+
+  constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
+
+  async start() {
+    this.server = createServer()
+    this.wsServer = new ws.Server({ server: this.server });
+    this.sockets = new Clients(this.driver);
+    this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
+
+    this.server.listen(this.options.port);
+    await once(this.server, 'listening');
+  }
+
+  async destroy() {
+    this.sockets.disconnect();
+    this.server.close();
+    await once(this.server, 'close')
+  }
+}
 
 class Clients {
   private clients: Array<Client> = [];
@@ -164,20 +195,3 @@ class Client {
     this.socket.close();
   }
 }
-
-export const addAPItoExpress = (server, driver: Driver) => {
-  const wsServer = new ws.Server({ noServer: true });
-  const sockets = new Clients(driver);
-
-  wsServer.on("connection", (socket) => sockets.addSocket(socket));
-
-  server.on("upgrade", (request, socket, head) => {
-    if (request.url !== "/zjs") {
-      return;
-    }
-
-    wsServer.handleUpgrade(request, socket, head, (socket) => {
-      wsServer.emit("connection", socket, request);
-    });
-  });
-};

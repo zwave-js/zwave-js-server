@@ -1,9 +1,8 @@
 import ws from "ws";
 
 const args = process.argv.slice(2).filter((val) => !val.startsWith("--"));
-const host = args.length < 1 ? "ws://localhost:3000" : args[0];
+const url = args.length < 1 ? "ws://localhost:3000" : args[0];
 const dump = process.argv.includes("--dump");
-const url = `${host}/zjs`;
 if (!dump) {
   console.info("Connecting to", url);
 }
