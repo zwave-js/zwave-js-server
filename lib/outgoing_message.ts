@@ -1,18 +1,18 @@
-import type { ZwaveState } from './state'
+import type { ZwaveState } from "./state";
 
 export interface OutgoingEvent {
-  source: 'driver' | 'controller' | 'node';
+  source: "driver" | "controller" | "node";
   event: string;
   [key: string]: unknown;
 }
 
 export interface OutgoingEventMessage {
-  type: 'event';
+  type: "event";
   event: OutgoingEvent;
 }
 
 export interface OutgoingStateMessage {
-  type: 'state';
+  type: "state";
   state: ZwaveState;
 }
 
