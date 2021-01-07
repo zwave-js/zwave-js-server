@@ -11,7 +11,7 @@ const socket = new ws(url)
 socket.on('open', function open () {
   socket.send(
     JSON.stringify({
-      messageID: 'my-msg-id!',
+      messageId: 'my-msg-id!',
       command: 'start_listening'
     })
   )

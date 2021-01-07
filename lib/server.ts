@@ -35,14 +35,14 @@ class Client {
     }
 
     if (msg.command === 'start_listening') {
-      this.sendResultSuccess(msg.messageID, {
+      this.sendResultSuccess(msg.messageId, {
         state: dumpState(this.driver)
       })
       this.receiveEvents = true
       return
     }
 
-    this.sendResultError(msg.messageID, 'unknown_command')
+    this.sendResultError(msg.messageId, 'unknown_command')
   }
 
   sendVersion () {
