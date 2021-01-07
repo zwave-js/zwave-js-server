@@ -1,5 +1,5 @@
 interface IncomingCommandStartListening {
-  messageID: string;
+  messageId: string;
   command: "start_listening";
 }
 
