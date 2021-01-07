@@ -1,13 +1,8 @@
-import { Driver, ZWaveController, ZWaveNode, Endpoint, TranslatedValueID, ValueMetadata } from "zwave-js";
+import { Driver, ZWaveController, ZWaveNode, Endpoint, TranslatedValueID, ValueMetadata } from 'zwave-js'
 
 export interface ZwaveState {
   controller: Partial<ZWaveController>;
   nodes: Partial<ZWaveNode>[];
-}
-
-interface NodeState extends Partial<ZWaveNode> {
-  endpoints: EndpointState[];
-  values: ValueState[];
 }
 
 interface EndpointState extends Partial<Endpoint> {
@@ -18,17 +13,21 @@ interface ValueState extends Partial<TranslatedValueID> {
   value: any;
 }
 
+interface NodeState extends Partial<ZWaveNode> {
+  endpoints: EndpointState[];
+  values: ValueState[];
+}
+
 function getNodeValues (node: ZWaveNode): ValueState[] {
-  const result = [];
+  const result = []
   for (const valueId of node.getDefinedValueIDs()) {
-    const valueState = valueId as ValueState;
-    valueState.metadata = node.getValueMetadata(valueId);
+    const valueState = valueId as ValueState
+    valueState.metadata = node.getValueMetadata(valueId)
     valueState.value = node.getValue(valueId)
-    result.push(valueState);
+    result.push(valueState)
   }
   return result
 }
-
 
 export const dumpNode = (node: ZWaveNode): NodeState => ({
   nodeId: node.nodeId,
@@ -64,18 +63,17 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   interviewAttempts: node.interviewAttempts,
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) => dumpEndpoint(endpoint)),
   values: getNodeValues(node)
-});
+})
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
   nodeId: endpoint.nodeId,
   index: endpoint.index,
   installerIcon: endpoint.installerIcon,
   userIcon: endpoint.userIcon
-});
-
+})
 
 export const dumpState = (driver: Driver): ZwaveState => {
-  const controller = driver.controller;
+  const controller = driver.controller
   return {
     controller: {
       libraryVersion: controller.libraryVersion,
@@ -94,8 +92,8 @@ export const dumpState = (driver: Driver): ZwaveState => {
       productId: controller.productId,
       supportedFunctionTypes: controller.supportedFunctionTypes,
       sucNodeId: controller.sucNodeId,
-      supportsTimers: controller.supportsTimers,
+      supportsTimers: controller.supportsTimers
     },
-    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node)),
-  };
-};
+    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node))
+  }
+}

@@ -1,88 +1,87 @@
-import mininist from "minimist";
-import { resolve } from "path";
-import { Driver } from "zwave-js";
-import express from "express";
-import { ZwavejsServer } from "../lib/server";
-import { createMockDriver } from "../mock";
+import mininist from 'minimist'
+import { resolve } from 'path'
+import { Driver } from 'zwave-js'
+import { ZwavejsServer } from '../lib/server'
+import { createMockDriver } from '../mock'
 
 interface Args {
   _: Array<string>;
   config?: string;
-  "mock-driver": boolean;
+  'mock-driver': boolean;
 }
-const expectedConfig = ["_", "config", "mock-driver"];
+const expectedConfig = ['_', 'config', 'mock-driver'];
 
 (async () => {
-  const args: Args = mininist(process.argv.slice(2));
+  const args: Args = mininist(process.argv.slice(2))
 
   const extraKeys = Object.keys(args).filter(
     (key) => !expectedConfig.includes(key)
-  );
+  )
   if (extraKeys.length > 0) {
-    console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);
-    return;
+    console.error(`Error: Got unexpected keys ${extraKeys.join(', ')}`)
+    return
   }
 
-  if (args["mock-driver"]) {
-    args._.push("mock-serial-port");
+  if (args['mock-driver']) {
+    args._.push('mock-serial-port')
   }
 
   if (args._.length < 1) {
-    console.error("Error: Missing path to serial port");
-    return;
+    console.error('Error: Missing path to serial port')
+    return
   }
 
-  const serialPort = args._[0];
+  const serialPort = args._[0]
 
-  let configPath = args.config;
-  if (configPath && configPath.substring(0, 1) !== "/") {
-    configPath = resolve(process.cwd(), configPath);
+  let configPath = args.config
+  if (configPath && configPath.substring(0, 1) !== '/') {
+    configPath = resolve(process.cwd(), configPath)
   }
 
-  let options = undefined;
+  let options
 
   if (configPath) {
     try {
-      options = require(configPath);
+      options = require(configPath)
       // make sure that networkKey is passed as buffer.
       // accept both zwave2mqtt format as ozw format
       if (options.networkKey && options.networkKey.length === 32) {
-        options.networkKey = Buffer.from(options.networkKey, "hex");
-      } else if (options.networkKey && options.networkKey.includes("0x")) {
+        options.networkKey = Buffer.from(options.networkKey, 'hex')
+      } else if (options.networkKey && options.networkKey.includes('0x')) {
         options.networkKey = options.networkKey
-          .replace("0x", "")
-          .replace(", ", "");
-        options.networkKey = Buffer.from(options.networkKey, "hex");
+          .replace('0x', '')
+          .replace(', ', '')
+        options.networkKey = Buffer.from(options.networkKey, 'hex')
       } else {
-        console.error("Error: Invalid networkKey defined");
-        return;
+        console.error('Error: Invalid networkKey defined')
+        return
       }
     } catch (err) {
-      console.error(`Error: failed loading config file ${configPath}`);
-      console.error(err);
-      return;
+      console.error(`Error: failed loading config file ${configPath}`)
+      console.error(err)
+      return
     }
   }
 
-  const driver = args["mock-driver"]
+  const driver = args['mock-driver']
     ? createMockDriver()
-    : new Driver(serialPort, options);
+    : new Driver(serialPort, options)
 
-  driver.on("error", (e) => {
-    console.error("Error in driver", e);
-  });
+  driver.on('error', (e) => {
+    console.error('Error in driver', e)
+  })
 
-  driver.on("driver ready", async () => {
+  driver.on('driver ready', async () => {
     try {
-      const server = new ZwavejsServer(driver, { port: 3000 });
+      const server = new ZwavejsServer(driver, { port: 3000 })
       await server.start()
-      console.info("Server listening on port 3000")
+      console.info('Server listening on port 3000')
     } catch (error) {
       console.error('Unable to start Server', error)
     }
-  });
+  })
 
-  await driver.start();
+  await driver.start()
 })().catch((err) => {
-  console.error("Unable to start driver", err);
-});
+  console.error('Unable to start driver', err)
+})

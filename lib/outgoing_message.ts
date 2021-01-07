@@ -1,32 +1,32 @@
-import type { ZwaveState } from "./state";
+import type { ZwaveState } from './state'
 
 export interface OutgoingEvent {
-  source: "driver" | "controller" | "node";
+  source: 'driver' | 'controller' | 'node';
   event: string;
   [key: string]: unknown;
 }
 
 interface OutgoingVersionMessage {
-  type: "version";
+  type: 'version';
   driverVersion: string;
   serverVersion: string;
   homeId: number;
 }
 
 interface OutgoingEventMessage {
-  type: "event";
+  type: 'event';
   event: OutgoingEvent;
 }
 
 interface OutgoingResultMessageError {
-  type: "result";
+  type: 'result';
   messageId: string;
   success: false;
   errorCode: string;
 }
 
 interface OutgoingResultMessageSuccessBase {
-  type: "result";
+  type: 'result';
   messageId: string;
   success: true;
 }
