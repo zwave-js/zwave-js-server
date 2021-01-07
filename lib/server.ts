@@ -6,45 +6,33 @@ import { EventForwarder } from "./forward";
 import { OutgoingEvent, OutgoingMessage } from "./outgoing_message";
 import { dumpState } from "./state";
 import { Server as HttpServer, ServerOptions as HttpServerOptions, createServer } from 'http'
+import { once } from 'events'
+
+interface ZwavejsServerOptions {
+  port: number
+}
 
 export class ZwavejsServer {
   private server: HttpServer;
   private wsServer: ws.Server;
   private sockets: Clients;
 
-  constructor(private driver: Driver) { }
+  constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
 
-  start() : Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.server = createServer()
-      this.wsServer = new ws.Server({ server: this.server });
-      this.sockets = new Clients(this.driver);
-      this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
+  async start() {
+    this.server = createServer()
+    this.wsServer = new ws.Server({ server: this.server });
+    this.sockets = new Clients(this.driver);
+    this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
 
-      this.server.on("upgrade", (request, socket, head) => {
-        if (request.url !== "/zjs") {
-          return;
-        }
-
-        this.wsServer.handleUpgrade(request, socket, head, (socket) => {
-          this.wsServer.emit("connection", socket, request);
-        });
-      });
-
-      this.server.listen(3000, resolve)
-    })
+    this.server.listen(this.options.port);
+    await once(this.server, 'listening');
   }
 
-  destroy() : Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.sockets.destroy();
-      this.server.close(function(err) {
-        if(err) reject(err)
-        else {
-          resolve()
-        }
-      });
-    })
+  async destroy() {
+    this.sockets.destroy();
+    this.server.close();
+    await once(this.server, 'close')
   }
 }
 

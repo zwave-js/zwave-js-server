@@ -63,8 +63,10 @@ const expectedConfig = ["_", "config"];
   });
 
   driver.on("driver ready", () => {
-    const server = new ZwavejsServer(driver);
-    server.start()
+    const server = new ZwavejsServer(driver, { port: 3000 });
+    server.start().catch((err) => {
+      console.error('Unable to start Server', err)
+    })
   });
 
   await driver.start();
