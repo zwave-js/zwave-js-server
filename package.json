@@ -1,7 +1,7 @@
 {
   "name": "zjs",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full access to Zwave-JS APIs using a websocket server",
   "main": "build/index.js",
   "scripts": {
     "lint": "eslint --ext .ts .",
