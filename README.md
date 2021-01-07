@@ -55,7 +55,7 @@ To start receive the state and get events, the client needs to send the `start_l
 
 ```ts
 interface {
-  messageID: string;
+  messageId: string;
   command: "start_listening";
 }
 ```
@@ -65,7 +65,7 @@ The server will respond with the current state and start sending events.
 ```ts
 interface {
   type: "result";
-  messageID: string; // maps the `start_listening` command
+  messageId: string; // maps the `start_listening` command
   success: true,
   result: {
     state: {

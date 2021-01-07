@@ -20,14 +20,14 @@ interface OutgoingEventMessage {
 
 interface OutgoingResultMessageError {
   type: "result";
-  messageID: string;
+  messageId: string;
   success: false;
   errorCode: string;
 }
 
 interface OutgoingResultMessageSuccessBase {
   type: "result";
-  messageID: string;
+  messageId: string;
   success: true;
 }
 

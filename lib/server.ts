@@ -120,22 +120,22 @@ class Client {
   }
 
   sendResultSuccess(
-    messageID: string,
+    messageId: string,
     result: OutgoingMessages.OutgoingResultMessageSuccess["result"]
   ) {
     this.sendData({
       type: "result",
       success: true,
-      messageID,
+      messageId,
       result,
     });
   }
 
-  sendResultError(messageID: string, errorCode: string) {
+  sendResultError(messageId: string, errorCode: string) {
     this.sendData({
       type: "result",
       success: false,
-      messageID,
+      messageId,
       errorCode,
     });
   }
