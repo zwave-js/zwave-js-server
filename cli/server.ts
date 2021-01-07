@@ -17,7 +17,7 @@ const expectedConfig = ["_", "config"];
     (key) => !expectedConfig.includes(key)
   );
   if (extraKeys.length > 0) {
-    console.error(`Got unexpected keys ${extraKeys.join(", ")}`);
+    console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);
     return;
   }
 
@@ -46,8 +46,8 @@ const expectedConfig = ["_", "config"];
         options.networkKey = options.networkKey.replace('0x', '').replace(', ', '')
         options.networkKey = Buffer.from(options.networkKey, 'hex')
       } else {
-        console.warn('Invalid networkKey defined');
-        delete options.networkKey
+        console.error('Error: Invalid networkKey defined');
+        return;
       }
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
