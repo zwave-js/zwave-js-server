@@ -9,9 +9,14 @@ if (!dump) {
 }
 const socket = new ws(url);
 
-// ws.on('open', function open() {
-//   ws.send('something');
-// });
+socket.on("open", function open() {
+  socket.send(
+    JSON.stringify({
+      messageID: "my-msg-id!",
+      command: "start_listening",
+    })
+  );
+});
 
 socket.on("message", (data) => {
   if (dump) {

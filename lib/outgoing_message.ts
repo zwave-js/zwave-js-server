@@ -6,14 +6,40 @@ export interface OutgoingEvent {
   [key: string]: unknown;
 }
 
-export interface OutgoingEventMessage {
+interface OutgoingVersionMessage {
+  type: "version";
+  driverVersion: string;
+  serverVersion: string;
+  homeId: number;
+}
+
+interface OutgoingEventMessage {
   type: "event";
   event: OutgoingEvent;
 }
 
-export interface OutgoingStateMessage {
-  type: "state";
-  state: ZwaveState;
+interface OutgoingResultMessageError {
+  type: "result";
+  messageId: string;
+  success: false;
+  errorCode: string;
 }
 
-export type OutgoingMessage = OutgoingEventMessage | OutgoingStateMessage;
+interface OutgoingResultMessageSuccessBase {
+  type: "result";
+  messageId: string;
+  success: true;
+}
+
+interface OutgoingStartListeningResultMessage
+  extends OutgoingResultMessageSuccessBase {
+  result: { state: ZwaveState };
+}
+
+export type OutgoingResultMessageSuccess = OutgoingStartListeningResultMessage;
+
+export type OutgoingMessage =
+  | OutgoingVersionMessage
+  | OutgoingEventMessage
+  | OutgoingResultMessageSuccess
+  | OutgoingResultMessageError;

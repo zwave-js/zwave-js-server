@@ -3,12 +3,14 @@ import { resolve } from "path";
 import { Driver } from "zwave-js";
 import express from "express";
 import { ZwavejsServer } from "../lib/server";
+import { createMockDriver } from "../mock";
 
 interface Args {
   _: Array<string>;
   config?: string;
+  "mock-driver": boolean;
 }
-const expectedConfig = ["_", "config"];
+const expectedConfig = ["_", "config", "mock-driver"];
 
 (async () => {
   const args: Args = mininist(process.argv.slice(2));
@@ -19,6 +21,10 @@ const expectedConfig = ["_", "config"];
   if (extraKeys.length > 0) {
     console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);
     return;
+  }
+
+  if (args["mock-driver"]) {
+    args._.push("mock-serial-port");
   }
 
   if (args._.length < 1) {
@@ -41,12 +47,14 @@ const expectedConfig = ["_", "config"];
       // make sure that networkKey is passed as buffer.
       // accept both zwave2mqtt format as ozw format
       if (options.networkKey && options.networkKey.length === 32) {
-        options.networkKey = Buffer.from(options.networkKey, 'hex')
-      } else if (options.networkKey && options.networkKey.includes('0x')) {
-        options.networkKey = options.networkKey.replace('0x', '').replace(', ', '')
-        options.networkKey = Buffer.from(options.networkKey, 'hex')
+        options.networkKey = Buffer.from(options.networkKey, "hex");
+      } else if (options.networkKey && options.networkKey.includes("0x")) {
+        options.networkKey = options.networkKey
+          .replace("0x", "")
+          .replace(", ", "");
+        options.networkKey = Buffer.from(options.networkKey, "hex");
       } else {
-        console.error('Error: Invalid networkKey defined');
+        console.error("Error: Invalid networkKey defined");
         return;
       }
     } catch (err) {
@@ -56,7 +64,9 @@ const expectedConfig = ["_", "config"];
     }
   }
 
-  const driver = new Driver(serialPort, options);
+  const driver = args["mock-driver"]
+    ? createMockDriver()
+    : new Driver(serialPort, options);
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
@@ -67,6 +77,7 @@ const expectedConfig = ["_", "config"];
     server.start().catch((err) => {
       console.error('Unable to start Server', err)
     })
+    console.info("Started listening on port 3000");
   });
 
   await driver.start();
