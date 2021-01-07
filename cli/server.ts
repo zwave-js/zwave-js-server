@@ -2,7 +2,7 @@ import mininist from "minimist";
 import { resolve } from "path";
 import { Driver } from "zwave-js";
 import express from "express";
-import { addAPItoExpress } from "../lib/express";
+import { ZwavejsServer } from "../lib/server";
 
 interface Args {
   _: Array<string>;
@@ -63,8 +63,8 @@ const expectedConfig = ["_", "config"];
   });
 
   driver.on("driver ready", () => {
-    const app = express();
-    addAPItoExpress(app.listen(3000), driver);
+    const server = new ZwavejsServer(driver);
+    server.start()
   });
 
   await driver.start();

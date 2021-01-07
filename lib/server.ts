@@ -1,10 +1,52 @@
 import { URL } from "url";
-import ws from "ws";
+import ws, { ServerOptions } from "ws";
 import type WebSocket from "ws";
 import type { Driver } from "zwave-js";
 import { EventForwarder } from "./forward";
 import { OutgoingEvent, OutgoingMessage } from "./outgoing_message";
 import { dumpState } from "./state";
+import { Server as HttpServer, ServerOptions as HttpServerOptions, createServer } from 'http'
+
+export class ZwavejsServer {
+  private server: HttpServer;
+  private wsServer: ws.Server;
+  private sockets: Clients;
+
+  constructor(private driver: Driver) { }
+
+  start() : Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.server = createServer()
+      this.wsServer = new ws.Server({ server: this.server });
+      this.sockets = new Clients(this.driver);
+      this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
+
+      this.server.on("upgrade", (request, socket, head) => {
+        if (request.url !== "/zjs") {
+          return;
+        }
+
+        this.wsServer.handleUpgrade(request, socket, head, (socket) => {
+          this.wsServer.emit("connection", socket, request);
+        });
+      });
+
+      this.server.listen(3000, resolve)
+    })
+  }
+
+  destroy() : Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.sockets.destroy();
+      this.server.close(function(err) {
+        if(err) reject(err)
+        else {
+          resolve()
+        }
+      });
+    })
+  }
+}
 
 class Clients {
   private clients: Array<Client> = [];
@@ -104,20 +146,3 @@ class Client {
     this.socket.terminate();
   }
 }
-
-export const addAPItoExpress = (server, driver: Driver) => {
-  const wsServer = new ws.Server({ noServer: true });
-  const sockets = new Clients(driver);
-
-  wsServer.on("connection", (socket) => sockets.addSocket(socket));
-
-  server.on("upgrade", (request, socket, head) => {
-    if (request.url !== "/zjs") {
-      return;
-    }
-
-    wsServer.handleUpgrade(request, socket, head, (socket) => {
-      wsServer.emit("connection", socket, request);
-    });
-  });
-};
