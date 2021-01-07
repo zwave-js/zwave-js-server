@@ -51,7 +51,7 @@ interface {
 }
 ```
 
-To start receive the state and get events, the client needs to send the `start_listening command.
+To start receive the state and get events, the client needs to send the `start_listening` command.
 
 ```ts
 interface {
