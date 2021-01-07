@@ -14,6 +14,8 @@ Opens server on `ws://localhost:3000/zjs`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
+If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
+
 ### Start client
 
 Requires server to be running.
@@ -38,15 +40,37 @@ ts-node cli/client.ts --dump
 
 ## API
 
-When a client connects, the server will send the current state of Z-Wave JS.
+When a client connects, the server will send the version.
 
 ```ts
 interface {
-  type: "state",
-  state: {
+  type: "version";
+  driverVersion: string;
+  serverVersion: string;
+  homeId: number;
+}
+```
+
+To start receive the state and get events, the client needs to send the `start_listening command.
+
+```ts
+interface {
+  messageID: string;
+  command: "start_listening";
+}
+```
+
+The server will respond with the current state and start sending events.
+
+```ts
+interface {
+  type: "result";
+  messageID: string; // maps the `start_listening` command
+  success: true,
+  result: { state: {
     controller: Partial<ZWaveController>;
     nodes: Partial<ZWaveNode>[];
-  }
+  }};
 }
 ```
 
