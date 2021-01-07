@@ -74,10 +74,12 @@ const expectedConfig = ["_", "config", "mock-driver"];
 
   driver.on("driver ready", () => {
     const server = new ZwavejsServer(driver, { port: 3000 });
-    server.start().catch((err) => {
+    server.start()
+    .then(() => console.info("Server listening on port 3000"))
+    .catch((err) => {
       console.error('Unable to start Server', err)
     })
-    console.info("Started listening on port 3000");
+
   });
 
   await driver.start();
