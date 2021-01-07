@@ -67,10 +67,12 @@ interface {
   type: "result";
   messageID: string; // maps the `start_listening` command
   success: true,
-  result: { state: {
-    controller: Partial<ZWaveController>;
-    nodes: Partial<ZWaveNode>[];
-  }};
+  result: {
+    state: {
+      controller: Partial<ZWaveController>;
+      nodes: Partial<ZWaveNode>[];
+    }
+  };
 }
 ```
 
