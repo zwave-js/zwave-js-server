@@ -10,12 +10,9 @@
   "scripts": {
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --ext .ts .",
-<<<<<<< HEAD
-    "test": "prettier --check lib mock cli && tsc --noEmit && npm run lint"
-=======
+    "test": "prettier --check lib mock cli && tsc --noEmit && npm run lint",
     "build": "tsc -p .",
     "local": "npm i -g && zwave-server"
->>>>>>> chore: node cli module
   },
   "author": "",
   "license": "Apache-2.0",
