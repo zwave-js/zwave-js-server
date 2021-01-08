@@ -5,10 +5,11 @@
   "main": "build/index.js",
   "scripts": {
     "lint": "eslint --ext .ts .",
-    "lint:fix": "eslint --fix --ext .ts ."
+    "lint:fix": "eslint --fix --ext .ts .",
+    "test": "npm run lint"
   },
   "author": "",
-  "license": "ISC",
+  "license": "",
   "dependencies": {
     "minimist": "^1.2.5",
     "ws": "^7.4.2",
