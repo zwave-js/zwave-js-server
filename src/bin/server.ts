@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import mininist from 'minimist'
 import { resolve } from 'path'
 import { Driver } from 'zwave-js'
@@ -12,6 +14,7 @@ interface Args {
 const expectedConfig = ['_', 'config', 'mock-driver'];
 
 (async () => {
+  // @ts-ignore
   const args: Args = mininist(process.argv.slice(2))
 
   const extraKeys = Object.keys(args).filter(

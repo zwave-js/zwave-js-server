@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import ws from 'ws'
 
 const args = process.argv.slice(2).filter((val) => !val.startsWith('--'))

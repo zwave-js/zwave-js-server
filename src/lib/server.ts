@@ -159,7 +159,9 @@ class Clients {
   }
 
   disconnect () {
-    clearInterval(this.pingInterval)
+    if(this.pingInterval !== undefined) {
+      clearInterval(this.pingInterval)
+    }
     this.pingInterval = undefined
     this.clients.forEach((client) => client.disconnect())
     this.clients = []
@@ -170,8 +172,11 @@ interface ZwavejsServerOptions {
 }
 
 export class ZwavejsServer {
+  // @ts-ignore
   private server: HttpServer;
+  // @ts-ignore
   private wsServer: ws.Server;
+  // @ts-ignore
   private sockets: Clients;
 
   constructor (private driver: Driver, private options: ZwavejsServerOptions) {}
