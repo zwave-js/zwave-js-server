@@ -35,7 +35,7 @@ const argv = yargs.usage('$0 [path]', 'Start the server')
 
   const serialPort = argv.path as string
 
-  let configPath = argv.config as string
+  let configPath = argv.config
   if (configPath && configPath.substring(0, 1) !== '/') {
     configPath = resolve(process.cwd(), configPath)
   }
@@ -65,7 +65,7 @@ const argv = yargs.usage('$0 [path]', 'Start the server')
     }
   }
 
-  const driver = argv.mock as boolean
+  const driver = argv.mock
     ? createMockDriver()
     : new Driver(serialPort, options)
 
