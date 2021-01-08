@@ -10,8 +10,7 @@
   "scripts": {
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --ext .ts .",
-    "build": "tsc -p .",
-    "local": "npm i -g && zwave-server"
+    "build": "tsc -p ."
   },
   "author": "",
   "license": "ISC",
