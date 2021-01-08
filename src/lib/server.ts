@@ -210,28 +210,29 @@ interface ZwavejsServerOptions {
 }
 
 export class ZwavejsServer {
-  // @ts-ignore
-  private server: HttpServer;
-  // @ts-ignore
-  private wsServer: ws.Server;
-  // @ts-ignore
-  private sockets: Clients;
+  private server?: HttpServer;
+  private wsServer?: ws.Server;
+  private sockets?: Clients;
 
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
 
-  async start() {
-    this.server = createServer();
-    this.wsServer = new ws.Server({ server: this.server });
-    this.sockets = new Clients(this.driver);
-    this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
+  async start () {
+    this.server = createServer()
+    this.wsServer = new ws.Server({ server: this.server })
+    this.sockets = new Clients(this.driver)
+    this.wsServer.on('connection', (socket) => this.sockets!.addSocket(socket))
 
     this.server.listen(this.options.port);
     await once(this.server, "listening");
   }
 
-  async destroy() {
-    this.sockets.disconnect();
-    this.server.close();
-    await once(this.server, "close");
+  async destroy () {
+    if(this.sockets) {
+      this.sockets.disconnect()
+    }
+    if(this.server) {
+      this.server.close()
+      await once(this.server, 'close')
+    }
   }
 }
