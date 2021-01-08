@@ -24,7 +24,7 @@ class Client {
     return this.socket.readyState === this.socket.OPEN;
   }
 
-  receiveMessage(data: string) {
+  async receiveMessage(data: string) {
     let msg: IncomingMessage;
     try {
       msg = JSON.parse(data);
@@ -34,15 +34,30 @@ class Client {
       return;
     }
 
-    if (msg.command === "start_listening") {
-      this.sendResultSuccess(msg.messageId, {
-        state: dumpState(this.driver),
-      });
-      this.receiveEvents = true;
-      return;
-    }
+    try {
+      if (msg.command === "start_listening") {
+        this.sendResultSuccess(msg.messageId, {
+          state: dumpState(this.driver),
+        });
+        this.receiveEvents = true;
+        return;
+      }
 
-    this.sendResultError(msg.messageId, "unknown_command");
+      if (msg.command == "node.set_value") {
+        const node = this.driver.controller.nodes.get(msg.nodeId);
+        if (!node) {
+          this.sendResultError(msg.messageId, "node_not_found");
+          return;
+        }
+        const success = await node.setValue(msg.valueId, msg.value);
+        this.sendResultSuccess(msg.messageId, { success });
+      }
+
+      this.sendResultError(msg.messageId, "unknown_command");
+    } catch (err) {
+      console.error("Unexpected error", err);
+      this.sendResultError(msg.messageId, "unknown_error");
+    }
   }
 
   sendVersion() {
