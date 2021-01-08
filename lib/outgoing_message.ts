@@ -25,18 +25,17 @@ interface OutgoingResultMessageError {
   errorCode: string;
 }
 
-interface OutgoingResultMessageSuccessBase {
+interface ResultTypes {
+  start_listening: { state: ZwaveState };
+  "node.set_value": { success: boolean };
+}
+
+export interface OutgoingResultMessageSuccess {
   type: "result";
   messageId: string;
   success: true;
+  result: ResultTypes[keyof ResultTypes];
 }
-
-interface OutgoingStartListeningResultMessage
-  extends OutgoingResultMessageSuccessBase {
-  result: { state: ZwaveState };
-}
-
-export type OutgoingResultMessageSuccess = OutgoingStartListeningResultMessage;
 
 export type OutgoingMessage =
   | OutgoingVersionMessage

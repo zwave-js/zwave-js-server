@@ -91,6 +91,29 @@ interface {
 }
 ```
 
+## Client commands
+
+```ts
+interface {
+  messageId: string;
+  command: "start_listening";
+}
+```
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_value";
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  },
+  value: any
+}
+```
+
 ## Authentication
 
 Z-Wave JS Server does not handle authentication and allows all connections to the websocket API. If you want to add authentication, add authentication middleware to your Express instance or run NGINX in front of Express instance.
