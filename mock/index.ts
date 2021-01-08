@@ -1,5 +1,5 @@
-import type { Driver } from 'zwave-js'
-import { EventEmitter } from 'events'
+import type { Driver } from "zwave-js";
+import { EventEmitter } from "events";
 
 class MockController extends EventEmitter {
   homeId = 1;
@@ -9,9 +9,9 @@ class MockController extends EventEmitter {
 class MockDriver extends EventEmitter {
   public controller = new MockController();
 
-  async start () {
-    this.emit('driver ready')
+  async start() {
+    this.emit("driver ready");
   }
 }
 
-export const createMockDriver = () => (new MockDriver() as unknown) as Driver
+export const createMockDriver = () => (new MockDriver() as unknown) as Driver;
