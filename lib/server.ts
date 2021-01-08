@@ -1,102 +1,102 @@
-import ws from 'ws'
-import type WebSocket from 'ws'
-import type { Driver } from 'zwave-js'
-import { EventForwarder } from './forward'
-import type * as OutgoingMessages from './outgoing_message'
-import { IncomingMessage } from './incoming_message'
-import { dumpState } from './state'
-import { Server as HttpServer, createServer } from 'http'
-import { once } from 'events'
-import { version } from './const'
+import ws from "ws";
+import type WebSocket from "ws";
+import type { Driver } from "zwave-js";
+import { EventForwarder } from "./forward";
+import type * as OutgoingMessages from "./outgoing_message";
+import { IncomingMessage } from "./incoming_message";
+import { dumpState } from "./state";
+import { Server as HttpServer, createServer } from "http";
+import { once } from "events";
+import { version } from "./const";
 
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
 
-  constructor (private socket: WebSocket, private driver: Driver) {
-    socket.on('pong', () => {
-      this._outstandingPing = false
-    })
-    socket.on('message', (data: string) => this.receiveMessage(data))
+  constructor(private socket: WebSocket, private driver: Driver) {
+    socket.on("pong", () => {
+      this._outstandingPing = false;
+    });
+    socket.on("message", (data: string) => this.receiveMessage(data));
   }
 
-  get isConnected (): boolean {
-    return this.socket.readyState === this.socket.OPEN
+  get isConnected(): boolean {
+    return this.socket.readyState === this.socket.OPEN;
   }
 
-  receiveMessage (data: string) {
-    let msg: IncomingMessage
+  receiveMessage(data: string) {
+    let msg: IncomingMessage;
     try {
-      msg = JSON.parse(data)
+      msg = JSON.parse(data);
     } catch (err) {
       // We don't have the message ID. Just close it.
-      this.socket.close()
-      return
+      this.socket.close();
+      return;
     }
 
-    if (msg.command === 'start_listening') {
+    if (msg.command === "start_listening") {
       this.sendResultSuccess(msg.messageId, {
-        state: dumpState(this.driver)
-      })
-      this.receiveEvents = true
-      return
+        state: dumpState(this.driver),
+      });
+      this.receiveEvents = true;
+      return;
     }
 
-    this.sendResultError(msg.messageId, 'unknown_command')
+    this.sendResultError(msg.messageId, "unknown_command");
   }
 
-  sendVersion () {
+  sendVersion() {
     this.sendData({
-      type: 'version',
-      driverVersion: 'TBD',
+      type: "version",
+      driverVersion: "TBD",
       serverVersion: version,
-      homeId: this.driver.controller.homeId
-    })
+      homeId: this.driver.controller.homeId,
+    });
   }
 
-  sendResultSuccess (
+  sendResultSuccess(
     messageId: string,
-    result: OutgoingMessages.OutgoingResultMessageSuccess['result']
+    result: OutgoingMessages.OutgoingResultMessageSuccess["result"]
   ) {
     this.sendData({
-      type: 'result',
+      type: "result",
       success: true,
       messageId,
-      result
-    })
+      result,
+    });
   }
 
-  sendResultError (messageId: string, errorCode: string) {
+  sendResultError(messageId: string, errorCode: string) {
     this.sendData({
-      type: 'result',
+      type: "result",
       success: false,
       messageId,
-      errorCode
-    })
+      errorCode,
+    });
   }
 
-  sendEvent (event: OutgoingMessages.OutgoingEvent) {
+  sendEvent(event: OutgoingMessages.OutgoingEvent) {
     this.sendData({
-      type: 'event',
-      event
-    })
+      type: "event",
+      event,
+    });
   }
 
-  sendData (data: OutgoingMessages.OutgoingMessage) {
-    this.socket.send(JSON.stringify(data))
+  sendData(data: OutgoingMessages.OutgoingMessage) {
+    this.socket.send(JSON.stringify(data));
   }
 
-  checkAlive () {
+  checkAlive() {
     if (this._outstandingPing) {
-      this.disconnect()
-      return
+      this.disconnect();
+      return;
     }
-    this._outstandingPing = true
-    this.socket.ping()
+    this._outstandingPing = true;
+    this.socket.ping();
   }
 
-  disconnect () {
-    this.socket.close()
+  disconnect() {
+    this.socket.close();
   }
 }
 class Clients {
@@ -105,68 +105,68 @@ class Clients {
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
-  constructor (private driver: Driver) {}
+  constructor(private driver: Driver) {}
 
-  addSocket (socket: WebSocket) {
-    console.debug('New client')
-    const client = new Client(socket, this.driver)
-    socket.on('close', () => {
-      console.info('Client disconnected')
-      this.scheduleClientCleanup()
-    })
-    client.sendVersion()
-    this.clients.push(client)
+  addSocket(socket: WebSocket) {
+    console.debug("New client");
+    const client = new Client(socket, this.driver);
+    socket.on("close", () => {
+      console.info("Client disconnected");
+      this.scheduleClientCleanup();
+    });
+    client.sendVersion();
+    this.clients.push(client);
 
     if (this.pingInterval === undefined) {
       this.pingInterval = setInterval(() => {
-        const newClients = []
+        const newClients = [];
 
         for (const client of this.clients) {
           if (client.isConnected) {
-            newClients.push(client)
+            newClients.push(client);
           } else {
-            client.disconnect()
+            client.disconnect();
           }
         }
 
-        this.clients = newClients
-      }, 30000)
+        this.clients = newClients;
+      }, 30000);
     }
 
     if (this.eventForwarder === undefined) {
       this.eventForwarder = new EventForwarder(this.driver, (data) => {
         for (const client of this.clients) {
           if (client.receiveEvents && client.isConnected) {
-            client.sendEvent(data)
+            client.sendEvent(data);
           }
         }
-      })
-      this.eventForwarder.start()
+      });
+      this.eventForwarder.start();
     }
   }
 
-  private scheduleClientCleanup () {
+  private scheduleClientCleanup() {
     if (this.cleanupScheduled) {
-      return
+      return;
     }
-    this.cleanupScheduled = true
-    setTimeout(() => this.cleanupClients(), 0)
+    this.cleanupScheduled = true;
+    setTimeout(() => this.cleanupClients(), 0);
   }
 
-  private cleanupClients () {
-    this.cleanupScheduled = false
-    this.clients = this.clients.filter((cl) => cl.isConnected)
+  private cleanupClients() {
+    this.cleanupScheduled = false;
+    this.clients = this.clients.filter((cl) => cl.isConnected);
   }
 
-  disconnect () {
-    clearInterval(this.pingInterval)
-    this.pingInterval = undefined
-    this.clients.forEach((client) => client.disconnect())
-    this.clients = []
+  disconnect() {
+    clearInterval(this.pingInterval);
+    this.pingInterval = undefined;
+    this.clients.forEach((client) => client.disconnect());
+    this.clients = [];
   }
 }
 interface ZwavejsServerOptions {
-  port: number
+  port: number;
 }
 
 export class ZwavejsServer {
@@ -174,21 +174,21 @@ export class ZwavejsServer {
   private wsServer: ws.Server;
   private sockets: Clients;
 
-  constructor (private driver: Driver, private options: ZwavejsServerOptions) {}
+  constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
 
-  async start () {
-    this.server = createServer()
-    this.wsServer = new ws.Server({ server: this.server })
-    this.sockets = new Clients(this.driver)
-    this.wsServer.on('connection', (socket) => this.sockets.addSocket(socket))
+  async start() {
+    this.server = createServer();
+    this.wsServer = new ws.Server({ server: this.server });
+    this.sockets = new Clients(this.driver);
+    this.wsServer.on("connection", (socket) => this.sockets.addSocket(socket));
 
-    this.server.listen(this.options.port)
-    await once(this.server, 'listening')
+    this.server.listen(this.options.port);
+    await once(this.server, "listening");
   }
 
-  async destroy () {
-    this.sockets.disconnect()
-    this.server.close()
-    await once(this.server, 'close')
+  async destroy() {
+    this.sockets.disconnect();
+    this.server.close();
+    await once(this.server, "close");
   }
 }
