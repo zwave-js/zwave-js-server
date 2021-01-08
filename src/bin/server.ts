@@ -1,44 +1,43 @@
 #!/usr/bin/env node
 
-import mininist from 'minimist'
+import * as yargs from 'yargs';
 import { resolve } from 'path'
 import { Driver } from 'zwave-js'
 import { ZwavejsServer } from '../lib/server'
 import { createMockDriver } from '../mock'
 
-interface Args {
-  _: Array<string>;
-  config?: string;
-  "mock-driver": boolean;
-}
-const expectedConfig = ["_", "config", "mock-driver"];
+const argv = yargs.usage('$0 [path]', 'Start the server')
+    .option('config', {
+    alias: 'c',
+    description: 'Configuration file path',
+    type: 'string'
+  })
+  .option('mock', {
+    alias: 'm',
+    description: 'Mock driver',
+    type: 'boolean',
+    default: false
+  })
+  .option('port', {
+    alias: 'p',
+    description: 'Listening port',
+    type: 'number',
+    default: 3000
+  })
+.help().argv;
 
 (async () => {
-  // @ts-ignore
-  const args: Args = mininist(process.argv.slice(2))
 
-  const extraKeys = Object.keys(args).filter(
-    (key) => !expectedConfig.includes(key)
-  );
-  if (extraKeys.length > 0) {
-    console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);
-    return;
+  if (argv.path === undefined) {
+    console.error('Error: Missing path to serial port')
+    return
   }
 
-  if (args["mock-driver"]) {
-    args._.push("mock-serial-port");
-  }
+  const serialPort = argv.path as string
 
-  if (args._.length < 1) {
-    console.error("Error: Missing path to serial port");
-    return;
-  }
-
-  const serialPort = args._[0];
-
-  let configPath = args.config;
-  if (configPath && configPath.substring(0, 1) !== "/") {
-    configPath = resolve(process.cwd(), configPath);
+  let configPath = argv.config as string
+  if (configPath && configPath.substring(0, 1) !== '/') {
+    configPath = resolve(process.cwd(), configPath)
   }
 
   let options;
@@ -66,7 +65,7 @@ const expectedConfig = ["_", "config", "mock-driver"];
     }
   }
 
-  const driver = args["mock-driver"]
+  const driver = argv.mock as boolean
     ? createMockDriver()
     : new Driver(serialPort, options);
 
@@ -76,9 +75,9 @@ const expectedConfig = ["_", "config", "mock-driver"];
 
   driver.on("driver ready", async () => {
     try {
-      const server = new ZwavejsServer(driver, { port: 3000 });
-      await server.start();
-      console.info("Server listening on port 3000");
+      const server = new ZwavejsServer(driver, { port: argv.port })
+      await server.start()
+      console.info('Server listening on port', argv.port)
     } catch (error) {
       console.error("Unable to start Server", error);
     }
