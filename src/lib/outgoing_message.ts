@@ -11,7 +11,7 @@ interface OutgoingVersionMessage {
   type: "version";
   driverVersion: string;
   serverVersion: string;
-  homeId: number;
+  homeId: number | undefined;
 }
 
 interface OutgoingEventMessage {

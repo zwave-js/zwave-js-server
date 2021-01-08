@@ -1,8 +1,10 @@
-import mininist from "minimist";
-import { resolve } from "path";
-import { Driver } from "zwave-js";
-import { ZwavejsServer } from "../lib/server";
-import { createMockDriver } from "../mock";
+#!/usr/bin/env node
+
+import mininist from 'minimist'
+import { resolve } from 'path'
+import { Driver } from 'zwave-js'
+import { ZwavejsServer } from '../lib/server'
+import { createMockDriver } from '../mock'
 
 interface Args {
   _: Array<string>;
@@ -12,7 +14,8 @@ interface Args {
 const expectedConfig = ["_", "config", "mock-driver"];
 
 (async () => {
-  const args: Args = mininist(process.argv.slice(2));
+  // @ts-ignore
+  const args: Args = mininist(process.argv.slice(2))
 
   const extraKeys = Object.keys(args).filter(
     (key) => !expectedConfig.includes(key)

@@ -1,4 +1,6 @@
-import ws from "ws";
+#!/usr/bin/env node
+
+import ws from 'ws'
 
 const args = process.argv.slice(2).filter((val) => !val.startsWith("--"));
 const url = args.length < 1 ? "ws://localhost:3000" : args[0];
