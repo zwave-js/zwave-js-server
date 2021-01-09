@@ -12,7 +12,7 @@
     "lint:fix": "eslint --fix --ext .ts .",
     "test": "prettier --check lib mock cli && tsc --noEmit && npm run lint",
     "build": "tsc -p .",
-    "local": "npm i -g && zwave-server"
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "",
   "license": "Apache-2.0",
