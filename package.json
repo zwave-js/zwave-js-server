@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --ext .ts .",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "",
   "license": "ISC",
