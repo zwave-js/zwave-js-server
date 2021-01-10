@@ -1,18 +1,11 @@
-import { ValueID } from "zwave-js";
+import { IncomingCommandBase } from "./incoming_message_base";
+import { IncomingMessageNode } from "./node/incoming_message";
 
-interface IncomingCommandStartListening {
+interface IncomingCommandStartListening extends IncomingCommandBase {
   messageId: string;
   command: "start_listening";
 }
 
-interface IncomingCommandNodeSetValue {
-  messageId: string;
-  command: "node.set_value";
-  nodeId: number;
-  valueId: ValueID;
-  value: unknown;
-}
-
 export type IncomingMessage =
   | IncomingCommandStartListening
-  | IncomingCommandNodeSetValue;
+  | IncomingMessageNode;

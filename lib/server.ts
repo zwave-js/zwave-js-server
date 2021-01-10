@@ -8,10 +8,30 @@ import { dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { once } from "events";
 import { version } from "./const";
+import { NodeMessageHandler } from "./node/message_handler";
+import { BaseError, ErrorCode, UnknownCommandError } from "./error";
+import { Instance } from "./instance";
+import { IncomingMessageNode } from "./node/incoming_message";
 
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
+
+  private instanceHandlers: Record<
+    Instance,
+    (
+      message: IncomingMessage
+    ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
+  > = {
+    [Instance.controller]: () => {
+      throw new Error("Controller handler not implemented.");
+    },
+    [Instance.driver]: () => {
+      throw new Error("Driver handler not implemented.");
+    },
+    [Instance.node]: (message) =>
+      NodeMessageHandler.handle(message as IncomingMessageNode, this.driver),
+  };
 
   constructor(private socket: WebSocket, private driver: Driver) {
     socket.on("pong", () => {
@@ -43,20 +63,23 @@ class Client {
         return;
       }
 
-      if (msg.command == "node.set_value") {
-        const node = this.driver.controller.nodes.get(msg.nodeId);
-        if (!node) {
-          this.sendResultError(msg.messageId, "node_not_found");
-          return;
-        }
-        const success = await node.setValue(msg.valueId, msg.value);
-        this.sendResultSuccess(msg.messageId, { success });
+      const [instance] = msg.command.split(".");
+      if (this.instanceHandlers[instance]) {
+        return this.sendResultSuccess(
+          msg.messageId,
+          await this.instanceHandlers[instance](msg)
+        );
       }
 
-      this.sendResultError(msg.messageId, "unknown_command");
-    } catch (err) {
+      throw new UnknownCommandError(msg.command);
+    } catch (err: unknown) {
+      if (err instanceof BaseError) {
+        console.error("Message error", err);
+        return this.sendResultError(msg.messageId, err.errorCode);
+      }
+
       console.error("Unexpected error", err);
-      this.sendResultError(msg.messageId, "unknown_error");
+      this.sendResultError(msg.messageId, ErrorCode.unknownError);
     }
   }
 

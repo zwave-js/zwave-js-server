@@ -1,4 +1,5 @@
 import type { ZwaveState } from "./state";
+import { NodeResultTypes } from "./node/outgoing_message";
 
 export interface OutgoingEvent {
   source: "driver" | "controller" | "node";
@@ -25,10 +26,9 @@ interface OutgoingResultMessageError {
   errorCode: string;
 }
 
-interface ResultTypes {
+type ResultTypes = {
   start_listening: { state: ZwaveState };
-  "node.set_value": { success: boolean };
-}
+} & NodeResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";
