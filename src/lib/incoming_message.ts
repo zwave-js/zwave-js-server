@@ -1,3 +1,4 @@
+import { IncomingMessageController } from "./controller/incoming_message";
 import { IncomingCommandBase } from "./incoming_message_base";
 import { IncomingMessageNode } from "./node/incoming_message";
 
@@ -8,4 +9,5 @@ interface IncomingCommandStartListening extends IncomingCommandBase {
 
 export type IncomingMessage =
   | IncomingCommandStartListening
-  | IncomingMessageNode;
+  | IncomingMessageNode
+  | IncomingMessageController;
