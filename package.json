@@ -1,23 +1,30 @@
 {
-  "name": "zjs",
+  "name": "zwave-js-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "build/index.js",
+  "description": "Full access to zwave-js driver throught Websockets",
+  "main": "dist/lib/index.js",
+  "bin": {
+    "zwave-server": "dist/bin/server.js",
+    "zwave-client": "dist/bin/client.js"
+  },
   "scripts": {
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --ext .ts .",
-    "test": "prettier --check lib mock cli && tsc --noEmit && npm run lint"
+    "test": "prettier --check src && tsc --noEmit && npm run lint",
+    "build": "tsc -p .",
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "minimist": "^1.2.5",
     "ws": "^7.4.2",
+    "yargs": "^16.2.0",
     "zwave-js": "^6.0.0-alpha.3"
   },
   "devDependencies": {
     "@types/node": "^14.14.20",
     "@types/ws": "^7.4.0",
+    "@types/yargs": "^15.0.12",
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "eslint": "^7.17.0",

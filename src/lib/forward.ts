@@ -1,5 +1,5 @@
 import { Driver, HealNodeStatus, ZWaveNode } from "zwave-js";
-import { ZWaveNodeEvents } from "zwave-js/build/lib/node/Types";
+import { NodeStatus, ZWaveNodeEvents } from "zwave-js/build/lib/node/Types";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
 
@@ -112,7 +112,9 @@ export class EventForwarder {
       "interview comleted",
       "ready",
     ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode) => notifyNode(changedNode, event));
+      node.on(event, (changedNode: ZWaveNode) =>
+        notifyNode(changedNode, event)
+      );
     }
 
     for (const event of [
@@ -121,7 +123,7 @@ export class EventForwarder {
       "dead",
       "alive",
     ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode, oldStatus) =>
+      node.on(event, (changedNode: ZWaveNode, oldStatus: NodeStatus) =>
         notifyNode(changedNode, event, { oldStatus })
       );
     }
@@ -133,7 +135,7 @@ export class EventForwarder {
       "value notification",
       "interview failed",
     ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode, args) =>
+      node.on(event, (changedNode: ZWaveNode, args: any) =>
         notifyNode(changedNode, event, { args })
       );
     }
