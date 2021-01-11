@@ -39,6 +39,22 @@ export class ControllerMessageHandler {
         );
         return { success };
       }
+      case ControllerCommand.healNode: {
+        const success = await driver.controller.healNode(message.nodeId);
+        return { success };
+      }
+      case ControllerCommand.beginHealingNetwork: {
+        const success = await driver.controller.beginHealingNetwork();
+        return { success };
+      }
+      case ControllerCommand.stopHealingNetwork: {
+        const success = await driver.controller.stopHealingNetwork();
+        return { success };
+      }
+      case ControllerCommand.isFailedNode: {
+        const success = await driver.controller.isFailedNode(message.nodeId);
+        return { success };
+      }
       default:
         throw new UnknownCommandError(
           // @ts-expect-error

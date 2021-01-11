@@ -7,4 +7,8 @@ export interface ControllerResultTypes {
   [ControllerCommand.stopExclusion]: { success: boolean };
   [ControllerCommand.removeFailedNode]: {};
   [ControllerCommand.replaceFailedNode]: { success: boolean };
+  [ControllerCommand.healNode]: { success: boolean };
+  [ControllerCommand.beginHealingNetwork]: { success: boolean };
+  [ControllerCommand.stopHealingNetwork]: { success: boolean };
+  [ControllerCommand.isFailedNode]: { success: boolean };
 }
