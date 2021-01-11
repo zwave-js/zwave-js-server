@@ -29,7 +29,7 @@ ts-node src/bin/client.ts
 To specify different host:
 
 ```shell
-ts-node src/bin/client.ts 192.168.1.100:6000
+ts-node src/bin/client.ts ws://192.168.1.100:6000
 ```
 
 To specify that it outputs each message on a single line so it can be replayed later:
