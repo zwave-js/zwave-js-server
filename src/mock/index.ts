@@ -12,6 +12,8 @@ class MockDriver extends EventEmitter {
   async start() {
     this.emit("driver ready");
   }
+
+  async destroy() {}
 }
 
 export const createMockDriver = () => (new MockDriver() as unknown) as Driver;
