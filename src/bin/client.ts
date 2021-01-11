@@ -63,3 +63,18 @@ socket.on("message", (data) => {
     console.dir(msg);
   }
 });
+
+let closing = false;
+
+process.on("SIGINT", async () => {
+  // Pressing ctrl+c twice.
+  if (closing) {
+    process.exit();
+  }
+
+  // Close gracefully
+  closing = true;
+  console.log("Shutting down");
+  socket.close();
+  process.exit();
+});

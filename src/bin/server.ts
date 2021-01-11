@@ -64,9 +64,11 @@ interface Args {
     console.error("Error in driver", e);
   });
 
+  let server;
+
   driver.on("driver ready", async () => {
     try {
-      const server = new ZwavejsServer(driver, { port: 3000 });
+      server = new ZwavejsServer(driver, { port: 3000 });
       await server.start();
       console.info("Server listening on port", 3000);
     } catch (error) {
@@ -75,6 +77,24 @@ interface Args {
   });
 
   await driver.start();
+
+  let closing = false;
+
+  process.on("SIGINT", async () => {
+    // Pressing ctrl+c twice.
+    if (closing) {
+      process.exit();
+    }
+
+    // Close gracefully
+    closing = true;
+    console.log("Shutting down");
+    if (server) {
+      await server.destroy();
+    }
+    await driver.destroy();
+    process.exit();
+  });
 })().catch((err) => {
   console.error("Unable to start driver", err);
 });
