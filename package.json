@@ -17,8 +17,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
+    "minimist": "^1.2.5",
     "ws": "^7.4.2",
-    "yargs": "^16.2.0",
     "zwave-js": "^6.0.0-alpha.3"
   },
   "devDependencies": {
