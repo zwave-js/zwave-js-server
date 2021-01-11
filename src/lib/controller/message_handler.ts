@@ -46,16 +46,58 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginHealingNetwork: {
-        const success = await driver.controller.beginHealingNetwork();
+        const success = driver.controller.beginHealingNetwork();
         return { success };
       }
       case ControllerCommand.stopHealingNetwork: {
-        const success = await driver.controller.stopHealingNetwork();
+        const success = driver.controller.stopHealingNetwork();
         return { success };
       }
       case ControllerCommand.isFailedNode: {
-        const success = await driver.controller.isFailedNode(message.nodeId);
-        return { success };
+        const failed = await driver.controller.isFailedNode(message.nodeId);
+        return { failed };
+      }
+      case ControllerCommand.getAssociationGroups: {
+        const groups = {};
+        driver.controller
+          .getAssociationGroups(message.nodeId)
+          .forEach((value, key) => (groups[key] = value));
+        return { groups };
+      }
+      case ControllerCommand.getAssociations: {
+        const associations = {};
+        driver.controller
+          .getAssociations(message.nodeId)
+          .forEach((value, key) => (associations[key] = value));
+        return { associations };
+      }
+      case ControllerCommand.isAssociationAllowed: {
+        const allowed = driver.controller.isAssociationAllowed(
+          message.nodeId,
+          message.group,
+          message.association
+        );
+        return { allowed };
+      }
+      case ControllerCommand.addAssociations: {
+        await driver.controller.addAssociations(
+          message.nodeId,
+          message.group,
+          message.associations
+        );
+        return {};
+      }
+      case ControllerCommand.removeAssociations: {
+        await driver.controller.removeAssociations(
+          message.nodeId,
+          message.group,
+          message.associations
+        );
+        return {};
+      }
+      case ControllerCommand.removeNodeFromAllAssocations: {
+        await driver.controller.removeNodeFromAllAssocations(message.nodeId);
+        return {};
       }
       default:
         throw new UnknownCommandError(command);
