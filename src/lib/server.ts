@@ -9,6 +9,8 @@ import { Server as HttpServer, createServer } from "http";
 import { once } from "events";
 import { version } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
+import { ControllerMessageHandler } from "./controller/message_handler";
+import { IncomingMessageController } from "./controller/incoming_message";
 import { BaseError, ErrorCode, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
@@ -23,9 +25,11 @@ class Client {
       message: IncomingMessage
     ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
   > = {
-    [Instance.controller]: () => {
-      throw new Error("Controller handler not implemented.");
-    },
+    [Instance.controller]: (message) =>
+      ControllerMessageHandler.handle(
+        message as IncomingMessageController,
+        this.driver
+      ),
     [Instance.driver]: () => {
       throw new Error("Driver handler not implemented.");
     },
