@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --ext .ts .",
-    "test": "prettier --check lib mock cli && tsc --noEmit && npm run lint",
+    "test": "prettier --check src && tsc --noEmit && npm run lint",
     "build": "tsc -p .",
     "prepublishOnly": "rm -rf dist && npm run build"
   },
