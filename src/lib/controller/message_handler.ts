@@ -46,11 +46,11 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginHealingNetwork: {
-        const success = await driver.controller.beginHealingNetwork();
+        const success = driver.controller.beginHealingNetwork();
         return { success };
       }
       case ControllerCommand.stopHealingNetwork: {
-        const success = await driver.controller.stopHealingNetwork();
+        const success = driver.controller.stopHealingNetwork();
         return { success };
       }
       case ControllerCommand.isFailedNode: {
@@ -59,20 +59,20 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.getAssociationGroups: {
         const groups = {};
-        await driver.controller
+        driver.controller
           .getAssociationGroups(message.nodeId)
           .forEach((value, key) => (groups[key] = value));
         return { groups };
       }
       case ControllerCommand.getAssociations: {
         const associations = {};
-        await driver.controller
+        driver.controller
           .getAssociations(message.nodeId)
           .forEach((value, key) => (associations[key] = value));
         return { associations };
       }
       case ControllerCommand.isAssociationAllowed: {
-        const allowed = await driver.controller.isAssociationAllowed(
+        const allowed = driver.controller.isAssociationAllowed(
           message.nodeId,
           message.group,
           message.association
