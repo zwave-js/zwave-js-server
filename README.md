@@ -38,6 +38,14 @@ To specify that it outputs each message on a single line so it can be replayed l
 ts-node src/bin/client.ts --dump
 ```
 
+You can filter the output by a specific node ID:
+
+```shell
+ts-node src/bin/client.ts --node 52
+```
+
+All these options can be combined.
+
 ## API
 
 When a client connects, the server will send the version.

@@ -1,28 +1,19 @@
 #!/usr/bin/env node
 
-import mininist from "minimist";
 import { resolve } from "path";
 import { Driver } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
+import { parseArgs } from "../util/parse-args";
 
 interface Args {
   _: Array<string>;
   config?: string;
   "mock-driver": boolean;
 }
-const expectedConfig = ["_", "config", "mock-driver"];
 
 (async () => {
-  const args: Args = mininist(process.argv.slice(2));
-
-  const extraKeys = Object.keys(args).filter(
-    (key) => !expectedConfig.includes(key)
-  );
-  if (extraKeys.length > 0) {
-    console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);
-    return;
-  }
+  const args = parseArgs<Args>(["_", "config", "mock-driver"]);
 
   if (args["mock-driver"]) {
     args._.push("mock-serial-port");
