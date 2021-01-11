@@ -9,7 +9,7 @@ export class NodeMessageHandler {
     message: IncomingMessageNode,
     driver: Driver
   ): Promise<NodeResultTypes[NodeCommand]> {
-    const { nodeId } = message;
+    const { nodeId, command } = message;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -18,11 +18,21 @@ export class NodeMessageHandler {
 
     switch (message.command) {
       case NodeCommand.setValue:
-        const { value, valueId } = message;
-        const success = await node.setValue(valueId, value);
+        const success = await node.setValue(message.valueId, message.value);
         return { success };
+      case NodeCommand.refreshInfo:
+        await node.refreshInfo();
+        return {};
+      case NodeCommand.getDefinedValueIDs:
+        const valueIds = node.getDefinedValueIDs();
+        return { valueIds };
+      case NodeCommand.getValueMetadata:
+        return node.getValueMetadata(message.valueId);
+      case NodeCommand.abortFirmwareUpdate:
+        await node.abortFirmwareUpdate();
+        return {};
       default:
-        throw new UnknownCommandError(message.command);
+        throw new UnknownCommandError(command);
     }
   }
 }

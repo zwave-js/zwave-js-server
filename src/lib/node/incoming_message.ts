@@ -12,4 +12,29 @@ export interface IncomingCommandNodeSetValue extends IncomingCommandNodeBase {
   value: unknown;
 }
 
-export type IncomingMessageNode = IncomingCommandNodeSetValue;
+export interface IncomingCommandNodeRefreshInfo
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.refreshInfo;
+}
+
+export interface IncomingCommandNodeGetDefinedValueIDs
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getDefinedValueIDs;
+}
+
+export interface IncomingCommandNodeGetValueMetadata
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getValueMetadata;
+  valueId: ValueID;
+}
+export interface IncomingCommandNodeAbortFirmwareUpdate
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.abortFirmwareUpdate;
+}
+
+export type IncomingMessageNode =
+  | IncomingCommandNodeSetValue
+  | IncomingCommandNodeRefreshInfo
+  | IncomingCommandNodeGetDefinedValueIDs
+  | IncomingCommandNodeGetValueMetadata
+  | IncomingCommandNodeAbortFirmwareUpdate;
