@@ -18,7 +18,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAssociations]: {
     associations: Record<number, readonly Association[]>;
   };
-  [ControllerCommand.isAssociationAllowed]: { success: boolean };
+  [ControllerCommand.isAssociationAllowed]: { allowed: boolean };
   [ControllerCommand.addAssociations]: Record<string, never>;
   [ControllerCommand.removeAssociations]: Record<string, never>;
   [ControllerCommand.removeNodeFromAllAssocations]: Record<string, never>;

@@ -72,12 +72,12 @@ export class ControllerMessageHandler {
         return { associations };
       }
       case ControllerCommand.isAssociationAllowed: {
-        const success = await driver.controller.isAssociationAllowed(
+        const allowed = await driver.controller.isAssociationAllowed(
           message.nodeId,
           message.group,
           message.association
         );
-        return { success };
+        return { allowed };
       }
       case ControllerCommand.addAssociations: {
         await driver.controller.addAssociations(
