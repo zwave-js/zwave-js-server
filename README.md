@@ -7,7 +7,7 @@ Small server wrapper around Z-Wave JS to access it via a WebSocket.
 ### Start server
 
 ```shell
-ts-node cli/server.ts /dev/tty0
+ts-node src/bin/server.ts /dev/tty0
 ```
 
 Opens server on `ws://localhost:3000`.
@@ -23,19 +23,19 @@ Requires server to be running.
 Default connects to `ws://localhost:3000`:
 
 ```shell
-ts-node cli/client.ts
+ts-node src/bin/client.ts
 ```
 
 To specify different host:
 
 ```shell
-ts-node cli/client.ts 192.168.1.100:6000
+ts-node src/bin/client.ts 192.168.1.100:6000
 ```
 
 To specify that it outputs each message on a single line so it can be replayed later:
 
 ```shell
-ts-node cli/client.ts --dump
+ts-node src/bin/client.ts --dump
 ```
 
 ## API
