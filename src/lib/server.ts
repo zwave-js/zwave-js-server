@@ -196,13 +196,13 @@ class Clients {
     this.clients = this.clients.filter((cl) => cl.isConnected);
   }
 
-  disconnect () {
-    if(this.pingInterval !== undefined) {
-      clearInterval(this.pingInterval)
+  disconnect() {
+    if (this.pingInterval !== undefined) {
+      clearInterval(this.pingInterval);
     }
-    this.pingInterval = undefined
-    this.clients.forEach((client) => client.disconnect())
-    this.clients = []
+    this.pingInterval = undefined;
+    this.clients.forEach((client) => client.disconnect());
+    this.clients = [];
   }
 }
 interface ZwavejsServerOptions {
@@ -216,23 +216,23 @@ export class ZwavejsServer {
 
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
 
-  async start () {
-    this.server = createServer()
-    this.wsServer = new ws.Server({ server: this.server })
-    this.sockets = new Clients(this.driver)
-    this.wsServer.on('connection', (socket) => this.sockets!.addSocket(socket))
+  async start() {
+    this.server = createServer();
+    this.wsServer = new ws.Server({ server: this.server });
+    this.sockets = new Clients(this.driver);
+    this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     this.server.listen(this.options.port);
     await once(this.server, "listening");
   }
 
-  async destroy () {
-    if(this.sockets) {
-      this.sockets.disconnect()
+  async destroy() {
+    if (this.sockets) {
+      this.sockets.disconnect();
     }
-    if(this.server) {
-      this.server.close()
-      await once(this.server, 'close')
+    if (this.server) {
+      this.server.close();
+      await once(this.server, "close");
     }
   }
 }
