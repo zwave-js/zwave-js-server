@@ -1,7 +1,7 @@
-import mininist from "minimist";
+import minimist from "minimist";
 
 export const parseArgs = <T>(expectedKeys: string[]): T => {
-  const args: T = mininist(process.argv.slice(2));
+  const args: T = minimist(process.argv.slice(2));
 
   const extraKeys = Object.keys(args).filter(
     (key) => !expectedKeys.includes(key)
