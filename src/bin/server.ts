@@ -1,43 +1,43 @@
 #!/usr/bin/env node
 
-import * as yargs from 'yargs';
-import { resolve } from 'path'
-import { Driver } from 'zwave-js'
-import { ZwavejsServer } from '../lib/server'
-import { createMockDriver } from '../mock'
+import * as yargs from "yargs";
+import { resolve } from "path";
+import { Driver } from "zwave-js";
+import { ZwavejsServer } from "../lib/server";
+import { createMockDriver } from "../mock";
 
-const argv = yargs.usage('$0 [path]', 'Start the server')
-    .option('config', {
-    alias: 'c',
-    description: 'Configuration file path',
-    type: 'string'
+const argv = yargs
+  .usage("$0 [path]", "Start the server")
+  .option("config", {
+    alias: "c",
+    description: "Configuration file path",
+    type: "string",
   })
-  .option('mock', {
-    alias: 'm',
-    description: 'Mock driver',
-    type: 'boolean',
-    default: false
+  .option("mock", {
+    alias: "m",
+    description: "Mock driver",
+    type: "boolean",
+    default: false,
   })
-  .option('port', {
-    alias: 'p',
-    description: 'Listening port',
-    type: 'number',
-    default: 3000
+  .option("port", {
+    alias: "p",
+    description: "Listening port",
+    type: "number",
+    default: 3000,
   })
-.help().argv;
+  .help().argv;
 
 (async () => {
-
-  if (argv.path === undefined) {
-    console.error('Error: Missing path to serial port')
-    return
+  if (!argv.mock && argv.path === undefined) {
+    console.error("Error: Missing path to serial port");
+    return;
   }
 
-  const serialPort = argv.path as string
+  const serialPort = argv.path as string;
 
-  let configPath = argv.config
-  if (configPath && configPath.substring(0, 1) !== '/') {
-    configPath = resolve(process.cwd(), configPath)
+  let configPath = argv.config;
+  if (configPath && configPath.substring(0, 1) !== "/") {
+    configPath = resolve(process.cwd(), configPath);
   }
 
   let options;
@@ -75,9 +75,9 @@ const argv = yargs.usage('$0 [path]', 'Start the server')
 
   driver.on("driver ready", async () => {
     try {
-      const server = new ZwavejsServer(driver, { port: argv.port })
-      await server.start()
-      console.info('Server listening on port', argv.port)
+      const server = new ZwavejsServer(driver, { port: argv.port });
+      await server.start();
+      console.info("Server listening on port", argv.port);
     } catch (error) {
       console.error("Unable to start Server", error);
     }
