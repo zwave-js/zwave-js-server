@@ -11,7 +11,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.healNode]: { success: boolean };
   [ControllerCommand.beginHealingNetwork]: { success: boolean };
   [ControllerCommand.stopHealingNetwork]: { success: boolean };
-  [ControllerCommand.isFailedNode]: { success: boolean };
+  [ControllerCommand.isFailedNode]: { failed: boolean };
   [ControllerCommand.getAssociationGroups]: {
     groups: Record<number, AssociationGroup>;
   };

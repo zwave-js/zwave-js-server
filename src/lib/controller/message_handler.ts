@@ -54,8 +54,8 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.isFailedNode: {
-        const success = await driver.controller.isFailedNode(message.nodeId);
-        return { success };
+        const failed = await driver.controller.isFailedNode(message.nodeId);
+        return { failed };
       }
       case ControllerCommand.getAssociationGroups: {
         const groups = {};
