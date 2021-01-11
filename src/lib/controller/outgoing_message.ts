@@ -6,7 +6,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.stopInclusion]: { success: boolean };
   [ControllerCommand.beginExclusion]: { success: boolean };
   [ControllerCommand.stopExclusion]: { success: boolean };
-  [ControllerCommand.removeFailedNode]: {};
+  [ControllerCommand.removeFailedNode]: Record<string, never>;
   [ControllerCommand.replaceFailedNode]: { success: boolean };
   [ControllerCommand.healNode]: { success: boolean };
   [ControllerCommand.beginHealingNetwork]: { success: boolean };
@@ -19,7 +19,7 @@ export interface ControllerResultTypes {
     associations: Record<number, readonly Association[]>;
   };
   [ControllerCommand.isAssociationAllowed]: { success: boolean };
-  [ControllerCommand.addAssociations]: {};
-  [ControllerCommand.removeAssociations]: {};
-  [ControllerCommand.removeNodeFromAllAssocations]: {};
+  [ControllerCommand.addAssociations]: Record<string, never>;
+  [ControllerCommand.removeAssociations]: Record<string, never>;
+  [ControllerCommand.removeNodeFromAllAssocations]: Record<string, never>;
 }
