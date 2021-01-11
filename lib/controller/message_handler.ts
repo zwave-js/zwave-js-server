@@ -9,6 +9,8 @@ export class ControllerMessageHandler {
     message: IncomingMessageController,
     driver: Driver
   ): Promise<ControllerResultTypes[ControllerCommand]> {
+    const { command } = message;
+
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
         const success = await driver.controller.beginInclusion(
@@ -56,10 +58,7 @@ export class ControllerMessageHandler {
         return { success };
       }
       default:
-        throw new UnknownCommandError(
-          // @ts-expect-error
-          message.command
-        );
+        throw new UnknownCommandError(command);
     }
   }
 }
