@@ -112,7 +112,9 @@ export class EventForwarder {
       "interview comleted",
       "ready",
     ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode : ZWaveNode) => notifyNode(changedNode, event))
+      node.on(event, (changedNode: ZWaveNode) =>
+        notifyNode(changedNode, event)
+      );
     }
 
     for (const event of [
