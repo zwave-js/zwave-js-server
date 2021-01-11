@@ -31,9 +31,6 @@ export class NodeMessageHandler {
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};
-      case NodeCommand.beginFirmwareUpdate:
-        await node.beginFirmwareUpdate(message.buffer, message.target);
-        return {};
       default:
         throw new UnknownCommandError(command);
     }

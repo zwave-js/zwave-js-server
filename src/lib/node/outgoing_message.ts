@@ -7,5 +7,4 @@ export interface NodeResultTypes {
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
   [NodeCommand.abortFirmwareUpdate]: {};
-  [NodeCommand.beginFirmwareUpdate]: {};
 }

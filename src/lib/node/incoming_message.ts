@@ -31,17 +31,10 @@ export interface IncomingCommandNodeAbortFirmwareUpdate
   extends IncomingCommandNodeBase {
   command: NodeCommand.abortFirmwareUpdate;
 }
-export interface IncomingCommandNodeBeginFirmwareUpdate
-  extends IncomingCommandNodeBase {
-  command: NodeCommand.beginFirmwareUpdate;
-  buffer: Buffer;
-  target?: number;
-}
 
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
-  | IncomingCommandNodeAbortFirmwareUpdate
-  | IncomingCommandNodeBeginFirmwareUpdate;
+  | IncomingCommandNodeAbortFirmwareUpdate;
