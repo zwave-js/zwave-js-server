@@ -1,3 +1,4 @@
+import { Association } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
@@ -59,6 +60,48 @@ export interface IncomingCommandControllerIsFailedNode
   nodeId: number;
 }
 
+export interface IncomingCommandControllerGetAssociationGroups
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getAssociationGroups;
+  nodeId: number;
+}
+
+export interface IncomingCommandControllerGetAssociations
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getAssociations;
+  nodeId: number;
+}
+
+export interface IncomingCommandControllerIsAssociationAllowed
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.isAssociationAllowed;
+  nodeId: number;
+  group: number;
+  association: Association;
+}
+
+export interface IncomingCommandControllerAddAssociations
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.addAssociations;
+  nodeId: number;
+  group: number;
+  associations: Association[];
+}
+
+export interface IncomingCommandControllerRemoveAssociations
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.removeAssociations;
+  nodeId: number;
+  group: number;
+  associations: Association[];
+}
+
+export interface IncomingCommandControllerRemoveNodeFromAllAssocations
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.removeNodeFromAllAssocations;
+  nodeId: number;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerStopInclusion
@@ -69,4 +112,10 @@ export type IncomingMessageController =
   | IncomingCommandControllerHealNode
   | IncomingCommandControllerBeginHealingNetwork
   | IncomingCommandControllerStopHealingNetwork
-  | IncomingCommandControllerIsFailedNode;
+  | IncomingCommandControllerIsFailedNode
+  | IncomingCommandControllerGetAssociationGroups
+  | IncomingCommandControllerGetAssociations
+  | IncomingCommandControllerIsAssociationAllowed
+  | IncomingCommandControllerAddAssociations
+  | IncomingCommandControllerRemoveAssociations
+  | IncomingCommandControllerRemoveNodeFromAllAssocations;

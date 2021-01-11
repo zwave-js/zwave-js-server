@@ -1,3 +1,4 @@
+import { Association, AssociationGroup } from "zwave-js";
 import { ControllerCommand } from "./command";
 
 export interface ControllerResultTypes {
@@ -11,4 +12,14 @@ export interface ControllerResultTypes {
   [ControllerCommand.beginHealingNetwork]: { success: boolean };
   [ControllerCommand.stopHealingNetwork]: { success: boolean };
   [ControllerCommand.isFailedNode]: { success: boolean };
+  [ControllerCommand.getAssociationGroups]: {
+    groups: Record<number, AssociationGroup>;
+  };
+  [ControllerCommand.getAssociations]: {
+    associations: Record<number, readonly Association[]>;
+  };
+  [ControllerCommand.isAssociationAllowed]: { success: boolean };
+  [ControllerCommand.addAssociations]: {};
+  [ControllerCommand.removeAssociations]: {};
+  [ControllerCommand.removeNodeFromAllAssocations]: {};
 }

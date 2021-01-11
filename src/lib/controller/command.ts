@@ -9,4 +9,10 @@ export enum ControllerCommand {
   beginHealingNetwork = "controller.begin_healing_network",
   stopHealingNetwork = "controller.stop_healing_network",
   isFailedNode = "controller.is_failed_node",
+  getAssociationGroups = "controller.get_association_groups",
+  getAssociations = "controller.get_associations",
+  isAssociationAllowed = "controller.is_association_allowed",
+  addAssociations = "controller.add_associations",
+  removeAssociations = "controller.remove_associations",
+  removeNodeFromAllAssocations = "controller.remove_node_from_all_assocations",
 }

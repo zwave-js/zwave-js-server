@@ -57,6 +57,48 @@ export class ControllerMessageHandler {
         const success = await driver.controller.isFailedNode(message.nodeId);
         return { success };
       }
+      case ControllerCommand.getAssociationGroups: {
+        const groups = {};
+        await driver.controller
+          .getAssociationGroups(message.nodeId)
+          .forEach((value, key) => (groups[key] = value));
+        return { groups };
+      }
+      case ControllerCommand.getAssociations: {
+        const associations = {};
+        await driver.controller
+          .getAssociations(message.nodeId)
+          .forEach((value, key) => (associations[key] = value));
+        return { associations };
+      }
+      case ControllerCommand.isAssociationAllowed: {
+        const success = await driver.controller.isAssociationAllowed(
+          message.nodeId,
+          message.group,
+          message.association
+        );
+        return { success };
+      }
+      case ControllerCommand.addAssociations: {
+        await driver.controller.addAssociations(
+          message.nodeId,
+          message.group,
+          message.associations
+        );
+        return {};
+      }
+      case ControllerCommand.removeAssociations: {
+        await driver.controller.removeAssociations(
+          message.nodeId,
+          message.group,
+          message.associations
+        );
+        return {};
+      }
+      case ControllerCommand.removeNodeFromAllAssocations: {
+        await driver.controller.removeNodeFromAllAssocations(message.nodeId);
+        return {};
+      }
       default:
         throw new UnknownCommandError(command);
     }
