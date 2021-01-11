@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import ws from "ws";
-import { ZwavejsServer } from "../src/lib/server";
-import { createMockDriver } from "../src/mock";
+import { ZwavejsServer } from "../lib/server";
+import { createMockDriver } from "../mock";
 
 const PORT = 45001;
 
