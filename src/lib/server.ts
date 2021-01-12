@@ -1,6 +1,7 @@
 import ws from "ws";
 import type WebSocket from "ws";
 import type { Driver } from "zwave-js";
+import { libVersion } from "zwave-js";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
@@ -90,7 +91,7 @@ class Client {
   sendVersion() {
     this.sendData({
       type: "version",
-      driverVersion: "TBD",
+      driverVersion: libVersion,
       serverVersion: version,
       homeId: this.driver.controller.homeId,
     });
