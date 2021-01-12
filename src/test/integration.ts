@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import ws from "ws";
+import { libVersion } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 
@@ -41,7 +42,7 @@ const runTest = async () => {
     await new Promise((resolve) => socket.once("open", resolve));
 
     assert.deepEqual(await nextMessage(), {
-      driverVersion: "TBD",
+      driverVersion: libVersion,
       homeId: 1,
       serverVersion: "1.0.0",
       type: "version",
