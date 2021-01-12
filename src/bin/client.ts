@@ -65,7 +65,7 @@ socket.on("message", (data) => {
 });
 
 let closing = false;
-const handleShutdown = async () => {
+const handleShutdown = () => {
   // Pressing ctrl+c twice.
   if (closing) {
     process.exit();
