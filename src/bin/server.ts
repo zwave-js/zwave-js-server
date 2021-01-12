@@ -80,7 +80,7 @@ interface Args {
 
   let closing = false;
 
-  process.on("SIGINT", async () => {
+  const handleShutdown = async () => {
     // Pressing ctrl+c twice.
     if (closing) {
       process.exit();
@@ -94,7 +94,10 @@ interface Args {
     }
     await driver.destroy();
     process.exit();
-  });
+  };
+
+  process.on("SIGINT", handleShutdown);
+  process.on("SIGTERM", handleShutdown);
 })().catch((err) => {
   console.error("Unable to start driver", err);
 });

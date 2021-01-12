@@ -65,8 +65,7 @@ socket.on("message", (data) => {
 });
 
 let closing = false;
-
-process.on("SIGINT", async () => {
+const handleShutdown = () => {
   // Pressing ctrl+c twice.
   if (closing) {
     process.exit();
@@ -77,4 +76,6 @@ process.on("SIGINT", async () => {
   console.log("Shutting down");
   socket.close();
   process.exit();
-});
+};
+process.on("SIGINT", handleShutdown);
+process.on("SIGTERM", handleShutdown);
