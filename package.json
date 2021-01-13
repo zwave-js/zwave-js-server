@@ -1,11 +1,14 @@
 {
-  "name": "zwave-js-server",
+  "name": "@zwave-js/server",
   "version": "1.0.0",
   "description": "Full access to zwave-js driver throught Websockets",
   "main": "dist/lib/index.js",
   "bin": {
     "zwave-server": "dist/bin/server.js",
     "zwave-client": "dist/bin/client.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "lint": "eslint --ext .ts .",
