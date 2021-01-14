@@ -44,7 +44,7 @@ const runTest = async () => {
     assert.deepEqual(await nextMessage(), {
       driverVersion: libVersion,
       homeId: 1,
-      serverVersion: "1.0.0",
+      serverVersion: require("../../package.json").version,
       type: "version",
     });
 
