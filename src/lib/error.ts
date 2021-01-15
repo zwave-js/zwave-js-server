@@ -4,7 +4,7 @@ export enum ErrorCode {
   nodeNotFound = "node_not_found",
 }
 
-export class BaseError {
+export class BaseError extends Error {
   errorCode: ErrorCode;
 }
 
