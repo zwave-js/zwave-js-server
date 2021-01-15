@@ -37,7 +37,11 @@ class Client {
       NodeMessageHandler.handle(message as IncomingMessageNode, this.driver),
   };
 
-  constructor(private socket: WebSocket, private driver: Driver, private logger: Logger) {
+  constructor(
+    private socket: WebSocket,
+    private driver: Driver,
+    private logger: Logger
+  ) {
     socket.on("pong", () => {
       this._outstandingPing = false;
     });
@@ -215,10 +219,10 @@ interface ZwavejsServerOptions {
 }
 
 export interface Logger {
-  error(message: string | Error, error?: Error): void
-  warn(message: string[]): void
-  info(message: string): void
-  debug(message: string): void
+  error(message: string | Error, error?: Error): void;
+  warn(message: string[]): void;
+  info(message: string): void;
+  debug(message: string): void;
 }
 
 export class ZwavejsServer extends EventEmitter {
@@ -228,8 +232,8 @@ export class ZwavejsServer extends EventEmitter {
   private logger: Logger;
 
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {
-    super()
-    this.logger = options.logger ?? console
+    super();
+    this.logger = options.logger ?? console;
   }
 
   async start() {
@@ -238,21 +242,21 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new Clients(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    this.logger.debug(`Starting server on port ${this.options.port}`)
+    this.logger.debug(`Starting server on port ${this.options.port}`);
 
-    this.server.on('error', this.onError.bind(this))
+    this.server.on("error", this.onError.bind(this));
     this.server.listen(this.options.port);
     await once(this.server, "listening");
-    this.logger.info(`ZwaveJS server listening on port ${this.options.port}`)
+    this.logger.info(`ZwaveJS server listening on port ${this.options.port}`);
   }
 
   private onError(error: Error) {
-    this.emit('error', error)
-    this.logger.error(error)
+    this.emit("error", error);
+    this.logger.error(error);
   }
 
   async destroy() {
-    this.logger.debug(`Closing server...`)
+    this.logger.debug(`Closing server...`);
     if (this.sockets) {
       this.sockets.disconnect();
     }
@@ -261,6 +265,6 @@ export class ZwavejsServer extends EventEmitter {
       await once(this.server, "close");
     }
 
-    this.logger.info(`Server closed`)
+    this.logger.info(`Server closed`);
   }
 }
