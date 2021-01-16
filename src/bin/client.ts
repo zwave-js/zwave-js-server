@@ -73,7 +73,9 @@ const handleShutdown = () => {
 
   // Close gracefully
   closing = true;
-  console.log("Shutting down");
+  if (!args.dump) {
+    console.log("Shutting down");
+  }
   socket.close();
   process.exit();
 };
