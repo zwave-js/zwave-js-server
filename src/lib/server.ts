@@ -80,13 +80,13 @@ class Client {
       }
 
       throw new UnknownCommandError(msg.command);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         return this.sendResultError(msg.messageId, err.errorCode);
       }
 
-      this.logger.error("Unexpected error", err);
+      this.logger.error("Unexpected error", err as Error);
       this.sendResultError(msg.messageId, ErrorCode.unknownError);
     }
   }
@@ -225,6 +225,13 @@ export interface Logger {
   debug(message: string): void;
 }
 
+export interface ZwavejsServer {
+  start(): void;
+  destroy(): void;
+  on(event: "listening", listener: () => void): this;
+  on(event: "error", listener: (error: Error) => void): this;
+}
+
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
@@ -247,6 +254,7 @@ export class ZwavejsServer extends EventEmitter {
     this.server.on("error", this.onError.bind(this));
     this.server.listen(this.options.port);
     await once(this.server, "listening");
+    this.emit("listening");
     this.logger.info(`ZwaveJS server listening on port ${this.options.port}`);
   }
 
