@@ -1,0 +1,12 @@
+.git
+.github
+*.md
+docs
+Dockerfile
+.vscode
+.nyc_output
+.coverage
+pkg
+test
+node_modules
+package-lock.json
