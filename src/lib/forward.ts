@@ -53,20 +53,24 @@ export class EventForwarder {
       this.setupNode(node);
     });
 
-    for (const event of [
-      "inclusion failed",
-      "exclusion failed",
-      "exclusion started",
-      "inclusion stopped",
-      "exclusion stopped",
-    ] as Array<ControllerEvents>) {
-      this.driver.controller.on(event, () =>
-        this.forwardEvent({
-          source: "controller",
-          event,
-        })
-      );
+    {
+      const events: ControllerEvents[] = [
+        "inclusion failed",
+        "exclusion failed",
+        "exclusion started",
+        "inclusion stopped",
+        "exclusion stopped",
+      ];
+      for (const event of events) {
+        this.driver.controller.on(event, () =>
+          this.forwardEvent({
+            source: "controller",
+            event,
+          })
+        );
+      }
     }
+
     this.driver.controller.on("inclusion started", (secure) =>
       this.forwardEvent({
         source: "controller",
@@ -108,36 +112,37 @@ export class EventForwarder {
         ...extra,
       });
 
-    for (const event of [
-      "interview comleted",
-      "ready",
-    ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode: ZWaveNode) =>
-        notifyNode(changedNode, event)
-      );
+    {
+      const events: ZWaveNodeEvents[] = ["interview completed", "ready"];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode) =>
+          notifyNode(changedNode, event)
+        );
+      }
     }
 
-    for (const event of [
-      "wake up",
-      "sleep",
-      "dead",
-      "alive",
-    ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode: ZWaveNode, oldStatus: NodeStatus) =>
-        notifyNode(changedNode, event, { oldStatus })
-      );
+    {
+      const events: ZWaveNodeEvents[] = ["wake up", "sleep", "dead", "alive"];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, oldStatus: NodeStatus) =>
+          notifyNode(changedNode, event, { oldStatus })
+        );
+      }
     }
 
-    for (const event of [
-      "value added",
-      "value updated",
-      "value removed",
-      "value notification",
-      "interview failed",
-    ] as Array<ZWaveNodeEvents>) {
-      node.on(event, (changedNode: ZWaveNode, args: any) =>
-        notifyNode(changedNode, event, { args })
-      );
+    {
+      const events: ZWaveNodeEvents[] = [
+        "value added",
+        "value updated",
+        "value removed",
+        "value notification",
+        "interview failed",
+      ];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, args: any) =>
+          notifyNode(changedNode, event, { args })
+        );
+      }
     }
 
     node.on("notification", (changedNode, notificationLabel, parameters) =>
