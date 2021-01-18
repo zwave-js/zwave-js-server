@@ -12,7 +12,7 @@
   },
   "scripts": {
     "lint": "eslint --ext .ts .",
-    "lint:fix": "eslint --fix --ext .ts .",
+    "lint:fix": "eslint --fix --ext .ts . && prettier -w .",
     "test": "prettier --check src && tsc --noEmit && npm run lint && ts-node src/test/integration.ts",
     "build": "tsc -p .",
     "prepublishOnly": "rm -rf dist && npm run build"

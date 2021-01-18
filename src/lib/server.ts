@@ -7,7 +7,7 @@ import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
 import { dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
-import { once } from "events";
+import { EventEmitter, once } from "events";
 import { version } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
@@ -15,7 +15,6 @@ import { IncomingMessageController } from "./controller/incoming_message";
 import { BaseError, ErrorCode, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
-
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -38,7 +37,11 @@ class Client {
       NodeMessageHandler.handle(message as IncomingMessageNode, this.driver),
   };
 
-  constructor(private socket: WebSocket, private driver: Driver) {
+  constructor(
+    private socket: WebSocket,
+    private driver: Driver,
+    private logger: Logger
+  ) {
     socket.on("pong", () => {
       this._outstandingPing = false;
     });
@@ -79,11 +82,11 @@ class Client {
       throw new UnknownCommandError(msg.command);
     } catch (err: unknown) {
       if (err instanceof BaseError) {
-        console.error("Message error", err);
+        this.logger.error("Message error", err);
         return this.sendResultError(msg.messageId, err.errorCode);
       }
 
-      console.error("Unexpected error", err);
+      this.logger.error("Unexpected error", err as Error);
       this.sendResultError(msg.messageId, ErrorCode.unknownError);
     }
   }
@@ -148,13 +151,13 @@ class Clients {
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
-  constructor(private driver: Driver) {}
+  constructor(private driver: Driver, private logger: Logger) {}
 
   addSocket(socket: WebSocket) {
-    console.debug("New client");
-    const client = new Client(socket, this.driver);
+    this.logger.debug("New client");
+    const client = new Client(socket, this.driver, this.logger);
     socket.on("close", () => {
-      console.info("Client disconnected");
+      this.logger.info("Client disconnected");
       this.scheduleClientCleanup();
     });
     client.sendVersion();
@@ -212,26 +215,56 @@ class Clients {
 }
 interface ZwavejsServerOptions {
   port: number;
+  logger?: Logger;
 }
 
-export class ZwavejsServer {
+export interface Logger {
+  error(message: string | Error, error?: Error): void;
+  warn(message: string): void;
+  info(message: string): void;
+  debug(message: string): void;
+}
+
+export interface ZwavejsServer {
+  start(): void;
+  destroy(): void;
+  on(event: "listening", listener: () => void): this;
+  on(event: "error", listener: (error: Error) => void): this;
+}
+
+export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
   private sockets?: Clients;
+  private logger: Logger;
 
-  constructor(private driver: Driver, private options: ZwavejsServerOptions) {}
+  constructor(private driver: Driver, private options: ZwavejsServerOptions) {
+    super();
+    this.logger = options.logger ?? console;
+  }
 
   async start() {
     this.server = createServer();
     this.wsServer = new ws.Server({ server: this.server });
-    this.sockets = new Clients(this.driver);
+    this.sockets = new Clients(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
+    this.logger.debug(`Starting server on port ${this.options.port}`);
+
+    this.server.on("error", this.onError.bind(this));
     this.server.listen(this.options.port);
     await once(this.server, "listening");
+    this.emit("listening");
+    this.logger.info(`ZwaveJS server listening on port ${this.options.port}`);
+  }
+
+  private onError(error: Error) {
+    this.emit("error", error);
+    this.logger.error(error);
   }
 
   async destroy() {
+    this.logger.debug(`Closing server...`);
     if (this.sockets) {
       this.sockets.disconnect();
     }
@@ -239,5 +272,7 @@ export class ZwavejsServer {
       this.server.close();
       await once(this.server, "close");
     }
+
+    this.logger.info(`Server closed`);
   }
 }
