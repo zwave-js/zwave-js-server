@@ -220,7 +220,7 @@ interface ZwavejsServerOptions {
 
 export interface Logger {
   error(message: string | Error, error?: Error): void;
-  warn(message: string[]): void;
+  warn(message: string): void;
   info(message: string): void;
   debug(message: string): void;
 }
