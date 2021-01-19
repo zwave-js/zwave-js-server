@@ -162,7 +162,7 @@ class Clients {
     });
     socket.on("close", (code, reason) => {
       this.logger.info("Client disconnected");
-      this.logger.debug(`${code}: ${reason}`);
+      this.logger.debug(`Code ${code}: ${reason}`);
       this.scheduleClientCleanup();
     });
     client.sendVersion();
