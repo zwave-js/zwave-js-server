@@ -58,6 +58,7 @@ class Client {
       msg = JSON.parse(data);
     } catch (err) {
       // We don't have the message ID. Just close it.
+      this.logger.debug(`Unable to parse data: ${data}`);
       this.socket.close();
       return;
     }
@@ -156,8 +157,12 @@ class Clients {
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
     const client = new Client(socket, this.driver, this.logger);
-    socket.on("close", () => {
+    socket.on("error", (error) => {
+      this.logger.error("Client socket error", error);
+    });
+    socket.on("close", (code, reason) => {
       this.logger.info("Client disconnected");
+      this.logger.debug(`${code}: ${reason}`);
       this.scheduleClientCleanup();
     });
     client.sendVersion();
