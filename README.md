@@ -4,7 +4,7 @@ Small server wrapper around Z-Wave JS to access it via a WebSocket.
 
 ## Trying it out
 
-Keep in mind that on production you want to execute `npm run build` and use `node` instead of `ts-node` for all below commands.
+These instructions are for development only. These CLIs will be available as `zwave-server` and `zwave-client` after installing the NPM package.
 
 ### Start server
 
