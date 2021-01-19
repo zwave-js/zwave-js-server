@@ -1,24 +1,12 @@
-import { Driver, HealNodeStatus, ZWaveNode } from "zwave-js";
-import { NodeStatus, ZWaveNodeEvents } from "zwave-js/build/lib/node/Types";
+import {
+  ControllerEvents,
+  Driver,
+  NodeStatus,
+  ZWaveNode,
+  ZWaveNodeEvents,
+} from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
-
-// TODO This should be exported in zwave-js and we import it
-interface ControllerEventCallbacks {
-  "inclusion failed": () => void;
-  "exclusion failed": () => void;
-  "inclusion started": (secure: boolean) => void;
-  "exclusion started": () => void;
-  "inclusion stopped": () => void;
-  "exclusion stopped": () => void;
-  "node added": (node: ZWaveNode) => void;
-  "node removed": (node: ZWaveNode) => void;
-  "heal network progress": (
-    progress: ReadonlyMap<number, HealNodeStatus>
-  ) => void;
-  "heal network done": (result: ReadonlyMap<number, HealNodeStatus>) => void;
-}
-declare type ControllerEvents = Extract<keyof ControllerEventCallbacks, string>;
 
 export class EventForwarder {
   /**
