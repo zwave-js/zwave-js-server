@@ -1,4 +1,10 @@
-import { Driver, ZWaveNode, ControllerEvents, ZWaveNodeEvents } from "zwave-js";
+import {
+  ControllerEvents,
+  Driver,
+  NodeStatus,
+  ZWaveNode,
+  ZWaveNodeEvents,
+} from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
 
