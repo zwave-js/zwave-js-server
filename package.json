@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.2",
   "description": "Full access to zwave-js driver throught Websockets",
   "main": "dist/lib/index.js",
   "bin": {
@@ -12,9 +12,10 @@
   },
   "scripts": {
     "lint": "eslint --ext .ts .",
-    "lint:fix": "eslint --fix --ext .ts .",
+    "lint:fix": "eslint --fix --ext .ts . && prettier -w .",
     "test": "prettier --check src && tsc --noEmit && npm run lint && ts-node src/test/integration.ts",
     "build": "tsc -p .",
+    "prepare": "npm run build",
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "",

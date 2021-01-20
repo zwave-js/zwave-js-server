@@ -1,9 +1,4 @@
 node_modules
-package-lock.json
 config.json
 /dist/
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
