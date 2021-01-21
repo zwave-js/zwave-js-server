@@ -8,6 +8,7 @@ class MockController extends EventEmitter {
 
 class MockDriver extends EventEmitter {
   public controller = new MockController();
+  public allNodesReady = true;
 
   async start() {
     this.emit("driver ready");
