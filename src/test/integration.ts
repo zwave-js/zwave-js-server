@@ -59,7 +59,15 @@ const runTest = async () => {
       type: "result",
       success: true,
       messageId: "my-msg-id!",
-      result: { state: { controller: { homeId: 1 }, nodes: [] } },
+      result: {
+        state: {
+          driver: {
+            allNodesReady: true,
+          },
+          controller: { homeId: 1 },
+          nodes: [],
+        },
+      },
     });
 
     console.log("Integration tests passed :)");
