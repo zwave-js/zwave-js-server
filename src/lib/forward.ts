@@ -136,7 +136,8 @@ export class EventForwarder {
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // include metadata in the response
-          args.metadata = node.getValueMetadata(args);
+          const metadata = node.getValueMetadata(args);
+          args.metadata = metadata;
           notifyNode(changedNode, event, { args });
         });
       }
