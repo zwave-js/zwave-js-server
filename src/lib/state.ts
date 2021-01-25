@@ -18,6 +18,7 @@ interface EndpointState extends Partial<Endpoint> {}
 interface ValueState extends Partial<TranslatedValueID> {
   metadata: ValueMetadata;
   value: any;
+  ccVersion: number;
 }
 
 interface NodeState extends Partial<ZWaveNode> {
@@ -31,6 +32,10 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
     const valueState = valueId as ValueState;
     valueState.metadata = node.getValueMetadata(valueId);
     valueState.value = node.getValue(valueId);
+    // get CC Version for this endpoint, fallback to CC version of the node itself
+    valueState.ccVersion =
+      node.getEndpoint(valueId.endpoint).getCCVersion(valueId.commandClass) ||
+      node.getEndpoint(0).getCCVersion(valueId.commandClass);
     result.push(valueState);
   }
   return result;

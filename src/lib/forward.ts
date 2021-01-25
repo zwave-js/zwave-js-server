@@ -120,16 +120,29 @@ export class EventForwarder {
 
     {
       const events: ZWaveNodeEvents[] = [
-        "value added",
         "value updated",
         "value removed",
-        "value notification",
         "interview failed",
       ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) =>
           notifyNode(changedNode, event, { args })
         );
+      }
+    }
+
+    {
+      const events: ZWaveNodeEvents[] = ["value added", "value notification"];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, args: any) => {
+          // include metadata and ccVersion in the response
+          const metadata = node.getValueMetadata(args);
+          args.metadata = metadata;
+          args.ccVersion =
+            node.getEndpoint(args.endpoint).getCCVersion(args.commandClass) ||
+            node.getEndpoint(0).getCCVersion(args.commandClass);
+          notifyNode(changedNode, event, { args });
+        });
       }
     }
 
