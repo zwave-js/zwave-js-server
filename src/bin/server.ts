@@ -42,8 +42,8 @@ interface Args {
         options.networkKey = Buffer.from(options.networkKey, "hex");
       } else if (options.networkKey && options.networkKey.includes("0x")) {
         options.networkKey = options.networkKey
-          .replace("0x", "")
-          .replace(", ", "");
+          .replace(/0x/g, "")
+          .replace(/, /g, "");
         options.networkKey = Buffer.from(options.networkKey, "hex");
       } else {
         console.error("Error: Invalid networkKey defined");
