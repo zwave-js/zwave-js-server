@@ -8,7 +8,6 @@ import {
 } from "zwave-js";
 
 export interface ZwaveState {
-  driver: Partial<Driver>;
   controller: Partial<ZWaveController>;
   nodes: Partial<ZWaveNode>[];
 }
@@ -89,9 +88,6 @@ export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
 export const dumpState = (driver: Driver): ZwaveState => {
   const controller = driver.controller;
   return {
-    driver: {
-      allNodesReady: driver.allNodesReady,
-    },
     controller: {
       libraryVersion: controller.libraryVersion,
       type: controller.type,

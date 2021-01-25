@@ -21,13 +21,6 @@ export class EventForwarder {
   ) {}
 
   start() {
-    this.driver.once("all nodes ready", () =>
-      this.forwardEvent({
-        source: "driver",
-        event: "all nodes ready",
-      })
-    );
-
     this.driver.controller.nodes.forEach((node) => this.setupNode(node));
 
     // Bind to all controller events
