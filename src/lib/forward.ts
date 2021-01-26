@@ -103,7 +103,7 @@ export class EventForwarder {
     node.on("ready", (changedNode: ZWaveNode) => {
       // Dump full node state on ready event
       const nodeState = dumpNode(changedNode);
-      notifyNode(changedNode, "notification", { nodeState });
+      notifyNode(changedNode, "ready", { nodeState });
     });
 
     {
