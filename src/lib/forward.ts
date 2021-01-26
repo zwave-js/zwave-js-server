@@ -4,17 +4,9 @@ import {
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
-  ZWaveNodeValueNotificationArgs,
-  ValueMetadata,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode, dumpValue } from "./state";
-
-interface ValueNotificationState
-  extends Partial<ZWaveNodeValueNotificationArgs> {
-  metadata: ValueMetadata;
-  ccVersion: number;
-}
 
 export class EventForwarder {
   /**
