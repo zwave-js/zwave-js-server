@@ -140,7 +140,8 @@ export class EventForwarder {
           args.metadata = metadata;
           args.ccVersion =
             node.getEndpoint(args.endpoint)?.getCCVersion(args.commandClass) ||
-            node.getEndpoint(0)?.getCCVersion(args.commandClass);
+            node.getEndpoint(0)?.getCCVersion(args.commandClass) ||
+            0;
           notifyNode(changedNode, event, { args });
         });
       }
