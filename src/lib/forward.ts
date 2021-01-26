@@ -4,9 +4,17 @@ import {
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
+  ZWaveNodeValueNotificationArgs,
+  ValueMetadata,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode } from "./state";
+import { dumpNode, dumpValue } from "./state";
+
+interface ValueNotificationState
+  extends Partial<ZWaveNodeValueNotificationArgs> {
+  metadata: ValueMetadata;
+  ccVersion: number;
+}
 
 export class EventForwarder {
   /**
@@ -103,9 +111,10 @@ export class EventForwarder {
     {
       const events: ZWaveNodeEvents[] = ["interview completed", "ready"];
       for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode) =>
-          notifyNode(changedNode, event)
-        );
+        node.on(event, (changedNode: ZWaveNode) => {
+          const nodeState = dumpNode(changedNode);
+          notifyNode(changedNode, event, { nodeState });
+        });
       }
     }
 
@@ -119,32 +128,32 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = [
-        "value updated",
-        "value removed",
-        "interview failed",
-      ];
-      for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode, args: any) =>
-          notifyNode(changedNode, event, { args })
-        );
-      }
-    }
-
-    {
-      const events: ZWaveNodeEvents[] = ["value added", "value notification"];
+      const events: ZWaveNodeEvents[] = ["value removed", "interview failed"];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
-          // include metadata and ccVersion in the response
-          const metadata = node.getValueMetadata(args);
-          args.metadata = metadata;
-          args.ccVersion =
-            node.getEndpoint(args.endpoint).getCCVersion(args.commandClass) ||
-            node.getEndpoint(0).getCCVersion(args.commandClass);
           notifyNode(changedNode, event, { args });
         });
       }
     }
+
+    {
+      const events: ZWaveNodeEvents[] = ["value updated", "value added"];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, args: any) => {
+          // only forward value events for ready nodes
+          if (!changedNode.ready) return;
+          notifyNode(changedNode, event, { args });
+        });
+      }
+    }
+
+    node.on(
+      "value notification",
+      (changedNode: ZWaveNode, args: ZWaveNodeValueNotificationArgs) => {
+        const valueState = dumpValue(changedNode, args);
+        notifyNode(changedNode, "value notification", { valueState });
+      }
+    );
 
     node.on("notification", (changedNode, notificationLabel, parameters) =>
       notifyNode(changedNode, "notification", { notificationLabel, parameters })
