@@ -147,7 +147,7 @@ export class EventForwarder {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
           const valueState = dumpValue(changedNode, args);
-          notifyNode(changedNode, event, { valueState });
+          notifyNode(changedNode, event, { args: valueState });
         });
       }
     }
