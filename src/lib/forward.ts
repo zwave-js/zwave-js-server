@@ -108,15 +108,11 @@ export class EventForwarder {
         ...extra,
       });
 
-    {
-      const events: ZWaveNodeEvents[] = ["interview completed", "ready"];
-      for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode) => {
-          const nodeState = dumpNode(changedNode);
-          notifyNode(changedNode, event, { nodeState });
-        });
-      }
-    }
+    node.on("ready", (changedNode: ZWaveNode) => {
+      // Dump full node state on ready event
+      const nodeState = dumpNode(changedNode);
+      notifyNode(changedNode, "notification", { nodeState });
+    });
 
     {
       const events: ZWaveNodeEvents[] = ["wake up", "sleep", "dead", "alive"];
@@ -128,7 +124,10 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = ["value removed", "interview failed"];
+      const events: ZWaveNodeEvents[] = [
+        "interview completed",
+        "interview failed",
+      ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           notifyNode(changedNode, event, { args });
@@ -141,6 +140,7 @@ export class EventForwarder {
         "value updated",
         "value added",
         "value notification",
+        "value removed",
       ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
