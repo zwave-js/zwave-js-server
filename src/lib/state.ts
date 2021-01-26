@@ -34,8 +34,8 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
     valueState.value = node.getValue(valueId);
     // get CC Version for this endpoint, fallback to CC version of the node itself
     valueState.ccVersion =
-      node.getEndpoint(valueId.endpoint).getCCVersion(valueId.commandClass) ||
-      node.getEndpoint(0).getCCVersion(valueId.commandClass);
+      node.getEndpoint(valueId.endpoint)?.getCCVersion(valueId.commandClass) ||
+      node.getEndpoint(0)?.getCCVersion(valueId.commandClass);
     result.push(valueState);
   }
   return result;

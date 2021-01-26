@@ -138,17 +138,9 @@ export class EventForwarder {
           // include metadata and ccVersion in the response
           const metadata = node.getValueMetadata(args);
           args.metadata = metadata;
-          try {
-            args.ccVersion =
-              node.getEndpoint(args.endpoint).getCCVersion(args.commandClass) ||
-              node.getEndpoint(0).getCCVersion(args.commandClass);
-          } catch {
-            // TEMPORARY FIX: race condition - node is being interviewed and endpoint is not yet available
-            // https://github.com/zwave-js/node-zwave-js/issues/1499
-            args.ccVersion = node
-              .getEndpoint(0)
-              .getCCVersion(args.commandClass);
-          }
+          args.ccVersion =
+            node.getEndpoint(args.endpoint)?.getCCVersion(args.commandClass) ||
+            node.getEndpoint(0)?.getCCVersion(args.commandClass);
           notifyNode(changedNode, event, { args });
         });
       }
