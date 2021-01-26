@@ -7,4 +7,5 @@ export interface NodeResultTypes {
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
+  [NodeCommand.pollValue]: TranslatedValueID;
 }

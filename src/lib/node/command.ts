@@ -4,4 +4,5 @@ export enum NodeCommand {
   getDefinedValueIDs = "node.get_defined_value_ids",
   getValueMetadata = "node.get_value_metadata",
   abortFirmwareUpdate = "node.abort_firmware_update",
+  pollValue = "node.poll_value",
 }
