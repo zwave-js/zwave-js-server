@@ -137,23 +137,20 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = ["value updated", "value added"];
+      const events: ZWaveNodeEvents[] = [
+        "value updated",
+        "value added",
+        "value notification",
+      ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          notifyNode(changedNode, event, { args });
+          const valueState = dumpValue(changedNode, args);
+          notifyNode(changedNode, event, { valueState });
         });
       }
     }
-
-    node.on(
-      "value notification",
-      (changedNode: ZWaveNode, args: ZWaveNodeValueNotificationArgs) => {
-        const valueState = dumpValue(changedNode, args);
-        notifyNode(changedNode, "value notification", { valueState });
-      }
-    );
 
     node.on("notification", (changedNode, notificationLabel, parameters) =>
       notifyNode(changedNode, "notification", { notificationLabel, parameters })
