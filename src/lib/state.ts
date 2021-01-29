@@ -39,8 +39,14 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 export const dumpValue = (node: ZWaveNode, valueArgs: any): ValueState => {
   const valueState = valueArgs as ValueState;
   valueState.metadata = node.getValueMetadata(valueArgs);
-  valueState.value =
-    valueArgs.value || valueArgs.newValue || node.getValue(valueArgs);
+  // make sure that value attribute always holds correct value
+  if (typeof valueArgs.value !== "undefined") {
+    valueState.value = valueArgs.value;
+  } else if (typeof valueArgs.newValue !== "undefined") {
+    valueState.value = valueArgs.newValue;
+  } else {
+    valueState.value = node.getValue(valueArgs);
+  }
   // get CC Version for this endpoint, fallback to CC version of the node itself
   valueState.ccVersion =
     node
