@@ -16,7 +16,8 @@ interface EndpointState extends Partial<Endpoint> {}
 
 interface ValueState extends Partial<TranslatedValueID> {
   metadata: ValueMetadata;
-  value: any;
+  value?: any;
+  newValue?: any;
   ccVersion: number;
 }
 
@@ -36,15 +37,16 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
   );
 }
 
-export const dumpValue = (node: ZWaveNode, valueArgs: any): ValueState => {
+export const dumpValue = (
+  node: ZWaveNode,
+  valueArgs: TranslatedValueID
+): ValueState => {
   const valueState = valueArgs as ValueState;
   valueState.metadata = node.getValueMetadata(valueArgs);
   // make sure that value attribute always holds correct value
-  if (typeof valueArgs.value !== "undefined") {
-    valueState.value = valueArgs.value;
-  } else if (typeof valueArgs.newValue !== "undefined") {
-    valueState.value = valueArgs.newValue;
-  } else {
+  if (typeof valueState.newValue !== "undefined") {
+    valueState.value = valueState.newValue;
+  } else if (typeof valueState.value === "undefined") {
     valueState.value = node.getValue(valueArgs);
   }
   // get CC Version for this endpoint, fallback to CC version of the node itself
