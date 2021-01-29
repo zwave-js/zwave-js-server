@@ -13,7 +13,8 @@ class MockDriver extends EventEmitter {
     this.emit("driver ready");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async destroy() {}
 }
 
-export const createMockDriver = () => (new MockDriver() as unknown) as Driver;
+export const createMockDriver = (): Driver => (new MockDriver() as unknown) as Driver;

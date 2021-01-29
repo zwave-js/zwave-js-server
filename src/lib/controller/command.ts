@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum ControllerCommand {
   beginInclusion = "controller.begin_inclusion",
   stopInclusion = "controller.stop_inclusion",

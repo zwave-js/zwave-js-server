@@ -13,9 +13,7 @@ export class ControllerMessageHandler {
 
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
-        const success = await driver.controller.beginInclusion(
-          message.includeNonSecure
-        );
+        const success = await driver.controller.beginInclusion(message.includeNonSecure);
         return { success };
       }
       case ControllerCommand.stopInclusion: {

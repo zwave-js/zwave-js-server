@@ -3,9 +3,7 @@ import minimist from "minimist";
 export const parseArgs = <T>(expectedKeys: string[]): T => {
   const args: T = minimist(process.argv.slice(2));
 
-  const extraKeys = Object.keys(args).filter(
-    (key) => !expectedKeys.includes(key)
-  );
+  const extraKeys = Object.keys(args).filter((key) => !expectedKeys.includes(key));
 
   if (extraKeys.length > 0) {
     console.error(`Error: Got unexpected keys ${extraKeys.join(", ")}`);

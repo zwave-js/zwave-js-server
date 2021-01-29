@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum NodeCommand {
   setValue = "node.set_value",
   refreshInfo = "node.refresh_info",

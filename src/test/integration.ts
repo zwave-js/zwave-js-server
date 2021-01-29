@@ -7,7 +7,6 @@ import { createMockDriver } from "../mock";
 const PORT = 45001;
 
 const createNextMessage = (socket) => {
-  // eslint-disable-next-line no-unused-vars
   let waitingListener: (msg: unknown) => void;
   const pendingMessages = [];
 
@@ -45,6 +44,7 @@ const runTest = async () => {
     assert.deepEqual(await nextMessage(), {
       driverVersion: libVersion,
       homeId: 1,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       serverVersion: require("../../package.json").version,
       type: "version"
     });

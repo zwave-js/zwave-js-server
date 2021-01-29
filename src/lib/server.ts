@@ -28,10 +28,7 @@ class Client {
     ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
   > = {
     [Instance.controller]: (message) =>
-      ControllerMessageHandler.handle(
-        message as IncomingMessageController,
-        this.driver
-      ),
+      ControllerMessageHandler.handle(message as IncomingMessageController, this.driver),
     [Instance.driver]: () => {
       throw new Error("Driver handler not implemented.");
     },
@@ -78,10 +75,7 @@ class Client {
 
       const [instance] = msg.command.split(".");
       if (this.instanceHandlers[instance]) {
-        return this.sendResultSuccess(
-          msg.messageId,
-          await this.instanceHandlers[instance](msg)
-        );
+        return this.sendResultSuccess(msg.messageId, await this.instanceHandlers[instance](msg));
       }
 
       throw new UnknownCommandError(msg.command);

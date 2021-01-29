@@ -1,10 +1,4 @@
-import {
-  ControllerEvents,
-  Driver,
-  NodeStatus,
-  ZWaveNode,
-  ZWaveNodeEvents
-} from "zwave-js";
+import { ControllerEvents, Driver, NodeStatus, ZWaveNode, ZWaveNodeEvents } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode, dumpValue } from "./state";
 
@@ -15,14 +9,9 @@ export class EventForwarder {
    * @param driver
    * @param forwardEvent
    */
-  constructor(
-    // eslint-disable-next-line no-unused-vars
-    public driver: Driver,
-    // eslint-disable-next-line no-unused-vars
-    public forwardEvent: (data: OutgoingEvent) => void
-  ) {}
+  constructor(public driver: Driver, public forwardEvent: (data: OutgoingEvent) => void) {}
 
-  start() {
+  start(): void {
     this.driver.controller.nodes.forEach((node) => this.setupNode(node));
 
     // Bind to all controller events
@@ -84,7 +73,7 @@ export class EventForwarder {
     );
   }
 
-  setupNode(node: ZWaveNode) {
+  setupNode(node: ZWaveNode): void {
     // Bind to all node events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/node/Types.ts#L84-L103
     const notifyNode = (node: ZWaveNode, event: string, extra = {}) =>
@@ -111,11 +100,9 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = [
-        "interview completed",
-        "interview failed"
-      ];
+      const events: ZWaveNodeEvents[] = ["interview completed", "interview failed"];
       for (const event of events) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           notifyNode(changedNode, event, { args });
         });
@@ -130,6 +117,7 @@ export class EventForwarder {
         "value removed"
       ];
       for (const event of events) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
@@ -143,13 +131,11 @@ export class EventForwarder {
       notifyNode(changedNode, "notification", { notificationLabel, parameters })
     );
 
-    node.on(
-      "firmware update progress",
-      (changedNode, sentFragments, totalFragments) =>
-        notifyNode(changedNode, "firmware update progress", {
-          sentFragments,
-          totalFragments
-        })
+    node.on("firmware update progress", (changedNode, sentFragments, totalFragments) =>
+      notifyNode(changedNode, "firmware update progress", {
+        sentFragments,
+        totalFragments
+      })
     );
 
     node.on("firmware update finished", (changedNode, status, waitTime) =>

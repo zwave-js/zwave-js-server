@@ -12,10 +12,11 @@ export interface ZwaveState {
   nodes: Partial<ZWaveNode>[];
 }
 
-interface EndpointState extends Partial<Endpoint> {}
+type EndpointState = Partial<Endpoint>;
 
 interface ValueState extends Partial<TranslatedValueID> {
   metadata: ValueMetadata;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   ccVersion: number;
 }
@@ -31,15 +32,10 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
     // once the node hits ready state, all values will be sent in the 'node ready' event.
     return [];
   }
-  return Array.from(node.getDefinedValueIDs(), (valueId) =>
-    dumpValue(node, valueId)
-  );
+  return Array.from(node.getDefinedValueIDs(), (valueId) => dumpValue(node, valueId));
 }
 
-export const dumpValue = (
-  node: ZWaveNode,
-  valueId: TranslatedValueID
-): ValueState => {
+export const dumpValue = (node: ZWaveNode, valueId: TranslatedValueID): ValueState => {
   const valueState = valueId as ValueState;
   valueState.metadata = node.getValueMetadata(valueId);
   valueState.value = node.getValue(valueId);
@@ -82,9 +78,7 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   individualEndpointCount: node.individualEndpointCount,
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
-  endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-    dumpEndpoint(endpoint)
-  ),
+  endpoints: Array.from(node.getAllEndpoints(), (endpoint) => dumpEndpoint(endpoint)),
   values: getNodeValues(node)
 });
 

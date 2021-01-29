@@ -37,11 +37,7 @@ socket.on("message", (data) => {
       return;
     }
 
-    if (
-      msg.type === "result" &&
-      msg.messageId === "start-listening-result" &&
-      msg.success
-    ) {
+    if (msg.type === "result" && msg.messageId === "start-listening-result" && msg.success) {
       const state = (msg.result as ResultTypes["start_listening"]).state;
 
       const nodes = state.nodes.filter((node) => node.nodeId === filterNode);

@@ -2,44 +2,37 @@ import { Association } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
-export interface IncomingCommandControllerBase extends IncomingCommandBase {}
+export type IncomingCommandControllerBase = IncomingCommandBase;
 
-export interface IncomingCommandControllerBeginInclusion
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerBeginInclusion extends IncomingCommandControllerBase {
   command: ControllerCommand.beginInclusion;
   includeNonSecure?: boolean;
 }
 
-export interface IncomingCommandControllerStopInclusion
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopInclusion extends IncomingCommandControllerBase {
   command: ControllerCommand.stopInclusion;
 }
 
-export interface IncomingCommandControllerBeginExclusion
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerBeginExclusion extends IncomingCommandControllerBase {
   command: ControllerCommand.beginExclusion;
 }
 
-export interface IncomingCommandControllerStopExclusion
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopExclusion extends IncomingCommandControllerBase {
   command: ControllerCommand.stopExclusion;
 }
 
-export interface IncomingCommandControllerRemoveFailedNode
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerRemoveFailedNode extends IncomingCommandControllerBase {
   command: ControllerCommand.removeFailedNode;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerReplaceFailedNode
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerReplaceFailedNode extends IncomingCommandControllerBase {
   command: ControllerCommand.replaceFailedNode;
   nodeId: number;
   includeNonSecure?: boolean;
 }
 
-export interface IncomingCommandControllerHealNode
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerHealNode extends IncomingCommandControllerBase {
   command: ControllerCommand.healNode;
   nodeId: number;
 }
@@ -49,13 +42,11 @@ export interface IncomingCommandControllerBeginHealingNetwork
   command: ControllerCommand.beginHealingNetwork;
 }
 
-export interface IncomingCommandControllerStopHealingNetwork
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopHealingNetwork extends IncomingCommandControllerBase {
   command: ControllerCommand.stopHealingNetwork;
 }
 
-export interface IncomingCommandControllerIsFailedNode
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerIsFailedNode extends IncomingCommandControllerBase {
   command: ControllerCommand.isFailedNode;
   nodeId: number;
 }
@@ -66,8 +57,7 @@ export interface IncomingCommandControllerGetAssociationGroups
   nodeId: number;
 }
 
-export interface IncomingCommandControllerGetAssociations
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetAssociations extends IncomingCommandControllerBase {
   command: ControllerCommand.getAssociations;
   nodeId: number;
 }
@@ -80,16 +70,14 @@ export interface IncomingCommandControllerIsAssociationAllowed
   association: Association;
 }
 
-export interface IncomingCommandControllerAddAssociations
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAddAssociations extends IncomingCommandControllerBase {
   command: ControllerCommand.addAssociations;
   nodeId: number;
   group: number;
   associations: Association[];
 }
 
-export interface IncomingCommandControllerRemoveAssociations
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerRemoveAssociations extends IncomingCommandControllerBase {
   command: ControllerCommand.removeAssociations;
   nodeId: number;
   group: number;
