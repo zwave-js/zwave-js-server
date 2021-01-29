@@ -24,7 +24,7 @@ socket.on("open", function open() {
   socket.send(
     JSON.stringify({
       messageId: "start-listening-result",
-      command: "start_listening",
+      command: "start_listening"
     })
   );
 });

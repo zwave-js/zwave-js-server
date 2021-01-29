@@ -17,15 +17,17 @@ export class NodeMessageHandler {
     }
 
     switch (message.command) {
-      case NodeCommand.setValue:
+      case NodeCommand.setValue: {
         const success = await node.setValue(message.valueId, message.value);
         return { success };
+      }
       case NodeCommand.refreshInfo:
         await node.refreshInfo();
         return {};
-      case NodeCommand.getDefinedValueIDs:
+      case NodeCommand.getDefinedValueIDs: {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
+      }
       case NodeCommand.getValueMetadata:
         return node.getValueMetadata(message.valueId);
       case NodeCommand.abortFirmwareUpdate:

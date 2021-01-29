@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 export enum ErrorCode {
   unknownError = "unknown_error",
   unknownCommand = "unknown_command",
-  nodeNotFound = "node_not_found",
+  nodeNotFound = "node_not_found"
 }
 
 export class BaseError extends Error {

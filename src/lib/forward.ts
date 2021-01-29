@@ -3,7 +3,7 @@ import {
   Driver,
   NodeStatus,
   ZWaveNode,
-  ZWaveNodeEvents,
+  ZWaveNodeEvents
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
@@ -16,7 +16,9 @@ export class EventForwarder {
    * @param forwardEvent
    */
   constructor(
+    // eslint-disable-next-line no-unused-vars
     public driver: Driver,
+    // eslint-disable-next-line no-unused-vars
     public forwardEvent: (data: OutgoingEvent) => void
   ) {}
 
@@ -24,7 +26,7 @@ export class EventForwarder {
     this.driver.once("all nodes ready", () =>
       this.forwardEvent({
         source: "driver",
-        event: "all nodes ready",
+        event: "all nodes ready"
       })
     );
 
@@ -36,7 +38,7 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "node added",
-        node: dumpNode(node),
+        node: dumpNode(node)
       });
       this.setupNode(node);
     });
@@ -47,13 +49,13 @@ export class EventForwarder {
         "exclusion failed",
         "exclusion started",
         "inclusion stopped",
-        "exclusion stopped",
+        "exclusion stopped"
       ];
       for (const event of events) {
         this.driver.controller.on(event, () =>
           this.forwardEvent({
             source: "controller",
-            event,
+            event
           })
         );
       }
@@ -63,28 +65,28 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "inclusion started",
-        secure,
+        secure
       })
     );
     this.driver.controller.on("node removed", (node) =>
       this.forwardEvent({
         source: "controller",
         event: "node removed",
-        node: dumpNode(node),
+        node: dumpNode(node)
       })
     );
     this.driver.controller.on("heal network progress", (progress) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
-        progress,
+        progress
       })
     );
     this.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
-        result,
+        result
       })
     );
   }
@@ -97,7 +99,7 @@ export class EventForwarder {
         source: "node",
         event,
         nodeId: node.nodeId,
-        ...extra,
+        ...extra
       });
 
     {
@@ -124,7 +126,7 @@ export class EventForwarder {
         "value updated",
         "value removed",
         "value notification",
-        "interview failed",
+        "interview failed"
       ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) =>
@@ -142,7 +144,7 @@ export class EventForwarder {
       (changedNode, sentFragments, totalFragments) =>
         notifyNode(changedNode, "firmware update progress", {
           sentFragments,
-          totalFragments,
+          totalFragments
         })
     );
 

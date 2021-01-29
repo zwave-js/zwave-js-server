@@ -7,6 +7,7 @@ import { createMockDriver } from "../mock";
 const PORT = 45001;
 
 const createNextMessage = (socket) => {
+  // eslint-disable-next-line no-unused-vars
   let waitingListener: (msg: unknown) => void;
   const pendingMessages = [];
 
@@ -45,29 +46,29 @@ const runTest = async () => {
       driverVersion: libVersion,
       homeId: 1,
       serverVersion: require("../../package.json").version,
-      type: "version",
+      type: "version"
     });
 
     socket.send(
       JSON.stringify({
         messageId: "my-msg-id!",
-        command: "start_listening",
+        command: "start_listening"
       })
     );
 
-    assert.deepEqual(await nextMessage(), {
+    assert.deepStrictEqual(await nextMessage(), {
       type: "result",
       success: true,
       messageId: "my-msg-id!",
       result: {
         state: {
           driver: {
-            allNodesReady: true,
+            allNodesReady: true
           },
           controller: { homeId: 1 },
-          nodes: [],
-        },
-      },
+          nodes: []
+        }
+      }
     });
 
     console.log("Integration tests passed :)");

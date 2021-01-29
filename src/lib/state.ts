@@ -4,7 +4,7 @@ import {
   ZWaveNode,
   Endpoint,
   TranslatedValueID,
-  ValueMetadata,
+  ValueMetadata
 } from "zwave-js";
 
 export interface ZwaveState {
@@ -71,21 +71,21 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
   ),
-  values: getNodeValues(node),
+  values: getNodeValues(node)
 });
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
   nodeId: endpoint.nodeId,
   index: endpoint.index,
   installerIcon: endpoint.installerIcon,
-  userIcon: endpoint.userIcon,
+  userIcon: endpoint.userIcon
 });
 
 export const dumpState = (driver: Driver): ZwaveState => {
   const controller = driver.controller;
   return {
     driver: {
-      allNodesReady: driver.allNodesReady,
+      allNodesReady: driver.allNodesReady
     },
     controller: {
       libraryVersion: controller.libraryVersion,
@@ -104,8 +104,8 @@ export const dumpState = (driver: Driver): ZwaveState => {
       productId: controller.productId,
       supportedFunctionTypes: controller.supportedFunctionTypes,
       sucNodeId: controller.sucNodeId,
-      supportsTimers: controller.supportsTimers,
+      supportsTimers: controller.supportsTimers
     },
-    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node)),
+    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node))
   };
 };

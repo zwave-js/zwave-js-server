@@ -15,6 +15,7 @@ import { IncomingMessageController } from "./controller/incoming_message";
 import { BaseError, ErrorCode, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
+
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -22,6 +23,7 @@ class Client {
   private instanceHandlers: Record<
     Instance,
     (
+      // eslint-disable-next-line no-unused-vars
       message: IncomingMessage
     ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
   > = {
@@ -34,12 +36,14 @@ class Client {
       throw new Error("Driver handler not implemented.");
     },
     [Instance.node]: (message) =>
-      NodeMessageHandler.handle(message as IncomingMessageNode, this.driver),
+      NodeMessageHandler.handle(message as IncomingMessageNode, this.driver)
   };
 
   constructor(
     private socket: WebSocket,
+    // eslint-disable-next-line no-unused-vars
     private driver: Driver,
+    // eslint-disable-next-line no-unused-vars
     private logger: Logger
   ) {
     socket.on("pong", () => {
@@ -66,7 +70,7 @@ class Client {
     try {
       if (msg.command === "start_listening") {
         this.sendResultSuccess(msg.messageId, {
-          state: dumpState(this.driver),
+          state: dumpState(this.driver)
         });
         this.receiveEvents = true;
         return;
@@ -97,7 +101,7 @@ class Client {
       type: "version",
       driverVersion: libVersion,
       serverVersion: version,
-      homeId: this.driver.controller.homeId,
+      homeId: this.driver.controller.homeId
     });
   }
 
@@ -109,7 +113,7 @@ class Client {
       type: "result",
       success: true,
       messageId,
-      result,
+      result
     });
   }
 
@@ -118,14 +122,14 @@ class Client {
       type: "result",
       success: false,
       messageId,
-      errorCode,
+      errorCode
     });
   }
 
   sendEvent(event: OutgoingMessages.OutgoingEvent) {
     this.sendData({
       type: "event",
-      event,
+      event
     });
   }
 
@@ -148,10 +152,12 @@ class Client {
 }
 class Clients {
   private clients: Array<Client> = [];
+  // eslint-disable-next-line no-undef
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
+  // eslint-disable-next-line no-unused-vars
   constructor(private driver: Driver, private logger: Logger) {}
 
   addSocket(socket: WebSocket) {
@@ -224,25 +230,33 @@ interface ZwavejsServerOptions {
 }
 
 export interface Logger {
+  // eslint-disable-next-line no-unused-vars
   error(message: string | Error, error?: Error): void;
+  // eslint-disable-next-line no-unused-vars
   warn(message: string): void;
+  // eslint-disable-next-line no-unused-vars
   info(message: string): void;
+  // eslint-disable-next-line no-unused-vars
   debug(message: string): void;
 }
 
 export interface ZwavejsServer {
   start(): void;
   destroy(): void;
+  // eslint-disable-next-line no-unused-vars
   on(event: "listening", listener: () => void): this;
+  // eslint-disable-next-line no-unused-vars
   on(event: "error", listener: (error: Error) => void): this;
 }
 
+// eslint-disable-next-line no-redeclare
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
   private sockets?: Clients;
   private logger: Logger;
 
+  // eslint-disable-next-line no-unused-vars
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {
     super();
     this.logger = options.logger ?? console;

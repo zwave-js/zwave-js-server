@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export enum ControllerCommand {
   beginInclusion = "controller.begin_inclusion",
   stopInclusion = "controller.stop_inclusion",
@@ -14,5 +15,5 @@ export enum ControllerCommand {
   isAssociationAllowed = "controller.is_association_allowed",
   addAssociations = "controller.add_associations",
   removeAssociations = "controller.remove_associations",
-  removeNodeFromAllAssocations = "controller.remove_node_from_all_assocations",
+  removeNodeFromAllAssocations = "controller.remove_node_from_all_assocations"
 }
