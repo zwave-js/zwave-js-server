@@ -4,6 +4,7 @@ import {
   ZWaveNode,
   Endpoint,
   TranslatedValueID,
+  ZWaveNodeValueNotificationArgs,
   ValueMetadata,
 } from "zwave-js";
 
@@ -47,6 +48,16 @@ export const dumpValue = (
   valueState.ccVersion =
     node.getEndpoint(valueId.endpoint)?.getCCVersion(valueId.commandClass) ||
     node.getEndpoint(0).getCCVersion(valueId.commandClass);
+  return valueState;
+};
+
+export const dumpValueNotification = (
+  node: ZWaveNode,
+  valueArgs: ZWaveNodeValueNotificationArgs
+): ValueState => {
+  const valueState = valueArgs as ValueState;
+  valueState.metadata = node.getValueMetadata(valueArgs);
+  valueState.ccVersion = 0; // no need for ccVersion in these stateless events (for now)
   return valueState;
 };
 

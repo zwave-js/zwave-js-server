@@ -4,9 +4,10 @@ import {
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
+  ZWaveNodeValueNotificationArgs,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode, dumpValue } from "./state";
+import { dumpNode, dumpValue, dumpValueNotification } from "./state";
 
 export class EventForwarder {
   /**
@@ -124,7 +125,6 @@ export class EventForwarder {
       const events: ZWaveNodeEvents[] = [
         "value updated",
         "value added",
-        "value notification",
         "value removed",
       ];
       for (const event of events) {
@@ -136,6 +136,14 @@ export class EventForwarder {
         });
       }
     }
+
+    node.on(
+      "value notification",
+      (changedNode: ZWaveNode, args: ZWaveNodeValueNotificationArgs) =>
+        notifyNode(changedNode, "value notification", {
+          args: dumpValueNotification(changedNode, args),
+        })
+    );
 
     node.on("notification", (changedNode, notificationLabel, parameters) =>
       notifyNode(changedNode, "notification", { notificationLabel, parameters })
