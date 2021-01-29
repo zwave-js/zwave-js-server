@@ -22,10 +22,7 @@ class Client {
 
   private instanceHandlers: Record<
     Instance,
-    (
-      // eslint-disable-next-line no-unused-vars
-      message: IncomingMessage
-    ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
+    (message: IncomingMessage) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
   > = {
     [Instance.controller]: (message) =>
       ControllerMessageHandler.handle(message as IncomingMessageController, this.driver),
@@ -38,9 +35,9 @@ class Client {
 
   constructor(
     private socket: WebSocket,
-    // eslint-disable-next-line no-unused-vars
+
     private driver: Driver,
-    // eslint-disable-next-line no-unused-vars
+
     private logger: Logger
   ) {
     socket.on("pong", () => {
@@ -151,7 +148,6 @@ class Clients {
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
-  // eslint-disable-next-line no-unused-vars
   constructor(private driver: Driver, private logger: Logger) {}
 
   addSocket(socket: WebSocket) {
@@ -224,22 +220,21 @@ interface ZwavejsServerOptions {
 }
 
 export interface Logger {
-  // eslint-disable-next-line no-unused-vars
   error(message: string | Error, error?: Error): void;
-  // eslint-disable-next-line no-unused-vars
+
   warn(message: string): void;
-  // eslint-disable-next-line no-unused-vars
+
   info(message: string): void;
-  // eslint-disable-next-line no-unused-vars
+
   debug(message: string): void;
 }
 
 export interface ZwavejsServer {
   start(): void;
   destroy(): void;
-  // eslint-disable-next-line no-unused-vars
+
   on(event: "listening", listener: () => void): this;
-  // eslint-disable-next-line no-unused-vars
+
   on(event: "error", listener: (error: Error) => void): this;
 }
 
@@ -250,7 +245,6 @@ export class ZwavejsServer extends EventEmitter {
   private sockets?: Clients;
   private logger: Logger;
 
-  // eslint-disable-next-line no-unused-vars
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {
     super();
     this.logger = options.logger ?? console;
