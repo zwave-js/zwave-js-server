@@ -3,7 +3,7 @@ import { NodeResultTypes } from "./node/outgoing_message";
 import { ControllerResultTypes } from "./controller/outgoing_message";
 
 export interface OutgoingEvent {
-  source: "driver" | "controller" | "node";
+  source: "controller" | "node";
   event: string;
   [key: string]: unknown;
 }

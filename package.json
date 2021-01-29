@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-beta.1",
   "description": "Full access to zwave-js driver throught Websockets",
   "main": "dist/lib/index.js",
   "bin": {
@@ -23,7 +23,7 @@
   "dependencies": {
     "minimist": "^1.2.5",
     "ws": "^7.4.2",
-    "zwave-js": "^6.0.1"
+    "zwave-js": "^6.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.20",

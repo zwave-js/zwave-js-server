@@ -8,7 +8,6 @@ import {
 } from "zwave-js";
 
 export interface ZwaveState {
-  driver: Partial<Driver>;
   controller: Partial<ZWaveController>;
   nodes: Partial<ZWaveNode>[];
 }
@@ -18,6 +17,7 @@ interface EndpointState extends Partial<Endpoint> {}
 interface ValueState extends Partial<TranslatedValueID> {
   metadata: ValueMetadata;
   value: any;
+  ccVersion: number;
 }
 
 interface NodeState extends Partial<ZWaveNode> {
@@ -26,15 +26,29 @@ interface NodeState extends Partial<ZWaveNode> {
 }
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
-  const result = [];
-  for (const valueId of node.getDefinedValueIDs()) {
-    const valueState = valueId as ValueState;
-    valueState.metadata = node.getValueMetadata(valueId);
-    valueState.value = node.getValue(valueId);
-    result.push(valueState);
+  if (!node.ready) {
+    // guard: do not request all values (and their metadata) while the node is still being interviewed.
+    // once the node hits ready state, all values will be sent in the 'node ready' event.
+    return [];
   }
-  return result;
+  return Array.from(node.getDefinedValueIDs(), (valueId) =>
+    dumpValue(node, valueId)
+  );
 }
+
+export const dumpValue = (
+  node: ZWaveNode,
+  valueId: TranslatedValueID
+): ValueState => {
+  const valueState = valueId as ValueState;
+  valueState.metadata = node.getValueMetadata(valueId);
+  valueState.value = node.getValue(valueId);
+  // get CC Version for this endpoint, fallback to CC version of the node itself
+  valueState.ccVersion =
+    node.getEndpoint(valueId.endpoint)?.getCCVersion(valueId.commandClass) ||
+    node.getEndpoint(0).getCCVersion(valueId.commandClass);
+  return valueState;
+};
 
 export const dumpNode = (node: ZWaveNode): NodeState => ({
   nodeId: node.nodeId,
@@ -84,9 +98,6 @@ export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
 export const dumpState = (driver: Driver): ZwaveState => {
   const controller = driver.controller;
   return {
-    driver: {
-      allNodesReady: driver.allNodesReady
-    },
     controller: {
       libraryVersion: controller.libraryVersion,
       type: controller.type,

@@ -6,7 +6,7 @@ import {
   ZWaveNodeEvents
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode } from "./state";
+import { dumpNode, dumpValue } from "./state";
 
 export class EventForwarder {
   /**
@@ -23,13 +23,6 @@ export class EventForwarder {
   ) {}
 
   start() {
-    this.driver.once("all nodes ready", () =>
-      this.forwardEvent({
-        source: "driver",
-        event: "all nodes ready"
-      })
-    );
-
     this.driver.controller.nodes.forEach((node) => this.setupNode(node));
 
     // Bind to all controller events
@@ -102,14 +95,11 @@ export class EventForwarder {
         ...extra
       });
 
-    {
-      const events: ZWaveNodeEvents[] = ["interview completed", "ready"];
-      for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode) =>
-          notifyNode(changedNode, event)
-        );
-      }
-    }
+    node.on("ready", (changedNode: ZWaveNode) => {
+      // Dump full node state on ready event
+      const nodeState = dumpNode(changedNode);
+      notifyNode(changedNode, "ready", { nodeState });
+    });
 
     {
       const events: ZWaveNodeEvents[] = ["wake up", "sleep", "dead", "alive"];
@@ -122,16 +112,30 @@ export class EventForwarder {
 
     {
       const events: ZWaveNodeEvents[] = [
-        "value added",
-        "value updated",
-        "value removed",
-        "value notification",
-        "interview failed"
+        "interview completed",
+        "interview failed",
       ];
       for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode, args: any) =>
-          notifyNode(changedNode, event, { args })
-        );
+        node.on(event, (changedNode: ZWaveNode, args: any) => {
+          notifyNode(changedNode, event, { args });
+        });
+      }
+    }
+
+    {
+      const events: ZWaveNodeEvents[] = [
+        "value updated",
+        "value added",
+        "value notification",
+        "value removed",
+      ];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, args: any) => {
+          // only forward value events for ready nodes
+          if (!changedNode.ready) return;
+          const valueState = dumpValue(changedNode, args);
+          notifyNode(changedNode, event, { args: valueState });
+        });
       }
     }
 

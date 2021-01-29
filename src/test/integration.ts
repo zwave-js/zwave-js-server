@@ -62,9 +62,6 @@ const runTest = async () => {
       messageId: "my-msg-id!",
       result: {
         state: {
-          driver: {
-            allNodesReady: true
-          },
           controller: { homeId: 1 },
           nodes: []
         }
