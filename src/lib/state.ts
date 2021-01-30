@@ -22,6 +22,7 @@ interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
   value?: any;
   newValue?: any;
+  prevValue?: any;
   ccVersion: number;
 }
 
@@ -53,7 +54,10 @@ export const dumpValue = (
   const valueState: ValueState = {
     commandClassName: valueArgs.commandClassName,
     commandClass: valueArgs.commandClass,
+    endpoint: valueArgs.endpoint,
     property: valueArgs.property,
+    propertyName: valueArgs.propertyName,
+    propertyKeyName: valueArgs.propertyKeyName,
     metadata: node.getValueMetadata(valueArgs),
     // get CC Version for this endpoint, fallback to CC version of the node itself
     ccVersion:
@@ -66,7 +70,9 @@ export const dumpValue = (
   // make sure that value attribute always holds correct value
   if ("newValue" in valueArgs) {
     valueState.value = valueArgs.newValue;
-  } else if ("value" in valueArgs) {
+  } else if ("prevValue" in valueArgs) {
+    valueState.value = valueArgs.prevValue;
+  } else if (!("value" in valueArgs)) {
     valueState.value = node.getValue(valueArgs);
   }
 
