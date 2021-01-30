@@ -31,6 +31,9 @@ export class NodeMessageHandler {
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};
+      case NodeCommand.pollValue:
+        const value = await node.pollValue<any>(message.valueId);
+        return { value };
       default:
         throw new UnknownCommandError(command);
     }

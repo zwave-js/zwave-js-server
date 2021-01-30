@@ -32,9 +32,15 @@ export interface IncomingCommandNodeAbortFirmwareUpdate
   command: NodeCommand.abortFirmwareUpdate;
 }
 
+export interface IncomingCommandNodePollValue extends IncomingCommandNodeBase {
+  command: NodeCommand.pollValue;
+  valueId: ValueID;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
-  | IncomingCommandNodeAbortFirmwareUpdate;
+  | IncomingCommandNodeAbortFirmwareUpdate
+  | IncomingCommandNodePollValue;
