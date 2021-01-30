@@ -5,6 +5,10 @@ import {
   Endpoint,
   TranslatedValueID,
   ValueMetadata,
+  ZWaveNodeValueAddedArgs,
+  ZWaveNodeValueUpdatedArgs,
+  ZWaveNodeValueRemovedArgs,
+  ZWaveNodeValueNotificationArgs,
 } from "zwave-js";
 
 export interface ZwaveState {
@@ -39,7 +43,12 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 
 export const dumpValue = (
   node: ZWaveNode,
-  valueArgs: TranslatedValueID
+  valueArgs:
+    | ZWaveNodeValueAddedArgs
+    | ZWaveNodeValueUpdatedArgs
+    | ZWaveNodeValueRemovedArgs
+    | ZWaveNodeValueNotificationArgs
+    | TranslatedValueID
 ): ValueState => {
   const valueState: ValueState = {
     ...valueArgs,
@@ -53,9 +62,9 @@ export const dumpValue = (
   };
 
   // make sure that value attribute always holds correct value
-  if (typeof valueState.newValue !== "undefined") {
-    valueState.value = valueState.newValue;
-  } else if (typeof valueState.value === "undefined") {
+  if ("newValue" in valueArgs) {
+    valueState.value = valueArgs.newValue;
+  } else if ("value" in valueArgs) {
     valueState.value = node.getValue(valueArgs);
   }
 
