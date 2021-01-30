@@ -16,7 +16,7 @@ interface EndpointState extends Partial<Endpoint> {}
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
-  value?: any;
+  value: any;
   ccVersion: number;
 }
 
