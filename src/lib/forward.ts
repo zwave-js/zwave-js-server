@@ -124,8 +124,8 @@ export class EventForwarder {
       const events: ZWaveNodeEvents[] = [
         "value updated",
         "value added",
-        "value removed",
         "value notification",
+        "value removed",
       ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {

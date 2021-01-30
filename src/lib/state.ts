@@ -41,20 +41,24 @@ export const dumpValue = (
   node: ZWaveNode,
   valueArgs: TranslatedValueID
 ): ValueState => {
-  const valueState = valueArgs as ValueState;
-  valueState.metadata = node.getValueMetadata(valueArgs);
+  const valueState: ValueState = {
+    ...valueArgs,
+    metadata: node.getValueMetadata(valueArgs),
+    // get CC Version for this endpoint, fallback to CC version of the node itself
+    ccVersion:
+      node
+        .getEndpoint(valueArgs.endpoint)
+        ?.getCCVersion(valueArgs.commandClass) ||
+      node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
+  };
+
   // make sure that value attribute always holds correct value
   if (typeof valueState.newValue !== "undefined") {
     valueState.value = valueState.newValue;
   } else if (typeof valueState.value === "undefined") {
     valueState.value = node.getValue(valueArgs);
   }
-  // get CC Version for this endpoint, fallback to CC version of the node itself
-  valueState.ccVersion =
-    node
-      .getEndpoint(valueArgs.endpoint)
-      ?.getCCVersion(valueArgs.commandClass) ||
-    node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
+
   return valueState;
 };
 
