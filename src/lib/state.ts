@@ -51,7 +51,9 @@ export const dumpValue = (
     | TranslatedValueID
 ): ValueState => {
   const valueState: ValueState = {
-    ...valueArgs,
+    commandClassName: valueArgs.commandClassName,
+    commandClass: valueArgs.commandClass,
+    property: valueArgs.property,
     metadata: node.getValueMetadata(valueArgs),
     // get CC Version for this endpoint, fallback to CC version of the node itself
     ccVersion:
