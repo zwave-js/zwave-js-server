@@ -14,7 +14,7 @@ export interface ZwaveState {
 
 interface EndpointState extends Partial<Endpoint> {}
 
-interface ValueState extends Partial<TranslatedValueID> {
+interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
   value?: any;
   newValue?: any;
