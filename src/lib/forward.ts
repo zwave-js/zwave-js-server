@@ -126,7 +126,7 @@ export class EventForwarder {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          // vakue updated/removed events are forwarded as-is
+          // value updated/removed events are forwarded as-is
           notifyNode(changedNode, event, { args });
         });
       }

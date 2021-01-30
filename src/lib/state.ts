@@ -48,7 +48,7 @@ export const dumpValue = (
       .getEndpoint(valueArgs.endpoint)
       ?.getCCVersion(valueArgs.commandClass) ||
     node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
-  if (!("value" in valueState)) {
+  if (!("value" in valueArgs)) {
     valueState.value = node.getValue(valueArgs);
   }
   return valueState;
