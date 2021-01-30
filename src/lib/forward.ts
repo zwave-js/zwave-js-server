@@ -121,16 +121,24 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = [
-        "value updated",
-        "value added",
-        "value notification",
-        "value removed",
-      ];
+      const events: ZWaveNodeEvents[] = ["value updated", "value removed"];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
+          // vakue updated/removed events are forwarded as-is
+          notifyNode(changedNode, event, { args });
+        });
+      }
+    }
+
+    {
+      const events: ZWaveNodeEvents[] = ["value added", "value notification"];
+      for (const event of events) {
+        node.on(event, (changedNode: ZWaveNode, args: any) => {
+          // only forward value events for ready nodes
+          if (!changedNode.ready) return;
+          // value added/notification should contain metadata, use dumpValue
           const valueState = dumpValue(changedNode, args);
           notifyNode(changedNode, event, { args: valueState });
         });

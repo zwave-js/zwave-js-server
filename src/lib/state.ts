@@ -5,10 +5,6 @@ import {
   Endpoint,
   TranslatedValueID,
   ValueMetadata,
-  ZWaveNodeValueAddedArgs,
-  ZWaveNodeValueUpdatedArgs,
-  ZWaveNodeValueRemovedArgs,
-  ZWaveNodeValueNotificationArgs,
 } from "zwave-js";
 
 export interface ZwaveState {
@@ -42,38 +38,19 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 
 export const dumpValue = (
   node: ZWaveNode,
-  valueArgs:
-    | ZWaveNodeValueAddedArgs
-    | ZWaveNodeValueUpdatedArgs
-    | ZWaveNodeValueRemovedArgs
-    | ZWaveNodeValueNotificationArgs
-    | TranslatedValueID
+  valueArgs: TranslatedValueID
 ): ValueState => {
-  const valueState: ValueState = {
-    commandClassName: valueArgs.commandClassName,
-    commandClass: valueArgs.commandClass,
-    endpoint: valueArgs.endpoint,
-    property: valueArgs.property,
-    propertyName: valueArgs.propertyName,
-    propertyKeyName: valueArgs.propertyKeyName,
-    metadata: node.getValueMetadata(valueArgs),
-    // get CC Version for this endpoint, fallback to CC version of the node itself
-    ccVersion:
-      node
-        .getEndpoint(valueArgs.endpoint)
-        ?.getCCVersion(valueArgs.commandClass) ||
-      node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
-  };
-
-  // make sure that value attribute always holds correct value
-  if ("newValue" in valueArgs) {
-    valueState.value = valueArgs.newValue;
-  } else if ("prevValue" in valueArgs) {
-    valueState.value = valueArgs.prevValue;
-  } else if (!("value" in valueArgs)) {
+  const valueState = valueArgs as ValueState;
+  valueState.metadata = node.getValueMetadata(valueArgs);
+  // get CC Version for this endpoint, fallback to CC version of the node itself
+  valueState.ccVersion =
+    node
+      .getEndpoint(valueArgs.endpoint)
+      ?.getCCVersion(valueArgs.commandClass) ||
+    node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
+  if (!("value" in valueState)) {
     valueState.value = node.getValue(valueArgs);
   }
-
   return valueState;
 };
 
