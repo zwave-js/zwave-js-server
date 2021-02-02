@@ -39,27 +39,24 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 export const dumpValue = (
   node: ZWaveNode,
   valueArgs: TranslatedValueID
-): ValueState => {
-  const valueState: ValueState = {
-    endpoint: valueArgs.endpoint,
-    commandClass: valueArgs.commandClass,
-    commandClassName: valueArgs.commandClassName,
-    property: valueArgs.property,
-    propertyName: valueArgs.propertyName,
-    propertyKeyName: valueArgs.propertyKeyName,
-    // get CC Version for this endpoint, fallback to CC version of the node itself
-    ccVersion:
-      node
-        .getEndpoint(valueArgs.endpoint)
-        ?.getCCVersion(valueArgs.commandClass) ||
-      node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
-    // append metadata
-    metadata: node.getValueMetadata(valueArgs),
-    // append actual value
-    value: node.getValue(valueArgs),
-  };
-  return valueState;
-};
+): ValueState => ({
+  endpoint: valueArgs.endpoint,
+  commandClass: valueArgs.commandClass,
+  commandClassName: valueArgs.commandClassName,
+  property: valueArgs.property,
+  propertyName: valueArgs.propertyName,
+  propertyKeyName: valueArgs.propertyKeyName,
+  // get CC Version for this endpoint, fallback to CC version of the node itself
+  ccVersion:
+    node
+      .getEndpoint(valueArgs.endpoint)
+      ?.getCCVersion(valueArgs.commandClass) ||
+    node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
+  // append metadata
+  metadata: node.getValueMetadata(valueArgs),
+  // append actual value
+  value: node.getValue(valueArgs),
+});
 
 export const dumpNode = (node: ZWaveNode): NodeState => ({
   nodeId: node.nodeId,

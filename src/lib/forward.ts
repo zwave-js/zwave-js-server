@@ -6,7 +6,7 @@ import {
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode, dumpValue } from "./state";
+import { dumpNode } from "./state";
 
 export class EventForwarder {
   /**
