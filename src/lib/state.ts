@@ -55,11 +55,9 @@ export const dumpValue = (
       node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
     // append metadata
     metadata: node.getValueMetadata(valueArgs),
+    // append actual value
+    value: node.getValue(valueArgs),
   };
-  // retrieve value if needed
-  if (!("value" in valueArgs)) {
-    valueState.value = node.getValue(valueArgs);
-  }
   return valueState;
 };
 
