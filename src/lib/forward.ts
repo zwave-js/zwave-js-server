@@ -6,7 +6,7 @@ import {
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode, dumpValue } from "./state";
+import { dumpNode } from "./state";
 
 export class EventForwarder {
   /**
@@ -121,26 +121,18 @@ export class EventForwarder {
     }
 
     {
-      const events: ZWaveNodeEvents[] = ["value updated", "value removed"];
+      const events: ZWaveNodeEvents[] = [
+        "value updated",
+        "value removed",
+        "value added",
+        "value notification",
+        "metadata updated",
+      ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          // value updated/removed events are forwarded as-is
           notifyNode(changedNode, event, { args });
-        });
-      }
-    }
-
-    {
-      const events: ZWaveNodeEvents[] = ["value added", "value notification"];
-      for (const event of events) {
-        node.on(event, (changedNode: ZWaveNode, args: any) => {
-          // only forward value events for ready nodes
-          if (!changedNode.ready) return;
-          // value added/notification should contain metadata, use dumpValue
-          const valueState = dumpValue(changedNode, args);
-          notifyNode(changedNode, event, { args: valueState });
         });
       }
     }
