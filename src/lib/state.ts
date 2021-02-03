@@ -44,6 +44,7 @@ export const dumpValue = (
   commandClass: valueArgs.commandClass,
   commandClassName: valueArgs.commandClassName,
   property: valueArgs.property,
+  propertyKey: valueArgs.propertyKey,
   propertyName: valueArgs.propertyName,
   propertyKeyName: valueArgs.propertyKeyName,
   // get CC Version for this endpoint, fallback to CC version of the node itself
