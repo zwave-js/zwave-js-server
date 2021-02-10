@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Full access to zwave-js driver throught Websockets",
   "main": "dist/lib/index.js",
   "bin": {
@@ -25,7 +25,7 @@
     "ws": "^7.4.2"
   },
   "peerDependencies": {
-    "zwave-js": "^6.1"
+    "zwave-js": "^6.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.20",
@@ -40,7 +40,7 @@
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3",
-    "zwave-js": "^6.1"
+    "zwave-js": "^6.2.0"
   },
   "husky": {
     "hooks": {
