@@ -91,6 +91,7 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   individualEndpointCount: node.individualEndpointCount,
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
+  interviewStage: node.interviewStage,
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
   ),
