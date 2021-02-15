@@ -103,7 +103,7 @@ interface {
 
 ## Client commands
 
-### Start Listening for events
+### Start listening to events
 
 ```ts
 interface {
@@ -127,6 +127,10 @@ interface {
   value: any
 }
 ```
+
+### Update the logging configuration
+
+> NOTE: You must provide at least one key/value pair as part of `config`
 
 ```ts
 interface {
