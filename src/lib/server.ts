@@ -72,6 +72,12 @@ class Client {
         return;
       }
 
+      if (msg.command === "update_log_config") {
+        this.driver.updateLogConfig(msg.config);
+        this.sendResultSuccess(msg.messageId, { success: true });
+        return;
+      }
+
       const [instance] = msg.command.split(".");
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
