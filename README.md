@@ -103,12 +103,16 @@ interface {
 
 ## Client commands
 
+### Start Listening for events
+
 ```ts
 interface {
   messageId: string;
   command: "start_listening";
 }
 ```
+
+### Set value on a node
 
 ```ts
 interface {
