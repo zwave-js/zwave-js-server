@@ -79,6 +79,13 @@ class Client {
         return;
       }
 
+      if (msg.command === DriverCommand.getLogConfig) {
+        this.sendResultSuccess(msg.messageId, {
+          config: this.driver.getLogConfig(),
+        });
+        return;
+      }
+
       const [instance] = msg.command.split(".");
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
