@@ -29,6 +29,8 @@ interface OutgoingResultMessageError {
 
 export type ResultTypes = {
   start_listening: { state: ZwaveState };
+} & {
+  update_log_config: { success: boolean };
 } & NodeResultTypes &
   ControllerResultTypes;
 
