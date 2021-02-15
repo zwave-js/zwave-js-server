@@ -74,7 +74,7 @@ class Client {
 
       if (msg.command === "update_log_config") {
         this.driver.updateLogConfig(msg.config);
-        this.sendResultSuccess(msg.messageId, { success: true });
+        this.sendResultSuccess(msg.messageId, {});
         return;
       }
 
