@@ -15,6 +15,7 @@ import { IncomingMessageController } from "./controller/incoming_message";
 import { BaseError, ErrorCode, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
+import { DriverCommand } from "./command";
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -64,7 +65,7 @@ class Client {
     }
 
     try {
-      if (msg.command === "start_listening") {
+      if (msg.command === DriverCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
           state: dumpState(this.driver),
         });
@@ -72,7 +73,7 @@ class Client {
         return;
       }
 
-      if (msg.command === "update_log_config") {
+      if (msg.command === DriverCommand.updateLogConfig) {
         this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
