@@ -1,6 +1,7 @@
 import type { ZwaveState } from "./state";
 import { NodeResultTypes } from "./node/outgoing_message";
 import { ControllerResultTypes } from "./controller/outgoing_message";
+import { DriverCommand } from "./command";
 
 export interface OutgoingEvent {
   source: "controller" | "node";
@@ -27,11 +28,13 @@ interface OutgoingResultMessageError {
   errorCode: string;
 }
 
-export type ResultTypes = {
-  start_listening: { state: ZwaveState };
-} & {
-  update_log_config: Record<string, never>;
-} & NodeResultTypes &
+export interface DriverResultTypes {
+  [DriverCommand.startListening]: { state: ZwaveState };
+  [DriverCommand.updateLogConfig]: Record<string, never>;
+}
+
+export type ResultTypes = DriverResultTypes &
+  NodeResultTypes &
   ControllerResultTypes;
 
 export interface OutgoingResultMessageSuccess {
