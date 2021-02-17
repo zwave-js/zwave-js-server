@@ -249,6 +249,9 @@ export class ZwavejsServer extends EventEmitter {
   }
 
   async start() {
+    if (!this.driver.ready) {
+      throw new Error("Cannot start server when driver not ready");
+    }
     this.server = createServer();
     this.wsServer = new ws.Server({ server: this.server });
     this.sockets = new Clients(this.driver, this.logger);
