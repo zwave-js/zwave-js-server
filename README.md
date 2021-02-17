@@ -139,7 +139,6 @@ interface {
   config: {
     enabled?: boolean;
     level?: number;
-    transports?: Transport[];
     logToFile?: boolean;
     filename?: string;
     forceConsole?: boolean;
