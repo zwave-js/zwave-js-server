@@ -27,12 +27,15 @@ interface OutgoingResultMessageError {
   errorCode: string;
 }
 
-export type ResultTypes = {
-  start_listening: { state: ZwaveState };
-} & {
-  update_log_config: Record<string, never>;
-} & NodeResultTypes &
-  ControllerResultTypes;
+export type ResultTypes =
+  | {
+      start_listening: { state: ZwaveState };
+    }
+  | {
+      update_log_config: Record<string, never>;
+    }
+  | NodeResultTypes
+  | ControllerResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";
