@@ -1,5 +1,4 @@
 import { LogConfig } from "@zwave-js/core";
-import { DeepPartial } from "@zwave-js/shared";
 import { IncomingMessageController } from "./controller/incoming_message";
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "./incoming_message_base";
@@ -11,7 +10,7 @@ interface IncomingCommandStartListening extends IncomingCommandBase {
 
 interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
   command: DriverCommand.updateLogConfig;
-  config: DeepPartial<LogConfig>;
+  config: Partial<LogConfig>;
 }
 
 export type IncomingMessage =
