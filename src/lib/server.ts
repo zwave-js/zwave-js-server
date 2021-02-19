@@ -80,6 +80,7 @@ class Client {
       }
 
       if (msg.command === DriverCommand.getLogConfig) {
+        // We don't want to return transports since that's used internally.
         const { transports, ...partialLogConfig } = this.driver.getLogConfig();
         this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
         return;
