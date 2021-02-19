@@ -80,9 +80,8 @@ class Client {
       }
 
       if (msg.command === DriverCommand.getLogConfig) {
-        this.sendResultSuccess(msg.messageId, {
-          config: this.driver.getLogConfig(),
-        });
+        const { transports, ...logConfig } = this.driver.getLogConfig();
+        this.sendResultSuccess(msg.messageId, { config: logConfig });
         return;
       }
 

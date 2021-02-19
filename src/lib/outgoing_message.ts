@@ -32,7 +32,7 @@ interface OutgoingResultMessageError {
 export interface DriverResultTypes {
   [DriverCommand.startListening]: { state: ZwaveState };
   [DriverCommand.updateLogConfig]: Record<string, never>;
-  [DriverCommand.getLogConfig]: { config: LogConfig }
+  [DriverCommand.getLogConfig]: { config: Partial<LogConfig> };
 }
 
 export type ResultTypes = DriverResultTypes &
