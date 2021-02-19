@@ -172,7 +172,3 @@ interface {
 ## Authentication
 
 Z-Wave JS Server does not handle authentication and allows all connections to the websocket API. If you want to add authentication, add authentication middleware to your Express instance or run NGINX in front of Express instance.
-
-```
-
-```
