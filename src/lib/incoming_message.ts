@@ -14,7 +14,6 @@ interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
 }
 
 interface IncomingCommandGetLogConfig extends IncomingCommandBase {
-  messageId: string;
   command: DriverCommand.getLogConfig;
 }
 
