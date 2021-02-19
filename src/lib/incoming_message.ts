@@ -13,7 +13,7 @@ interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
   config: Partial<LogConfig>;
 }
 
-interface IncomingCommandGetLogLevel extends IncomingCommandBase {
+interface IncomingCommandGetLogConfig extends IncomingCommandBase {
   messageId: string;
   command: DriverCommand.getLogConfig;
 }
@@ -21,6 +21,6 @@ interface IncomingCommandGetLogLevel extends IncomingCommandBase {
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
-  | IncomingCommandGetLogLevel
+  | IncomingCommandGetLogConfig
   | IncomingMessageNode
   | IncomingMessageController;
