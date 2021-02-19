@@ -103,12 +103,16 @@ interface {
 
 ## Client commands
 
+### Start listening to events
+
 ```ts
 interface {
   messageId: string;
   command: "start_listening";
 }
 ```
+
+### Set value on a node
 
 ```ts
 interface {
@@ -121,6 +125,47 @@ interface {
     propertyKey?: string | number;
   },
   value: any
+}
+```
+
+### Update the logging configuration
+
+> NOTE: You must provide at least one key/value pair as part of `config`
+
+```ts
+interface {
+  messageId: string;
+  command: "update_log_config";
+  config: {
+    enabled?: boolean;
+    level?: number;
+    logToFile?: boolean;
+    filename?: string;
+    forceConsole?: boolean;
+  }
+}
+```
+
+### Get the logging configuration
+
+```ts
+interface {
+  messageId: string;
+  command: "get_log_config";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  config: {
+    enabled: boolean;
+    level: number;
+    logToFile: boolean;
+    filename: string;
+    forceConsole: boolean;
+  }
 }
 ```
 

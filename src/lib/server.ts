@@ -15,6 +15,7 @@ import { IncomingMessageController } from "./controller/incoming_message";
 import { BaseError, ErrorCode, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
+import { DriverCommand } from "./command";
 class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -64,11 +65,24 @@ class Client {
     }
 
     try {
-      if (msg.command === "start_listening") {
+      if (msg.command === DriverCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
           state: dumpState(this.driver),
         });
         this.receiveEvents = true;
+        return;
+      }
+
+      if (msg.command === DriverCommand.updateLogConfig) {
+        this.driver.updateLogConfig(msg.config);
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
+      if (msg.command === DriverCommand.getLogConfig) {
+        // We don't want to return transports since that's used internally.
+        const { transports, ...partialLogConfig } = this.driver.getLogConfig();
+        this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
         return;
       }
 
