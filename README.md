@@ -155,15 +155,17 @@ interface {
 }
 ```
 
-Returns `Partial<LogConfig>`:
+Returns:
 
 ```ts
 interface {
-  enabled: boolean;
-  level: number;
-  logToFile: boolean;
-  filename: string;
-  forceConsole: boolean;
+  config: {
+    enabled: boolean;
+    level: number;
+    logToFile: boolean;
+    filename: string;
+    forceConsole: boolean;
+  }
 }
 ```
 
