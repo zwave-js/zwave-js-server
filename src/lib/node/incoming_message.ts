@@ -1,4 +1,4 @@
-import { CommandClass, ConfigValue, ValueID } from "zwave-js";
+import { ConfigValue, ValueID } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
