@@ -5,4 +5,5 @@ export enum NodeCommand {
   getValueMetadata = "node.get_value_metadata",
   abortFirmwareUpdate = "node.abort_firmware_update",
   pollValue = "node.poll_value",
+  setRawConfigParameterValue = "node.set_raw_config_parameter_value",
 }
