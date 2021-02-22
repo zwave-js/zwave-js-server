@@ -155,6 +155,10 @@ interface {
 }
 ```
 
+### Controller level commands
+
+Refer to the [Z-Wave JS Controller methods documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods) for more information on available commands. `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands, so `beginInclusion` is called using the `node.begin_inclusion` command.
+
 ### Node level commands
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
