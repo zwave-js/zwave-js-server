@@ -103,7 +103,9 @@ interface {
 
 ## Client commands
 
-### Start listening to events
+### Server level commands
+
+#### Start listening to events
 
 ```ts
 interface {
@@ -112,23 +114,7 @@ interface {
 }
 ```
 
-### Set value on a node
-
-```ts
-interface {
-  messageId: string;
-  command: "node.set_value";
-  valueId: {
-    commandClass: CommandClasses;
-    endpoint?: number;
-    property: string | number;
-    propertyKey?: string | number;
-  },
-  value: any
-}
-```
-
-### Update the logging configuration
+#### Update the logging configuration
 
 > NOTE: You must provide at least one key/value pair as part of `config`
 
@@ -146,7 +132,7 @@ interface {
 }
 ```
 
-### Get the logging configuration
+#### Get the logging configuration
 
 ```ts
 interface {
@@ -166,6 +152,97 @@ interface {
     filename: string;
     forceConsole: boolean;
   }
+}
+```
+
+### Node level commands
+
+#### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_value";
+  nodeId: number;
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+  value: any;
+}
+```
+
+#### [Refresh node info](https://zwave-js.github.io/node-zwave-js/#/api/node?id=refreshinfo)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.refresh_info";
+  nodeId: number;
+}
+```
+
+#### [Get defined Value IDs](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getdefinedvalueids)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_defined_value_ids";
+  nodeId: number;
+}
+```
+
+#### [Get value metadata](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getvaluemetadata)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_value_metadata";
+  nodeId: number;
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+}
+```
+
+#### [Abort Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortfirmwareupdate)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.abort_firmware_update";
+  nodeId: number;
+}
+```
+
+#### [Poll value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=pollvalue)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.poll_value";
+  nodeId: number;
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+}
+```
+
+#### [Set raw configuration parameter value (Advanced)](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_raw_config_parameter_value";
+  nodeId: number;
 }
 ```
 
