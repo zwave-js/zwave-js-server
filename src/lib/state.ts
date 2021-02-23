@@ -24,28 +24,27 @@ interface CommandClassState {
   isSecure: boolean;
 }
 
-interface EndpointState extends Partial<Endpoint> {}
+type EndpointState = Partial<Endpoint>;
 
-interface DeviceClassState
-  extends Partial<
-    Modify<
-      DeviceClass,
-      {
-        basic: {
-          key: number;
-          label: string;
-        };
-        generic: {
-          key: number;
-          label: string;
-        };
-        specific: {
-          key: number;
-          label: string;
-        };
-      }
-    >
-  > {}
+type DeviceClassState = Partial<
+  Modify<
+    DeviceClass,
+    {
+      basic: {
+        key: number;
+        label: string;
+      };
+      generic: {
+        key: number;
+        label: string;
+      };
+      specific: {
+        key: number;
+        label: string;
+      };
+    }
+  >
+>;
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
@@ -53,18 +52,17 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface NodeState
-  extends Partial<
-    Modify<
-      ZWaveNode,
-      {
-        deviceClass: DeviceClassState;
-        commandClasses: CommandClassState[];
-        endpoints: EndpointState[];
-        values: ValueState[];
-      }
-    >
-  > {}
+type NodeState = Partial<
+  Modify<
+    ZWaveNode,
+    {
+      deviceClass: DeviceClassState;
+      commandClasses: CommandClassState[];
+      endpoints: EndpointState[];
+      values: ValueState[];
+    }
+  >
+>;
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
   if (!node.ready) {
