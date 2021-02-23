@@ -34,6 +34,13 @@ export class NodeMessageHandler {
       case NodeCommand.pollValue:
         const value = await node.pollValue<any>(message.valueId);
         return { value };
+      case NodeCommand.setRawConfigParameterValue:
+        await node.commandClasses.Configuration.set(
+          message.parameter,
+          message.value,
+          message.valueSize
+        );
+        return {};
       default:
         throw new UnknownCommandError(command);
     }

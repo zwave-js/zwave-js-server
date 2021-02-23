@@ -1,4 +1,4 @@
-import { ValueID } from "zwave-js";
+import { ConfigValue, ValueID } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
@@ -37,10 +37,19 @@ export interface IncomingCommandNodePollValue extends IncomingCommandNodeBase {
   valueId: ValueID;
 }
 
+export interface IncomingCommandNodeSetRawConfigParameterValue
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.setRawConfigParameterValue;
+  parameter: number;
+  value: ConfigValue;
+  valueSize: 1 | 2 | 4;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
   | IncomingCommandNodeAbortFirmwareUpdate
-  | IncomingCommandNodePollValue;
+  | IncomingCommandNodePollValue
+  | IncomingCommandNodeSetRawConfigParameterValue;

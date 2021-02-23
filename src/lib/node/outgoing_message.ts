@@ -8,4 +8,5 @@ export interface NodeResultTypes {
   [NodeCommand.getValueMetadata]: ValueMetadata;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.pollValue]: { value: any | undefined };
+  [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
 }
