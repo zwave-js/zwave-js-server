@@ -21,6 +21,7 @@ interface CommandClassState {
   id: number;
   name: string;
   version: number;
+  isSecure: boolean;
 }
 
 interface EndpointState extends Partial<Endpoint> {}
@@ -133,7 +134,7 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   interviewAttempts: node.interviewAttempts,
   interviewStage: node.interviewStage,
   commandClasses: Array.from(node.getSupportedCCInstances(), (cc) =>
-    dumpCommandClass(cc)
+    dumpCommandClass(node, cc)
   ),
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
@@ -168,11 +169,13 @@ export const dumpDeviceClass = (
 });
 
 export const dumpCommandClass = (
+  node: ZWaveNode,
   commandClass: CommandClass
 ): CommandClassState => ({
   id: commandClass.ccId,
   name: CommandClasses[commandClass.ccId],
   version: commandClass.version,
+  isSecure: node.isCCSecure(commandClass.ccId),
 });
 
 export const dumpState = (driver: Driver): ZwaveState => {
