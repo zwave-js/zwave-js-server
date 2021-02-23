@@ -6,13 +6,21 @@ import {
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
+  CommandClass,
 } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
 export interface ZwaveState {
   controller: Partial<ZWaveController>;
   nodes: NodeState[];
+}
+
+interface CommandClassState {
+  id: number;
+  name: string;
+  version: number;
 }
 
 interface EndpointState extends Partial<Endpoint> {}
@@ -50,6 +58,7 @@ interface NodeState
       ZWaveNode,
       {
         deviceClass: DeviceClassState;
+        commandClasses: CommandClassState[];
         endpoints: EndpointState[];
         values: ValueState[];
       }
@@ -123,6 +132,9 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
   interviewStage: node.interviewStage,
+  commandClasses: Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(cc)
+  ),
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
   ),
@@ -153,6 +165,14 @@ export const dumpDeviceClass = (
   },
   mandatorySupportedCCs: deviceClass.mandatorySupportedCCs,
   mandatoryControlledCCs: deviceClass.mandatoryControlledCCs,
+});
+
+export const dumpCommandClass = (
+  commandClass: CommandClass
+): CommandClassState => ({
+  id: commandClass.ccId,
+  name: CommandClasses[commandClass.ccId],
+  version: commandClass.version,
 });
 
 export const dumpState = (driver: Driver): ZwaveState => {
