@@ -5,14 +5,46 @@ import {
   Endpoint,
   TranslatedValueID,
   ValueMetadata,
+  DeviceClass,
+  CommandClass,
 } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
+
+type Modify<T, R> = Omit<T, keyof R> & R;
 
 export interface ZwaveState {
   controller: Partial<ZWaveController>;
-  nodes: Partial<ZWaveNode>[];
+  nodes: NodeState[];
 }
 
-interface EndpointState extends Partial<Endpoint> {}
+interface CommandClassState {
+  id: number;
+  name: string;
+  version: number;
+  isSecure: boolean;
+}
+
+type EndpointState = Partial<Endpoint>;
+
+type DeviceClassState = Partial<
+  Modify<
+    DeviceClass,
+    {
+      basic: {
+        key: number;
+        label: string;
+      };
+      generic: {
+        key: number;
+        label: string;
+      };
+      specific: {
+        key: number;
+        label: string;
+      };
+    }
+  >
+>;
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
@@ -20,10 +52,17 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface NodeState extends Partial<ZWaveNode> {
-  endpoints: EndpointState[];
-  values: ValueState[];
-}
+type NodeState = Partial<
+  Modify<
+    ZWaveNode,
+    {
+      deviceClass: DeviceClassState;
+      commandClasses: CommandClassState[];
+      endpoints: EndpointState[];
+      values: ValueState[];
+    }
+  >
+>;
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
   if (!node.ready) {
@@ -66,7 +105,7 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   userIcon: node.userIcon,
   status: node.status,
   ready: node.ready,
-  deviceClass: node.deviceClass,
+  deviceClass: dumpDeviceClass(node.deviceClass),
   isListening: node.isListening,
   isFrequentListening: node.isFrequentListening,
   isRouting: node.isRouting,
@@ -92,6 +131,9 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
   interviewStage: node.interviewStage,
+  commandClasses: Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(node, cc)
+  ),
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
   ),
@@ -103,6 +145,35 @@ export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
   index: endpoint.index,
   installerIcon: endpoint.installerIcon,
   userIcon: endpoint.userIcon,
+});
+
+export const dumpDeviceClass = (
+  deviceClass: DeviceClass
+): DeviceClassState => ({
+  basic: {
+    key: deviceClass.basic.key,
+    label: deviceClass.basic.label,
+  },
+  generic: {
+    key: deviceClass.generic.key,
+    label: deviceClass.generic.label,
+  },
+  specific: {
+    key: deviceClass.specific.key,
+    label: deviceClass.specific.label,
+  },
+  mandatorySupportedCCs: deviceClass.mandatorySupportedCCs,
+  mandatoryControlledCCs: deviceClass.mandatoryControlledCCs,
+});
+
+export const dumpCommandClass = (
+  node: ZWaveNode,
+  commandClass: CommandClass
+): CommandClassState => ({
+  id: commandClass.ccId,
+  name: CommandClasses[commandClass.ccId],
+  version: commandClass.version,
+  isSecure: node.isCCSecure(commandClass.ccId),
 });
 
 export const dumpState = (driver: Driver): ZwaveState => {
