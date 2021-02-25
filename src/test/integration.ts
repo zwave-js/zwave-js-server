@@ -3,6 +3,7 @@ import ws from "ws";
 import { libVersion } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
+import { minSchemeVersion, maxSchemeVersion } from "../lib/const";
 
 const PORT = 45001;
 
@@ -45,6 +46,8 @@ const runTest = async () => {
       driverVersion: libVersion,
       homeId: 1,
       serverVersion: require("../../package.json").version,
+      minSchemeVersion: minSchemeVersion,
+      maxSchemeVersion: maxSchemeVersion,
       type: "version",
     });
 
