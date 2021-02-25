@@ -62,11 +62,13 @@ interface {
 ```
 
 To start receive the state and get events, the client needs to send the `start_listening` command.
+See below for info about schemeVersion.
 
 ```ts
 interface {
   messageId: string;
   command: "start_listening";
+  schemeVersion: 1;
 }
 ```
 
@@ -111,10 +113,13 @@ interface {
 interface {
   messageId: string;
   command: "start_listening";
+  schemeVersion: 1;
 }
 ```
 
 #### Update the logging configuration
+
+[compatible with scheme version: 1+]
 
 > NOTE: You must provide at least one key/value pair as part of `config`
 
@@ -133,6 +138,8 @@ interface {
 ```
 
 #### Get the logging configuration
+
+[compatible with scheme version: 1+]
 
 ```ts
 interface {
@@ -163,6 +170,8 @@ interface {
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
 
+[compatible with scheme version: 0+]
+
 ```ts
 interface {
   messageId: string;
@@ -180,6 +189,8 @@ interface {
 
 #### [Refresh node info](https://zwave-js.github.io/node-zwave-js/#/api/node?id=refreshinfo)
 
+[compatible with scheme version: 0+]
+
 ```ts
 interface {
   messageId: string;
@@ -190,6 +201,8 @@ interface {
 
 #### [Get defined Value IDs](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getdefinedvalueids)
 
+[compatible with scheme version: 0+]
+
 ```ts
 interface {
   messageId: string;
@@ -199,6 +212,8 @@ interface {
 ```
 
 #### [Get value metadata](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getvaluemetadata)
+
+[compatible with scheme version: 0+]
 
 ```ts
 interface {
@@ -216,6 +231,8 @@ interface {
 
 #### [Abort Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortfirmwareupdate)
 
+[compatible with scheme version: 0+]
+
 ```ts
 interface {
   messageId: string;
@@ -225,6 +242,8 @@ interface {
 ```
 
 #### [Poll value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=pollvalue)
+
+[compatible with scheme version: 1+]
 
 ```ts
 interface {
@@ -242,6 +261,8 @@ interface {
 
 #### [Set raw configuration parameter value (Advanced)](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
 
+[compatible with scheme version: 1+]
+
 ```ts
 interface {
   messageId: string;
@@ -249,6 +270,53 @@ interface {
   nodeId: number;
 }
 ```
+
+## Scheme Version
+
+In an attempt to keep compatibility between different server and client versions, we introduced a (basic) API Scheme Version.
+
+1. **client connects** --> server sends back version info including the scheme versions it can handle:
+
+   ```json
+   {
+     "type": "version",
+     "driverVersion": "6.5.0",
+     "serverVersion": "1.0.0",
+     "homeId": 3967882672,
+     "minSchemeVersion": 0,
+     "maxSchemeVersion": 1
+   }
+   ```
+
+2. **Client decides what to do based on supported scheme version**.
+   For example drop connection if the supported server scheme is too old or just handle the supported scheme itself. For example most/all basic commands will just work but relatively new commands won't and the client decides to only not handle the stuff in the upgraded scheme.
+
+3. **Client needs to tell the server what scheme it wants to use.** This is done in the "start_listening" command:
+
+   ```json
+   {
+     "command": "start_listening",
+     "messageId": 1,
+     "schemeVersion": 1
+   }
+   ```
+
+   From this moment the server knows how to treat commands to/from this client. The server can handle multiple clients with different scheme versions.
+
+4. If no **scheme version parameter is provided** in the start_listening command, the server will use the **minimal Scheme version** (which is 0 at this time).
+
+5. If the client sends a scheme version which is **out of range**, this will produce an error to the client an in the server's log:
+
+   ```json
+   {
+     "command": "start_listening",
+     "messageId": 1,
+     "schemeVersion": 3
+   }
+   {"type":"result","success":false,"messageId":1,"errorCode":"scheme_incompatible"}
+   ```
+
+6. When we make **breaking changes** in the api, we **bump the scheme version**. When adding new commands/features, we also bump the api scheme and note in both code comments and documentation to which scheme version that feature is compatible with.
 
 ## Authentication
 
