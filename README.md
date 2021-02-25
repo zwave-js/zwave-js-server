@@ -300,7 +300,7 @@ In an attempt to keep compatibility between different server and client versions
 
    From this moment the server knows how to treat commands to/from this client. The server can handle multiple clients with different schema versions.
 
-4. By default the server will use the minimum schema it supports if the `set_api_schema` command is omitted (which is 0 at this time).
+4. By default the server will use the minimum schema it supports (which is 0 at this time) if the `set_api_schema` command is omitted.
 
 5. If the client sends a schema version which is **out of range**, this will produce an error to the client and in the server's log:
 
