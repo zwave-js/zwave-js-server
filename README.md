@@ -305,7 +305,7 @@ In an attempt to keep compatibility between different server and client versions
 
 4. If no **schema version parameter is provided** in the start_listening command, the server will use the **minimal Schema version** (which is 0 at this time).
 
-5. If the client sends a schema version which is **out of range**, this will produce an error to the client an in the server's log:
+5. If the client sends a schema version which is **out of range**, this will produce an error to the client and in the server's log:
 
    ```json
    {
