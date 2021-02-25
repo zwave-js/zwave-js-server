@@ -56,7 +56,7 @@ type NodeState = Partial<
   Modify<
     ZWaveNode,
     {
-      deviceClass: DeviceClassState;
+      deviceClassFull: DeviceClassState;
       commandClasses: CommandClassState[];
       endpoints: EndpointState[];
       values: ValueState[];
@@ -105,7 +105,9 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   userIcon: node.userIcon,
   status: node.status,
   ready: node.ready,
-  deviceClass: dumpDeviceClass(node.deviceClass),
+  // This is for legacy compat with server < 1.0.0
+  deviceClass: node.deviceClass,
+  deviceClassFull: dumpDeviceClass(node.deviceClass),
   isListening: node.isListening,
   isFrequentListening: node.isFrequentListening,
   isRouting: node.isRouting,
