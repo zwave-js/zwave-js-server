@@ -6,7 +6,6 @@ import { IncomingMessageNode } from "./node/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: DriverCommand.startListening;
-  schemaVersion: number | undefined;
 }
 
 interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
@@ -18,9 +17,15 @@ interface IncomingCommandGetLogConfig extends IncomingCommandBase {
   command: DriverCommand.getLogConfig;
 }
 
+interface IncomingCommandSetApiSchema extends IncomingCommandBase {
+  command: DriverCommand.setApiSchema;
+  schemaVersion: number;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
+  | IncomingCommandSetApiSchema
   | IncomingMessageNode
   | IncomingMessageController;

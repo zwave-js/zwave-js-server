@@ -72,16 +72,21 @@ export class Client {
     }
 
     try {
-      if (msg.command === DriverCommand.startListening) {
+      if (msg.command === DriverCommand.setApiSchema) {
         // Handle schema version
-        this.schemaVersion = msg.schemaVersion | minSchemaVersion;
+        this.schemaVersion = msg.schemaVersion;
         if (
           this.schemaVersion < minSchemaVersion ||
           this.schemaVersion > maxSchemaVersion
         ) {
           throw new SchemaIncompatibleError(this.schemaVersion);
         }
+        this.sendResultSuccess(msg.messageId, {});
+        this.receiveEvents = true;
+        return;
+      }
 
+      if (msg.command === DriverCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
           state: dumpState(this.driver, this.schemaVersion),
         });

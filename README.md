@@ -62,13 +62,11 @@ interface {
 ```
 
 To start receive the state and get events, the client needs to send the `start_listening` command.
-See below for info about schemaVersion.
 
 ```ts
 interface {
   messageId: string;
   command: "start_listening";
-  schemaVersion: 1;
 }
 ```
 
@@ -291,11 +289,11 @@ In an attempt to keep compatibility between different server and client versions
 2. **Client decides what to do based on supported schema version**.
    For example drop connection if the supported server schema is too old or just handle the supported schema itself. For example most/all basic commands will just work but relatively new commands won't and the client decides to only not handle the stuff in the upgraded schema.
 
-3. **Client needs to tell the server what schema it wants to use.** This is done in the "start_listening" command:
+3. **Client needs to tell the server what schema it wants to use.** This is done with the "set_api_schema" command:
 
    ```json
    {
-     "command": "start_listening",
+     "command": "set_api_schema",
      "messageId": 1,
      "schemaVersion": 1
    }
@@ -303,13 +301,13 @@ In an attempt to keep compatibility between different server and client versions
 
    From this moment the server knows how to treat commands to/from this client. The server can handle multiple clients with different schema versions.
 
-4. If no **schema version parameter is provided** in the start_listening command, the server will use the **minimal Schema version** (which is 0 at this time).
+4. By default the server will use the minimum schema it supports if this command is omitted (which is 0 at this time).
 
 5. If the client sends a schema version which is **out of range**, this will produce an error to the client and in the server's log:
 
    ```json
    {
-     "command": "start_listening",
+     "command": "set_api_schema",
      "messageId": 1,
      "schemaVersion": 3
    }
