@@ -273,7 +273,7 @@ interface {
 
 ## Schema Version
 
-In an attempt to keep compatibility between different server and client versions, we introduced a (basic) API Schema Version.
+In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.
 
 1. **client connects** --> server sends back version info including the schema versions it can handle:
 
