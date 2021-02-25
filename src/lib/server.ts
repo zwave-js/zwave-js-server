@@ -8,14 +8,14 @@ import { IncomingMessage } from "./incoming_message";
 import { dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
-import { version, minSchemeVersion, maxSchemeVersion } from "./const";
+import { version, minSchemaVersion, maxSchemaVersion } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
 import { IncomingMessageController } from "./controller/incoming_message";
 import {
   BaseError,
   ErrorCode,
-  SchemeIncompatibleError,
+  SchemaIncompatibleError,
   UnknownCommandError,
 } from "./error";
 import { Instance } from "./instance";
@@ -25,7 +25,7 @@ import { DriverCommand } from "./command";
 export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
-  public schemeVersion = minSchemeVersion;
+  public schemaVersion = minSchemaVersion;
 
   private instanceHandlers: Record<
     Instance,
@@ -73,17 +73,17 @@ export class Client {
 
     try {
       if (msg.command === DriverCommand.startListening) {
-        // Handle scheme version
-        this.schemeVersion = msg.schemeVersion | minSchemeVersion;
+        // Handle schema version
+        this.schemaVersion = msg.schemaVersion | minSchemaVersion;
         if (
-          this.schemeVersion < minSchemeVersion ||
-          this.schemeVersion > maxSchemeVersion
+          this.schemaVersion < minSchemaVersion ||
+          this.schemaVersion > maxSchemaVersion
         ) {
-          throw new SchemeIncompatibleError(this.schemeVersion);
+          throw new SchemaIncompatibleError(this.schemaVersion);
         }
 
         this.sendResultSuccess(msg.messageId, {
-          state: dumpState(this.driver, this.schemeVersion),
+          state: dumpState(this.driver, this.schemaVersion),
         });
         this.receiveEvents = true;
         return;
@@ -128,8 +128,8 @@ export class Client {
       driverVersion: libVersion,
       serverVersion: version,
       homeId: this.driver.controller.homeId,
-      minSchemeVersion: minSchemeVersion,
-      maxSchemeVersion: maxSchemeVersion,
+      minSchemaVersion: minSchemaVersion,
+      maxSchemaVersion: maxSchemaVersion,
     });
   }
 

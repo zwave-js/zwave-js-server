@@ -100,7 +100,7 @@ export const dumpValue = (
 
 export const dumpNode = (
   node: ZWaveNode,
-  schemeVersion: number
+  schemaVersion: number
 ): NodeState => ({
   nodeId: node.nodeId,
   index: node.index,
@@ -108,9 +108,9 @@ export const dumpNode = (
   userIcon: node.userIcon,
   status: node.status,
   ready: node.ready,
-  // deviceclass dump is extended in schemeVersion 1+
+  // deviceclass dump is extended in schemaVersion 1+
   deviceClass:
-    schemeVersion === 0 ? node.deviceClass : dumpDeviceClass(node.deviceClass),
+    schemaVersion === 0 ? node.deviceClass : dumpDeviceClass(node.deviceClass),
   isListening: node.isListening,
   isFrequentListening: node.isFrequentListening,
   isRouting: node.isRouting,
@@ -136,9 +136,9 @@ export const dumpNode = (
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
   interviewStage: node.interviewStage,
-  // CommandClasses dump supported from schemeVersion 1+
+  // CommandClasses dump supported from schemaVersion 1+
   commandClasses:
-    schemeVersion >= 1
+    schemaVersion >= 1
       ? Array.from(node.getSupportedCCInstances(), (cc) =>
           dumpCommandClass(node, cc)
         )
@@ -187,7 +187,7 @@ export const dumpCommandClass = (
 
 export const dumpState = (
   driver: Driver,
-  schemeVersion: number
+  schemaVersion: number
 ): ZwaveState => {
   const controller = driver.controller;
   return {
@@ -211,7 +211,7 @@ export const dumpState = (
       supportsTimers: controller.supportsTimers,
     },
     nodes: Array.from(controller.nodes.values(), (node) =>
-      dumpNode(node, schemeVersion)
+      dumpNode(node, schemaVersion)
     ),
   };
 };

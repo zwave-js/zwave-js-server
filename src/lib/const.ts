@@ -1,7 +1,7 @@
 export const version = require("../../package.json").version;
 
-// minimal scheme version the server supports
-export const minSchemeVersion = 0;
+// minimal schema version the server supports
+export const minSchemaVersion = 0;
 
-// maximal/current scheme version the server supports
-export const maxSchemeVersion = 1;
+// maximal/current schema version the server supports
+export const maxSchemaVersion = 1;

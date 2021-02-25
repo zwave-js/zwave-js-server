@@ -25,12 +25,12 @@ export class EventForwarder {
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
 
     this.clients.driver.controller.on("node added", (node: ZWaveNode) => {
-      // forward event to all connected clients, respecting schemeVersion it supports
+      // forward event to all connected clients, respecting schemaVersion it supports
       this.clients.clients.forEach((client) =>
         this.sendEvent(client, {
           source: "controller",
           event: "node added",
-          node: dumpNode(node, client.schemeVersion),
+          node: dumpNode(node, client.schemaVersion),
         })
       );
       this.setupNode(node);
@@ -62,12 +62,12 @@ export class EventForwarder {
       })
     );
     this.clients.driver.controller.on("node removed", (node) =>
-      // forward event to all connected clients, respecting schemeVersion it supports
+      // forward event to all connected clients, respecting schemaVersion it supports
       this.clients.clients.forEach((client) =>
         this.sendEvent(client, {
           source: "controller",
           event: "node removed",
-          node: dumpNode(node, client.schemeVersion),
+          node: dumpNode(node, client.schemaVersion),
         })
       )
     );
@@ -117,7 +117,7 @@ export class EventForwarder {
           source: "node",
           event: "ready",
           nodeId: changedNode.nodeId,
-          ...dumpNode(changedNode, client.schemeVersion),
+          ...dumpNode(changedNode, client.schemaVersion),
         })
       );
     });

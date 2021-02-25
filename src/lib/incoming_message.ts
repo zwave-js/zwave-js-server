@@ -6,7 +6,7 @@ import { IncomingMessageNode } from "./node/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: DriverCommand.startListening;
-  schemeVersion: number | undefined;
+  schemaVersion: number | undefined;
 }
 
 interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
