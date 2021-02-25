@@ -56,7 +56,7 @@ type NodeState = Partial<
   Modify<
     ZWaveNode,
     {
-      deviceClass: DeviceClassState;
+      deviceClass: DeviceClass | DeviceClassState;
       commandClasses: CommandClassState[];
       endpoints: EndpointState[];
       values: ValueState[];
@@ -98,14 +98,19 @@ export const dumpValue = (
   value: node.getValue(valueArgs),
 });
 
-export const dumpNode = (node: ZWaveNode): NodeState => ({
+export const dumpNode = (
+  node: ZWaveNode,
+  schemeVersion: number
+): NodeState => ({
   nodeId: node.nodeId,
   index: node.index,
   installerIcon: node.installerIcon,
   userIcon: node.userIcon,
   status: node.status,
   ready: node.ready,
-  deviceClass: dumpDeviceClass(node.deviceClass),
+  // deviceclass dump is extended in schemeVersion 1+
+  deviceClass:
+    schemeVersion === 0 ? node.deviceClass : dumpDeviceClass(node.deviceClass),
   isListening: node.isListening,
   isFrequentListening: node.isFrequentListening,
   isRouting: node.isRouting,
@@ -131,9 +136,13 @@ export const dumpNode = (node: ZWaveNode): NodeState => ({
   aggregatedEndpointCount: node.aggregatedEndpointCount,
   interviewAttempts: node.interviewAttempts,
   interviewStage: node.interviewStage,
-  commandClasses: Array.from(node.getSupportedCCInstances(), (cc) =>
-    dumpCommandClass(node, cc)
-  ),
+  // CommandClasses dump supported from schemeVersion 1+
+  commandClasses:
+    schemeVersion >= 1
+      ? Array.from(node.getSupportedCCInstances(), (cc) =>
+          dumpCommandClass(node, cc)
+        )
+      : undefined,
   endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
     dumpEndpoint(endpoint)
   ),
@@ -176,7 +185,10 @@ export const dumpCommandClass = (
   isSecure: node.isCCSecure(commandClass.ccId),
 });
 
-export const dumpState = (driver: Driver): ZwaveState => {
+export const dumpState = (
+  driver: Driver,
+  schemeVersion: number
+): ZwaveState => {
   const controller = driver.controller;
   return {
     controller: {
@@ -198,6 +210,8 @@ export const dumpState = (driver: Driver): ZwaveState => {
       sucNodeId: controller.sucNodeId,
       supportsTimers: controller.supportsTimers,
     },
-    nodes: Array.from(controller.nodes.values(), (node) => dumpNode(node)),
+    nodes: Array.from(controller.nodes.values(), (node) =>
+      dumpNode(node, schemeVersion)
+    ),
   };
 };

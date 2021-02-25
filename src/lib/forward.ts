@@ -1,36 +1,38 @@
 import {
   ControllerEvents,
-  Driver,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
+import { Client, ClientsController } from "./server";
 
 export class EventForwarder {
   /**
    * Only load this once the driver is ready.
    *
-   * @param driver
-   * @param forwardEvent
+   * @param clients
    */
-  constructor(
-    public driver: Driver,
-    public forwardEvent: (data: OutgoingEvent) => void
-  ) {}
+  constructor(public clients: ClientsController) {}
 
   start() {
-    this.driver.controller.nodes.forEach((node) => this.setupNode(node));
+    this.clients.driver.controller.nodes.forEach((node) =>
+      this.setupNode(node)
+    );
 
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
-    this.driver.controller.on("node added", (node: ZWaveNode) => {
-      this.forwardEvent({
-        source: "controller",
-        event: "node added",
-        node: dumpNode(node),
-      });
+
+    this.clients.driver.controller.on("node added", (node: ZWaveNode) => {
+      // forward event to all connected clients, respecting schemeVersion it supports
+      this.clients.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "controller",
+          event: "node added",
+          node: dumpNode(node, client.schemeVersion),
+        })
+      );
       this.setupNode(node);
     });
 
@@ -43,7 +45,7 @@ export class EventForwarder {
         "exclusion stopped",
       ];
       for (const event of events) {
-        this.driver.controller.on(event, () =>
+        this.clients.driver.controller.on(event, () =>
           this.forwardEvent({
             source: "controller",
             event,
@@ -52,34 +54,49 @@ export class EventForwarder {
       }
     }
 
-    this.driver.controller.on("inclusion started", (secure) =>
+    this.clients.driver.controller.on("inclusion started", (secure) =>
       this.forwardEvent({
         source: "controller",
         event: "inclusion started",
         secure,
       })
     );
-    this.driver.controller.on("node removed", (node) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "node removed",
-        node: dumpNode(node),
-      })
+    this.clients.driver.controller.on("node removed", (node) =>
+      // forward event to all connected clients, respecting schemeVersion it supports
+      this.clients.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "controller",
+          event: "node removed",
+          node: dumpNode(node, client.schemeVersion),
+        })
+      )
     );
-    this.driver.controller.on("heal network progress", (progress) =>
+    this.clients.driver.controller.on("heal network progress", (progress) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
         progress,
       })
     );
-    this.driver.controller.on("heal network done", (result) =>
+    this.clients.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
         result,
       })
     );
+  }
+
+  forwardEvent(data: OutgoingEvent) {
+    // Forward event to all connected clients
+    this.clients.clients.forEach((client) => this.sendEvent(client, data));
+  }
+
+  sendEvent(client: Client, data: OutgoingEvent) {
+    // Send event to connected client only
+    if (client.receiveEvents && client.isConnected) {
+      client.sendEvent(data);
+    }
   }
 
   setupNode(node: ZWaveNode) {
@@ -95,8 +112,14 @@ export class EventForwarder {
 
     node.on("ready", (changedNode: ZWaveNode) => {
       // Dump full node state on ready event
-      const nodeState = dumpNode(changedNode);
-      notifyNode(changedNode, "ready", { nodeState });
+      this.clients.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "node",
+          event: "ready",
+          nodeId: changedNode.nodeId,
+          ...dumpNode(changedNode, client.schemeVersion),
+        })
+      );
     });
 
     {

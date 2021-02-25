@@ -2,6 +2,7 @@ export enum ErrorCode {
   unknownError = "unknown_error",
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
+  schemeIncompatible = "scheme_incompatible",
 }
 
 export class BaseError extends Error {
@@ -28,6 +29,14 @@ export class NodeNotFoundError extends BaseError {
   errorCode = ErrorCode.nodeNotFound;
 
   constructor(public nodeId: number) {
+    super();
+  }
+}
+
+export class SchemeIncompatibleError extends BaseError {
+  errorCode = ErrorCode.schemeIncompatible;
+
+  constructor(public schemeId: number) {
     super();
   }
 }

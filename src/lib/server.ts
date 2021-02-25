@@ -8,17 +8,24 @@ import { IncomingMessage } from "./incoming_message";
 import { dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
-import { version } from "./const";
+import { version, minSchemeVersion, maxSchemeVersion } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
 import { IncomingMessageController } from "./controller/incoming_message";
-import { BaseError, ErrorCode, UnknownCommandError } from "./error";
+import {
+  BaseError,
+  ErrorCode,
+  SchemeIncompatibleError,
+  UnknownCommandError,
+} from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { DriverCommand } from "./command";
-class Client {
+
+export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
+  public schemeVersion = minSchemeVersion;
 
   private instanceHandlers: Record<
     Instance,
@@ -66,8 +73,17 @@ class Client {
 
     try {
       if (msg.command === DriverCommand.startListening) {
+        // Handle scheme version
+        this.schemeVersion = msg.schemeVersion | minSchemeVersion;
+        if (
+          this.schemeVersion < minSchemeVersion ||
+          this.schemeVersion > maxSchemeVersion
+        ) {
+          throw new SchemeIncompatibleError(this.schemeVersion);
+        }
+
         this.sendResultSuccess(msg.messageId, {
-          state: dumpState(this.driver),
+          state: dumpState(this.driver, this.schemeVersion),
         });
         this.receiveEvents = true;
         return;
@@ -112,6 +128,8 @@ class Client {
       driverVersion: libVersion,
       serverVersion: version,
       homeId: this.driver.controller.homeId,
+      minSchemeVersion: minSchemeVersion,
+      maxSchemeVersion: maxSchemeVersion,
     });
   }
 
@@ -160,13 +178,13 @@ class Client {
     this.socket.close();
   }
 }
-class Clients {
-  private clients: Array<Client> = [];
+export class ClientsController {
+  public clients: Array<Client> = [];
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
-  constructor(private driver: Driver, private logger: Logger) {}
+  constructor(public driver: Driver, private logger: Logger) {}
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
@@ -199,13 +217,7 @@ class Clients {
     }
 
     if (this.eventForwarder === undefined) {
-      this.eventForwarder = new EventForwarder(this.driver, (data) => {
-        for (const client of this.clients) {
-          if (client.receiveEvents && client.isConnected) {
-            client.sendEvent(data);
-          }
-        }
-      });
+      this.eventForwarder = new EventForwarder(this);
       this.eventForwarder.start();
     }
   }
@@ -254,7 +266,7 @@ export interface ZwavejsServer {
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
-  private sockets?: Clients;
+  private sockets?: ClientsController;
   private logger: Logger;
 
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {
@@ -268,7 +280,7 @@ export class ZwavejsServer extends EventEmitter {
     }
     this.server = createServer();
     this.wsServer = new ws.Server({ server: this.server });
-    this.sockets = new Clients(this.driver, this.logger);
+    this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     this.logger.debug(`Starting server on port ${this.options.port}`);
