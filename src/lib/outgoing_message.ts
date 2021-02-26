@@ -15,6 +15,8 @@ interface OutgoingVersionMessage {
   driverVersion: string;
   serverVersion: string;
   homeId: number | undefined;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
 }
 
 interface OutgoingEventMessage {

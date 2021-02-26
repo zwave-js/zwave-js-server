@@ -17,9 +17,15 @@ interface IncomingCommandGetLogConfig extends IncomingCommandBase {
   command: DriverCommand.getLogConfig;
 }
 
+interface IncomingCommandSetApiSchema extends IncomingCommandBase {
+  command: DriverCommand.setApiSchema;
+  schemaVersion: number;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
+  | IncomingCommandSetApiSchema
   | IncomingMessageNode
   | IncomingMessageController;
