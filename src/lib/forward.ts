@@ -117,7 +117,7 @@ export class EventForwarder {
           source: "node",
           event: "ready",
           nodeId: changedNode.nodeId,
-          node: dumpNode(changedNode, client.schemaVersion),
+          nodeState: dumpNode(changedNode, client.schemaVersion),
         })
       );
     });
