@@ -13,7 +13,25 @@ import { CommandClasses } from "@zwave-js/core";
 type Modify<T, R> = Omit<T, keyof R> & R;
 
 export interface ZwaveState {
-  controller: Partial<ZWaveController>;
+  controller: {
+    libraryVersion: ZWaveController["libraryVersion"];
+    type: ZWaveController["type"];
+    homeId: ZWaveController["homeId"];
+    ownNodeId: ZWaveController["ownNodeId"];
+    isSecondary: ZWaveController["isSecondary"];
+    isUsingHomeIdFromOtherNetwork: ZWaveController["isUsingHomeIdFromOtherNetwork"];
+    isSISPresent: ZWaveController["isSISPresent"];
+    wasRealPrimary: ZWaveController["wasRealPrimary"];
+    isStaticUpdateController: ZWaveController["isStaticUpdateController"];
+    isSlave: ZWaveController["isSlave"];
+    serialApiVersion: ZWaveController["serialApiVersion"];
+    manufacturerId: ZWaveController["manufacturerId"];
+    productType: ZWaveController["productType"];
+    productId: ZWaveController["productId"];
+    supportedFunctionTypes: ZWaveController["supportedFunctionTypes"];
+    sucNodeId: ZWaveController["sucNodeId"];
+    supportsTimers: ZWaveController["supportsTimers"];
+  };
   nodes: NodeState[];
 }
 
@@ -24,27 +42,29 @@ interface CommandClassState {
   isSecure: boolean;
 }
 
-type EndpointState = Partial<Endpoint>;
+interface EndpointState {
+  nodeId: Endpoint["nodeId"];
+  index: Endpoint["index"];
+  installerIcon: Endpoint["installerIcon"];
+  userIcon: Endpoint["userIcon"];
+}
 
-type DeviceClassState = Partial<
-  Modify<
-    DeviceClass,
-    {
-      basic: {
-        key: number;
-        label: string;
-      };
-      generic: {
-        key: number;
-        label: string;
-      };
-      specific: {
-        key: number;
-        label: string;
-      };
-    }
-  >
->;
+interface DeviceClassState {
+  basic: {
+    key: number;
+    label: string;
+  };
+  generic: {
+    key: number;
+    label: string;
+  };
+  specific: {
+    key: number;
+    label: string;
+  };
+  mandatorySupportedCCs: DeviceClass["mandatorySupportedCCs"];
+  mandatoryControlledCCs: DeviceClass["mandatoryControlledCCs"];
+}
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
@@ -52,19 +72,49 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-type NodeState0 = Partial<
-  Modify<
-    ZWaveNode,
-    {
-      deviceClass?: DeviceClass | null;
-      commandClasses: CommandClassState[];
-      endpoints: EndpointState[];
-      values: ValueState[];
-    }
-  >
->;
+interface NodeState0 {
+  nodeId: ZWaveNode["nodeId"];
+  index: ZWaveNode["index"];
+  installerIcon: ZWaveNode["installerIcon"];
+  userIcon: ZWaveNode["userIcon"];
+  status: ZWaveNode["status"];
+  ready: ZWaveNode["ready"];
+  isListening: ZWaveNode["isListening"];
+  isFrequentListening: ZWaveNode["isFrequentListening"];
+  isRouting: ZWaveNode["isRouting"];
+  maxBaudRate: ZWaveNode["maxBaudRate"];
+  isSecure: ZWaveNode["isSecure"];
+  version: ZWaveNode["version"];
+  isBeaming: ZWaveNode["isBeaming"];
+  manufacturerId: ZWaveNode["manufacturerId"];
+  productId: ZWaveNode["productId"];
+  productType: ZWaveNode["productType"];
+  firmwareVersion: ZWaveNode["firmwareVersion"];
+  zwavePlusVersion: ZWaveNode["zwavePlusVersion"];
+  nodeType: ZWaveNode["nodeType"];
+  roleType: ZWaveNode["roleType"];
+  name: ZWaveNode["name"];
+  location: ZWaveNode["location"];
+  deviceConfig: ZWaveNode["deviceConfig"];
+  label: ZWaveNode["label"];
+  neighbors: ZWaveNode["neighbors"];
+  endpointCountIsDynamic: ZWaveNode["endpointCountIsDynamic"];
+  endpointsHaveIdenticalCapabilities: ZWaveNode["endpointsHaveIdenticalCapabilities"];
+  individualEndpointCount: ZWaveNode["individualEndpointCount"];
+  aggregatedEndpointCount: ZWaveNode["aggregatedEndpointCount"];
+  interviewAttempts: ZWaveNode["interviewAttempts"];
+  interviewStage: ZWaveNode["interviewStage"];
 
-type NodeState1 = Modify<NodeState0, { deviceClass: DeviceClassState | null }>;
+  deviceClass: DeviceClass | null;
+
+  endpoints: EndpointState[];
+  values: ValueState[];
+}
+
+type NodeState1 = Modify<
+  NodeState0,
+  { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
+>;
 
 type NodeState = NodeState0 | NodeState1;
 
@@ -112,21 +162,17 @@ export const dumpValue = (
   };
 };
 
-export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
-  return {
+export const dumpNode = (
+  node: ZWaveNode,
+  schemaVersion: number
+): NodeState0 | NodeState1 => {
+  const base: Partial<NodeState0> = {
     nodeId: node.nodeId,
     index: node.index,
     installerIcon: node.installerIcon,
     userIcon: node.userIcon,
     status: node.status,
     ready: node.ready,
-    // deviceclass dump is extended in schemaVersion 1+
-    deviceClass:
-      schemaVersion === 0
-        ? node.deviceClass || null
-        : node.deviceClass
-        ? dumpDeviceClass(node.deviceClass)
-        : null,
     isListening: node.isListening,
     isFrequentListening: node.isFrequentListening,
     isRouting: node.isRouting,
@@ -152,18 +198,28 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     aggregatedEndpointCount: node.aggregatedEndpointCount,
     interviewAttempts: node.interviewAttempts,
     interviewStage: node.interviewStage,
-    // CommandClasses dump supported from schemaVersion 1+
-    commandClasses:
-      schemaVersion >= 1
-        ? Array.from(node.getSupportedCCInstances(), (cc) =>
-            dumpCommandClass(node, cc)
-          )
-        : undefined,
     endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
       dumpEndpoint(endpoint)
     ),
     values: getNodeValues(node),
   };
+
+  if (schemaVersion == 0) {
+    const node0 = base as NodeState0;
+    node0.deviceClass = node.deviceClass || null;
+    return node0;
+  }
+
+  // Schema >= 1
+  const node1 = base as NodeState1;
+  node1.deviceClass = node.deviceClass
+    ? dumpDeviceClass(node.deviceClass)
+    : null;
+  node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(node, cc)
+  );
+
+  return node1;
 };
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
