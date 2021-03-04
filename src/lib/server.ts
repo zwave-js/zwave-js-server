@@ -107,7 +107,7 @@ export class Client {
         return;
       }
 
-      const [instance] = msg.command.split(".");
+      const instance = msg.command.split(".")[0] as Instance;
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
           msg.messageId,

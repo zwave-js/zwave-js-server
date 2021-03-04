@@ -6,6 +6,7 @@ export enum ErrorCode {
 }
 
 export class BaseError extends Error {
+  // @ts-ignore
   errorCode: ErrorCode;
 }
 

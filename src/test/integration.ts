@@ -7,11 +7,11 @@ import { minSchemaVersion, maxSchemaVersion } from "../lib/const";
 
 const PORT = 45001;
 
-const createNextMessage = (socket) => {
-  let waitingListener: (msg: unknown) => void;
-  const pendingMessages = [];
+const createNextMessage = (socket: ws) => {
+  let waitingListener: ((msg: unknown) => void) | undefined;
+  const pendingMessages: unknown[] = [];
 
-  socket.on("message", (data) => {
+  socket.on("message", (data: string) => {
     const msg = JSON.parse(data);
     if (!waitingListener) {
       pendingMessages.push(msg);
@@ -35,12 +35,12 @@ const createNextMessage = (socket) => {
 const runTest = async () => {
   const server = new ZwavejsServer(createMockDriver(), { port: PORT });
   await server.start();
-  let socket;
+  let socket: ws | undefined = undefined;
 
   try {
     socket = new ws(`ws://localhost:${PORT}`);
     const nextMessage = createNextMessage(socket);
-    await new Promise((resolve) => socket.once("open", resolve));
+    await new Promise((resolve) => socket!.once("open", resolve));
 
     assert.deepEqual(await nextMessage(), {
       driverVersion: libVersion,

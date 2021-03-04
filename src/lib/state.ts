@@ -52,17 +52,21 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-type NodeState = Partial<
+type NodeState0 = Partial<
   Modify<
     ZWaveNode,
     {
-      deviceClass: DeviceClass | DeviceClassState;
+      deviceClass?: DeviceClass | null;
       commandClasses: CommandClassState[];
       endpoints: EndpointState[];
       values: ValueState[];
     }
   >
 >;
+
+type NodeState1 = Modify<NodeState0, { deviceClass: DeviceClassState | null }>;
+
+type NodeState = NodeState0 | NodeState1;
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
   if (!node.ready) {
@@ -78,76 +82,89 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 export const dumpValue = (
   node: ZWaveNode,
   valueArgs: TranslatedValueID
-): ValueState => ({
-  endpoint: valueArgs.endpoint,
-  commandClass: valueArgs.commandClass,
-  commandClassName: valueArgs.commandClassName,
-  property: valueArgs.property,
-  propertyKey: valueArgs.propertyKey,
-  propertyName: valueArgs.propertyName,
-  propertyKeyName: valueArgs.propertyKeyName,
+): ValueState => {
   // get CC Version for this endpoint, fallback to CC version of the node itself
-  ccVersion:
-    node
-      .getEndpoint(valueArgs.endpoint)
-      ?.getCCVersion(valueArgs.commandClass) ||
-    node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
-  // append metadata
-  metadata: node.getValueMetadata(valueArgs),
-  // append actual value
-  value: node.getValue(valueArgs),
-});
+  let ccVersion: number | undefined;
 
-export const dumpNode = (
-  node: ZWaveNode,
-  schemaVersion: number
-): NodeState => ({
-  nodeId: node.nodeId,
-  index: node.index,
-  installerIcon: node.installerIcon,
-  userIcon: node.userIcon,
-  status: node.status,
-  ready: node.ready,
-  // deviceclass dump is extended in schemaVersion 1+
-  deviceClass:
-    schemaVersion === 0 ? node.deviceClass : dumpDeviceClass(node.deviceClass),
-  isListening: node.isListening,
-  isFrequentListening: node.isFrequentListening,
-  isRouting: node.isRouting,
-  maxBaudRate: node.maxBaudRate,
-  isSecure: node.isSecure,
-  version: node.version,
-  isBeaming: node.isBeaming,
-  manufacturerId: node.manufacturerId,
-  productId: node.productId,
-  productType: node.productType,
-  firmwareVersion: node.firmwareVersion,
-  zwavePlusVersion: node.zwavePlusVersion,
-  nodeType: node.nodeType,
-  roleType: node.roleType,
-  name: node.name,
-  location: node.location,
-  deviceConfig: node.deviceConfig,
-  label: node.label,
-  neighbors: node.neighbors,
-  endpointCountIsDynamic: node.endpointCountIsDynamic,
-  endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
-  individualEndpointCount: node.individualEndpointCount,
-  aggregatedEndpointCount: node.aggregatedEndpointCount,
-  interviewAttempts: node.interviewAttempts,
-  interviewStage: node.interviewStage,
-  // CommandClasses dump supported from schemaVersion 1+
-  commandClasses:
-    schemaVersion >= 1
-      ? Array.from(node.getSupportedCCInstances(), (cc) =>
-          dumpCommandClass(node, cc)
-        )
-      : undefined,
-  endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-    dumpEndpoint(endpoint)
-  ),
-  values: getNodeValues(node),
-});
+  if (valueArgs.endpoint !== undefined) {
+    ccVersion = node
+      .getEndpoint(valueArgs.endpoint)
+      ?.getCCVersion(valueArgs.commandClass);
+  }
+
+  if (ccVersion === undefined) {
+    ccVersion = node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
+  }
+
+  return {
+    endpoint: valueArgs.endpoint,
+    commandClass: valueArgs.commandClass,
+    commandClassName: valueArgs.commandClassName,
+    property: valueArgs.property,
+    propertyKey: valueArgs.propertyKey,
+    propertyName: valueArgs.propertyName,
+    propertyKeyName: valueArgs.propertyKeyName,
+    ccVersion,
+    // append metadata
+    metadata: node.getValueMetadata(valueArgs),
+    // append actual value
+    value: node.getValue(valueArgs),
+  };
+};
+
+export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
+  return {
+    nodeId: node.nodeId,
+    index: node.index,
+    installerIcon: node.installerIcon,
+    userIcon: node.userIcon,
+    status: node.status,
+    ready: node.ready,
+    // deviceclass dump is extended in schemaVersion 1+
+    deviceClass:
+      schemaVersion === 0
+        ? node.deviceClass || null
+        : node.deviceClass
+        ? dumpDeviceClass(node.deviceClass)
+        : null,
+    isListening: node.isListening,
+    isFrequentListening: node.isFrequentListening,
+    isRouting: node.isRouting,
+    maxBaudRate: node.maxBaudRate,
+    isSecure: node.isSecure,
+    version: node.version,
+    isBeaming: node.isBeaming,
+    manufacturerId: node.manufacturerId,
+    productId: node.productId,
+    productType: node.productType,
+    firmwareVersion: node.firmwareVersion,
+    zwavePlusVersion: node.zwavePlusVersion,
+    nodeType: node.nodeType,
+    roleType: node.roleType,
+    name: node.name,
+    location: node.location,
+    deviceConfig: node.deviceConfig,
+    label: node.label,
+    neighbors: node.neighbors,
+    endpointCountIsDynamic: node.endpointCountIsDynamic,
+    endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
+    individualEndpointCount: node.individualEndpointCount,
+    aggregatedEndpointCount: node.aggregatedEndpointCount,
+    interviewAttempts: node.interviewAttempts,
+    interviewStage: node.interviewStage,
+    // CommandClasses dump supported from schemaVersion 1+
+    commandClasses:
+      schemaVersion >= 1
+        ? Array.from(node.getSupportedCCInstances(), (cc) =>
+            dumpCommandClass(node, cc)
+          )
+        : undefined,
+    endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
+      dumpEndpoint(endpoint)
+    ),
+    values: getNodeValues(node),
+  };
+};
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
   nodeId: endpoint.nodeId,
