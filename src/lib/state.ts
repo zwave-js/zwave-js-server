@@ -72,7 +72,7 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface NodeState0 {
+interface NodeStateSchema0 {
   nodeId: ZWaveNode["nodeId"];
   index: ZWaveNode["index"];
   installerIcon: ZWaveNode["installerIcon"];
@@ -111,12 +111,12 @@ interface NodeState0 {
   values: ValueState[];
 }
 
-type NodeState1 = Modify<
-  NodeState0,
+type NodeStateSchema1 = Modify<
+  NodeStateSchema0,
   { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
 >;
 
-type NodeState = NodeState0 | NodeState1;
+type NodeState = NodeStateSchema0 | NodeStateSchema1;
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
   if (!node.ready) {
@@ -165,8 +165,8 @@ export const dumpValue = (
 export const dumpNode = (
   node: ZWaveNode,
   schemaVersion: number
-): NodeState0 | NodeState1 => {
-  const base: Partial<NodeState0> = {
+): NodeStateSchema0 | NodeStateSchema1 => {
+  const base: Partial<NodeStateSchema0> = {
     nodeId: node.nodeId,
     index: node.index,
     installerIcon: node.installerIcon,
@@ -205,13 +205,13 @@ export const dumpNode = (
   };
 
   if (schemaVersion == 0) {
-    const node0 = base as NodeState0;
+    const node0 = base as NodeStateSchema0;
     node0.deviceClass = node.deviceClass || null;
     return node0;
   }
 
   // Schema >= 1
-  const node1 = base as NodeState1;
+  const node1 = base as NodeStateSchema1;
   node1.deviceClass = node.deviceClass
     ? dumpDeviceClass(node.deviceClass)
     : null;
