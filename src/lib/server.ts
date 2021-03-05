@@ -82,7 +82,6 @@ export class Client {
           throw new SchemaIncompatibleError(this.schemaVersion);
         }
         this.sendResultSuccess(msg.messageId, {});
-        this.receiveEvents = true;
         return;
       }
 
