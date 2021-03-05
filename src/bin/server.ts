@@ -64,7 +64,7 @@ interface Args {
     console.error("Error in driver", e);
   });
 
-  let server;
+  let server: ZwavejsServer;
 
   driver.on("driver ready", async () => {
     try {

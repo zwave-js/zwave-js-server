@@ -1,7 +1,7 @@
 import minimist from "minimist";
 
 export const parseArgs = <T>(expectedKeys: string[]): T => {
-  const args: T = minimist(process.argv.slice(2));
+  const args = minimist(process.argv.slice(2));
 
   const extraKeys = Object.keys(args).filter(
     (key) => !expectedKeys.includes(key)
@@ -12,5 +12,5 @@ export const parseArgs = <T>(expectedKeys: string[]): T => {
     process.exit(1);
   }
 
-  return args;
+  return (args as unknown) as T;
 };

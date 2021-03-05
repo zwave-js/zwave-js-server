@@ -58,14 +58,14 @@ export class ControllerMessageHandler {
         return { failed };
       }
       case ControllerCommand.getAssociationGroups: {
-        const groups = {};
+        const groups: ControllerResultTypes[ControllerCommand.getAssociationGroups]["groups"] = {};
         driver.controller
           .getAssociationGroups(message.nodeId)
           .forEach((value, key) => (groups[key] = value));
         return { groups };
       }
       case ControllerCommand.getAssociations: {
-        const associations = {};
+        const associations: ControllerResultTypes[ControllerCommand.getAssociations]["associations"] = {};
         driver.controller
           .getAssociations(message.nodeId)
           .forEach((value, key) => (associations[key] = value));

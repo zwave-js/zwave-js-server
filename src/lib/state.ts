@@ -13,7 +13,25 @@ import { CommandClasses } from "@zwave-js/core";
 type Modify<T, R> = Omit<T, keyof R> & R;
 
 export interface ZwaveState {
-  controller: Partial<ZWaveController>;
+  controller: {
+    libraryVersion: ZWaveController["libraryVersion"];
+    type: ZWaveController["type"];
+    homeId: ZWaveController["homeId"];
+    ownNodeId: ZWaveController["ownNodeId"];
+    isSecondary: ZWaveController["isSecondary"];
+    isUsingHomeIdFromOtherNetwork: ZWaveController["isUsingHomeIdFromOtherNetwork"];
+    isSISPresent: ZWaveController["isSISPresent"];
+    wasRealPrimary: ZWaveController["wasRealPrimary"];
+    isStaticUpdateController: ZWaveController["isStaticUpdateController"];
+    isSlave: ZWaveController["isSlave"];
+    serialApiVersion: ZWaveController["serialApiVersion"];
+    manufacturerId: ZWaveController["manufacturerId"];
+    productType: ZWaveController["productType"];
+    productId: ZWaveController["productId"];
+    supportedFunctionTypes: ZWaveController["supportedFunctionTypes"];
+    sucNodeId: ZWaveController["sucNodeId"];
+    supportsTimers: ZWaveController["supportsTimers"];
+  };
   nodes: NodeState[];
 }
 
@@ -24,27 +42,29 @@ interface CommandClassState {
   isSecure: boolean;
 }
 
-type EndpointState = Partial<Endpoint>;
+interface EndpointState {
+  nodeId: Endpoint["nodeId"];
+  index: Endpoint["index"];
+  installerIcon: Endpoint["installerIcon"];
+  userIcon: Endpoint["userIcon"];
+}
 
-type DeviceClassState = Partial<
-  Modify<
-    DeviceClass,
-    {
-      basic: {
-        key: number;
-        label: string;
-      };
-      generic: {
-        key: number;
-        label: string;
-      };
-      specific: {
-        key: number;
-        label: string;
-      };
-    }
-  >
->;
+interface DeviceClassState {
+  basic: {
+    key: number;
+    label: string;
+  };
+  generic: {
+    key: number;
+    label: string;
+  };
+  specific: {
+    key: number;
+    label: string;
+  };
+  mandatorySupportedCCs: DeviceClass["mandatorySupportedCCs"];
+  mandatoryControlledCCs: DeviceClass["mandatoryControlledCCs"];
+}
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
@@ -52,17 +72,51 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-type NodeState = Partial<
-  Modify<
-    ZWaveNode,
-    {
-      deviceClass: DeviceClass | DeviceClassState;
-      commandClasses: CommandClassState[];
-      endpoints: EndpointState[];
-      values: ValueState[];
-    }
-  >
+interface NodeStateSchema0 {
+  nodeId: ZWaveNode["nodeId"];
+  index: ZWaveNode["index"];
+  installerIcon: ZWaveNode["installerIcon"];
+  userIcon: ZWaveNode["userIcon"];
+  status: ZWaveNode["status"];
+  ready: ZWaveNode["ready"];
+  isListening: ZWaveNode["isListening"];
+  isFrequentListening: ZWaveNode["isFrequentListening"];
+  isRouting: ZWaveNode["isRouting"];
+  maxBaudRate: ZWaveNode["maxBaudRate"];
+  isSecure: ZWaveNode["isSecure"];
+  version: ZWaveNode["version"];
+  isBeaming: ZWaveNode["isBeaming"];
+  manufacturerId: ZWaveNode["manufacturerId"];
+  productId: ZWaveNode["productId"];
+  productType: ZWaveNode["productType"];
+  firmwareVersion: ZWaveNode["firmwareVersion"];
+  zwavePlusVersion: ZWaveNode["zwavePlusVersion"];
+  nodeType: ZWaveNode["nodeType"];
+  roleType: ZWaveNode["roleType"];
+  name: ZWaveNode["name"];
+  location: ZWaveNode["location"];
+  deviceConfig: ZWaveNode["deviceConfig"];
+  label: ZWaveNode["label"];
+  neighbors: ZWaveNode["neighbors"];
+  endpointCountIsDynamic: ZWaveNode["endpointCountIsDynamic"];
+  endpointsHaveIdenticalCapabilities: ZWaveNode["endpointsHaveIdenticalCapabilities"];
+  individualEndpointCount: ZWaveNode["individualEndpointCount"];
+  aggregatedEndpointCount: ZWaveNode["aggregatedEndpointCount"];
+  interviewAttempts: ZWaveNode["interviewAttempts"];
+  interviewStage: ZWaveNode["interviewStage"];
+
+  deviceClass: DeviceClass | null;
+
+  endpoints: EndpointState[];
+  values: ValueState[];
+}
+
+type NodeStateSchema1 = Modify<
+  NodeStateSchema0,
+  { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
 >;
+
+type NodeState = NodeStateSchema0 | NodeStateSchema1;
 
 function getNodeValues(node: ZWaveNode): ValueState[] {
   if (!node.ready) {
@@ -78,76 +132,95 @@ function getNodeValues(node: ZWaveNode): ValueState[] {
 export const dumpValue = (
   node: ZWaveNode,
   valueArgs: TranslatedValueID
-): ValueState => ({
-  endpoint: valueArgs.endpoint,
-  commandClass: valueArgs.commandClass,
-  commandClassName: valueArgs.commandClassName,
-  property: valueArgs.property,
-  propertyKey: valueArgs.propertyKey,
-  propertyName: valueArgs.propertyName,
-  propertyKeyName: valueArgs.propertyKeyName,
+): ValueState => {
   // get CC Version for this endpoint, fallback to CC version of the node itself
-  ccVersion:
-    node
+  let ccVersion: number | undefined;
+
+  if (valueArgs.endpoint !== undefined) {
+    ccVersion = node
       .getEndpoint(valueArgs.endpoint)
-      ?.getCCVersion(valueArgs.commandClass) ||
-    node.getEndpoint(0).getCCVersion(valueArgs.commandClass),
-  // append metadata
-  metadata: node.getValueMetadata(valueArgs),
-  // append actual value
-  value: node.getValue(valueArgs),
-});
+      ?.getCCVersion(valueArgs.commandClass);
+  }
+
+  if (ccVersion === undefined) {
+    ccVersion = node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
+  }
+
+  return {
+    endpoint: valueArgs.endpoint,
+    commandClass: valueArgs.commandClass,
+    commandClassName: valueArgs.commandClassName,
+    property: valueArgs.property,
+    propertyKey: valueArgs.propertyKey,
+    propertyName: valueArgs.propertyName,
+    propertyKeyName: valueArgs.propertyKeyName,
+    ccVersion,
+    // append metadata
+    metadata: node.getValueMetadata(valueArgs),
+    // append actual value
+    value: node.getValue(valueArgs),
+  };
+};
 
 export const dumpNode = (
   node: ZWaveNode,
   schemaVersion: number
-): NodeState => ({
-  nodeId: node.nodeId,
-  index: node.index,
-  installerIcon: node.installerIcon,
-  userIcon: node.userIcon,
-  status: node.status,
-  ready: node.ready,
-  // deviceclass dump is extended in schemaVersion 1+
-  deviceClass:
-    schemaVersion === 0 ? node.deviceClass : dumpDeviceClass(node.deviceClass),
-  isListening: node.isListening,
-  isFrequentListening: node.isFrequentListening,
-  isRouting: node.isRouting,
-  maxBaudRate: node.maxBaudRate,
-  isSecure: node.isSecure,
-  version: node.version,
-  isBeaming: node.isBeaming,
-  manufacturerId: node.manufacturerId,
-  productId: node.productId,
-  productType: node.productType,
-  firmwareVersion: node.firmwareVersion,
-  zwavePlusVersion: node.zwavePlusVersion,
-  nodeType: node.nodeType,
-  roleType: node.roleType,
-  name: node.name,
-  location: node.location,
-  deviceConfig: node.deviceConfig,
-  label: node.label,
-  neighbors: node.neighbors,
-  endpointCountIsDynamic: node.endpointCountIsDynamic,
-  endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
-  individualEndpointCount: node.individualEndpointCount,
-  aggregatedEndpointCount: node.aggregatedEndpointCount,
-  interviewAttempts: node.interviewAttempts,
-  interviewStage: node.interviewStage,
-  // CommandClasses dump supported from schemaVersion 1+
-  commandClasses:
-    schemaVersion >= 1
-      ? Array.from(node.getSupportedCCInstances(), (cc) =>
-          dumpCommandClass(node, cc)
-        )
-      : undefined,
-  endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-    dumpEndpoint(endpoint)
-  ),
-  values: getNodeValues(node),
-});
+): NodeStateSchema0 | NodeStateSchema1 => {
+  const base: Partial<NodeStateSchema0> = {
+    nodeId: node.nodeId,
+    index: node.index,
+    installerIcon: node.installerIcon,
+    userIcon: node.userIcon,
+    status: node.status,
+    ready: node.ready,
+    isListening: node.isListening,
+    isFrequentListening: node.isFrequentListening,
+    isRouting: node.isRouting,
+    maxBaudRate: node.maxBaudRate,
+    isSecure: node.isSecure,
+    version: node.version,
+    isBeaming: node.isBeaming,
+    manufacturerId: node.manufacturerId,
+    productId: node.productId,
+    productType: node.productType,
+    firmwareVersion: node.firmwareVersion,
+    zwavePlusVersion: node.zwavePlusVersion,
+    nodeType: node.nodeType,
+    roleType: node.roleType,
+    name: node.name,
+    location: node.location,
+    deviceConfig: node.deviceConfig,
+    label: node.label,
+    neighbors: node.neighbors,
+    endpointCountIsDynamic: node.endpointCountIsDynamic,
+    endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
+    individualEndpointCount: node.individualEndpointCount,
+    aggregatedEndpointCount: node.aggregatedEndpointCount,
+    interviewAttempts: node.interviewAttempts,
+    interviewStage: node.interviewStage,
+    endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
+      dumpEndpoint(endpoint)
+    ),
+    values: getNodeValues(node),
+  };
+
+  if (schemaVersion == 0) {
+    const node0 = base as NodeStateSchema0;
+    node0.deviceClass = node.deviceClass || null;
+    return node0;
+  }
+
+  // Schema >= 1
+  const node1 = base as NodeStateSchema1;
+  node1.deviceClass = node.deviceClass
+    ? dumpDeviceClass(node.deviceClass)
+    : null;
+  node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(node, cc)
+  );
+
+  return node1;
+};
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
   nodeId: endpoint.nodeId,
