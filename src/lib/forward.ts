@@ -7,6 +7,7 @@ import {
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
+import { schemaTransformValueMetadata } from "../util/metadata_handler";
 
 export class EventForwarder {
   /**
@@ -110,6 +111,40 @@ export class EventForwarder {
         ...extra,
       });
 
+    // Value or Metadata updates require potential schema transforms
+    const notifyNodeOnValueOrMetadataUpdates = (
+      node: ZWaveNode,
+      event: string,
+      args: any
+    ) => {
+      let newArgs: any;
+      this.clients.clients.forEach((client) => {
+        // Copy arguments for each client so transforms don't impact all clients
+        Object.assign(newArgs, args);
+        if (args.hasOwnProperty("prevValue")) {
+          schemaTransformValueMetadata(
+            newArgs.prevValue.metadata,
+            client.schemaVersion
+          );
+        }
+        if (args.hasOwnProperty("newValue")) {
+          schemaTransformValueMetadata(
+            newArgs.newValue.metadata,
+            client.schemaVersion
+          );
+        }
+        if (args.hasOwnProperty("metadata")) {
+          schemaTransformValueMetadata(newArgs.metadata, client.schemaVersion);
+        }
+        this.sendEvent(client, {
+          source: "node",
+          event,
+          nodeId: node.nodeId,
+          ...{ newArgs },
+        });
+      });
+    };
+
     node.on("ready", (changedNode: ZWaveNode) => {
       // Dump full node state on ready event
       this.clients.clients.forEach((client) =>
@@ -155,7 +190,7 @@ export class EventForwarder {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          notifyNode(changedNode, event, { args });
+          notifyNodeOnValueOrMetadataUpdates(changedNode, event, args);
         });
       }
     }

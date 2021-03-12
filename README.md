@@ -281,7 +281,7 @@ In an attempt to keep compatibility between different server and client versions
      "serverVersion": "1.0.0",
      "homeId": 3967882672,
      "minSchemaVersion": 0,
-     "maxSchemaVersion": 1
+     "maxSchemaVersion": 2
    }
    ```
 
