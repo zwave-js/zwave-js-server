@@ -7,11 +7,11 @@ export const getValueMetadata = (
 ): ValueMetadata => {
   let metadata: ValueMetadata;
   metadata = node.getValueMetadata(valueArgs);
-  transformValueMetadata(metadata, schemaVersion);
+  schemaTransformValueMetadata(metadata, schemaVersion);
   return metadata;
 };
 
-export const transformValueMetadata = (
+export const schemaTransformValueMetadata = (
   metadata: ValueMetadata,
   schemaVersion: number
 ): void => {
