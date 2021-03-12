@@ -121,19 +121,19 @@ export class EventForwarder {
       this.clients.clients.forEach((client) => {
         // Copy arguments for each client so transforms don't impact all clients
         Object.assign(newArgs, args);
-        if (newArgs.hasOwnProperty("prevValue")) {
+        if ("prevValue" in newArgs) {
           schemaTransformValueMetadata(
             newArgs.prevValue.metadata,
             client.schemaVersion
           );
         }
-        if (newArgs.hasOwnProperty("newValue")) {
+        if ("newValue" in newArgs) {
           schemaTransformValueMetadata(
             newArgs.newValue.metadata,
             client.schemaVersion
           );
         }
-        if (newArgs.hasOwnProperty("metadata")) {
+        if ("metadata" in newArgs) {
           schemaTransformValueMetadata(newArgs.metadata, client.schemaVersion);
         }
         this.sendEvent(client, {
