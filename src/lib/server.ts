@@ -42,7 +42,11 @@ export class Client {
       throw new Error("Driver handler not implemented.");
     },
     [Instance.node]: (message) =>
-      NodeMessageHandler.handle(message as IncomingMessageNode, this.driver),
+      NodeMessageHandler.handle(
+        message as IncomingMessageNode,
+        this.driver,
+        this
+      ),
   };
 
   constructor(
