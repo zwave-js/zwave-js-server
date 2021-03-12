@@ -138,7 +138,7 @@ export class EventForwarder {
           source: "node",
           event,
           nodeId: node.nodeId,
-          ...{ args: newArgs },
+          args: newArgs,
         });
       });
     };
