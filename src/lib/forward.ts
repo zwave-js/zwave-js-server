@@ -139,7 +139,7 @@ export class EventForwarder {
           source: "node",
           event,
           nodeId: node.nodeId,
-          ...{ newArgs },
+          { args: newArgs },
         });
       });
     };
