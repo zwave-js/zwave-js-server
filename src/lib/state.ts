@@ -9,7 +9,7 @@ import {
   CommandClass,
 } from "zwave-js";
 import { CommandClasses } from "@zwave-js/core";
-import { getValueMetadata } from "../util/metadata_handler";
+import { getTransformedValueMetadata } from "../util/metadata_handler";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -158,7 +158,7 @@ export const dumpValue = (
     propertyKeyName: valueArgs.propertyKeyName,
     ccVersion,
     // append metadata
-    metadata: getValueMetadata(node, valueArgs, schemaVersion),
+    metadata: getTransformedValueMetadata(node, valueArgs, schemaVersion),
     // append actual value
     value: node.getValue(valueArgs),
   };

@@ -1,6 +1,6 @@
 import { ValueID, ValueMetadata, ZWaveNode } from "zwave-js";
 
-export const getValueMetadata = (
+export const getTransformedValueMetadata = (
   node: ZWaveNode,
   valueArgs: ValueID,
   schemaVersion: number
