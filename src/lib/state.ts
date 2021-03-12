@@ -4,12 +4,12 @@ import {
   ZWaveNode,
   Endpoint,
   TranslatedValueID,
+  ValueID,
   ValueMetadata,
   DeviceClass,
   CommandClass,
 } from "zwave-js";
 import { CommandClasses } from "@zwave-js/core";
-import { getTransformedValueMetadata } from "../util/metadata_handler";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -289,4 +289,24 @@ export const dumpState = (
       dumpNode(node, schemaVersion)
     ),
   };
+};
+
+export const getTransformedValueMetadata = (
+  node: ZWaveNode,
+  valueArgs: ValueID,
+  schemaVersion: number
+): ValueMetadata => {
+  let metadata: ValueMetadata;
+  metadata = node.getValueMetadata(valueArgs);
+  schemaTransformValueMetadata(metadata, schemaVersion);
+  return metadata;
+};
+
+export const schemaTransformValueMetadata = (
+  metadata: ValueMetadata,
+  schemaVersion: number
+): void => {
+  if (schemaVersion < 2 && metadata.type === "buffer") {
+    metadata.type = "string";
+  }
 };

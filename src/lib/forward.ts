@@ -5,9 +5,8 @@ import {
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode } from "./state";
+import { dumpNode, schemaTransformValueMetadata } from "./state";
 import { Client, ClientsController } from "./server";
-import { schemaTransformValueMetadata } from "../util/metadata_handler";
 
 export class EventForwarder {
   /**
@@ -119,7 +118,7 @@ export class EventForwarder {
     ) => {
       this.clients.clients.forEach((client) => {
         // Copy arguments for each client so transforms don't impact all clients
-        const newArgs = {...args};
+        const newArgs = { ...args };
         if ("prevValue" in newArgs) {
           schemaTransformValueMetadata(
             newArgs.prevValue.metadata,
@@ -139,7 +138,7 @@ export class EventForwarder {
           source: "node",
           event,
           nodeId: node.nodeId,
-          { args: newArgs },
+          ...{ args: newArgs },
         });
       });
     };
