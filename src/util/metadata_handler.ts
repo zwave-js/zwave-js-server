@@ -15,7 +15,7 @@ export const schemaTransformValueMetadata = (
   metadata: ValueMetadata,
   schemaVersion: number
 ): void => {
-  if (schemaVersion <= 1 && metadata.type === "buffer") {
+  if (schemaVersion < 2 && metadata.type === "buffer") {
     metadata.type = "string";
   }
 };
