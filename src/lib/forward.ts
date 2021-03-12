@@ -117,10 +117,9 @@ export class EventForwarder {
       event: string,
       args: any
     ) => {
-      let newArgs: any;
       this.clients.clients.forEach((client) => {
         // Copy arguments for each client so transforms don't impact all clients
-        Object.assign(newArgs, args);
+        const newArgs = {...args};
         if ("prevValue" in newArgs) {
           schemaTransformValueMetadata(
             newArgs.prevValue.metadata,
