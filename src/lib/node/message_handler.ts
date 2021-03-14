@@ -1,7 +1,7 @@
 import { Driver } from "zwave-js";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
-import { getTransformedValueMetadata } from "../state";
+import { dumpMetadata, getTransformedValueMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
@@ -30,9 +30,8 @@ export class NodeMessageHandler {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
       case NodeCommand.getValueMetadata:
-        return getTransformedValueMetadata(
-          node,
-          message.valueId,
+        return dumpMetadata(
+          node.getValueMetadata(message.valueId),
           client.schemaVersion
         );
       case NodeCommand.abortFirmwareUpdate:

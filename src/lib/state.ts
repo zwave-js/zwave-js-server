@@ -4,7 +4,6 @@ import {
   ZWaveNode,
   Endpoint,
   TranslatedValueID,
-  ValueID,
   ValueMetadata,
   DeviceClass,
   CommandClass,
@@ -71,6 +70,23 @@ interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
   ccVersion: number;
   value?: any;
+}
+
+interface MetadataState {
+  type: ValueMetadata["type"];
+  default?: ValueMetadata["default"];
+  readable: ValueMetadata["readable"];
+  writeable: ValueMetadata["writeable"];
+  description?: ValueMetadata["description"];
+  label?: ValueMetadata["label"];
+  ccSpecific?: ValueMetadata["ccSpecific"];
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+  steps?: number;
+  states?: Record<number, string>;
+  unit?: string;
 }
 
 interface NodeStateSchema0 {
@@ -158,10 +174,59 @@ export const dumpValue = (
     propertyKeyName: valueArgs.propertyKeyName,
     ccVersion,
     // append metadata
-    metadata: getTransformedValueMetadata(node, valueArgs, schemaVersion),
+    metadata: dumpMetadata(node.getValueMetadata(valueArgs), schemaVersion),
     // append actual value
     value: node.getValue(valueArgs),
   };
+};
+
+export const dumpMetadata = (
+  metadata: ValueMetadata,
+  schemaVersion: number
+): MetadataState => {
+  let newMetadata: MetadataState = {
+    type: metadata.type,
+    default: metadata.default,
+    readable: metadata.readable,
+    writeable: metadata.writeable,
+    description: metadata.description,
+    label: metadata.label,
+    ccSpecific: metadata.ccSpecific,
+  };
+
+  if ("min" in metadata) {
+    newMetadata.min = metadata.min;
+  }
+
+  if ("max" in metadata) {
+    newMetadata.max = metadata.max;
+  }
+
+  if ("minLength" in metadata) {
+    newMetadata.minLength = metadata.minLength;
+  }
+
+  if ("maxLength" in metadata) {
+    newMetadata.maxLength = metadata.maxLength;
+  }
+
+  if ("steps" in metadata) {
+    newMetadata.steps = metadata.steps;
+  }
+
+  if ("states" in metadata) {
+    newMetadata.states = { ...metadata.states };
+  }
+
+  if ("unit" in metadata) {
+    newMetadata.unit = metadata.unit;
+  }
+
+  if (schemaVersion < 2 && newMetadata.type === "buffer") {
+    newMetadata.type = "string";
+  }
+
+  return newMetadata;
 };
 
 export const dumpNode = (
@@ -289,24 +354,4 @@ export const dumpState = (
       dumpNode(node, schemaVersion)
     ),
   };
-};
-
-export const getTransformedValueMetadata = (
-  node: ZWaveNode,
-  valueArgs: ValueID,
-  schemaVersion: number
-): ValueMetadata => {
-  let metadata: ValueMetadata;
-  metadata = node.getValueMetadata(valueArgs);
-  schemaTransformValueMetadata(metadata, schemaVersion);
-  return metadata;
-};
-
-export const schemaTransformValueMetadata = (
-  metadata: ValueMetadata,
-  schemaVersion: number
-): void => {
-  if (schemaVersion < 2 && metadata.type === "buffer") {
-    metadata.type = "string";
-  }
 };

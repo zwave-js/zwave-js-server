@@ -5,7 +5,7 @@ import {
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode, schemaTransformValueMetadata } from "./state";
+import { dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
 
 export class EventForwarder {
@@ -120,19 +120,24 @@ export class EventForwarder {
         // Copy arguments for each client so transforms don't impact all clients
         const newArgs = { ...args };
         if ("prevValue" in newArgs) {
-          schemaTransformValueMetadata(
+          newArgs.prevValue = { ...newArgs.prevValue };
+          newArgs.prevValue.metadata = dumpMetadata(
             newArgs.prevValue.metadata,
             client.schemaVersion
           );
         }
         if ("newValue" in newArgs) {
-          schemaTransformValueMetadata(
+          newArgs.newValue = { ...newArgs.newValue };
+          newArgs.newValue.metadata = dumpMetadata(
             newArgs.newValue.metadata,
             client.schemaVersion
           );
         }
         if ("metadata" in newArgs) {
-          schemaTransformValueMetadata(newArgs.metadata, client.schemaVersion);
+          newArgs.metadata = dumpMetadata(
+            newArgs.metadata,
+            client.schemaVersion
+          );
         }
         this.sendEvent(client, {
           source: "node",
