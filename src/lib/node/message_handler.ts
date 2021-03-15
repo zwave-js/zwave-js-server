@@ -1,7 +1,7 @@
 import { Driver } from "zwave-js";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
-import { dumpMetadata, getTransformedValueMetadata } from "../state";
+import { dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
