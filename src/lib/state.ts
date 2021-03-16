@@ -72,6 +72,23 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
+interface MetadataState {
+  type: ValueMetadata["type"];
+  default?: ValueMetadata["default"];
+  readable: ValueMetadata["readable"];
+  writeable: ValueMetadata["writeable"];
+  description?: ValueMetadata["description"];
+  label?: ValueMetadata["label"];
+  ccSpecific?: ValueMetadata["ccSpecific"];
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+  steps?: number;
+  states?: Record<number, string>;
+  unit?: string;
+}
+
 interface NodeStateSchema0 {
   nodeId: ZWaveNode["nodeId"];
   index: ZWaveNode["index"];
@@ -118,20 +135,21 @@ type NodeStateSchema1 = Modify<
 
 type NodeState = NodeStateSchema0 | NodeStateSchema1;
 
-function getNodeValues(node: ZWaveNode): ValueState[] {
+function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
     // guard: do not request all values (and their metadata) while the node is still being interviewed.
     // once the node hits ready state, all values will be sent in the 'node ready' event.
     return [];
   }
   return Array.from(node.getDefinedValueIDs(), (valueId) =>
-    dumpValue(node, valueId)
+    dumpValue(node, valueId, schemaVersion)
   );
 }
 
 export const dumpValue = (
   node: ZWaveNode,
-  valueArgs: TranslatedValueID
+  valueArgs: TranslatedValueID,
+  schemaVersion: number
 ): ValueState => {
   // get CC Version for this endpoint, fallback to CC version of the node itself
   let ccVersion: number | undefined;
@@ -156,10 +174,59 @@ export const dumpValue = (
     propertyKeyName: valueArgs.propertyKeyName,
     ccVersion,
     // append metadata
-    metadata: node.getValueMetadata(valueArgs),
+    metadata: dumpMetadata(node.getValueMetadata(valueArgs), schemaVersion),
     // append actual value
     value: node.getValue(valueArgs),
   };
+};
+
+export const dumpMetadata = (
+  metadata: ValueMetadata,
+  schemaVersion: number
+): MetadataState => {
+  let newMetadata: MetadataState = {
+    type: metadata.type,
+    default: metadata.default,
+    readable: metadata.readable,
+    writeable: metadata.writeable,
+    description: metadata.description,
+    label: metadata.label,
+    ccSpecific: metadata.ccSpecific,
+  };
+
+  if ("min" in metadata) {
+    newMetadata.min = metadata.min;
+  }
+
+  if ("max" in metadata) {
+    newMetadata.max = metadata.max;
+  }
+
+  if ("minLength" in metadata) {
+    newMetadata.minLength = metadata.minLength;
+  }
+
+  if ("maxLength" in metadata) {
+    newMetadata.maxLength = metadata.maxLength;
+  }
+
+  if ("steps" in metadata) {
+    newMetadata.steps = metadata.steps;
+  }
+
+  if ("states" in metadata) {
+    newMetadata.states = { ...metadata.states };
+  }
+
+  if ("unit" in metadata) {
+    newMetadata.unit = metadata.unit;
+  }
+
+  if (schemaVersion < 2 && newMetadata.type === "buffer") {
+    newMetadata.type = "string";
+  }
+
+  return newMetadata;
 };
 
 export const dumpNode = (
@@ -201,7 +268,7 @@ export const dumpNode = (
     endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
       dumpEndpoint(endpoint)
     ),
-    values: getNodeValues(node),
+    values: getNodeValues(node, schemaVersion),
   };
 
   if (schemaVersion == 0) {

@@ -5,7 +5,7 @@ import {
   ZWaveNodeEvents,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpNode } from "./state";
+import { dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
 
 export class EventForwarder {
@@ -110,6 +110,44 @@ export class EventForwarder {
         ...extra,
       });
 
+    // Value or Metadata updates require potential schema transforms
+    const notifyNodeOnValueOrMetadataUpdates = (
+      node: ZWaveNode,
+      event: string,
+      args: any
+    ) => {
+      this.clients.clients.forEach((client) => {
+        // Copy arguments for each client so transforms don't impact all clients
+        const newArgs = { ...args };
+        if ("prevValue" in newArgs) {
+          newArgs.prevValue = { ...newArgs.prevValue };
+          newArgs.prevValue.metadata = dumpMetadata(
+            newArgs.prevValue.metadata,
+            client.schemaVersion
+          );
+        }
+        if ("newValue" in newArgs) {
+          newArgs.newValue = { ...newArgs.newValue };
+          newArgs.newValue.metadata = dumpMetadata(
+            newArgs.newValue.metadata,
+            client.schemaVersion
+          );
+        }
+        if ("metadata" in newArgs) {
+          newArgs.metadata = dumpMetadata(
+            newArgs.metadata,
+            client.schemaVersion
+          );
+        }
+        this.sendEvent(client, {
+          source: "node",
+          event,
+          nodeId: node.nodeId,
+          args: newArgs,
+        });
+      });
+    };
+
     node.on("ready", (changedNode: ZWaveNode) => {
       // Dump full node state on ready event
       this.clients.clients.forEach((client) =>
@@ -155,7 +193,7 @@ export class EventForwarder {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          notifyNode(changedNode, event, { args });
+          notifyNodeOnValueOrMetadataUpdates(changedNode, event, args);
         });
       }
     }

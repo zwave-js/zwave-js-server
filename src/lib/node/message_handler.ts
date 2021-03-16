@@ -1,5 +1,7 @@
 import { Driver } from "zwave-js";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
+import { Client } from "../server";
+import { dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
@@ -7,7 +9,8 @@ import { NodeResultTypes } from "./outgoing_message";
 export class NodeMessageHandler {
   static async handle(
     message: IncomingMessageNode,
-    driver: Driver
+    driver: Driver,
+    client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
 
@@ -27,7 +30,10 @@ export class NodeMessageHandler {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
       case NodeCommand.getValueMetadata:
-        return node.getValueMetadata(message.valueId);
+        return dumpMetadata(
+          node.getValueMetadata(message.valueId),
+          client.schemaVersion
+        );
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};
