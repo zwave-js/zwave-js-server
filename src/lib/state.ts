@@ -264,17 +264,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     isListening: node.isListening,
     isFrequentListening: Boolean(node.isFrequentListening),
     isRouting: node.isRouting,
-    maxBaudRate: node.maxDataRate,
     isSecure: node.isSecure,
-    version: node.protocolVersion,
-    isBeaming: node.supportsBeaming,
     manufacturerId: node.manufacturerId,
     productId: node.productId,
     productType: node.productType,
     firmwareVersion: node.firmwareVersion,
     zwavePlusVersion: node.zwavePlusVersion,
     nodeType: node.zwavePlusNodeType,
-    roleType: node.zwavePlusRoleType,
     name: node.name,
     location: node.location,
     deviceConfig: node.deviceConfig,
@@ -294,25 +290,32 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   if (schemaVersion == 0) {
     const node0 = base as NodeStateSchema0;
+    node0.maxBaudRate = node.maxDataRate;
+    node0.version = node.protocolVersion;
+    node0.isBeaming = node.supportsBeaming;
+    node0.roleType = node.zwavePlusRoleType;
     node0.deviceClass = node.deviceClass || null;
     return node0;
   }
 
   // All schemas >= 1
-  const node1 = base as NodeStateSchema1;
-  node1.deviceClass = node.deviceClass
-    ? dumpDeviceClass(node.deviceClass)
-    : null;
-  node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-    dumpCommandClass(node, cc)
-  );
-
   if (schemaVersion <= 2) {
+    const node1 = base as NodeStateSchema1;
+    node1.maxBaudRate = node.maxDataRate;
+    node1.version = node.protocolVersion;
+    node1.isBeaming = node.supportsBeaming;
+    node1.roleType = node.zwavePlusRoleType;
+    node1.deviceClass = node.deviceClass
+      ? dumpDeviceClass(node.deviceClass)
+      : null;
+    node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+      dumpCommandClass(node, cc)
+    );
     return node1;
   }
 
   // All schemas >= 3
-  const node3 = node1 as NodeStateSchema3;
+  const node3 = base as NodeStateSchema3;
 
   // Add or update changed keys
   node3.isFrequentListening = node.isFrequentListening;
