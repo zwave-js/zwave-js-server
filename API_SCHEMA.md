@@ -14,3 +14,17 @@ Base schema.
 ## Schema 2
 
 - `Buffer` values were previously exposed with a `ValueType` of `string`. They are now exposed with a `ValueType` of `Buffer`
+
+# Schema 3
+
+- Renamed `controller.removeNodeFromAllAssocations` to `controller.removeNodeFromAllAssociations` to fix a typo
+- Numeric loglevels are converted to the corresponding string loglevel internally. driver.getLogConfig always returns the string loglevel regardless.
+- `isFrequentListening` was changed to have the type `FLiRS = false | "250ms" | "1000ms"` (previously `boolean`) to indicate the wakeup frequency.
+- `maxBaudRate` was renamed to `maxDataRate`, the type `Baudrate` was renamed to `DataRate`
+- The property `supportedDataRates` was added to provide an array of supported data rates
+- The `version` property was renamed to `protocolVersion` and had its type changed from `number` to the enum `ProtocolVersion` (the underlying values are still the same).
+- The `isBeaming` property was renamed to `supportsBeaming` to better show its intent.
+- The `supportsSecurity` property was split off from the `isSecure` property because they have a different meaning.
+- The mutually exclusive `isRoutingSlave` and `isController` properties were merged into the new `nodeType` property.
+- The old `nodeType` and `roleType` properties were renamed to `zwavePlusNodeType` and `zwavePlusRoleType` to clarify that they refer to Z-Wave+.
+- The node `notification` event was reworked and decoupled from the Notification CC. The event callback now indicates which CC raised the event and its arguments are moved into a single object parameter.

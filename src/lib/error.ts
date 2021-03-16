@@ -3,6 +3,7 @@ export enum ErrorCode {
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
   schemaIncompatible = "schema_incompatible",
+  notSupportedBySchema = "not_supported_by_schema",
 }
 
 export class BaseError extends Error {
@@ -38,6 +39,14 @@ export class SchemaIncompatibleError extends BaseError {
   errorCode = ErrorCode.schemaIncompatible;
 
   constructor(public schemaId: number) {
+    super();
+  }
+}
+
+export class NotSupportedBySchemaError extends BaseError {
+  errorCode = ErrorCode.schemaIncompatible;
+
+  constructor(public schemaUsedId: number, public schemaRequired: string) {
     super();
   }
 }

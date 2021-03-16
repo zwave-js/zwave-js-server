@@ -1,5 +1,6 @@
 import { Driver } from "zwave-js";
-import { UnknownCommandError } from "../error";
+import { NotSupportedBySchemaError, UnknownCommandError } from "../error";
+import { Client } from "../server";
 import { ControllerCommand } from "./command";
 import { IncomingMessageController } from "./incoming_message";
 import { ControllerResultTypes } from "./outgoing_message";
@@ -7,7 +8,8 @@ import { ControllerResultTypes } from "./outgoing_message";
 export class ControllerMessageHandler {
   static async handle(
     message: IncomingMessageController,
-    driver: Driver
+    driver: Driver,
+    client: Client
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
 
@@ -96,7 +98,17 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.removeNodeFromAllAssocations: {
-        await driver.controller.removeNodeFromAllAssocations(message.nodeId);
+        if (client.schemaVersion > 2) {
+          throw new NotSupportedBySchemaError(client.schemaVersion, "<3");
+        }
+        await driver.controller.removeNodeFromAllAssociations(message.nodeId);
+        return {};
+      }
+      case ControllerCommand.removeNodeFromAllAssociations: {
+        if (client.schemaVersion < 3) {
+          throw new NotSupportedBySchemaError(client.schemaVersion, ">2");
+        }
+        await driver.controller.removeNodeFromAllAssociations(message.nodeId);
         return {};
       }
       default:

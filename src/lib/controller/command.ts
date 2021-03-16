@@ -14,5 +14,8 @@ export enum ControllerCommand {
   isAssociationAllowed = "controller.is_association_allowed",
   addAssociations = "controller.add_associations",
   removeAssociations = "controller.remove_associations",
+  // Schema version < 3
   removeNodeFromAllAssocations = "controller.remove_node_from_all_assocations",
+  // Schema version > 2
+  removeNodeFromAllAssociations = "controller.remove_node_from_all_associations",
 }

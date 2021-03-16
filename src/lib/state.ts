@@ -97,19 +97,19 @@ interface NodeStateSchema0 {
   status: ZWaveNode["status"];
   ready: ZWaveNode["ready"];
   isListening: ZWaveNode["isListening"];
-  isFrequentListening: ZWaveNode["isFrequentListening"];
+  isFrequentListening: boolean;
   isRouting: ZWaveNode["isRouting"];
-  maxBaudRate: ZWaveNode["maxBaudRate"];
+  maxBaudRate: ZWaveNode["maxDataRate"];
   isSecure: ZWaveNode["isSecure"];
-  version: ZWaveNode["version"];
-  isBeaming: ZWaveNode["isBeaming"];
+  version?: number;
+  isBeaming: ZWaveNode["supportsBeaming"];
   manufacturerId: ZWaveNode["manufacturerId"];
   productId: ZWaveNode["productId"];
   productType: ZWaveNode["productType"];
   firmwareVersion: ZWaveNode["firmwareVersion"];
   zwavePlusVersion: ZWaveNode["zwavePlusVersion"];
-  nodeType: ZWaveNode["nodeType"];
-  roleType: ZWaveNode["roleType"];
+  nodeType: ZWaveNode["zwavePlusNodeType"];
+  roleType: ZWaveNode["zwavePlusRoleType"];
   name: ZWaveNode["name"];
   location: ZWaveNode["location"];
   deviceConfig: ZWaveNode["deviceConfig"];
@@ -133,7 +133,36 @@ type NodeStateSchema1 = Modify<
   { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
 >;
 
-type NodeState = NodeStateSchema0 | NodeStateSchema1;
+type NodeStateSchema2 = NodeStateSchema1;
+
+type NodeStateSchema3 = Omit<
+  Modify<
+    NodeStateSchema2,
+    {
+      isFrequentListening: ZWaveNode["isFrequentListening"];
+      maxDataRate: ZWaveNode["maxDataRate"];
+      supportedDataRates: ZWaveNode["supportedDataRates"];
+      protocolVersion: ZWaveNode["protocolVersion"];
+      supportsBeaming: ZWaveNode["supportsBeaming"];
+      supportsSecurity: ZWaveNode["supportsSecurity"];
+      zwavePlusNodeType: ZWaveNode["zwavePlusNodeType"];
+      zwavePlusRoleType: ZWaveNode["zwavePlusRoleType"];
+      nodeType: ZWaveNode["nodeType"];
+    }
+  >,
+  keyof {
+    maxBaudRate: ZWaveNode["maxDataRate"];
+    version: number;
+    isBeaming: ZWaveNode["supportsBeaming"];
+    roleType: ZWaveNode["zwavePlusRoleType"];
+  }
+>;
+
+type NodeState =
+  | NodeStateSchema0
+  | NodeStateSchema1
+  | NodeStateSchema2
+  | NodeStateSchema3;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -229,10 +258,7 @@ export const dumpMetadata = (
   return newMetadata;
 };
 
-export const dumpNode = (
-  node: ZWaveNode,
-  schemaVersion: number
-): NodeStateSchema0 | NodeStateSchema1 => {
+export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   const base: Partial<NodeStateSchema0> = {
     nodeId: node.nodeId,
     index: node.index,
@@ -241,19 +267,19 @@ export const dumpNode = (
     status: node.status,
     ready: node.ready,
     isListening: node.isListening,
-    isFrequentListening: node.isFrequentListening,
+    isFrequentListening: Boolean(node.isFrequentListening),
     isRouting: node.isRouting,
-    maxBaudRate: node.maxBaudRate,
+    maxBaudRate: node.maxDataRate,
     isSecure: node.isSecure,
-    version: node.version,
-    isBeaming: node.isBeaming,
+    version: node.protocolVersion,
+    isBeaming: node.supportsBeaming,
     manufacturerId: node.manufacturerId,
     productId: node.productId,
     productType: node.productType,
     firmwareVersion: node.firmwareVersion,
     zwavePlusVersion: node.zwavePlusVersion,
-    nodeType: node.nodeType,
-    roleType: node.roleType,
+    nodeType: node.zwavePlusNodeType,
+    roleType: node.zwavePlusRoleType,
     name: node.name,
     location: node.location,
     deviceConfig: node.deviceConfig,
@@ -277,7 +303,7 @@ export const dumpNode = (
     return node0;
   }
 
-  // Schema >= 1
+  // All schemas >= 1
   const node1 = base as NodeStateSchema1;
   node1.deviceClass = node.deviceClass
     ? dumpDeviceClass(node.deviceClass)
@@ -286,7 +312,27 @@ export const dumpNode = (
     dumpCommandClass(node, cc)
   );
 
-  return node1;
+  if (schemaVersion <= 2) {
+    return node1;
+  }
+
+  // All schemas >= 3
+  delete node1.maxBaudRate;
+  delete node1.version;
+  delete node1.isBeaming;
+  delete node1.roleType;
+
+  const node3 = node1 as NodeStateSchema3;
+  node3.isFrequentListening = node.isFrequentListening;
+  node3.maxDataRate = node.maxDataRate;
+  node3.protocolVersion = node.protocolVersion;
+  node3.supportsBeaming = node.supportsBeaming;
+  node3.supportsSecurity = node.supportsSecurity;
+  node3.nodeType = node.nodeType;
+  node3.zwavePlusNodeType = node.zwavePlusNodeType;
+  node3.zwavePlusRoleType = node.zwavePlusRoleType;
+
+  return node3;
 };
 
 export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
