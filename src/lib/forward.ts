@@ -5,6 +5,7 @@ import {
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
@@ -183,8 +184,9 @@ export class EventForwarder {
       }
     );
 
-    node.on("notification", (changedNode, notificationLabel, parameters) =>
-      notifyNode(changedNode, "notification", { notificationLabel, parameters })
+    node.on("notification",
+      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) =>
+        notifyNode(changedNode, "notification", { ccId, ...args })
     );
 
     node.on(

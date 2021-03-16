@@ -97,7 +97,7 @@ interface NodeStateSchema0 {
   status: ZWaveNode["status"];
   ready: ZWaveNode["ready"];
   isListening: ZWaveNode["isListening"];
-  isFrequentListening: boolean;
+  isFrequentListening: boolean | null;
   isRouting: ZWaveNode["isRouting"];
   maxBaudRate: ZWaveNode["maxDataRate"];
   isSecure: ZWaveNode["isSecure"];
@@ -262,7 +262,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     status: node.status,
     ready: node.ready,
     isListening: node.isListening,
-    isFrequentListening: Boolean(node.isFrequentListening),
     isRouting: node.isRouting,
     isSecure: node.isSecure,
     manufacturerId: node.manufacturerId,
@@ -290,7 +289,11 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   if (schemaVersion == 0) {
     const node0 = base as NodeStateSchema0;
-    node0.maxBaudRate = node.maxDataRate;
+    (node0.isFrequentListening =
+      node.isFrequentListening === undefined
+        ? null
+        : Boolean(node.isFrequentListening)),
+      (node0.maxBaudRate = node.maxDataRate);
     node0.version = node.protocolVersion;
     node0.isBeaming = node.supportsBeaming;
     node0.roleType = node.zwavePlusRoleType;
@@ -301,7 +304,11 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   // All schemas >= 1
   if (schemaVersion <= 2) {
     const node1 = base as NodeStateSchema1;
-    node1.maxBaudRate = node.maxDataRate;
+    (node1.isFrequentListening =
+      node.isFrequentListening === undefined
+        ? null
+        : Boolean(node.isFrequentListening)),
+      (node1.maxBaudRate = node.maxDataRate);
     node1.version = node.protocolVersion;
     node1.isBeaming = node.supportsBeaming;
     node1.roleType = node.zwavePlusRoleType;
