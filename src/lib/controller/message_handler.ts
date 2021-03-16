@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { NotSupportedBySchemaError, UnknownCommandError } from "../error";
+import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { ControllerCommand } from "./command";
 import { IncomingMessageController } from "./incoming_message";
@@ -97,17 +97,8 @@ export class ControllerMessageHandler {
         );
         return {};
       }
-      case ControllerCommand.removeNodeFromAllAssocations: {
-        if (client.schemaVersion > 2) {
-          throw new NotSupportedBySchemaError(client.schemaVersion, "<3");
-        }
-        await driver.controller.removeNodeFromAllAssociations(message.nodeId);
-        return {};
-      }
+      case ControllerCommand.removeNodeFromAllAssocations:
       case ControllerCommand.removeNodeFromAllAssociations: {
-        if (client.schemaVersion < 3) {
-          throw new NotSupportedBySchemaError(client.schemaVersion, ">2");
-        }
         await driver.controller.removeNodeFromAllAssociations(message.nodeId);
         return {};
       }

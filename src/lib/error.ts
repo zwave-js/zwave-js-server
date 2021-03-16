@@ -42,11 +42,3 @@ export class SchemaIncompatibleError extends BaseError {
     super();
   }
 }
-
-export class NotSupportedBySchemaError extends BaseError {
-  errorCode = ErrorCode.schemaIncompatible;
-
-  constructor(public schemaUsedId: number, public schemaRequired: string) {
-    super();
-  }
-}
