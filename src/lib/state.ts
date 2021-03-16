@@ -150,12 +150,7 @@ type NodeStateSchema3 = Omit<
       nodeType: ZWaveNode["nodeType"];
     }
   >,
-  keyof {
-    maxBaudRate: ZWaveNode["maxDataRate"];
-    version: number;
-    isBeaming: ZWaveNode["supportsBeaming"];
-    roleType: ZWaveNode["zwavePlusRoleType"];
-  }
+  "maxBaudRate" | "version" | "isBeaming" | "roleType"
 >;
 
 type NodeState =
@@ -317,13 +312,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   // All schemas >= 3
-
-  // Remove unused keys
-  delete node1.maxBaudRate;
-  delete node1.version;
-  delete node1.isBeaming;
-  delete node1.roleType;
-
   const node3 = node1 as NodeStateSchema3;
 
   // Add or update changed keys
