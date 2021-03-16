@@ -3,6 +3,7 @@ import {
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
+  ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpMetadata, dumpNode } from "./state";
@@ -110,44 +111,6 @@ export class EventForwarder {
         ...extra,
       });
 
-    // Value or Metadata updates require potential schema transforms
-    const notifyNodeOnValueOrMetadataUpdates = (
-      node: ZWaveNode,
-      event: string,
-      args: any
-    ) => {
-      this.clients.clients.forEach((client) => {
-        // Copy arguments for each client so transforms don't impact all clients
-        const newArgs = { ...args };
-        if ("prevValue" in newArgs && "metadata" in newArgs.prevValue) {
-          newArgs.prevValue = { ...newArgs.prevValue };
-          newArgs.prevValue.metadata = dumpMetadata(
-            newArgs.prevValue.metadata,
-            client.schemaVersion
-          );
-        }
-        if ("newValue" in newArgs && "metadata" in newArgs.newValue) {
-          newArgs.newValue = { ...newArgs.newValue };
-          newArgs.newValue.metadata = dumpMetadata(
-            newArgs.newValue.metadata,
-            client.schemaVersion
-          );
-        }
-        if ("metadata" in newArgs) {
-          newArgs.metadata = dumpMetadata(
-            newArgs.metadata,
-            client.schemaVersion
-          );
-        }
-        this.sendEvent(client, {
-          source: "node",
-          event,
-          nodeId: node.nodeId,
-          args: newArgs,
-        });
-      });
-    };
-
     node.on("ready", (changedNode: ZWaveNode) => {
       // Dump full node state on ready event
       this.clients.clients.forEach((client) =>
@@ -187,16 +150,38 @@ export class EventForwarder {
         "value removed",
         "value added",
         "value notification",
-        "metadata updated",
       ];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, args: any) => {
           // only forward value events for ready nodes
           if (!changedNode.ready) return;
-          notifyNodeOnValueOrMetadataUpdates(changedNode, event, args);
+          notifyNode(changedNode, event, { args });
         });
       }
     }
+
+    node.on(
+      "metadata updated",
+      (changedNode: ZWaveNode, args: ZWaveNodeMetadataUpdatedArgs) => {
+        if (!changedNode.ready) return;
+        this.clients.clients.forEach((client) => {
+          // Copy arguments for each client so transforms don't impact all clients
+          const newArgs = { ...args };
+          if ("metadata" in newArgs && newArgs.metadata != undefined) {
+            newArgs.metadata = dumpMetadata(
+              newArgs.metadata,
+              client.schemaVersion
+            );
+          }
+          this.sendEvent(client, {
+            source: "node",
+            event: "metadata updated",
+            nodeId: changedNode.nodeId,
+            args: newArgs,
+          });
+        });
+      }
+    );
 
     node.on("notification", (changedNode, notificationLabel, parameters) =>
       notifyNode(changedNode, "notification", { notificationLabel, parameters })
