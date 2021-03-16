@@ -25,6 +25,5 @@ Base schema.
 - The `version` property was renamed to `protocolVersion` and had its type changed from `number` to the enum `ProtocolVersion` (the underlying values are still the same).
 - The `isBeaming` property was renamed to `supportsBeaming` to better show its intent.
 - The `supportsSecurity` property was split off from the `isSecure` property because they have a different meaning.
-- The mutually exclusive `isRoutingSlave` and `isController` properties were merged into the new `nodeType` property.
 - The old `nodeType` and `roleType` properties were renamed to `zwavePlusNodeType` and `zwavePlusRoleType` to clarify that they refer to Z-Wave+.
 - The node `notification` event was reworked and decoupled from the Notification CC. The event callback now indicates which CC raised the event and its arguments are moved into a single object parameter.
