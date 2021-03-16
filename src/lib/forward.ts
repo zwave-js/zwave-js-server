@@ -167,7 +167,7 @@ export class EventForwarder {
         this.clients.clients.forEach((client) => {
           // Copy arguments for each client so transforms don't impact all clients
           const newArgs = { ...args };
-          if ("metadata" in newArgs && newArgs.metadata != undefined) {
+          if (newArgs.metadata != undefined) {
             newArgs.metadata = dumpMetadata(
               newArgs.metadata,
               client.schemaVersion
