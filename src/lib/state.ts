@@ -317,14 +317,19 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   // All schemas >= 3
+
+  // Remove unused keys
   delete node1.maxBaudRate;
   delete node1.version;
   delete node1.isBeaming;
   delete node1.roleType;
 
   const node3 = node1 as NodeStateSchema3;
+
+  // Add or update changed keys
   node3.isFrequentListening = node.isFrequentListening;
   node3.maxDataRate = node.maxDataRate;
+  node3.supportedDataRates = node.supportedDataRates;
   node3.protocolVersion = node.protocolVersion;
   node3.supportsBeaming = node.supportsBeaming;
   node3.supportsSecurity = node.supportsSecurity;
