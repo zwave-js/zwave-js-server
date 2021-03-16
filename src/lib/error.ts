@@ -3,7 +3,6 @@ export enum ErrorCode {
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
   schemaIncompatible = "schema_incompatible",
-  notSupportedBySchema = "not_supported_by_schema",
 }
 
 export class BaseError extends Error {
