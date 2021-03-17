@@ -184,7 +184,8 @@ export class EventForwarder {
       }
     );
 
-    node.on("notification",
+    node.on(
+      "notification",
       (changedNode: ZWaveNode, ccId: CommandClasses, args: any) =>
         notifyNode(changedNode, "notification", { ccId, ...args })
     );
