@@ -294,7 +294,8 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
         ? null
         : Boolean(node.isFrequentListening)),
       (node0.maxBaudRate = node.maxDataRate);
-    node0.version = node.protocolVersion;
+    node0.version =
+      node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
     node0.isBeaming = node.supportsBeaming;
     node0.roleType = node.zwavePlusRoleType;
     node0.deviceClass = node.deviceClass || null;
@@ -309,7 +310,8 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
         ? null
         : Boolean(node.isFrequentListening)),
       (node1.maxBaudRate = node.maxDataRate);
-    node1.version = node.protocolVersion;
+    node1.version =
+      node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
     node1.isBeaming = node.supportsBeaming;
     node1.roleType = node.zwavePlusRoleType;
     node1.deviceClass = node.deviceClass
