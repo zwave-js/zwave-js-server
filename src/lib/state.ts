@@ -286,18 +286,22 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     values: getNodeValues(node, schemaVersion),
   };
 
-  if (schemaVersion == 0) {
-    const node0 = base as NodeStateSchema0;
-    node0.isFrequentListening =
+  // Handle schema 3 changes by transforming them into the properties that schema < 3 expects.
+  if (schemaVersion < 3) {
+    base.isFrequentListening =
       node.isFrequentListening === undefined
         ? null
         : Boolean(node.isFrequentListening);
-    node0.maxBaudRate = node.maxDataRate;
-    node0.version =
+    base.maxBaudRate = node.maxDataRate;
+    base.version =
       node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
-    node0.isBeaming = node.supportsBeaming;
-    node0.nodeType = node.zwavePlusNodeType;
-    node0.roleType = node.zwavePlusRoleType;
+    base.isBeaming = node.supportsBeaming;
+    base.nodeType = node.zwavePlusNodeType;
+    base.roleType = node.zwavePlusRoleType;
+  }
+
+  if (schemaVersion == 0) {
+    const node0 = base as NodeStateSchema0;
     node0.deviceClass = node.deviceClass || null;
     return node0;
   }
@@ -305,16 +309,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   // All schemas >= 1
   if (schemaVersion <= 2) {
     const node1 = base as NodeStateSchema1;
-    node1.isFrequentListening =
-      node.isFrequentListening === undefined
-        ? null
-        : Boolean(node.isFrequentListening);
-    node1.maxBaudRate = node.maxDataRate;
-    node1.version =
-      node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
-    node1.isBeaming = node.supportsBeaming;
-    node1.nodeType = node.zwavePlusNodeType;
-    node1.roleType = node.zwavePlusRoleType;
     node1.deviceClass = node.deviceClass
       ? dumpDeviceClass(node.deviceClass)
       : null;
