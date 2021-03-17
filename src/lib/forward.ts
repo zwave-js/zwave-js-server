@@ -186,8 +186,30 @@ export class EventForwarder {
 
     node.on(
       "notification",
-      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) =>
-        notifyNode(changedNode, "notification", { ccId, ...args })
+      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) => {
+        this.clients.clients.forEach((client) => {
+          // Only send notification events from the Notification CC for schema version < 3
+          if (client.schemaVersion < 3 && ccId == CommandClasses.Notification) {
+            let eventData: OutgoingEvent = {
+              source: "node",
+              event: "notification",
+              nodeId: changedNode.nodeId,
+              notificationLabel: args.notificationLabel,
+            };
+            if ("parameters" in args) {
+              eventData["parameters"] = args.parameters;
+            }
+            this.sendEvent(client, eventData);
+          } else if (client.schemaVersion >= 3) {
+            this.sendEvent(client, {
+              source: "node",
+              event: "notification",
+              nodeId: changedNode.nodeId,
+              args: { ccId, ...args },
+            });
+          }
+        });
+      }
     );
 
     node.on(
