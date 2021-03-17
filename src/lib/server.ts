@@ -37,8 +37,7 @@ export class Client {
     [Instance.controller]: (message) =>
       ControllerMessageHandler.handle(
         message as IncomingMessageController,
-        this.driver,
-        this
+        this.driver
       ),
     [Instance.driver]: () => {
       throw new Error("Driver handler not implemented.");

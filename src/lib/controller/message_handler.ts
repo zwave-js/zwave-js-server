@@ -1,6 +1,5 @@
 import { Driver } from "zwave-js";
 import { UnknownCommandError } from "../error";
-import { Client } from "../server";
 import { ControllerCommand } from "./command";
 import { IncomingMessageController } from "./incoming_message";
 import { ControllerResultTypes } from "./outgoing_message";
@@ -8,8 +7,7 @@ import { ControllerResultTypes } from "./outgoing_message";
 export class ControllerMessageHandler {
   static async handle(
     message: IncomingMessageController,
-    driver: Driver,
-    client: Client
+    driver: Driver
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
 
