@@ -205,7 +205,8 @@ export class EventForwarder {
               source: "node",
               event: "notification",
               nodeId: changedNode.nodeId,
-              args: { ccId, ...args },
+              ccId,
+              args,
             });
           }
         });
