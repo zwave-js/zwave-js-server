@@ -9,6 +9,7 @@ import { CommandClasses } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
+import { ZWaveNotificationCallback } from "zwave-js/build/lib/node/Types";
 
 export class EventForwarder {
   /**

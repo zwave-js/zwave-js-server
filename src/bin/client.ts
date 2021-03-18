@@ -19,11 +19,8 @@ const schemaVersion = args.schemaVersion
 const url = args._[0] || "ws://localhost:3000";
 const filterNode = args.node ? Number(args.node) : undefined;
 
-if (schemaVersion > maxSchemaVersion) {
-  console.log(
-    "Schema version must be less than or equal to ",
-    maxSchemaVersion
-  );
+if (schemaVersion > maxSchemaVersion || schemaVersion < 0) {
+  console.log("Schema version must be between 0 and ", maxSchemaVersion);
   process.exit();
 }
 
