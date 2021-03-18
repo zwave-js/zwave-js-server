@@ -194,7 +194,7 @@ export class EventForwarder {
               source: "node",
               event: "notification",
               nodeId: changedNode.nodeId,
-              notificationLabel: args.notificationLabel,
+              notificationLabel: args.eventLabel,
             };
             if ("parameters" in args) {
               eventData["parameters"] = args.parameters;
