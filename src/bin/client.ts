@@ -35,7 +35,7 @@ socket.on("open", function open() {
     JSON.stringify({
       messageId: "api-schema-id",
       command: "set_api_schema",
-      schemaVersion: maxSchemaVersion,
+      schemaVersion: schemaVersion,
     })
   );
   socket.send(
