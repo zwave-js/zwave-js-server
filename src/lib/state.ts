@@ -293,8 +293,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
         ? null
         : Boolean(node.isFrequentListening);
     base.maxBaudRate = node.maxDataRate;
-    base.version =
-      node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
+    base.version = node.protocolVersion;
     base.isBeaming = node.supportsBeaming;
     base.nodeType = node.zwavePlusNodeType;
     base.roleType = node.zwavePlusRoleType;
