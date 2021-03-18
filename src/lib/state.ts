@@ -330,6 +330,12 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   node3.nodeType = node.nodeType;
   node3.zwavePlusNodeType = node.zwavePlusNodeType;
   node3.zwavePlusRoleType = node.zwavePlusRoleType;
+  node3.deviceClass = node.deviceClass
+    ? dumpDeviceClass(node.deviceClass)
+    : null;
+  node3.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(node, cc)
+  );
 
   return node3;
 };
