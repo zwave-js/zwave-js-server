@@ -95,10 +95,11 @@ export interface IncomingCommandControllerRemoveAssociations
   group: number;
   associations: Association[];
 }
-
-export interface IncomingCommandControllerRemoveNodeFromAllAssocations
+export interface IncomingCommandControllerRemoveNodeFromAllAssociations
   extends IncomingCommandControllerBase {
-  command: ControllerCommand.removeNodeFromAllAssocations;
+  command:
+    | ControllerCommand.removeNodeFromAllAssociations
+    | ControllerCommand.removeNodeFromAllAssocations;
   nodeId: number;
 }
 
@@ -118,4 +119,4 @@ export type IncomingMessageController =
   | IncomingCommandControllerIsAssociationAllowed
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations
-  | IncomingCommandControllerRemoveNodeFromAllAssocations;
+  | IncomingCommandControllerRemoveNodeFromAllAssociations;

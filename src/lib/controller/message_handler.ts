@@ -95,8 +95,9 @@ export class ControllerMessageHandler {
         );
         return {};
       }
-      case ControllerCommand.removeNodeFromAllAssocations: {
-        await driver.controller.removeNodeFromAllAssocations(message.nodeId);
+      case ControllerCommand.removeNodeFromAllAssocations:
+      case ControllerCommand.removeNodeFromAllAssociations: {
+        await driver.controller.removeNodeFromAllAssociations(message.nodeId);
         return {};
       }
       default:

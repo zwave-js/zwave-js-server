@@ -21,5 +21,8 @@ export interface ControllerResultTypes {
   [ControllerCommand.isAssociationAllowed]: { allowed: boolean };
   [ControllerCommand.addAssociations]: Record<string, never>;
   [ControllerCommand.removeAssociations]: Record<string, never>;
+  // Schema version < 3
   [ControllerCommand.removeNodeFromAllAssocations]: Record<string, never>;
+  // Schema version > 2
+  [ControllerCommand.removeNodeFromAllAssociations]: Record<string, never>;
 }

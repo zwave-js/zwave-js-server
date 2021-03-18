@@ -21,6 +21,7 @@ import {
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { DriverCommand } from "./command";
+import { numberFromLogLevel } from "../util/logger";
 
 export class Client {
   public receiveEvents = false;
@@ -106,6 +107,16 @@ export class Client {
       if (msg.command === DriverCommand.getLogConfig) {
         // We don't want to return transports since that's used internally.
         const { transports, ...partialLogConfig } = this.driver.getLogConfig();
+
+        if (
+          this.schemaVersion < 3 &&
+          typeof partialLogConfig.level === "string"
+        ) {
+          let levelNum = numberFromLogLevel(partialLogConfig.level);
+          if (levelNum != undefined) {
+            partialLogConfig.level = levelNum;
+          }
+        }
         this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
         return;
       }

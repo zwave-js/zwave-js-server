@@ -5,6 +5,7 @@ import {
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
@@ -183,8 +184,33 @@ export class EventForwarder {
       }
     );
 
-    node.on("notification", (changedNode, notificationLabel, parameters) =>
-      notifyNode(changedNode, "notification", { notificationLabel, parameters })
+    node.on(
+      "notification",
+      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) => {
+        this.clients.clients.forEach((client) => {
+          // Only send notification events from the Notification CC for schema version < 3
+          if (client.schemaVersion < 3 && ccId == CommandClasses.Notification) {
+            let eventData: OutgoingEvent = {
+              source: "node",
+              event: "notification",
+              nodeId: changedNode.nodeId,
+              notificationLabel: args.notificationLabel,
+            };
+            if ("parameters" in args) {
+              eventData["parameters"] = args.parameters;
+            }
+            this.sendEvent(client, eventData);
+          } else if (client.schemaVersion >= 3) {
+            this.sendEvent(client, {
+              source: "node",
+              event: "notification",
+              nodeId: changedNode.nodeId,
+              ccId,
+              args,
+            });
+          }
+        });
+      }
     );
 
     node.on(
