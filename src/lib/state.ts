@@ -295,10 +295,9 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   // Handle schema 3 changes by transforming them into the properties that schema < 3 expects.
   if (schemaVersion < 3) {
-    base.isFrequentListening =
-      node.isFrequentListening === undefined
-        ? null
-        : Boolean(node.isFrequentListening);
+    base.isFrequentListening = node.isFrequentListening
+      ? Boolean(node.isFrequentListening)
+      : null;
     base.maxBaudRate = node.maxDataRate;
     base.version = node.protocolVersion ? node.protocolVersion + 1 : null;
     base.isBeaming = node.supportsBeaming;
