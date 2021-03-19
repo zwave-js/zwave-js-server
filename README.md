@@ -46,6 +46,12 @@ You can filter the output by a specific node ID:
 ts-node src/bin/client.ts --node 52
 ```
 
+To specify a schema version other than the latest (`maxSchemaVersion`):
+
+```shell
+ts-node src/bin/client.ts --schemaVersion 0
+```
+
 All these options can be combined.
 
 ## API

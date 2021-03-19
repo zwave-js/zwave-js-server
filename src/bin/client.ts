@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import ws from "ws";
+import { maxSchemaVersion } from "../lib/const";
 import { OutgoingMessage, ResultTypes } from "../lib/outgoing_message";
 import { parseArgs } from "../util/parse-args";
 
@@ -8,11 +9,24 @@ interface Args {
   _: Array<string>;
   dump: boolean;
   node: string;
+  schemaVersion: string;
 }
 
-const args = parseArgs<Args>(["_", "dump", "node"]);
+const args = parseArgs<Args>(["_", "dump", "node", "schemaVersion"]);
+const schemaVersion = args.schemaVersion
+  ? Number(args.schemaVersion)
+  : maxSchemaVersion;
 const url = args._[0] || "ws://localhost:3000";
 const filterNode = args.node ? Number(args.node) : undefined;
+
+if (
+  isNaN(schemaVersion) ||
+  schemaVersion > maxSchemaVersion ||
+  schemaVersion < 0
+) {
+  console.log("Schema version must be between 0 and ", maxSchemaVersion);
+  process.exit();
+}
 
 if (!args.dump) {
   console.info("Connecting to", url);
@@ -21,6 +35,13 @@ if (!args.dump) {
 const socket = new ws(url);
 
 socket.on("open", function open() {
+  socket.send(
+    JSON.stringify({
+      messageId: "api-schema-id",
+      command: "set_api_schema",
+      schemaVersion: schemaVersion,
+    })
+  );
   socket.send(
     JSON.stringify({
       messageId: "start-listening-result",
