@@ -51,9 +51,7 @@ interface EndpointStateSchema0 {
 
 type EndpointStateSchema1 = Modify<
   EndpointStateSchema0,
-  {
-    deviceClass: DeviceClassState | null;
-  }
+  { deviceClass: DeviceClassState | null }
 >;
 
 type EndpointState = EndpointStateSchema0 | EndpointStateSchema1;
