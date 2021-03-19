@@ -42,12 +42,21 @@ interface CommandClassState {
   isSecure: boolean;
 }
 
-interface EndpointState {
+interface EndpointStateSchema0 {
   nodeId: Endpoint["nodeId"];
   index: Endpoint["index"];
   installerIcon: Endpoint["installerIcon"];
   userIcon: Endpoint["userIcon"];
 }
+
+type EndpointStateSchema1 = Modify<
+  EndpointStateSchema0,
+  {
+    deviceClass: DeviceClassState | null;
+  }
+>;
+
+type EndpointState = EndpointStateSchema0 | EndpointStateSchema1;
 
 interface DeviceClassState {
   basic: {
@@ -281,7 +290,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     interviewAttempts: node.interviewAttempts,
     interviewStage: node.interviewStage,
     endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-      dumpEndpoint(endpoint)
+      dumpEndpoint(endpoint, schemaVersion)
     ),
     values: getNodeValues(node, schemaVersion),
   };
@@ -341,12 +350,25 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   return node3;
 };
 
-export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
-  nodeId: endpoint.nodeId,
-  index: endpoint.index,
-  installerIcon: endpoint.installerIcon,
-  userIcon: endpoint.userIcon,
-});
+export const dumpEndpoint = (
+  endpoint: Endpoint,
+  schemaVersion: number
+): EndpointState => {
+  let base: EndpointStateSchema0 = {
+    nodeId: endpoint.nodeId,
+    index: endpoint.index,
+    installerIcon: endpoint.installerIcon,
+    userIcon: endpoint.userIcon,
+  };
+  if (schemaVersion < 3) {
+    return base as EndpointStateSchema0;
+  }
+  const endpoint3 = base as EndpointStateSchema1;
+  endpoint3.deviceClass = endpoint.deviceClass
+    ? dumpDeviceClass(endpoint.deviceClass)
+    : null;
+  return endpoint3;
+};
 
 export const dumpDeviceClass = (
   deviceClass: DeviceClass
