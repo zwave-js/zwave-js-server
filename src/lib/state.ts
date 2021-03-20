@@ -42,12 +42,19 @@ interface CommandClassState {
   isSecure: boolean;
 }
 
-interface EndpointState {
+interface EndpointStateSchema0 {
   nodeId: Endpoint["nodeId"];
   index: Endpoint["index"];
   installerIcon: Endpoint["installerIcon"];
   userIcon: Endpoint["userIcon"];
 }
+
+type EndpointStateSchema1 = Modify<
+  EndpointStateSchema0,
+  { deviceClass: DeviceClassState | null }
+>;
+
+type EndpointState = EndpointStateSchema0 | EndpointStateSchema1;
 
 interface DeviceClassState {
   basic: {
@@ -101,7 +108,7 @@ interface NodeStateSchema0 {
   isRouting: ZWaveNode["isRouting"];
   maxBaudRate: ZWaveNode["maxDataRate"];
   isSecure: ZWaveNode["isSecure"];
-  version?: number;
+  version: number | null;
   isBeaming: ZWaveNode["supportsBeaming"];
   manufacturerId: ZWaveNode["manufacturerId"];
   productId: ZWaveNode["productId"];
@@ -281,20 +288,18 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     interviewAttempts: node.interviewAttempts,
     interviewStage: node.interviewStage,
     endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-      dumpEndpoint(endpoint)
+      dumpEndpoint(endpoint, schemaVersion)
     ),
     values: getNodeValues(node, schemaVersion),
   };
 
   // Handle schema 3 changes by transforming them into the properties that schema < 3 expects.
   if (schemaVersion < 3) {
-    base.isFrequentListening =
-      node.isFrequentListening === undefined
-        ? null
-        : Boolean(node.isFrequentListening);
+    base.isFrequentListening = node.isFrequentListening
+      ? Boolean(node.isFrequentListening)
+      : null;
     base.maxBaudRate = node.maxDataRate;
-    base.version =
-      node.protocolVersion === undefined ? undefined : node.protocolVersion + 1;
+    base.version = node.protocolVersion ? node.protocolVersion + 1 : null;
     base.isBeaming = node.supportsBeaming;
     base.nodeType = node.zwavePlusNodeType;
     base.roleType = node.zwavePlusRoleType;
@@ -341,12 +346,25 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   return node3;
 };
 
-export const dumpEndpoint = (endpoint: Endpoint): EndpointState => ({
-  nodeId: endpoint.nodeId,
-  index: endpoint.index,
-  installerIcon: endpoint.installerIcon,
-  userIcon: endpoint.userIcon,
-});
+export const dumpEndpoint = (
+  endpoint: Endpoint,
+  schemaVersion: number
+): EndpointState => {
+  let base: EndpointStateSchema0 = {
+    nodeId: endpoint.nodeId,
+    index: endpoint.index,
+    installerIcon: endpoint.installerIcon,
+    userIcon: endpoint.userIcon,
+  };
+  if (schemaVersion < 3) {
+    return base as EndpointStateSchema0;
+  }
+  const endpoint3 = base as EndpointStateSchema1;
+  endpoint3.deviceClass = endpoint.deviceClass
+    ? dumpDeviceClass(endpoint.deviceClass)
+    : null;
+  return endpoint3;
+};
 
 export const dumpDeviceClass = (
   deviceClass: DeviceClass
