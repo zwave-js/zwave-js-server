@@ -9,6 +9,11 @@ import {
   CommandClass,
 } from "zwave-js";
 import { CommandClasses } from "@zwave-js/core";
+import {
+  ConfigurationMetadata,
+  ConfigValue,
+  ValueFormat,
+} from "zwave-js/build/lib/commandclass/ConfigurationCC";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -81,19 +86,28 @@ interface ValueState extends TranslatedValueID {
 
 interface MetadataState {
   type: ValueMetadata["type"];
-  default?: ValueMetadata["default"];
+  default?: ValueMetadata["default"] | ConfigValue;
   readable: ValueMetadata["readable"];
   writeable: ValueMetadata["writeable"];
   description?: ValueMetadata["description"];
   label?: ValueMetadata["label"];
   ccSpecific?: ValueMetadata["ccSpecific"];
-  min?: number;
-  max?: number;
+  min?: number | ConfigValue;
+  max?: number | ConfigValue;
   minLength?: number;
   maxLength?: number;
   steps?: number;
   states?: Record<number, string>;
   unit?: string;
+  valueSize?: number;
+  format?: ValueFormat;
+  name?: string;
+  info?: string;
+  noBulkSupport?: boolean;
+  isAdvanced?: boolean;
+  requiresReInclusion?: boolean;
+  allowManualEntry?: boolean;
+  isFromConfig?: boolean;
 }
 
 interface NodeStateSchema0 {
@@ -212,7 +226,7 @@ export const dumpValue = (
 };
 
 export const dumpMetadata = (
-  metadata: ValueMetadata,
+  metadata: ValueMetadata | ConfigurationMetadata,
   schemaVersion: number
 ): MetadataState => {
   let newMetadata: MetadataState = {
@@ -251,6 +265,42 @@ export const dumpMetadata = (
 
   if ("unit" in metadata) {
     newMetadata.unit = metadata.unit;
+  }
+
+  if ("valueSize" in metadata) {
+    newMetadata.valueSize = metadata.valueSize;
+  }
+
+  if ("format" in metadata) {
+    newMetadata.format = metadata.format;
+  }
+
+  if ("name" in metadata) {
+    newMetadata.name = metadata.name;
+  }
+
+  if ("info" in metadata) {
+    newMetadata.info = metadata.info;
+  }
+
+  if ("noBulkSupport" in metadata) {
+    newMetadata.noBulkSupport = metadata.noBulkSupport;
+  }
+
+  if ("isAdvanced" in metadata) {
+    newMetadata.isAdvanced = metadata.isAdvanced;
+  }
+
+  if ("requiresReInclusion" in metadata) {
+    newMetadata.requiresReInclusion = metadata.requiresReInclusion;
+  }
+
+  if ("allowManualEntry" in metadata) {
+    newMetadata.allowManualEntry = metadata.allowManualEntry;
+  }
+
+  if ("isFromConfig" in metadata) {
+    newMetadata.isFromConfig = metadata.isFromConfig;
   }
 
   if (schemaVersion < 2 && newMetadata.type === "buffer") {
