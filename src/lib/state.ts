@@ -99,6 +99,19 @@ interface MetadataState {
   steps?: number;
   states?: Record<number, string>;
   unit?: string;
+}
+
+interface ConfigurationMetadataState {
+  type: ConfigurationMetadata["type"];
+  readable: boolean;
+  writeable: boolean;
+  description?: string;
+  label?: string;
+  ccSpecific?: Record<string, any>;
+  min?: ConfigValue;
+  max?: ConfigValue;
+  default?: ConfigValue;
+  unit?: string;
   valueSize?: number;
   format?: ValueFormat;
   name?: string;
@@ -106,6 +119,7 @@ interface MetadataState {
   noBulkSupport?: boolean;
   isAdvanced?: boolean;
   requiresReInclusion?: boolean;
+  states?: Record<number, string>;
   allowManualEntry?: boolean;
   isFromConfig?: boolean;
 }
@@ -209,6 +223,17 @@ export const dumpValue = (
     ccVersion = node.getEndpoint(0).getCCVersion(valueArgs.commandClass);
   }
 
+  let metadata: ValueMetadata | ConfigurationMetadata;
+
+  if (valueArgs.commandClass === CommandClasses.Configuration) {
+    metadata = dumpConfigurationMetadata(
+      node.getValueMetadata(valueArgs) as ConfigurationMetadata,
+      schemaVersion
+    );
+  } else {
+    metadata = dumpMetadata(node.getValueMetadata(valueArgs), schemaVersion);
+  }
+
   return {
     endpoint: valueArgs.endpoint,
     commandClass: valueArgs.commandClass,
@@ -219,14 +244,48 @@ export const dumpValue = (
     propertyKeyName: valueArgs.propertyKeyName,
     ccVersion,
     // append metadata
-    metadata: dumpMetadata(node.getValueMetadata(valueArgs), schemaVersion),
+    metadata,
     // append actual value
     value: node.getValue(valueArgs),
   };
 };
 
+export const dumpConfigurationMetadata = (
+  metadata: ConfigurationMetadata,
+  schemaVersion: number
+): ConfigurationMetadataState => {
+  let newMetadata: ConfigurationMetadataState = {
+    type: metadata.type,
+    readable: metadata.readable,
+    writeable: metadata.writeable,
+    description: metadata.description,
+    label: metadata.label,
+    ccSpecific: metadata.ccSpecific,
+    default: metadata.default,
+    min: metadata.min,
+    max: metadata.max,
+    states: metadata.states,
+    unit: metadata.unit,
+    valueSize: metadata.valueSize,
+    format: metadata.format,
+    name: metadata.name,
+    info: metadata.info,
+    noBulkSupport: metadata.noBulkSupport,
+    isAdvanced: metadata.isAdvanced,
+    requiresReInclusion: metadata.requiresReInclusion,
+    allowManualEntry: metadata.allowManualEntry,
+    isFromConfig: metadata.isFromConfig,
+  };
+
+  if (schemaVersion < 2 && newMetadata.type === "buffer") {
+    newMetadata.type = "string";
+  }
+
+  return newMetadata;
+};
+
 export const dumpMetadata = (
-  metadata: ValueMetadata | ConfigurationMetadata,
+  metadata: ValueMetadata,
   schemaVersion: number
 ): MetadataState => {
   let newMetadata: MetadataState = {
@@ -265,42 +324,6 @@ export const dumpMetadata = (
 
   if ("unit" in metadata) {
     newMetadata.unit = metadata.unit;
-  }
-
-  if ("valueSize" in metadata) {
-    newMetadata.valueSize = metadata.valueSize;
-  }
-
-  if ("format" in metadata) {
-    newMetadata.format = metadata.format;
-  }
-
-  if ("name" in metadata) {
-    newMetadata.name = metadata.name;
-  }
-
-  if ("info" in metadata) {
-    newMetadata.info = metadata.info;
-  }
-
-  if ("noBulkSupport" in metadata) {
-    newMetadata.noBulkSupport = metadata.noBulkSupport;
-  }
-
-  if ("isAdvanced" in metadata) {
-    newMetadata.isAdvanced = metadata.isAdvanced;
-  }
-
-  if ("requiresReInclusion" in metadata) {
-    newMetadata.requiresReInclusion = metadata.requiresReInclusion;
-  }
-
-  if ("allowManualEntry" in metadata) {
-    newMetadata.allowManualEntry = metadata.allowManualEntry;
-  }
-
-  if ("isFromConfig" in metadata) {
-    newMetadata.isFromConfig = metadata.isFromConfig;
   }
 
   if (schemaVersion < 2 && newMetadata.type === "buffer") {
