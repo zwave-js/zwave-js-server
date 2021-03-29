@@ -7,8 +7,9 @@ import {
 } from "zwave-js";
 import { CommandClasses } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpMetadata, dumpNode } from "./state";
+import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
+import { ConfigurationMetadata } from "zwave-js/build/lib/commandclass/ConfigurationCC";
 
 export class EventForwarder {
   /**
@@ -169,10 +170,17 @@ export class EventForwarder {
           // Copy arguments for each client so transforms don't impact all clients
           const newArgs = { ...args };
           if (newArgs.metadata != undefined) {
-            newArgs.metadata = dumpMetadata(
-              newArgs.metadata,
-              client.schemaVersion
-            );
+            if (newArgs.commandClass === CommandClasses.Configuration) {
+              newArgs.metadata = dumpConfigurationMetadata(
+                newArgs.metadata as ConfigurationMetadata,
+                client.schemaVersion
+              );
+            } else {
+              newArgs.metadata = dumpMetadata(
+                newArgs.metadata,
+                client.schemaVersion
+              );
+            }
           }
           this.sendEvent(client, {
             source: "node",

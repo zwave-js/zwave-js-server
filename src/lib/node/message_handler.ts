@@ -1,10 +1,12 @@
 import { Driver } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
-import { dumpMetadata } from "../state";
+import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
+import { ConfigurationMetadata } from "zwave-js/build/lib/commandclass/ConfigurationCC";
 
 export class NodeMessageHandler {
   static async handle(
@@ -30,6 +32,13 @@ export class NodeMessageHandler {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
       case NodeCommand.getValueMetadata:
+        if (message.valueId.commandClass == CommandClasses.Configuration) {
+          return dumpConfigurationMetadata(
+            node.getValueMetadata(message.valueId) as ConfigurationMetadata,
+            client.schemaVersion
+          );
+        }
+
         return dumpMetadata(
           node.getValueMetadata(message.valueId),
           client.schemaVersion
