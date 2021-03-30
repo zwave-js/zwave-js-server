@@ -86,14 +86,14 @@ interface ValueState extends TranslatedValueID {
 
 interface MetadataState {
   type: ValueMetadata["type"];
-  default?: ValueMetadata["default"] | ConfigValue;
+  default?: ValueMetadata["default"];
   readable: ValueMetadata["readable"];
   writeable: ValueMetadata["writeable"];
   description?: ValueMetadata["description"];
   label?: ValueMetadata["label"];
   ccSpecific?: ValueMetadata["ccSpecific"];
-  min?: number | ConfigValue;
-  max?: number | ConfigValue;
+  min?: number;
+  max?: number;
   minLength?: number;
   maxLength?: number;
   steps?: number;
