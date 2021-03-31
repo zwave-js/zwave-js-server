@@ -1,12 +1,11 @@
 import { Driver } from "zwave-js";
-import { CommandClasses } from "@zwave-js/core";
+import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
-import { ConfigurationMetadata } from "zwave-js/build/lib/commandclass/ConfigurationCC";
 
 export class NodeMessageHandler {
   static async handle(

@@ -8,12 +8,12 @@ import {
   DeviceClass,
   CommandClass,
 } from "zwave-js";
-import { CommandClasses } from "@zwave-js/core";
 import {
+  CommandClasses,
   ConfigurationMetadata,
   ConfigValue,
-  ValueFormat,
-} from "zwave-js/build/lib/commandclass/ConfigurationCC";
+  ConfigValueFormat,
+} from "@zwave-js/core";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -113,7 +113,7 @@ interface ConfigurationMetadataState {
   default?: ConfigValue;
   unit?: string;
   valueSize?: number;
-  format?: ValueFormat;
+  format?: ConfigValueFormat;
   name?: string;
   info?: string;
   noBulkSupport?: boolean;
