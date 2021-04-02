@@ -47,7 +47,7 @@ export class Client {
         message as IncomingMessageNode,
         this.driver,
         this,
-        this.clientsController
+        this.clientsController.clients
       ),
   };
 
