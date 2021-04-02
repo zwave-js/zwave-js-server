@@ -27,7 +27,6 @@ export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
   public schemaVersion = minSchemaVersion;
-  public clientsController: ClientsController;
 
   private instanceHandlers: Record<
     Instance,
@@ -47,7 +46,8 @@ export class Client {
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.driver,
-        this
+        this,
+        this.clientsController
       ),
   };
 
@@ -55,9 +55,8 @@ export class Client {
     private socket: WebSocket,
     private driver: Driver,
     private logger: Logger,
-    private controller: ClientsController
+    private clientsController: ClientsController
   ) {
-    this.clientsController = controller;
     socket.on("pong", () => {
       this._outstandingPing = false;
     });
