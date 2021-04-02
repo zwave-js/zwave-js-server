@@ -22,7 +22,6 @@ import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { DriverCommand } from "./command";
 import { numberFromLogLevel } from "../util/logger";
-import { NONAME } from "node:dns";
 
 export class Client {
   public receiveEvents = false;
@@ -48,8 +47,7 @@ export class Client {
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.driver,
-        this,
-        this.clientsController
+        this
       ),
   };
 
