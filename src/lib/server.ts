@@ -22,11 +22,13 @@ import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { DriverCommand } from "./command";
 import { numberFromLogLevel } from "../util/logger";
+import { NONAME } from "node:dns";
 
 export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
   public schemaVersion = minSchemaVersion;
+  public clientsController: ClientsController;
 
   private instanceHandlers: Record<
     Instance,
@@ -46,15 +48,18 @@ export class Client {
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.driver,
-        this
+        this,
+        this.clientsController
       ),
   };
 
   constructor(
     private socket: WebSocket,
     private driver: Driver,
-    private logger: Logger
+    private logger: Logger,
+    private controller: ClientsController
   ) {
+    this.clientsController = controller;
     socket.on("pong", () => {
       this._outstandingPing = false;
     });
@@ -207,7 +212,7 @@ export class ClientsController {
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
-    const client = new Client(socket, this.driver, this.logger);
+    const client = new Client(socket, this.driver, this.logger, this);
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
     });

@@ -26,6 +26,15 @@ export class NodeMessageHandler {
         return { success };
       case NodeCommand.refreshInfo:
         await node.refreshInfo();
+        client.clientsController.clients.forEach((client) => {
+          if (client.receiveEvents && client.isConnected) {
+            client.sendEvent({
+              source: "node",
+              event: "not ready",
+              nodeId,
+            });
+          }
+        });
         return {};
       case NodeCommand.getDefinedValueIDs:
         const valueIds = node.getDefinedValueIDs();
