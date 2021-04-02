@@ -1,7 +1,6 @@
-import { Driver } from "zwave-js";
 import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
-import { Client } from "../server";
+import { Client, ClientsController } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
@@ -10,13 +9,12 @@ import { NodeResultTypes } from "./outgoing_message";
 export class NodeMessageHandler {
   static async handle(
     message: IncomingMessageNode,
-    driver: Driver,
-    client: Client,
-    clients: Client[]
+    clientsController: ClientsController,
+    client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
 
-    const node = driver.controller.nodes.get(nodeId);
+    const node = clientsController.driver.controller.nodes.get(nodeId);
     if (!node) {
       throw new NodeNotFoundError(nodeId);
     }
@@ -27,7 +25,7 @@ export class NodeMessageHandler {
         return { success };
       case NodeCommand.refreshInfo:
         await node.refreshInfo();
-        clients.forEach((client) => {
+        clientsController.clients.forEach((client) => {
           if (client.receiveEvents && client.isConnected) {
             client.sendEvent({
               source: "node",
