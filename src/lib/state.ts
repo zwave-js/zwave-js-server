@@ -92,8 +92,8 @@ interface MetadataState {
   description?: ValueMetadata["description"];
   label?: ValueMetadata["label"];
   ccSpecific?: ValueMetadata["ccSpecific"];
-  min?: number;
-  max?: number;
+  min?: ConfigValue;
+  max?: ConfigValue;
   minLength?: number;
   maxLength?: number;
   steps?: number;
