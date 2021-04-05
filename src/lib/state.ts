@@ -92,8 +92,8 @@ interface MetadataState {
   description?: ValueMetadata["description"];
   label?: ValueMetadata["label"];
   ccSpecific?: ValueMetadata["ccSpecific"];
-  min?: ConfigValue;
-  max?: ConfigValue;
+  min?: number;
+  max?: number;
   minLength?: number;
   maxLength?: number;
   steps?: number;
@@ -298,11 +298,11 @@ export const dumpMetadata = (
     ccSpecific: metadata.ccSpecific,
   };
 
-  if ("min" in metadata) {
+  if ("min" in metadata && typeof metadata.min === "number") {
     newMetadata.min = metadata.min;
   }
 
-  if ("max" in metadata) {
+  if ("max" in metadata && typeof metadata.max === "number") {
     newMetadata.max = metadata.max;
   }
 
