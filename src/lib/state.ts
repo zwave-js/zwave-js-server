@@ -13,6 +13,12 @@ import {
   ConfigurationMetadata,
   ConfigValue,
   ConfigValueFormat,
+  ValueMetadataAny,
+  ValueMetadataBoolean,
+  ValueMetadataBuffer,
+  ValueMetadataDuration,
+  ValueMetadataNumeric,
+  ValueMetadataString,
 } from "@zwave-js/core";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -285,7 +291,13 @@ export const dumpConfigurationMetadata = (
 };
 
 export const dumpMetadata = (
-  metadata: ValueMetadata,
+  metadata:
+    | ValueMetadataAny
+    | ValueMetadataBoolean
+    | ValueMetadataBuffer
+    | ValueMetadataDuration
+    | ValueMetadataNumeric
+    | ValueMetadataString,
   schemaVersion: number
 ): MetadataState => {
   let newMetadata: MetadataState = {
@@ -298,11 +310,11 @@ export const dumpMetadata = (
     ccSpecific: metadata.ccSpecific,
   };
 
-  if ("min" in metadata && typeof metadata.min === "number") {
+  if ("min" in metadata) {
     newMetadata.min = metadata.min;
   }
 
-  if ("max" in metadata && typeof metadata.max === "number") {
+  if ("max" in metadata) {
     newMetadata.max = metadata.max;
   }
 
