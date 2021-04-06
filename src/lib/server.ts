@@ -20,8 +20,10 @@ import {
 } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
-import { DriverCommand } from "./command";
+import { ServerCommand } from "./command";
 import { numberFromLogLevel } from "../util/logger";
+import { DriverMessageHandler } from "./driver/message_handler";
+import { IncomingMessageDriver } from "./driver/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -39,9 +41,12 @@ export class Client {
         message as IncomingMessageController,
         this.driver
       ),
-    [Instance.driver]: () => {
-      throw new Error("Driver handler not implemented.");
-    },
+    [Instance.driver]: (message) =>
+      DriverMessageHandler.handle(
+        message as IncomingMessageDriver,
+        this.driver,
+        this
+      ),
     [Instance.node]: (message) =>
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
@@ -77,7 +82,7 @@ export class Client {
     }
 
     try {
-      if (msg.command === DriverCommand.setApiSchema) {
+      if (msg.command === ServerCommand.setApiSchema) {
         // Handle schema version
         this.schemaVersion = msg.schemaVersion;
         if (
@@ -90,7 +95,7 @@ export class Client {
         return;
       }
 
-      if (msg.command === DriverCommand.startListening) {
+      if (msg.command === ServerCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
           state: dumpState(this.driver, this.schemaVersion),
         });
@@ -98,13 +103,13 @@ export class Client {
         return;
       }
 
-      if (msg.command === DriverCommand.updateLogConfig) {
+      if (msg.command === ServerCommand.updateLogConfig) {
         this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
 
-      if (msg.command === DriverCommand.getLogConfig) {
+      if (msg.command === ServerCommand.getLogConfig) {
         // We don't want to return transports since that's used internally.
         const { transports, ...partialLogConfig } = this.driver.getLogConfig();
 
@@ -119,19 +124,6 @@ export class Client {
         }
         this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
         return;
-      }
-
-      if (msg.command === DriverCommand.disableStatistics) {
-        this.driver.disableStatistics();
-        this.sendResultSuccess(msg.messageId, {});
-      }
-
-      if (msg.command === DriverCommand.enableStatistics) {
-        this.driver.enableStatistics({
-          applicationName: msg.applicationName,
-          applicationVersion: msg.applicationVersion,
-        });
-        this.sendResultSuccess(msg.messageId, {});
       }
 
       const instance = msg.command.split(".")[0] as Instance;

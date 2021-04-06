@@ -2,7 +2,8 @@ import { LogConfig } from "@zwave-js/core";
 import type { ZwaveState } from "./state";
 import { NodeResultTypes } from "./node/outgoing_message";
 import { ControllerResultTypes } from "./controller/outgoing_message";
-import { DriverCommand } from "./command";
+import { ServerCommand } from "./command";
+import { DriverResultTypes } from "./driver/outgoing_message";
 
 export interface OutgoingEvent {
   source: "controller" | "node";
@@ -31,17 +32,16 @@ interface OutgoingResultMessageError {
   errorCode: string;
 }
 
-export interface DriverResultTypes {
-  [DriverCommand.startListening]: { state: ZwaveState };
-  [DriverCommand.updateLogConfig]: Record<string, never>;
-  [DriverCommand.getLogConfig]: { config: Partial<LogConfig> };
-  [DriverCommand.disableStatistics]: Record<string, never>;
-  [DriverCommand.enableStatistics]: Record<string, never>;
+export interface ServerResultTypes {
+  [ServerCommand.startListening]: { state: ZwaveState };
+  [ServerCommand.updateLogConfig]: Record<string, never>;
+  [ServerCommand.getLogConfig]: { config: Partial<LogConfig> };
 }
 
-export type ResultTypes = DriverResultTypes &
+export type ResultTypes = ServerResultTypes &
   NodeResultTypes &
-  ControllerResultTypes;
+  ControllerResultTypes &
+  DriverResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";
