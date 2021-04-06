@@ -121,6 +121,19 @@ export class Client {
         return;
       }
 
+      if (msg.command === DriverCommand.disableStatistics) {
+        this.driver.disableStatistics();
+        this.sendResultSuccess(msg.messageId, {});
+      }
+
+      if (msg.command === DriverCommand.enableStatistics) {
+        this.driver.enableStatistics({
+          applicationName: msg.applicationName,
+          applicationVersion: msg.applicationVersion,
+        });
+        this.sendResultSuccess(msg.messageId, {});
+      }
+
       const instance = msg.command.split(".")[0] as Instance;
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(

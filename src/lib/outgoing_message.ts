@@ -35,6 +35,8 @@ export interface DriverResultTypes {
   [DriverCommand.startListening]: { state: ZwaveState };
   [DriverCommand.updateLogConfig]: Record<string, never>;
   [DriverCommand.getLogConfig]: { config: Partial<LogConfig> };
+  [DriverCommand.disableStatistics]: Record<string, never>;
+  [DriverCommand.enableStatistics]: Record<string, never>;
 }
 
 export type ResultTypes = DriverResultTypes &

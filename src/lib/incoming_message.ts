@@ -22,10 +22,22 @@ interface IncomingCommandSetApiSchema extends IncomingCommandBase {
   schemaVersion: number;
 }
 
+interface IncomingCommandEnableStatistics extends IncomingCommandBase {
+  command: DriverCommand.enableStatistics;
+  applicationName: string;
+  applicationVersion: string;
+}
+
+interface IncomingCommandDisableStatistics extends IncomingCommandBase {
+  command: DriverCommand.disableStatistics;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
   | IncomingCommandSetApiSchema
+  | IncomingCommandDisableStatistics
+  | IncomingCommandEnableStatistics
   | IncomingMessageNode
   | IncomingMessageController;
