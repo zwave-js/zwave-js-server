@@ -8,12 +8,18 @@ import {
   DeviceClass,
   CommandClass,
 } from "zwave-js";
-import { CommandClasses } from "@zwave-js/core";
 import {
+  CommandClasses,
   ConfigurationMetadata,
   ConfigValue,
-  ValueFormat,
-} from "zwave-js/build/lib/commandclass/ConfigurationCC";
+  ConfigValueFormat,
+  ValueMetadataAny,
+  ValueMetadataBoolean,
+  ValueMetadataBuffer,
+  ValueMetadataDuration,
+  ValueMetadataNumeric,
+  ValueMetadataString,
+} from "@zwave-js/core";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -113,7 +119,7 @@ interface ConfigurationMetadataState {
   default?: ConfigValue;
   unit?: string;
   valueSize?: number;
-  format?: ValueFormat;
+  format?: ConfigValueFormat;
   name?: string;
   info?: string;
   noBulkSupport?: boolean;
@@ -285,7 +291,13 @@ export const dumpConfigurationMetadata = (
 };
 
 export const dumpMetadata = (
-  metadata: ValueMetadata,
+  metadata:
+    | ValueMetadataAny
+    | ValueMetadataBoolean
+    | ValueMetadataBuffer
+    | ValueMetadataDuration
+    | ValueMetadataNumeric
+    | ValueMetadataString,
   schemaVersion: number
 ): MetadataState => {
   let newMetadata: MetadataState = {
