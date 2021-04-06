@@ -1,5 +1,5 @@
-import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { Driver } from "zwave-js";
+import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
