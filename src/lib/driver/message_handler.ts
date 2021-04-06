@@ -25,6 +25,7 @@ export class DriverMessageHandler {
         });
         return {};
       case DriverCommand.getLogConfig:
+        // We don't want to return transports since that's used internally.
         const { transports, ...partialLogConfig } = driver.getLogConfig();
 
         if (
