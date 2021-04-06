@@ -37,7 +37,7 @@ export class Client {
     [Instance.controller]: (message) =>
       ControllerMessageHandler.handle(
         message as IncomingMessageController,
-        this.clientsController.driver
+        this.driver
       ),
     [Instance.driver]: () => {
       throw new Error("Driver handler not implemented.");
@@ -45,14 +45,14 @@ export class Client {
     [Instance.node]: (message) =>
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
-        this.clientsController,
+        this.driver,
         this
       ),
   };
 
   constructor(
     private socket: WebSocket,
-    private clientsController: ClientsController,
+    private driver: Driver,
     private logger: Logger
   ) {
     socket.on("pong", () => {
@@ -92,24 +92,21 @@ export class Client {
 
       if (msg.command === DriverCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
-          state: dumpState(this.clientsController.driver, this.schemaVersion),
+          state: dumpState(this.driver, this.schemaVersion),
         });
         this.receiveEvents = true;
         return;
       }
 
       if (msg.command === DriverCommand.updateLogConfig) {
-        this.clientsController.driver.updateLogConfig(msg.config);
+        this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
 
       if (msg.command === DriverCommand.getLogConfig) {
         // We don't want to return transports since that's used internally.
-        const {
-          transports,
-          ...partialLogConfig
-        } = this.clientsController.driver.getLogConfig();
+        const { transports, ...partialLogConfig } = this.driver.getLogConfig();
 
         if (
           this.schemaVersion < 3 &&
@@ -149,7 +146,7 @@ export class Client {
       type: "version",
       driverVersion: libVersion,
       serverVersion: version,
-      homeId: this.clientsController.driver.controller.homeId,
+      homeId: this.driver.controller.homeId,
       minSchemaVersion: minSchemaVersion,
       maxSchemaVersion: maxSchemaVersion,
     });
@@ -210,7 +207,7 @@ export class ClientsController {
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
-    const client = new Client(socket, this, this.logger);
+    const client = new Client(socket, this.driver, this.logger);
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
     });
