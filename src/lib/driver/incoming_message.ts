@@ -2,6 +2,10 @@ import { LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "../incoming_message_base";
 
+interface IncomingCommandGetConfig extends IncomingCommandBase {
+  command: DriverCommand.getConfig;
+}
+
 interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
   command: DriverCommand.updateLogConfig;
   config: Partial<LogConfig>;
@@ -21,8 +25,14 @@ interface IncomingCommandDisableStatistics extends IncomingCommandBase {
   command: DriverCommand.disableStatistics;
 }
 
+interface IncomingCommandStatisticsEnabled extends IncomingCommandBase {
+  command: DriverCommand.statisticsEnabled;
+}
+
 export type IncomingMessageDriver =
+  | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
   | IncomingCommandDisableStatistics
-  | IncomingCommandEnableStatistics;
+  | IncomingCommandEnableStatistics
+  | IncomingCommandStatisticsEnabled;

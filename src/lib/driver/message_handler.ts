@@ -4,7 +4,7 @@ import { Client } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
-import { numberFromLogLevel } from "../../util/logger";
+import { dumpDriver, dumpLogConfig } from "../state";
 
 export class DriverMessageHandler {
   static async handle(
@@ -13,8 +13,9 @@ export class DriverMessageHandler {
     client: Client
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
-
     switch (message.command) {
+      case DriverCommand.getConfig:
+        return dumpDriver(driver, client.schemaVersion);
       case DriverCommand.disableStatistics:
         driver.disableStatistics();
         return {};
@@ -25,22 +26,12 @@ export class DriverMessageHandler {
         });
         return {};
       case DriverCommand.getLogConfig:
-        // We don't want to return transports since that's used internally.
-        const { transports, ...partialLogConfig } = driver.getLogConfig();
-
-        if (
-          client.schemaVersion < 3 &&
-          typeof partialLogConfig.level === "string"
-        ) {
-          let levelNum = numberFromLogLevel(partialLogConfig.level);
-          if (levelNum != undefined) {
-            partialLogConfig.level = levelNum;
-          }
-        }
-        return { config: partialLogConfig };
+        return { config: dumpLogConfig(driver, client.schemaVersion) };
       case DriverCommand.updateLogConfig:
         driver.updateLogConfig(message.config);
         return {};
+      case DriverCommand.statisticsEnabled:
+        return { statisticsEnabled: driver.statisticsEnabled };
       default:
         throw new UnknownCommandError(command);
     }

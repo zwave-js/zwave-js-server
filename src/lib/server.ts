@@ -5,7 +5,7 @@ import { libVersion } from "zwave-js";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
-import { dumpState } from "./state";
+import { dumpLogConfig, dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
 import { version, minSchemaVersion, maxSchemaVersion } from "./const";
@@ -21,7 +21,6 @@ import {
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { ServerCommand } from "./command";
-import { numberFromLogLevel } from "../util/logger";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 
@@ -110,19 +109,9 @@ export class Client {
       }
 
       if (msg.command === ServerCommand.getLogConfig) {
-        // We don't want to return transports since that's used internally.
-        const { transports, ...partialLogConfig } = this.driver.getLogConfig();
-
-        if (
-          this.schemaVersion < 3 &&
-          typeof partialLogConfig.level === "string"
-        ) {
-          let levelNum = numberFromLogLevel(partialLogConfig.level);
-          if (levelNum != undefined) {
-            partialLogConfig.level = levelNum;
-          }
-        }
-        this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
+        this.sendResultSuccess(msg.messageId, {
+          config: dumpLogConfig(this.driver, this.schemaVersion),
+        });
         return;
       }
 
