@@ -64,6 +64,10 @@ const runTest = async () => {
       messageId: "my-msg-id!",
       result: {
         state: {
+          driver: {
+            config: { enabled: true, level: "debug" },
+            statisticsEnabled: true,
+          },
           controller: { homeId: 1 },
           nodes: [],
         },
