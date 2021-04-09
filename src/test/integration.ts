@@ -65,7 +65,7 @@ const runTest = async () => {
       result: {
         state: {
           driver: {
-            config: { enabled: true, level: "debug" },
+            config: { enabled: true, level: 5 },
             statisticsEnabled: true,
           },
           controller: { homeId: 1 },
