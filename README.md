@@ -120,6 +120,46 @@ interface {
 }
 ```
 
+### Set API schema version
+
+```ts
+interface {
+  messageId: string;
+  command: "set_api_schema";
+  schemaVersion: number;
+}
+```
+
+### Driver level commands
+
+#### Get the config of the driver
+
+[compatible with schema version: 0+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_config";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  config: {
+    logConfig: {
+      enabled: boolean;
+      level: number;
+      logToFile: boolean;
+      filename: string;
+      forceConsole: boolean;
+    };
+    statisticsEnabled: boolean;
+  }
+}
+```
+
 #### Update the logging configuration
 
 [compatible with schema version: 1+]
@@ -129,7 +169,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "update_log_config";
+  command: "driver.update_log_config";
   config: {
     enabled?: boolean;
     level?: number;
@@ -147,7 +187,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "get_log_config";
+  command: "driver.get_log_config";
 }
 ```
 
@@ -162,6 +202,47 @@ interface {
     filename: string;
     forceConsole: boolean;
   }
+}
+```
+
+#### Enable data usage statistics collection
+
+[compatible with schema version: 0+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_statistics";
+}
+```
+
+#### Disable data usage statistics collection
+
+[compatible with schema version: 0+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_statistics";
+}
+```
+
+#### Get whether statistics are enabled
+
+[compatible with schema version: 0+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.statistics_enabled";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  statisticsEnabled: boolean;
 }
 ```
 

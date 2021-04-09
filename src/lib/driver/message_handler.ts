@@ -15,7 +15,7 @@ export class DriverMessageHandler {
     const { command } = message;
     switch (message.command) {
       case DriverCommand.getConfig:
-        return dumpDriver(driver, client.schemaVersion);
+        return { config: dumpDriver(driver, client.schemaVersion) };
       case DriverCommand.disableStatistics:
         driver.disableStatistics();
         return {};
