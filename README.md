@@ -122,6 +122,8 @@ interface {
 
 ### Set API schema version
 
+[compatible with schema version: 0+]
+
 ```ts
 interface {
   messageId: string;
