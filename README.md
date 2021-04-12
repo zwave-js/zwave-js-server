@@ -223,7 +223,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "driver.enable_statistics";
+  command: "driver.disable_statistics";
 }
 ```
 
@@ -234,7 +234,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "driver.statistics_enabled";
+  command: "driver.is_statistics_enabled";
 }
 ```
 
