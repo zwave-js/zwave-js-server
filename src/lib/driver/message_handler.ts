@@ -30,7 +30,7 @@ export class DriverMessageHandler {
       case DriverCommand.updateLogConfig:
         driver.updateLogConfig(message.config);
         return {};
-      case DriverCommand.statisticsEnabled:
+      case DriverCommand.isStatisticsEnabled:
         return { statisticsEnabled: driver.statisticsEnabled };
       default:
         throw new UnknownCommandError(command);

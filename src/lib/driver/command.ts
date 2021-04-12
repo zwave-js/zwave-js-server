@@ -4,5 +4,5 @@ export enum DriverCommand {
   getLogConfig = "driver.get_log_config",
   enableStatistics = "driver.enable_statistics",
   disableStatistics = "driver.disable_statistics",
-  statisticsEnabled = "driver.statistics_enabled",
+  isStatisticsEnabled = "driver.is_statistics_enabled",
 }

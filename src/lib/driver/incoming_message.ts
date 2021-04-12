@@ -25,8 +25,8 @@ interface IncomingCommandDisableStatistics extends IncomingCommandBase {
   command: DriverCommand.disableStatistics;
 }
 
-interface IncomingCommandStatisticsEnabled extends IncomingCommandBase {
-  command: DriverCommand.statisticsEnabled;
+interface IncomingCommandIsStatisticsEnabled extends IncomingCommandBase {
+  command: DriverCommand.isStatisticsEnabled;
 }
 
 export type IncomingMessageDriver =
@@ -35,4 +35,4 @@ export type IncomingMessageDriver =
   | IncomingCommandGetLogConfig
   | IncomingCommandDisableStatistics
   | IncomingCommandEnableStatistics
-  | IncomingCommandStatisticsEnabled;
+  | IncomingCommandIsStatisticsEnabled;
