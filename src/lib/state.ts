@@ -390,6 +390,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     values: getNodeValues(node, schemaVersion),
   };
 
+  // In schema 4 we started using the interview stage string instead of the enum number
   if (schemaVersion <= 3) base.interviewStage = node.interviewStage;
 
   // Handle schema 3 changes by transforming them into the properties that schema < 3 expects.
