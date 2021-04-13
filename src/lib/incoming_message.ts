@@ -1,24 +1,25 @@
 import { LogConfig } from "@zwave-js/core";
 import { IncomingMessageController } from "./controller/incoming_message";
-import { DriverCommand } from "./command";
+import { ServerCommand } from "./command";
 import { IncomingCommandBase } from "./incoming_message_base";
 import { IncomingMessageNode } from "./node/incoming_message";
+import { IncomingMessageDriver } from "./driver/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
-  command: DriverCommand.startListening;
+  command: ServerCommand.startListening;
 }
 
 interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
-  command: DriverCommand.updateLogConfig;
+  command: ServerCommand.updateLogConfig;
   config: Partial<LogConfig>;
 }
 
 interface IncomingCommandGetLogConfig extends IncomingCommandBase {
-  command: DriverCommand.getLogConfig;
+  command: ServerCommand.getLogConfig;
 }
 
 interface IncomingCommandSetApiSchema extends IncomingCommandBase {
-  command: DriverCommand.setApiSchema;
+  command: ServerCommand.setApiSchema;
   schemaVersion: number;
 }
 
@@ -28,4 +29,5 @@ export type IncomingMessage =
   | IncomingCommandGetLogConfig
   | IncomingCommandSetApiSchema
   | IncomingMessageNode
-  | IncomingMessageController;
+  | IncomingMessageController
+  | IncomingMessageDriver;

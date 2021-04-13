@@ -5,7 +5,7 @@ import { libVersion } from "zwave-js";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
-import { dumpState } from "./state";
+import { dumpLogConfig, dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
 import { version, minSchemaVersion, maxSchemaVersion } from "./const";
@@ -20,8 +20,9 @@ import {
 } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageNode } from "./node/incoming_message";
-import { DriverCommand } from "./command";
-import { numberFromLogLevel } from "../util/logger";
+import { ServerCommand } from "./command";
+import { DriverMessageHandler } from "./driver/message_handler";
+import { IncomingMessageDriver } from "./driver/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -39,9 +40,12 @@ export class Client {
         message as IncomingMessageController,
         this.driver
       ),
-    [Instance.driver]: () => {
-      throw new Error("Driver handler not implemented.");
-    },
+    [Instance.driver]: (message) =>
+      DriverMessageHandler.handle(
+        message as IncomingMessageDriver,
+        this.driver,
+        this
+      ),
     [Instance.node]: (message) =>
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
@@ -77,7 +81,7 @@ export class Client {
     }
 
     try {
-      if (msg.command === DriverCommand.setApiSchema) {
+      if (msg.command === ServerCommand.setApiSchema) {
         // Handle schema version
         this.schemaVersion = msg.schemaVersion;
         if (
@@ -90,7 +94,7 @@ export class Client {
         return;
       }
 
-      if (msg.command === DriverCommand.startListening) {
+      if (msg.command === ServerCommand.startListening) {
         this.sendResultSuccess(msg.messageId, {
           state: dumpState(this.driver, this.schemaVersion),
         });
@@ -98,26 +102,16 @@ export class Client {
         return;
       }
 
-      if (msg.command === DriverCommand.updateLogConfig) {
+      if (msg.command === ServerCommand.updateLogConfig) {
         this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
 
-      if (msg.command === DriverCommand.getLogConfig) {
-        // We don't want to return transports since that's used internally.
-        const { transports, ...partialLogConfig } = this.driver.getLogConfig();
-
-        if (
-          this.schemaVersion < 3 &&
-          typeof partialLogConfig.level === "string"
-        ) {
-          let levelNum = numberFromLogLevel(partialLogConfig.level);
-          if (levelNum != undefined) {
-            partialLogConfig.level = levelNum;
-          }
-        }
-        this.sendResultSuccess(msg.messageId, { config: partialLogConfig });
+      if (msg.command === ServerCommand.getLogConfig) {
+        this.sendResultSuccess(msg.messageId, {
+          config: dumpLogConfig(this.driver, this.schemaVersion),
+        });
         return;
       }
 

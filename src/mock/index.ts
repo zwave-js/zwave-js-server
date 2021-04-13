@@ -1,5 +1,6 @@
 import type { Driver } from "zwave-js";
 import { EventEmitter } from "events";
+import { LogConfig } from "@zwave-js/core";
 
 class MockController extends EventEmitter {
   homeId = 1;
@@ -11,8 +12,17 @@ class MockDriver extends EventEmitter {
 
   public ready = true;
 
+  public statisticsEnabled = true;
+
   async start() {
     this.emit("driver ready");
+  }
+
+  public getLogConfig(): Partial<LogConfig> {
+    return {
+      enabled: true,
+      level: "debug",
+    };
   }
 
   async destroy() {}

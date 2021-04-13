@@ -13,6 +13,7 @@ import {
   ConfigurationMetadata,
   ConfigValue,
   ConfigValueFormat,
+  LogConfig,
   ValueMetadataAny,
   ValueMetadataBoolean,
   ValueMetadataBuffer,
@@ -20,10 +21,18 @@ import {
   ValueMetadataNumeric,
   ValueMetadataString,
 } from "@zwave-js/core";
+import { numberFromLogLevel } from "../util/logger";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
+type LogConfigState = Partial<LogConfig>;
+export interface DriverState {
+  logConfig: LogConfigState;
+  statisticsEnabled: boolean;
+}
+
 export interface ZwaveState {
+  driver: DriverState;
   controller: {
     libraryVersion: ZWaveController["libraryVersion"];
     type: ZWaveController["type"];
@@ -480,12 +489,37 @@ export const dumpCommandClass = (
   isSecure: node.isCCSecure(commandClass.ccId),
 });
 
+export const dumpLogConfig = (
+  driver: Driver,
+  schemaVersion: number
+): LogConfigState => {
+  const { transports, ...partialLogConfig } = driver.getLogConfig();
+  if (schemaVersion < 3 && typeof partialLogConfig.level === "string") {
+    let levelNum = numberFromLogLevel(partialLogConfig.level);
+    if (levelNum != undefined) {
+      partialLogConfig.level = levelNum;
+    }
+  }
+  return partialLogConfig;
+};
+
+export const dumpDriver = (
+  driver: Driver,
+  schemaVersion: number
+): DriverState => {
+  return {
+    logConfig: dumpLogConfig(driver, schemaVersion),
+    statisticsEnabled: driver.statisticsEnabled,
+  };
+};
+
 export const dumpState = (
   driver: Driver,
   schemaVersion: number
 ): ZwaveState => {
   const controller = driver.controller;
   return {
+    driver: dumpDriver(driver, schemaVersion),
     controller: {
       libraryVersion: controller.libraryVersion,
       type: controller.type,
