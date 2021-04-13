@@ -1,4 +1,5 @@
 import { ConfigValue, ValueID } from "zwave-js";
+import { CommandClasses } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
@@ -45,6 +46,17 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   valueSize: 1 | 2 | 4;
 }
 
+export interface IncomingCommandNodeRefreshValues
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.refreshValues;
+}
+
+export interface IncomingCommandNodeRefreshCCValues
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.refreshCCValues;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -52,4 +64,6 @@ export type IncomingMessageNode =
   | IncomingCommandNodeGetValueMetadata
   | IncomingCommandNodeAbortFirmwareUpdate
   | IncomingCommandNodePollValue
-  | IncomingCommandNodeSetRawConfigParameterValue;
+  | IncomingCommandNodeSetRawConfigParameterValue
+  | IncomingCommandNodeRefreshValues
+  | IncomingCommandNodeRefreshCCValues;

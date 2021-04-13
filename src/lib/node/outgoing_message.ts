@@ -9,4 +9,6 @@ export interface NodeResultTypes {
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.pollValue]: { value: any | undefined };
   [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
+  [NodeCommand.refreshValues]: Record<string, never>;
+  [NodeCommand.refreshCCValues]: Record<string, never>;
 }

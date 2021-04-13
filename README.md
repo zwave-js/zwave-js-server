@@ -357,6 +357,32 @@ interface {
 }
 ```
 
+#### [Refresh values](https://zwave-js.github.io/node-zwave-js/#/api/node?id=refreshvalues)
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.refresh_values";
+  nodeId: number;
+}
+```
+
+#### [Refresh command class values](https://zwave-js.github.io/node-zwave-js/#/api/node?id=refreshccvalues)
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.refresh_cc_values";
+  nodeId: number;
+  commandClass: CommandClasses;
+}
+```
+
+
 ## Schema Version
 
 In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.

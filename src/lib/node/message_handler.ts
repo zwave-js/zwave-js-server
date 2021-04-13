@@ -55,6 +55,12 @@ export class NodeMessageHandler {
           message.valueSize
         );
         return {};
+      case NodeCommand.refreshValues:
+        await node.refreshValues();
+        return {};
+      case NodeCommand.refreshCCValues:
+        await node.refreshCCValues(message.commandClass);
+        return {};
       default:
         throw new UnknownCommandError(command);
     }
