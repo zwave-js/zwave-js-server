@@ -186,19 +186,22 @@ type NodeStateSchema1 = Modify<
 
 type NodeStateSchema2 = NodeStateSchema1;
 
-type NodeStateSchema3 = Modify<
-  Omit<NodeStateSchema2, "maxBaudRate" | "version" | "isBeaming" | "roleType">,
-  {
-    isFrequentListening: ZWaveNode["isFrequentListening"];
-    maxDataRate: ZWaveNode["maxDataRate"];
-    supportedDataRates: ZWaveNode["supportedDataRates"];
-    protocolVersion: ZWaveNode["protocolVersion"];
-    supportsBeaming: ZWaveNode["supportsBeaming"];
-    supportsSecurity: ZWaveNode["supportsSecurity"];
-    zwavePlusNodeType: ZWaveNode["zwavePlusNodeType"];
-    zwavePlusRoleType: ZWaveNode["zwavePlusRoleType"];
-    nodeType: ZWaveNode["nodeType"];
-  }
+type NodeStateSchema3 = Omit<
+  Modify<
+    NodeStateSchema2,
+    {
+      isFrequentListening: ZWaveNode["isFrequentListening"];
+      maxDataRate: ZWaveNode["maxDataRate"];
+      supportedDataRates: ZWaveNode["supportedDataRates"];
+      protocolVersion: ZWaveNode["protocolVersion"];
+      supportsBeaming: ZWaveNode["supportsBeaming"];
+      supportsSecurity: ZWaveNode["supportsSecurity"];
+      zwavePlusNodeType: ZWaveNode["zwavePlusNodeType"];
+      zwavePlusRoleType: ZWaveNode["zwavePlusRoleType"];
+      nodeType: ZWaveNode["nodeType"];
+    }
+  >,
+  "maxBaudRate" | "version" | "isBeaming" | "roleType"
 >;
 
 type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
