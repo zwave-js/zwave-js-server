@@ -136,7 +136,7 @@ interface {
 
 #### Get the config of the driver
 
-[compatible with schema version: 0+]
+[compatible with schema version: 4+]
 
 ```ts
 interface {
@@ -164,7 +164,7 @@ interface {
 
 #### Update the logging configuration
 
-[compatible with schema version: 1+]
+[compatible with schema version: 4+]
 
 > NOTE: You must provide at least one key/value pair as part of `config`
 
@@ -184,7 +184,7 @@ interface {
 
 #### Get the logging configuration
 
-[compatible with schema version: 1+]
+[compatible with schema version: 4+]
 
 ```ts
 interface {
@@ -209,7 +209,7 @@ interface {
 
 #### Enable data usage statistics collection
 
-[compatible with schema version: 0+]
+[compatible with schema version: 4+]
 
 ```ts
 interface {
@@ -220,7 +220,7 @@ interface {
 
 #### Disable data usage statistics collection
 
-[compatible with schema version: 0+]
+[compatible with schema version: 4+]
 
 ```ts
 interface {
@@ -231,7 +231,7 @@ interface {
 
 #### Get whether statistics are enabled
 
-[compatible with schema version: 0+]
+[compatible with schema version: 4+]
 
 ```ts
 interface {
