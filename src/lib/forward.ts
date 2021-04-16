@@ -32,14 +32,14 @@ export class EventForwarder {
 
     // Forward logging events on to clients that are currently
     // receiving logs
-    this.server.on("logging", (info: ZWaveLogInfo) => {
+    this.server.on("logging", (message: string) => {
       this.clients.clients
         .filter((cl) => cl.receiveLogs && cl.isConnected)
         .forEach((client) =>
           client.sendEvent({
             source: "driver",
             event: "logging",
-            info,
+            message,
           })
         );
     });

@@ -294,7 +294,7 @@ export interface ZwavejsServer {
   destroy(): void;
   on(event: "listening", listener: () => void): this;
   on(event: "error", listener: (error: Error) => void): this;
-  on(event: "logging", listener: (info: ZWaveLogInfo) => void): this;
+  on(event: "logging", listener: (message: string) => void): this;
 }
 
 export class ZwavejsServer extends EventEmitter {
@@ -354,8 +354,11 @@ export class ZwavejsServer extends EventEmitter {
 }
 
 export class EventEmitterLogTransport extends Transport {
+  private messageSymbol: Symbol;
+
   public constructor(private emitter: EventEmitter, private logger: Logger) {
     super({ format: createDefaultTransportFormat(false, false) });
+    this.messageSymbol = Symbol.for("message");
     this.logger.error("EventEmitterLogTransport created");
   }
 
