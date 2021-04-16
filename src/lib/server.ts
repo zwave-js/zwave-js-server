@@ -313,6 +313,8 @@ export class ZwavejsServer extends EventEmitter {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
     }
+
+    // Create log transport for server and update the drivers log configuration
     this.serverTransport = new EventEmitterLogTransport(this, this.logger);
     const transports = this.driver.getLogConfig().transports;
     transports.push(this.serverTransport);
