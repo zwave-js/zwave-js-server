@@ -315,7 +315,7 @@ export class ZwavejsServer extends EventEmitter {
     }
 
     // Create log transport for server and update the drivers log configuration
-    this.serverTransport = new EventEmitterLogTransport(this, this.logger);
+    this.serverTransport = new EventEmitterLogTransport(this);
     const transports = this.driver.getLogConfig().transports;
     transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
@@ -359,11 +359,9 @@ export class EventEmitterLogTransport extends Transport {
   public constructor(private emitter: EventEmitter, private logger: Logger) {
     super({ format: createDefaultTransportFormat(false, false) });
     this.messageSymbol = Symbol.for("message");
-    this.logger.error("EventEmitterLogTransport created");
   }
 
   public log(info: ZWaveLogInfo, next: () => void): any {
-    this.logger.error("attached");
     this.emitter.emit("logging", info);
     next();
   }
