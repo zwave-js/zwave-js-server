@@ -23,11 +23,21 @@ interface IncomingCommandSetApiSchema extends IncomingCommandBase {
   schemaVersion: number;
 }
 
+interface IncomingCommandStartListeningToLogs extends IncomingCommandBase {
+  command: ServerCommand.startListeningToLogs;
+}
+
+interface IncomingCommandStopListeningToLogs extends IncomingCommandBase {
+  command: ServerCommand.stopListeningToLogs;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
   | IncomingCommandSetApiSchema
+  | IncomingCommandStartListeningToLogs
+  | IncomingCommandStopListeningToLogs
   | IncomingMessageNode
   | IncomingMessageController
   | IncomingMessageDriver;

@@ -1,7 +1,10 @@
+import Transport from "winston-transport";
 import ws from "ws";
 import type WebSocket from "ws";
 import type { Driver } from "zwave-js";
 import { libVersion } from "zwave-js";
+import { createDefaultTransportFormat } from "@zwave-js/core";
+import type { ZWaveLogInfo } from "@zwave-js/core";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
@@ -28,6 +31,7 @@ export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
   public schemaVersion = minSchemaVersion;
+  public receiveLogs = false;
 
   private instanceHandlers: Record<
     Instance,
@@ -115,6 +119,18 @@ export class Client {
         return;
       }
 
+      if (msg.command === ServerCommand.startListeningToLogs) {
+        this.receiveLogs = true;
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
+      if (msg.command === ServerCommand.stopListeningToLogs) {
+        this.receiveLogs = false;
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
       const instance = msg.command.split(".")[0] as Instance;
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
@@ -197,7 +213,11 @@ export class ClientsController {
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
 
-  constructor(public driver: Driver, private logger: Logger) {}
+  constructor(
+    public driver: Driver,
+    private logger: Logger,
+    private server: ZwavejsServer
+  ) {}
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
@@ -230,7 +250,7 @@ export class ClientsController {
     }
 
     if (this.eventForwarder === undefined) {
-      this.eventForwarder = new EventForwarder(this);
+      this.eventForwarder = new EventForwarder(this, this.server);
       this.eventForwarder.start();
     }
   }
@@ -274,6 +294,7 @@ export interface ZwavejsServer {
   destroy(): void;
   on(event: "listening", listener: () => void): this;
   on(event: "error", listener: (error: Error) => void): this;
+  on(event: "logging", listener: (info: ZWaveLogInfo) => void): this;
 }
 
 export class ZwavejsServer extends EventEmitter {
@@ -281,6 +302,7 @@ export class ZwavejsServer extends EventEmitter {
   private wsServer?: ws.Server;
   private sockets?: ClientsController;
   private logger: Logger;
+  private serverTransport?: EventEmitterLogTransport;
 
   constructor(private driver: Driver, private options: ZwavejsServerOptions) {
     super();
@@ -291,9 +313,14 @@ export class ZwavejsServer extends EventEmitter {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
     }
+    this.serverTransport = new EventEmitterLogTransport(this, this.logger);
+    const transports = this.driver.getLogConfig().transports;
+    transports.push(this.serverTransport);
+    this.driver.updateLogConfig({ transports });
+
     this.server = createServer();
     this.wsServer = new ws.Server({ server: this.server });
-    this.sockets = new ClientsController(this.driver, this.logger);
+    this.sockets = new ClientsController(this.driver, this.logger, this);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     this.logger.debug(`Starting server on port ${this.options.port}`);
@@ -321,5 +348,18 @@ export class ZwavejsServer extends EventEmitter {
     }
 
     this.logger.info(`Server closed`);
+  }
+}
+
+export class EventEmitterLogTransport extends Transport {
+  public constructor(private emitter: EventEmitter, private logger: Logger) {
+    super({ format: createDefaultTransportFormat(false, false) });
+    this.logger.error("EventEmitterLogTransport created");
+  }
+
+  public log(info: ZWaveLogInfo, next: () => void): any {
+    this.logger.error("attached");
+    this.emitter.emit("logging", info);
+    next();
   }
 }

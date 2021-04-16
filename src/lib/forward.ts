@@ -5,10 +5,14 @@ import {
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
-import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
+import {
+  CommandClasses,
+  ConfigurationMetadata,
+  ZWaveLogInfo,
+} from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
-import { Client, ClientsController } from "./server";
+import { Client, ClientsController, ZwavejsServer } from "./server";
 
 export class EventForwarder {
   /**
@@ -16,12 +20,27 @@ export class EventForwarder {
    *
    * @param clients
    */
-  constructor(public clients: ClientsController) {}
+  constructor(
+    public clients: ClientsController,
+    private server: ZwavejsServer
+  ) {}
 
   start() {
     this.clients.driver.controller.nodes.forEach((node) =>
       this.setupNode(node)
     );
+
+    this.server.on("logging", (info: ZWaveLogInfo) => {
+      this.clients.clients
+        .filter((cl) => cl.receiveLogs)
+        .forEach((client) =>
+          this.sendEvent(client, {
+            source: "driver",
+            event: "logging",
+            info,
+          })
+        );
+    });
 
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112

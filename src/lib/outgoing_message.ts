@@ -6,7 +6,7 @@ import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
 
 export interface OutgoingEvent {
-  source: "controller" | "node";
+  source: "controller" | "node" | "driver";
   event: string;
   [key: string]: unknown;
 }
@@ -36,6 +36,8 @@ export interface ServerResultTypes {
   [ServerCommand.startListening]: { state: ZwaveState };
   [ServerCommand.updateLogConfig]: Record<string, never>;
   [ServerCommand.getLogConfig]: { config: Partial<LogConfig> };
+  [ServerCommand.startListeningToLogs]: Record<string, never>;
+  [ServerCommand.stopListeningToLogs]: Record<string, never>;
 }
 
 export type ResultTypes = ServerResultTypes &
