@@ -22,8 +22,11 @@ class MockDriver extends EventEmitter {
     return {
       enabled: true,
       level: "debug",
+      transports: [],
     };
   }
+
+  public updateLogConfig(config: Partial<LogConfig>) {}
 
   async destroy() {}
 }
