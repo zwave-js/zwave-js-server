@@ -1,18 +1,4 @@
-import {
-  ControllerEvents,
-  NodeStatus,
-  ZWaveNode,
-  ZWaveNodeEvents,
-  ZWaveNodeMetadataUpdatedArgs,
-} from "zwave-js";
-import {
-  CommandClasses,
-  ConfigurationMetadata,
-  ZWaveLogInfo,
-} from "@zwave-js/core";
-import { OutgoingEvent } from "./outgoing_message";
-import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
-import { Client, ClientsController, ZwavejsServer } from "./server";
+import { ClientsController, ZwavejsServer } from "./server";
 
 export class LoggingEventForwarder {
   /**

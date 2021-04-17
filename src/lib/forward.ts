@@ -5,14 +5,10 @@ import {
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
-import {
-  CommandClasses,
-  ConfigurationMetadata,
-  ZWaveLogInfo,
-} from "@zwave-js/core";
+import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
-import { Client, ClientsController, ZwavejsServer } from "./server";
+import { Client, ClientsController } from "./server";
 
 export class EventForwarder {
   /**
