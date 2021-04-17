@@ -280,10 +280,6 @@ export class ClientsController {
     this.loggingEventForwarder?.start();
   }
 
-  public stopLoggingEventForwarder() {
-    this.loggingEventForwarder?.stop();
-  }
-
   private scheduleClientCleanup() {
     if (this.cleanupScheduled) {
       return;
