@@ -20,29 +20,12 @@ export class EventForwarder {
    *
    * @param clients
    */
-  constructor(
-    public clients: ClientsController,
-    private server: ZwavejsServer
-  ) {}
+  constructor(public clients: ClientsController) {}
 
   start() {
     this.clients.driver.controller.nodes.forEach((node) =>
       this.setupNode(node)
     );
-
-    // Forward logging events on to clients that are currently
-    // receiving logs
-    this.server.on("logging", (message: string) => {
-      this.clients.clients
-        .filter((cl) => cl.receiveLogs && cl.isConnected)
-        .forEach((client) =>
-          client.sendEvent({
-            source: "driver",
-            event: "logging",
-            message,
-          })
-        );
-    });
 
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112

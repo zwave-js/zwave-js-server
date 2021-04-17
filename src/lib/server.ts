@@ -26,6 +26,7 @@ import { IncomingMessageNode } from "./node/incoming_message";
 import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
+import { LoggingEventForwarder } from "./logging";
 
 export class Client {
   public receiveEvents = false;
@@ -60,6 +61,7 @@ export class Client {
 
   constructor(
     private socket: WebSocket,
+    private clientsController: ClientsController,
     private driver: Driver,
     private logger: Logger
   ) {
@@ -121,6 +123,9 @@ export class Client {
 
       if (msg.command === ServerCommand.startListeningToLogs) {
         this.receiveLogs = true;
+        if (!this.clientsController.loggingEventForwarderStarted) {
+          this.clientsController.startLoggingEventForwarder();
+        }
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
@@ -212,6 +217,7 @@ export class ClientsController {
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
+  private loggingEventForwarder?: LoggingEventForwarder;
 
   constructor(
     public driver: Driver,
@@ -221,7 +227,7 @@ export class ClientsController {
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
-    const client = new Client(socket, this.driver, this.logger);
+    const client = new Client(socket, this, this.driver, this.logger);
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
     });
@@ -250,9 +256,32 @@ export class ClientsController {
     }
 
     if (this.eventForwarder === undefined) {
-      this.eventForwarder = new EventForwarder(this, this.server);
+      this.eventForwarder = new EventForwarder(this);
       this.eventForwarder.start();
     }
+
+    if (this.loggingEventForwarder === undefined) {
+      this.loggingEventForwarder = new LoggingEventForwarder(this, this.server);
+      this.loggingEventForwarder.start();
+    }
+  }
+
+  get loggingEventForwarderStarted(): boolean {
+    if (
+      !this.loggingEventForwarder ||
+      this.loggingEventForwarder === undefined
+    ) {
+      return false;
+    }
+    return this.loggingEventForwarder.started;
+  }
+
+  public startLoggingEventForwarder() {
+    this.loggingEventForwarder?.start();
+  }
+
+  public stopLoggingEventForwarder() {
+    this.loggingEventForwarder?.stop();
   }
 
   private scheduleClientCleanup() {
@@ -266,6 +295,12 @@ export class ClientsController {
   private cleanupClients() {
     this.cleanupScheduled = false;
     this.clients = this.clients.filter((cl) => cl.isConnected);
+    if (
+      this.clients.filter((cl) => cl.receiveLogs).length == 0 &&
+      this.loggingEventForwarderStarted
+    ) {
+      this.loggingEventForwarder?.stop();
+    }
   }
 
   disconnect() {
