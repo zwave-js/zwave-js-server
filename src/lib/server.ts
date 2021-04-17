@@ -262,7 +262,6 @@ export class ClientsController {
 
     if (this.loggingEventForwarder === undefined) {
       this.loggingEventForwarder = new LoggingEventForwarder(this, this.server);
-      this.loggingEventForwarder.start();
     }
   }
 
