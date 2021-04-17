@@ -10,7 +10,7 @@ export class LoggingEventForwarder {
   public started: boolean = false;
 
   constructor(
-    public clients: ClientsController,
+    private clients: ClientsController,
     private server: ZwavejsServer
   ) {}
 

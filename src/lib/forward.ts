@@ -16,7 +16,7 @@ export class EventForwarder {
    *
    * @param clients
    */
-  constructor(public clients: ClientsController) {}
+  constructor(private clients: ClientsController) {}
 
   start() {
     this.clients.driver.controller.nodes.forEach((node) =>
