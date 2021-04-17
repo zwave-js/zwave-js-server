@@ -362,7 +362,7 @@ export class EventEmitterLogTransport extends Transport {
   }
 
   public log(info: ZWaveLogInfo, next: () => void): any {
-    this.emitter.emit("logging", info);
+    this.emitter.emit("logging", info[this.messageSymbol as any]);
     next();
   }
 }
