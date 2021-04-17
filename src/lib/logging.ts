@@ -14,27 +14,25 @@ export class LoggingEventForwarder {
     private server: ZwavejsServer
   ) {}
 
-  // Forward logging events on to clients that are currently
-  // receiving logs
-  forwardLogging(message: string) {
-    this.clients.clients
-      .filter((cl) => cl.receiveLogs && cl.isConnected)
-      .forEach((client) =>
-        client.sendEvent({
-          source: "driver",
-          event: "logging",
-          message,
-        })
-      );
-  }
-
   start() {
-    this.server.on("logging", this.forwardLogging);
+    // Forward logging events on to clients that are currently
+    // receiving logs
+    this.server.on("logging", (message: string) => {
+      this.clients.clients
+        .filter((cl) => cl.receiveLogs && cl.isConnected)
+        .forEach((client) =>
+          client.sendEvent({
+            source: "driver",
+            event: "logging",
+            message,
+          })
+        );
+    });
     this.started = true;
   }
 
   stop() {
-    this.server.removeListener("logging", this.forwardLogging);
+    this.server.removeAllListeners("logging");
     this.started = false;
   }
 }
