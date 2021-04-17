@@ -356,7 +356,7 @@ export class ZwavejsServer extends EventEmitter {
 export class EventEmitterLogTransport extends Transport {
   private messageSymbol: Symbol;
 
-  public constructor(private emitter: EventEmitter, private logger: Logger) {
+  public constructor(private emitter: EventEmitter) {
     super({ format: createDefaultTransportFormat(false, false) });
     this.messageSymbol = Symbol.for("message");
   }
