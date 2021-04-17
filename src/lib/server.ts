@@ -347,7 +347,7 @@ export class ZwavejsServer extends EventEmitter {
 
     // Create log transport for server and update the drivers log configuration
     this.serverTransport = new EventEmitterLogTransport(this);
-    const transports = this.driver.getLogConfig().transports;
+    const transports = this.driver.getLogConfig().transports || [];
     transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
 
