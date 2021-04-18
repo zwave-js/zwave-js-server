@@ -238,10 +238,6 @@ export class ClientsController {
       this.eventForwarder = new EventForwarder(this);
       this.eventForwarder.start();
     }
-
-    if (this.loggingEventForwarder === undefined) {
-      this.loggingEventForwarder = new LoggingEventForwarder(this, this.driver);
-    }
   }
 
   get loggingEventForwarderStarted(): boolean {
@@ -249,6 +245,9 @@ export class ClientsController {
   }
 
   public configureLoggingEventForwarder() {
+    if (this.loggingEventForwarder === undefined) {
+      this.loggingEventForwarder = new LoggingEventForwarder(this, this.driver);
+    }
     if (!this.loggingEventForwarderStarted) {
       this.loggingEventForwarder?.start();
     }
