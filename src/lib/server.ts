@@ -255,8 +255,7 @@ export class ClientsController {
 
   public cleanupLoggingEventForwarder() {
     if (
-      this.clients.filter((cl) => cl.receiveLogs).length ==
-        0 &&
+      this.clients.filter((cl) => cl.receiveLogs).length == 0 &&
       this.loggingEventForwarderStarted
     ) {
       this.loggingEventForwarder?.stop();
