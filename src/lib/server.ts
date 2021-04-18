@@ -245,13 +245,7 @@ export class ClientsController {
   }
 
   get loggingEventForwarderStarted(): boolean {
-    if (
-      !this.loggingEventForwarder ||
-      this.loggingEventForwarder === undefined
-    ) {
-      return false;
-    }
-    return this.loggingEventForwarder.started;
+    return this.loggingEventForwarder?.started === true;
   }
 
   public configureLoggingEventForwarder() {
