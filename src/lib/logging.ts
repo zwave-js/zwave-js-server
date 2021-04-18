@@ -48,6 +48,7 @@ class EventEmitterLogTransport extends Transport {
   }
 
   public log(info: ZWaveLogInfo, next: () => void): any {
+    const { message, ...partialInfo } = info;
     // Forward logs on to clients that are currently
     // receiving logs
     this.clients.clients
@@ -57,6 +58,7 @@ class EventEmitterLogTransport extends Transport {
           source: "driver",
           event: "logging",
           message: info[this.messageSymbol as any],
+          ...partialInfo,
         })
       );
     next();
