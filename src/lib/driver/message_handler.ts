@@ -33,11 +33,11 @@ export class DriverMessageHandler {
         return {};
       case DriverCommand.isStatisticsEnabled:
         return { statisticsEnabled: driver.statisticsEnabled };
-      case DriverCommand.startListeningToLogs:
+      case DriverCommand.startListeningLogs:
         client.receiveLogs = true;
         clientsController.configureLoggingEventForwarder();
         return {};
-      case DriverCommand.stopListeningToLogs:
+      case DriverCommand.stopListeningLogs:
         client.receiveLogs = false;
         clientsController.cleanupLoggingEventForwarder();
         return {};

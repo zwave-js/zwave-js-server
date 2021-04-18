@@ -9,6 +9,6 @@ export interface DriverResultTypes {
   [DriverCommand.disableStatistics]: Record<string, never>;
   [DriverCommand.enableStatistics]: Record<string, never>;
   [DriverCommand.isStatisticsEnabled]: { statisticsEnabled: boolean };
-  [DriverCommand.startListeningToLogs]: Record<string, never>;
-  [DriverCommand.stopListeningToLogs]: Record<string, never>;
+  [DriverCommand.startListeningLogs]: Record<string, never>;
+  [DriverCommand.stopListeningLogs]: Record<string, never>;
 }

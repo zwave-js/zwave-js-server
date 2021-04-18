@@ -255,7 +255,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "driver.start_listening_to_logs";
+  command: "driver.start_listening_logs";
 }
 ```
 
@@ -266,7 +266,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "driver.stop_listening_to_logs";
+  command: "driver.stop_listening_logs";
 }
 ```
 
