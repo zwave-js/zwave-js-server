@@ -1,7 +1,7 @@
 import Transport from "winston-transport";
 import { createDefaultTransportFormat } from "@zwave-js/core";
 import type { ZWaveLogInfo } from "@zwave-js/core";
-import { ClientsController, ZwavejsServer } from "./server";
+import { ClientsController, Logger } from "./server";
 import { Driver } from "zwave-js";
 
 export class LoggingEventForwarder {
@@ -14,27 +14,17 @@ export class LoggingEventForwarder {
   private serverTransport?: WebSocketLogTransport;
   public started: boolean = false;
 
-  constructor(private clients: ClientsController, private driver: Driver) {
-    // Create log transport for server
-    this.serverTransport = new WebSocketLogTransport(this.clients);
-
-    // Workaround - when we attach our transport to the logger for the first time,
-    // We don't get all of the logs. Attaching then detaching up front makes it so
-    // that we get all the logs next time.
-    const transports = this.driver.getLogConfig().transports || [];
-    // Attach
-    this.driver.updateLogConfig({
-      transports: [...transports, this.serverTransport],
-    });
-    // Detach
-    this.driver.updateLogConfig({ transports });
-  }
+  constructor(private clients: ClientsController, private driver: Driver) {}
 
   start() {
-    if (!this.serverTransport || this.serverTransport === undefined) {
-      throw new Error("Cannot start listening to logs");
-    }
-    const transports = this.driver.getLogConfig().transports || [];
+    var { transports, level } = this.driver.getLogConfig();
+    transports = transports || [];
+    // Create log transport for server, we need to do this every
+    // time we attach so we can get the current log level
+    this.serverTransport = new WebSocketLogTransport(
+      level as string,
+      this.clients
+    );
     transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
     this.started = true;
@@ -46,6 +36,7 @@ export class LoggingEventForwarder {
       (transport) => transport !== this.serverTransport
     );
     this.driver.updateLogConfig({ transports });
+    delete this.serverTransport;
     this.started = false;
   }
 }
@@ -53,8 +44,11 @@ export class LoggingEventForwarder {
 class WebSocketLogTransport extends Transport {
   private messageSymbol: Symbol;
 
-  public constructor(private clients: ClientsController) {
-    super({ format: createDefaultTransportFormat(false, false) });
+  public constructor(logLevel: string, private clients: ClientsController) {
+    super({
+      level: logLevel,
+      format: createDefaultTransportFormat(false, false),
+    });
     this.messageSymbol = Symbol.for("message");
   }
 
