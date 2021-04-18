@@ -120,9 +120,7 @@ export class Client {
 
       if (msg.command === ServerCommand.startListeningToLogs) {
         this.receiveLogs = true;
-        if (!this.clientsController.loggingEventForwarderStarted) {
-          this.clientsController.startLoggingEventForwarder();
-        }
+        this.clientsController.configureLoggingEventForwarder();
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
@@ -130,6 +128,7 @@ export class Client {
       if (msg.command === ServerCommand.stopListeningToLogs) {
         this.receiveLogs = false;
         this.sendResultSuccess(msg.messageId, {});
+        this.clientsController.cleanupLoggingEventForwarder();
         return;
       }
 
@@ -268,8 +267,20 @@ export class ClientsController {
     return this.loggingEventForwarder.started;
   }
 
-  public startLoggingEventForwarder() {
-    this.loggingEventForwarder?.start();
+  public configureLoggingEventForwarder() {
+    if (!this.loggingEventForwarderStarted) {
+      this.loggingEventForwarder?.start();
+    }
+  }
+
+  public cleanupLoggingEventForwarder() {
+    if (
+      this.clients.filter((cl) => cl.receiveLogs && cl.isConnected).length ==
+        0 &&
+      this.loggingEventForwarderStarted
+    ) {
+      this.loggingEventForwarder?.stop();
+    }
   }
 
   private scheduleClientCleanup() {
@@ -283,12 +294,7 @@ export class ClientsController {
   private cleanupClients() {
     this.cleanupScheduled = false;
     this.clients = this.clients.filter((cl) => cl.isConnected);
-    if (
-      this.clients.filter((cl) => cl.receiveLogs).length == 0 &&
-      this.loggingEventForwarderStarted
-    ) {
-      this.loggingEventForwarder?.stop();
-    }
+    this.cleanupLoggingEventForwarder();
   }
 
   disconnect() {
@@ -298,6 +304,7 @@ export class ClientsController {
     this.pingInterval = undefined;
     this.clients.forEach((client) => client.disconnect());
     this.clients = [];
+    this.cleanupLoggingEventForwarder();
   }
 }
 interface ZwavejsServerOptions {
