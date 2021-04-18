@@ -11,12 +11,12 @@ export class LoggingEventForwarder {
    * @param clients
    * @param driver
    */
-  private serverTransport?: EventEmitterLogTransport;
+  private serverTransport?: WebSocketLogTransport;
   public started: boolean = false;
 
   constructor(private clients: ClientsController, private driver: Driver) {
     // Create log transport for server
-    this.serverTransport = new EventEmitterLogTransport(this.clients);
+    this.serverTransport = new WebSocketLogTransport(this.clients);
 
     // Workaround - when we attach our transport to the logger for the first time,
     // We don't get all of the logs. Attaching then detaching up front makes it so
@@ -50,7 +50,7 @@ export class LoggingEventForwarder {
   }
 }
 
-class EventEmitterLogTransport extends Transport {
+class WebSocketLogTransport extends Transport {
   private messageSymbol: Symbol;
 
   public constructor(private clients: ClientsController) {
