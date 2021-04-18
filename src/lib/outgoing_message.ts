@@ -36,8 +36,6 @@ export interface ServerResultTypes {
   [ServerCommand.startListening]: { state: ZwaveState };
   [ServerCommand.updateLogConfig]: Record<string, never>;
   [ServerCommand.getLogConfig]: { config: Partial<LogConfig> };
-  [ServerCommand.startListeningToLogs]: Record<string, never>;
-  [ServerCommand.stopListeningToLogs]: Record<string, never>;
 }
 
 export type ResultTypes = ServerResultTypes &
