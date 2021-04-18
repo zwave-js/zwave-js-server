@@ -17,6 +17,17 @@ export class LoggingEventForwarder {
   constructor(private clients: ClientsController, private driver: Driver) {
     // Create log transport for server
     this.serverTransport = new EventEmitterLogTransport(this.clients);
+
+    // Workaround - when we attach our transport to the logger for the first time,
+    // We don't get all of the logs. Attaching then detaching up front makes it so
+    // that we get all the logs next time.
+    const transports = this.driver.getLogConfig().transports || [];
+    // Attach
+    this.driver.updateLogConfig({
+      transports: [...transports, this.serverTransport],
+    });
+    // Detach
+    this.driver.updateLogConfig({ transports });
   }
 
   start() {
