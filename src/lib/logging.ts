@@ -14,17 +14,19 @@ export class LoggingEventForwarder {
   private serverTransport?: WebSocketLogTransport;
   public started: boolean = false;
 
-  constructor(private clients: ClientsController, private driver: Driver) {}
+  constructor(private clients: ClientsController, private driver: Driver) {
+    // Create log transport for server
+    this.serverTransport = new WebSocketLogTransport(this.clients);
+  }
 
   start() {
+    if (!this.serverTransport || this.serverTransport === undefined) {
+      throw new Error("Cannot start listening to logs");
+    }
     var { transports, level } = this.driver.getLogConfig();
+    // Set the log level before attaching the transport
+    this.serverTransport.level = level as string;
     transports = transports || [];
-    // Create log transport for server, we need to do this every
-    // time we attach so we can get the current log level
-    this.serverTransport = new WebSocketLogTransport(
-      level as string,
-      this.clients
-    );
     transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
     this.started = true;
@@ -36,7 +38,6 @@ export class LoggingEventForwarder {
       (transport) => transport !== this.serverTransport
     );
     this.driver.updateLogConfig({ transports });
-    delete this.serverTransport;
     this.started = false;
   }
 }
@@ -44,9 +45,8 @@ export class LoggingEventForwarder {
 class WebSocketLogTransport extends Transport {
   private messageSymbol: Symbol;
 
-  public constructor(logLevel: string, private clients: ClientsController) {
+  public constructor(private clients: ClientsController) {
     super({
-      level: logLevel,
       format: createDefaultTransportFormat(false, false),
     });
     this.messageSymbol = Symbol.for("message");
