@@ -255,7 +255,7 @@ export class ClientsController {
 
   public cleanupLoggingEventForwarder() {
     if (
-      this.clients.filter((cl) => cl.receiveLogs && cl.isConnected).length ==
+      this.clients.filter((cl) => cl.receiveLogs).length ==
         0 &&
       this.loggingEventForwarderStarted
     ) {
