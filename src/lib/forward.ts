@@ -136,6 +136,7 @@ export class EventForwarder {
     {
       const events: ZWaveNodeEvents[] = [
         "interview completed",
+        "interview started",
         "interview failed",
       ];
       for (const event of events) {
@@ -144,6 +145,13 @@ export class EventForwarder {
         });
       }
     }
+
+    node.on(
+      "interview stage completed",
+      (changedNode: ZWaveNode, stageName: string) => {
+        notifyNode(changedNode, "interview stage completed", { stageName });
+      }
+    );
 
     {
       const events: ZWaveNodeEvents[] = [
