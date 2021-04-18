@@ -127,8 +127,8 @@ export class Client {
 
       if (msg.command === ServerCommand.stopListeningToLogs) {
         this.receiveLogs = false;
-        this.sendResultSuccess(msg.messageId, {});
         this.clientsController.cleanupLoggingEventForwarder();
+        this.sendResultSuccess(msg.messageId, {});
         return;
       }
 
