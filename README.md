@@ -132,28 +132,6 @@ interface {
 }
 ```
 
-### Start listening to logging events
-
-[compatible with schema version: 4+]
-
-```ts
-interface {
-  messageId: string;
-  command: "start_listening_to_logs";
-}
-```
-
-### Stop listening to logging events
-
-[compatible with schema version: 4+]
-
-```ts
-interface {
-  messageId: string;
-  command: "stop_listening_to_logs";
-}
-```
-
 ### Driver level commands
 
 #### Get the config of the driver
@@ -267,6 +245,28 @@ Returns:
 ```ts
 interface {
   statisticsEnabled: boolean;
+}
+```
+
+### Start listening to logging events
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.start_listening_to_logs";
+}
+```
+
+### Stop listening to logging events
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.stop_listening_to_logs";
 }
 ```
 

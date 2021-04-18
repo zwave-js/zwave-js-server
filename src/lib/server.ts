@@ -45,6 +45,7 @@ export class Client {
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
         message as IncomingMessageDriver,
+        this.clientsController,
         this.driver,
         this
       ),
@@ -115,20 +116,6 @@ export class Client {
         this.sendResultSuccess(msg.messageId, {
           config: dumpLogConfig(this.driver, this.schemaVersion),
         });
-        return;
-      }
-
-      if (msg.command === ServerCommand.startListeningToLogs) {
-        this.receiveLogs = true;
-        this.clientsController.configureLoggingEventForwarder();
-        this.sendResultSuccess(msg.messageId, {});
-        return;
-      }
-
-      if (msg.command === ServerCommand.stopListeningToLogs) {
-        this.receiveLogs = false;
-        this.clientsController.cleanupLoggingEventForwarder();
-        this.sendResultSuccess(msg.messageId, {});
         return;
       }
 

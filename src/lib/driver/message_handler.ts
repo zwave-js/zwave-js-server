@@ -1,6 +1,6 @@
 import { Driver } from "zwave-js";
 import { UnknownCommandError } from "../error";
-import { Client } from "../server";
+import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
@@ -9,6 +9,7 @@ import { dumpDriver, dumpLogConfig } from "../state";
 export class DriverMessageHandler {
   static async handle(
     message: IncomingMessageDriver,
+    clientsController: ClientsController,
     driver: Driver,
     client: Client
   ): Promise<DriverResultTypes[DriverCommand]> {
@@ -32,6 +33,14 @@ export class DriverMessageHandler {
         return {};
       case DriverCommand.isStatisticsEnabled:
         return { statisticsEnabled: driver.statisticsEnabled };
+      case DriverCommand.startListeningToLogs:
+        client.receiveLogs = true;
+        clientsController.configureLoggingEventForwarder();
+        return {};
+      case DriverCommand.stopListeningToLogs:
+        client.receiveLogs = false;
+        clientsController.cleanupLoggingEventForwarder();
+        return {};
       default:
         throw new UnknownCommandError(command);
     }
