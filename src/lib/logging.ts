@@ -33,10 +33,9 @@ export class LoggingEventForwarder {
   }
 
   stop() {
-    var transports = this.driver.getLogConfig().transports;
-    transports = transports.filter(
-      (transport) => transport !== this.serverTransport
-    );
+    const transports = this.driver
+      .getLogConfig()
+      .transports.filter((transport) => transport !== this.serverTransport);
     this.driver.updateLogConfig({ transports });
     this.started = false;
   }
