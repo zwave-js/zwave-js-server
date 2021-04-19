@@ -248,6 +248,28 @@ interface {
 }
 ```
 
+### Start listening to logging events
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.start_listening_logs";
+}
+```
+
+### Stop listening to logging events
+
+[compatible with schema version: 4+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.stop_listening_logs";
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.

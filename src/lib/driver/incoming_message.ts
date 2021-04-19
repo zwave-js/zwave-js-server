@@ -29,10 +29,20 @@ interface IncomingCommandIsStatisticsEnabled extends IncomingCommandBase {
   command: DriverCommand.isStatisticsEnabled;
 }
 
+interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
+  command: DriverCommand.startListeningLogs;
+}
+
+interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
+  command: DriverCommand.stopListeningLogs;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
   | IncomingCommandGetLogConfig
   | IncomingCommandDisableStatistics
   | IncomingCommandEnableStatistics
-  | IncomingCommandIsStatisticsEnabled;
+  | IncomingCommandIsStatisticsEnabled
+  | IncomingCommandStartListeningLogs
+  | IncomingCommandStopListeningLogs;

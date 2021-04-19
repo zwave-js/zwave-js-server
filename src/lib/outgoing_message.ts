@@ -6,7 +6,7 @@ import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
 
 export interface OutgoingEvent {
-  source: "controller" | "node";
+  source: "controller" | "node" | "driver";
   event: string;
   [key: string]: unknown;
 }

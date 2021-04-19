@@ -23,11 +23,13 @@ import { IncomingMessageNode } from "./node/incoming_message";
 import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
+import { LoggingEventForwarder } from "./logging";
 
 export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
   public schemaVersion = minSchemaVersion;
+  public receiveLogs = false;
 
   private instanceHandlers: Record<
     Instance,
@@ -43,6 +45,7 @@ export class Client {
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
         message as IncomingMessageDriver,
+        this.clientsController,
         this.driver,
         this
       ),
@@ -56,6 +59,7 @@ export class Client {
 
   constructor(
     private socket: WebSocket,
+    private clientsController: ClientsController,
     private driver: Driver,
     private logger: Logger
   ) {
@@ -196,12 +200,13 @@ export class ClientsController {
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
+  private loggingEventForwarder?: LoggingEventForwarder;
 
   constructor(public driver: Driver, private logger: Logger) {}
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
-    const client = new Client(socket, this.driver, this.logger);
+    const client = new Client(socket, this, this.driver, this.logger);
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
     });
@@ -235,6 +240,28 @@ export class ClientsController {
     }
   }
 
+  get loggingEventForwarderStarted(): boolean {
+    return this.loggingEventForwarder?.started === true;
+  }
+
+  public configureLoggingEventForwarder() {
+    if (this.loggingEventForwarder === undefined) {
+      this.loggingEventForwarder = new LoggingEventForwarder(this, this.driver);
+    }
+    if (!this.loggingEventForwarderStarted) {
+      this.loggingEventForwarder?.start();
+    }
+  }
+
+  public cleanupLoggingEventForwarder() {
+    if (
+      this.clients.filter((cl) => cl.receiveLogs).length == 0 &&
+      this.loggingEventForwarderStarted
+    ) {
+      this.loggingEventForwarder?.stop();
+    }
+  }
+
   private scheduleClientCleanup() {
     if (this.cleanupScheduled) {
       return;
@@ -246,6 +273,7 @@ export class ClientsController {
   private cleanupClients() {
     this.cleanupScheduled = false;
     this.clients = this.clients.filter((cl) => cl.isConnected);
+    this.cleanupLoggingEventForwarder();
   }
 
   disconnect() {
@@ -255,6 +283,7 @@ export class ClientsController {
     this.pingInterval = undefined;
     this.clients.forEach((client) => client.disconnect());
     this.clients = [];
+    this.cleanupLoggingEventForwarder();
   }
 }
 interface ZwavejsServerOptions {
@@ -291,6 +320,7 @@ export class ZwavejsServer extends EventEmitter {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
     }
+
     this.server = createServer();
     this.wsServer = new ws.Server({ server: this.server });
     this.sockets = new ClientsController(this.driver, this.logger);
