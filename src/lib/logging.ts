@@ -11,21 +11,24 @@ export class LoggingEventForwarder {
    * @param clients
    * @param driver
    */
-  private serverTransport: WebSocketLogTransport;
-  public started: boolean = false;
+  private serverTransport?: WebSocketLogTransport;
 
-  constructor(private clients: ClientsController, private driver: Driver) {
-    // Create log transport for server
-    this.serverTransport = new WebSocketLogTransport(this.clients);
+  constructor(private clients: ClientsController, private driver: Driver) {}
+
+  public get started(): boolean {
+    return this.serverTransport != undefined;
   }
 
   start() {
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
-    this.serverTransport.level = level as string;
-    transports = [...transports, this.serverTransport];
+    this.serverTransport = new WebSocketLogTransport(
+      level as string,
+      this.clients
+    );
+    transports = transports || [];
+    transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
-    this.started = true;
   }
 
   stop() {
@@ -33,18 +36,18 @@ export class LoggingEventForwarder {
       .getLogConfig()
       .transports.filter((transport) => transport !== this.serverTransport);
     this.driver.updateLogConfig({ transports });
-    this.started = false;
+    delete this.serverTransport;
   }
 }
 
 class WebSocketLogTransport extends Transport {
-  private messageSymbol: Symbol;
+  private messageSymbol = Symbol.for("message");
 
-  public constructor(private clients: ClientsController) {
+  public constructor(level: string, private clients: ClientsController) {
     super({
       format: createDefaultTransportFormat(false, false),
+      level,
     });
-    this.messageSymbol = Symbol.for("message");
   }
 
   public log(info: ZWaveLogInfo, next: () => void): any {
