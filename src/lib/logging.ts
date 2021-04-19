@@ -11,7 +11,7 @@ export class LoggingEventForwarder {
    * @param clients
    * @param driver
    */
-  private serverTransport?: WebSocketLogTransport;
+  private serverTransport: WebSocketLogTransport;
   public started: boolean = false;
 
   constructor(private clients: ClientsController, private driver: Driver) {
@@ -20,9 +20,6 @@ export class LoggingEventForwarder {
   }
 
   start() {
-    if (!this.serverTransport || this.serverTransport === undefined) {
-      throw new Error("Cannot start listening to logs");
-    }
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
     this.serverTransport.level = level as string;
