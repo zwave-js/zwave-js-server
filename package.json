@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Full access to zwave-js driver through Websockets",
   "main": "dist/lib/index.js",
   "bin": {
