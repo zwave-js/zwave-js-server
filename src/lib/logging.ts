@@ -23,8 +23,7 @@ export class LoggingEventForwarder {
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
     this.serverTransport.level = level as string;
-    transports = transports || [];
-    transports.push(this.serverTransport);
+    transports = [...transports, this.serverTransport];
     this.driver.updateLogConfig({ transports });
     this.started = true;
   }
