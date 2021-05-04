@@ -481,8 +481,8 @@ In the case of `zwave_error`, the extra keys `zwave_error_code` and `zwave_error
 "success": false,
 "messageId": 1,
 "errorCode": "zwave_error",
-"zwave_error_code": 18,
-"zwave_error_message": "The message cannot be sent because node 61 is dead"
+"zwaveErrorCode": 18,
+"zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
 }
 
 ## Authentication

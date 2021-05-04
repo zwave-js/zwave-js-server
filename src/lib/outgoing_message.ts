@@ -38,8 +38,8 @@ interface OutgoingResultMessageZWaveError {
   messageId: string;
   success: false;
   errorCode: ErrorCode.zwaveError;
-  zwave_error_code: ZWaveErrorCodes;
-  zwave_error_message: string;
+  zwaveErrorCode: ZWaveErrorCodes;
+  zwaveErrorMessage: string;
 }
 
 export interface ServerResultTypes {

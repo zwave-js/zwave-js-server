@@ -185,8 +185,8 @@ export class Client {
       success: false,
       messageId,
       errorCode: ErrorCode.zwaveError,
-      zwave_error_code: zjsErrorCode,
-      zwave_error_message: message,
+      zwaveErrorCode: zjsErrorCode,
+      zwaveErrorMessage: message,
     });
   }
 
