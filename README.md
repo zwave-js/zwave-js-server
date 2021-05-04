@@ -404,7 +404,6 @@ interface {
 }
 ```
 
-
 ## Schema Version
 
 In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.
@@ -451,6 +450,40 @@ In an attempt to keep compatibility between different server and client versions
    ```
 
 6. When we make **breaking changes** in the api, we **bump the schema version**. When adding new commands/features, we also bump the api schema and note in both code comments and documentation to which schema version that feature is compatible with.
+
+## Errors
+
+If a command results in an error, the following response is returned:
+
+```json
+{
+  "type": "result",
+  "success": false,
+  "messageId": 1,
+  "errorCode": "schema_incompatible"
+}
+```
+
+The following error codes exist:
+
+| code                | description          |
+| ------------------- | -------------------- |
+| unknown_command     | Unknown command      |
+| node_not_found      | Node not found       |
+| schema_incompatible | Incompatible Schema  |
+| zwave_error         | Error from Z-Wave JS |
+| unknown_error       | Unknown exception    |
+
+In the case of `zwave_error`, the extra keys `zwave_error_code` and `zwave_error_message` will be added.
+
+{
+"type": "result",
+"success": false,
+"messageId": 1,
+"errorCode": "zwave_error",
+"zwave_error_code": 18,
+"zwave_error_message": "The message cannot be sent because node 61 is dead"
+}
 
 ## Authentication
 

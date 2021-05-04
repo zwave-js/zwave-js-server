@@ -3,6 +3,7 @@ export enum ErrorCode {
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
   schemaIncompatible = "schema_incompatible",
+  zwaveError = "zwave_error",
 }
 
 export class BaseError extends Error {

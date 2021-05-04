@@ -1,6 +1,6 @@
 import ws from "ws";
 import type WebSocket from "ws";
-import type { Driver } from "zwave-js";
+import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { libVersion } from "zwave-js";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
@@ -133,6 +133,10 @@ export class Client {
         this.logger.error("Message error", err);
         return this.sendResultError(msg.messageId, err.errorCode);
       }
+      if (err instanceof ZWaveError) {
+        this.logger.error("Z-Wave error", err);
+        return this.sendResultZWaveError(msg.messageId, err.code, err.message);
+      }
 
       this.logger.error("Unexpected error", err as Error);
       this.sendResultError(msg.messageId, ErrorCode.unknownError);
@@ -162,12 +166,27 @@ export class Client {
     });
   }
 
-  sendResultError(messageId: string, errorCode: string) {
+  sendResultError(messageId: string, errorCode: Omit<ErrorCode, "zwaveError">) {
     this.sendData({
       type: "result",
       success: false,
       messageId,
       errorCode,
+    });
+  }
+
+  sendResultZWaveError(
+    messageId: string,
+    zjsErrorCode: ZWaveErrorCodes,
+    message: string
+  ) {
+    this.sendData({
+      type: "result",
+      success: false,
+      messageId,
+      errorCode: ErrorCode.zwaveError,
+      zwave_error_code: zjsErrorCode,
+      zwave_error_message: message,
     });
   }
 
