@@ -1,9 +1,10 @@
-import { LogConfig } from "@zwave-js/core";
+import { LogConfig, ZWaveErrorCodes } from "@zwave-js/core";
 import type { ZwaveState } from "./state";
 import { NodeResultTypes } from "./node/outgoing_message";
 import { ControllerResultTypes } from "./controller/outgoing_message";
 import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
+import { ErrorCode } from "./error";
 
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver";
@@ -29,7 +30,16 @@ interface OutgoingResultMessageError {
   type: "result";
   messageId: string;
   success: false;
-  errorCode: string;
+  errorCode: Omit<ErrorCode, "zwaveError">;
+}
+
+interface OutgoingResultMessageZWaveError {
+  type: "result";
+  messageId: string;
+  success: false;
+  errorCode: ErrorCode.zwaveError;
+  zwaveErrorCode: ZWaveErrorCodes;
+  zwaveErrorMessage: string;
 }
 
 export interface ServerResultTypes {
@@ -54,4 +64,5 @@ export type OutgoingMessage =
   | OutgoingVersionMessage
   | OutgoingEventMessage
   | OutgoingResultMessageSuccess
-  | OutgoingResultMessageError;
+  | OutgoingResultMessageError
+  | OutgoingResultMessageZWaveError;
