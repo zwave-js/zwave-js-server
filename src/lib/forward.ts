@@ -1,5 +1,6 @@
 import {
   ControllerEvents,
+  FirmwareUpdateStatus,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
@@ -230,15 +231,24 @@ export class EventForwarder {
 
     node.on(
       "firmware update progress",
-      (changedNode, sentFragments, totalFragments) =>
+      (changedNode: ZWaveNode, sentFragments: number, totalFragments: number) =>
         notifyNode(changedNode, "firmware update progress", {
           sentFragments,
           totalFragments,
         })
     );
 
-    node.on("firmware update finished", (changedNode, status, waitTime) =>
-      notifyNode(changedNode, "firmware update finished", { status, waitTime })
+    node.on(
+      "firmware update finished",
+      (
+        changedNode: ZWaveNode,
+        status: FirmwareUpdateStatus,
+        waitTime?: number
+      ) =>
+        notifyNode(changedNode, "firmware update finished", {
+          status,
+          waitTime,
+        })
     );
   }
 }
