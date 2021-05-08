@@ -337,6 +337,36 @@ interface {
 }
 ```
 
+#### [Begin Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=beginfirmwareupdate)
+
+##### Format must be guessed
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.begin_firmware_update_guess_format";
+  nodeId: number;
+  firmwareFilename: string;
+  firmwareFile: Buffer;
+}
+```
+
+##### Format is known
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.begin_firmware_update_known_format";
+  nodeId: number;
+  firmwareFile: Buffer;
+  firmwareFileFormat: FirmwareFileFormat;
+}
+```
+
 #### [Abort Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortfirmwareupdate)
 
 [compatible with schema version: 0+]
