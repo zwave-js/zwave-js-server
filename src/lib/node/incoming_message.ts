@@ -3,8 +3,6 @@ import { CommandClasses, FirmwareFileFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
-type Base64 = string;
-
 export interface IncomingCommandNodeBase extends IncomingCommandBase {
   nodeId: number;
 }
@@ -35,13 +33,13 @@ export interface IncomingCommandNodeBeginFirmwareUpdateGuessFormat
   extends IncomingCommandNodeBase {
   command: NodeCommand.beginFirmwareUpdateGuessFormat;
   firmwareFilename: string;
-  firmwareFile: Base64;
+  firmwareFile: string; // use base64 encoding for the file
 }
 
 export interface IncomingCommandNodeBeginFirmwareUpdateKnownFormat
   extends IncomingCommandNodeBase {
   command: NodeCommand.beginFirmwareUpdateKnownFormat;
-  firmwareFile: Base64;
+  firmwareFile: string; // use base64 encoding for the file
   firmwareFileFormat: FirmwareFileFormat;
 }
 

@@ -362,7 +362,7 @@ interface {
   messageId: string;
   command: "node.begin_firmware_update_known_format";
   nodeId: number;
-  firmwareFile: Base64;
+  firmwareFile: string;
   firmwareFileFormat: FirmwareFileFormat;
 }
 ```
