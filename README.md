@@ -349,7 +349,7 @@ interface {
   command: "node.begin_firmware_update_guess_format";
   nodeId: number;
   firmwareFilename: string;
-  firmwareFile: Buffer;
+  firmwareFile: Base64;
 }
 ```
 
@@ -362,7 +362,7 @@ interface {
   messageId: string;
   command: "node.begin_firmware_update_known_format";
   nodeId: number;
-  firmwareFile: Buffer;
+  firmwareFile: Base64;
   firmwareFileFormat: FirmwareFileFormat;
 }
 ```

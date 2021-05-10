@@ -20,6 +20,7 @@ export class NodeMessageHandler {
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
+    let firmwareFile: Buffer;
     let actualFirmware: Firmware;
 
     const node = driver.controller.nodes.get(nodeId);
@@ -50,19 +51,21 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdateGuessFormat:
+        firmwareFile = Buffer.from(message.firmwareFile, "base64");
         const format = guessFirmwareFileFormat(
           message.firmwareFilename,
-          message.firmwareFile
+          firmwareFile
         );
-        actualFirmware = extractFirmware(message.firmwareFile, format);
+        actualFirmware = extractFirmware(firmwareFile, format);
         await node.beginFirmwareUpdate(
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
         return {};
       case NodeCommand.beginFirmwareUpdateKnownFormat:
+        firmwareFile = Buffer.from(message.firmwareFile, "base64");
         actualFirmware = extractFirmware(
-          message.firmwareFile,
+          firmwareFile,
           message.firmwareFileFormat
         );
         await node.beginFirmwareUpdate(
