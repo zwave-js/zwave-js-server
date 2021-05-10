@@ -349,7 +349,7 @@ interface {
   command: "node.begin_firmware_update_guess_format";
   nodeId: number;
   firmwareFilename: string;
-  firmwareFile: Base64;
+  firmwareFile: string; // use base64 encoding for the file
 }
 ```
 
