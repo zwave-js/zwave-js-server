@@ -55,7 +55,7 @@ export class NodeMessageHandler {
           message.firmwareFile
         );
         actualFirmware = extractFirmware(message.firmwareFile, format);
-        node.beginFirmwareUpdate(
+        await node.beginFirmwareUpdate(
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
@@ -65,7 +65,7 @@ export class NodeMessageHandler {
           message.firmwareFile,
           message.firmwareFileFormat
         );
-        node.beginFirmwareUpdate(
+        await node.beginFirmwareUpdate(
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
