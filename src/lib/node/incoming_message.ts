@@ -1,5 +1,5 @@
 import { ConfigValue, ValueID } from "zwave-js";
-import { CommandClasses } from "@zwave-js/core";
+import { CommandClasses, FirmwareFileFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
@@ -28,6 +28,15 @@ export interface IncomingCommandNodeGetValueMetadata
   command: NodeCommand.getValueMetadata;
   valueId: ValueID;
 }
+
+export interface IncomingCommandNodeBeginFirmwareUpdate
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.beginFirmwareUpdate;
+  firmwareFilename: string;
+  firmwareFile: string; // use base64 encoding for the file
+  firmwareFileFormat?: FirmwareFileFormat;
+}
+
 export interface IncomingCommandNodeAbortFirmwareUpdate
   extends IncomingCommandNodeBase {
   command: NodeCommand.abortFirmwareUpdate;
@@ -62,6 +71,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeRefreshInfo
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
+  | IncomingCommandNodeBeginFirmwareUpdate
   | IncomingCommandNodeAbortFirmwareUpdate
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue

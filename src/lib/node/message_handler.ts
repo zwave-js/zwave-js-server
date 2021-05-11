@@ -1,5 +1,11 @@
 import { Driver } from "zwave-js";
-import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
+import {
+  CommandClasses,
+  ConfigurationMetadata,
+  extractFirmware,
+  Firmware,
+  guessFirmwareFileFormat,
+} from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
@@ -14,6 +20,8 @@ export class NodeMessageHandler {
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
+    let firmwareFile: Buffer;
+    let actualFirmware: Firmware;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -42,6 +50,17 @@ export class NodeMessageHandler {
           node.getValueMetadata(message.valueId),
           client.schemaVersion
         );
+      case NodeCommand.beginFirmwareUpdate:
+        firmwareFile = Buffer.from(message.firmwareFile, "base64");
+        const format = message.firmwareFileFormat
+          ? message.firmwareFileFormat
+          : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile);
+        actualFirmware = extractFirmware(firmwareFile, format);
+        await node.beginFirmwareUpdate(
+          actualFirmware.data,
+          actualFirmware.firmwareTarget
+        );
+        return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};

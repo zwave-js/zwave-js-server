@@ -6,6 +6,7 @@ export interface NodeResultTypes {
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
+  [NodeCommand.beginFirmwareUpdate]: Record<string, never>;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.pollValue]: { value: any | undefined };
   [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
