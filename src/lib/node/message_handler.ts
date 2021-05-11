@@ -50,24 +50,12 @@ export class NodeMessageHandler {
           node.getValueMetadata(message.valueId),
           client.schemaVersion
         );
-      case NodeCommand.beginFirmwareUpdateGuessFormat:
+      case NodeCommand.beginFirmwareUpdate:
         firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        const format = guessFirmwareFileFormat(
-          message.firmwareFilename,
-          firmwareFile
-        );
+        const format = message.firmwareFileFormat
+          ? message.firmwareFileFormat
+          : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile);
         actualFirmware = extractFirmware(firmwareFile, format);
-        await node.beginFirmwareUpdate(
-          actualFirmware.data,
-          actualFirmware.firmwareTarget
-        );
-        return {};
-      case NodeCommand.beginFirmwareUpdateKnownFormat:
-        firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        actualFirmware = extractFirmware(
-          firmwareFile,
-          message.firmwareFileFormat
-        );
         await node.beginFirmwareUpdate(
           actualFirmware.data,
           actualFirmware.firmwareTarget

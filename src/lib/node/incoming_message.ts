@@ -29,18 +29,12 @@ export interface IncomingCommandNodeGetValueMetadata
   valueId: ValueID;
 }
 
-export interface IncomingCommandNodeBeginFirmwareUpdateGuessFormat
+export interface IncomingCommandNodeBeginFirmwareUpdate
   extends IncomingCommandNodeBase {
-  command: NodeCommand.beginFirmwareUpdateGuessFormat;
+  command: NodeCommand.beginFirmwareUpdate;
   firmwareFilename: string;
   firmwareFile: string; // use base64 encoding for the file
-}
-
-export interface IncomingCommandNodeBeginFirmwareUpdateKnownFormat
-  extends IncomingCommandNodeBase {
-  command: NodeCommand.beginFirmwareUpdateKnownFormat;
-  firmwareFile: string; // use base64 encoding for the file
-  firmwareFileFormat: FirmwareFileFormat;
+  firmwareFileFormat?: FirmwareFileFormat;
 }
 
 export interface IncomingCommandNodeAbortFirmwareUpdate
@@ -77,8 +71,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeRefreshInfo
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
-  | IncomingCommandNodeBeginFirmwareUpdateGuessFormat
-  | IncomingCommandNodeBeginFirmwareUpdateKnownFormat
+  | IncomingCommandNodeBeginFirmwareUpdate
   | IncomingCommandNodeAbortFirmwareUpdate
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
