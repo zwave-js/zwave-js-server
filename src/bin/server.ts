@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { exit } from "process";
 import { resolve } from "path";
 import { Driver } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
@@ -10,20 +11,18 @@ interface Args {
   _: Array<string>;
   config?: string;
   "mock-driver": boolean;
-  "websocket-port": number;
+  port: number;
 }
 
 (async () => {
-  const args = parseArgs<Args>([
-    "_",
-    "config",
-    "mock-driver",
-    "websocket-port",
-  ]);
+  const args = parseArgs<Args>(["_", "config", "mock-driver", "port"]);
 
   let wsPort = 3000;
-  if (args["websocket-port"]) {
-    wsPort = args["websocket-port"];
+  if (args["port"]) {
+    if (typeof args["port"] === "string") {
+      throw new Error("port must be a valid integer");
+    }
+    wsPort = args["port"];
   }
 
   if (args["mock-driver"]) {
