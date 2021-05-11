@@ -346,7 +346,7 @@ If `firmwareFileFormat` is not provided, the format will be guessed based on the
 ```ts
 interface {
   messageId: string;
-  command: "node.begin_firmware_update_guess_format";
+  command: "node.begin_firmware_update";
   nodeId: number;
   firmwareFilename: string;
   firmwareFile: string; // use base64 encoding for the file
