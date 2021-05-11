@@ -20,7 +20,7 @@ interface Args {
     "mock-driver",
     "websocket-port",
   ]);
- 
+
   let wsPort = 3000;
   if (args["websocket-port"]) {
     wsPort = args["websocket-port"];
