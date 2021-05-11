@@ -19,7 +19,7 @@ interface Args {
 
   let wsPort = 3000;
   if (args["port"]) {
-    if (typeof args["port"] === "string") {
+    if (typeof args["port"] !== "number") {
       throw new Error("port must be a valid integer");
     }
     wsPort = args["port"];
