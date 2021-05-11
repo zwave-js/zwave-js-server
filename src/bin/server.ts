@@ -20,6 +20,11 @@ interface Args {
     "mock-driver",
     "websocket-port",
   ]);
+  
+  let wsPort = 3000;
+  if (args["websocket-port"]) {
+    wsPort = args["websocket-port"];
+  }
 
   if (args["mock-driver"]) {
     args._.push("mock-serial-port");
@@ -74,10 +79,6 @@ interface Args {
 
   driver.on("driver ready", async () => {
     try {
-      let wsPort = 3000;
-      if (args["websocket-port"]) {
-        wsPort = args["websocket-port"];
-      }
       server = new ZwavejsServer(driver, { port: wsPort });
       await server.start();
       console.info("Server listening on port", wsPort);
