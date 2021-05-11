@@ -10,10 +10,16 @@ interface Args {
   _: Array<string>;
   config?: string;
   "mock-driver": boolean;
+  "websocket-port": number;
 }
 
 (async () => {
-  const args = parseArgs<Args>(["_", "config", "mock-driver"]);
+  const args = parseArgs<Args>([
+    "_",
+    "config",
+    "mock-driver",
+    "websocket-port",
+  ]);
 
   if (args["mock-driver"]) {
     args._.push("mock-serial-port");
@@ -68,9 +74,13 @@ interface Args {
 
   driver.on("driver ready", async () => {
     try {
-      server = new ZwavejsServer(driver, { port: 3000 });
+      let wsPort = 3000;
+      if (args["websocket-port"]) {
+        wsPort = args["websocket-port"];
+      }
+      server = new ZwavejsServer(driver, { port: wsPort });
       await server.start();
-      console.info("Server listening on port", 3000);
+      console.info("Server listening on port", wsPort);
     } catch (error) {
       console.error("Unable to start Server", error);
     }
