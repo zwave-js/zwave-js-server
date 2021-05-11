@@ -16,6 +16,8 @@ Opens server on `ws://localhost:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
+You can specify a different port for the websocket server to listen on with `--websocket-port`.
+
 If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
 
 ### Start client
