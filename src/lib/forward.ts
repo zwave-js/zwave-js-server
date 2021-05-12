@@ -203,6 +203,8 @@ export class EventForwarder {
     node.on(
       "notification",
       (changedNode: ZWaveNode, ccId: CommandClasses, args: any) => {
+        // only forward value events for ready nodes
+        if (!changedNode.ready) return;
         this.clients.clients.forEach((client) => {
           // Only send notification events from the Notification CC for schema version < 3
           if (client.schemaVersion < 3 && ccId == CommandClasses.Notification) {
@@ -231,11 +233,18 @@ export class EventForwarder {
 
     node.on(
       "firmware update progress",
-      (changedNode: ZWaveNode, sentFragments: number, totalFragments: number) =>
+      (
+        changedNode: ZWaveNode,
+        sentFragments: number,
+        totalFragments: number
+      ) => {
+        // only forward value events for ready nodes
+        if (!changedNode.ready) return;
         notifyNode(changedNode, "firmware update progress", {
           sentFragments,
           totalFragments,
-        })
+        });
+      }
     );
 
     node.on(
@@ -244,11 +253,14 @@ export class EventForwarder {
         changedNode: ZWaveNode,
         status: FirmwareUpdateStatus,
         waitTime?: number
-      ) =>
+      ) => {
+        // only forward value events for ready nodes
+        if (!changedNode.ready) return;
         notifyNode(changedNode, "firmware update finished", {
           status,
           waitTime,
-        })
+        });
+      }
     );
   }
 }
