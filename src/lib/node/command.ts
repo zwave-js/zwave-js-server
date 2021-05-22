@@ -9,4 +9,5 @@ export enum NodeCommand {
   setRawConfigParameterValue = "node.set_raw_config_parameter_value",
   refreshValues = "node.refresh_values",
   refreshCCValues = "node.refresh_cc_values",
+  ping = "node.ping",
 }

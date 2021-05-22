@@ -66,6 +66,10 @@ export interface IncomingCommandNodeRefreshCCValues
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandNodePing extends IncomingCommandNodeBase {
+  command: NodeCommand.ping;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -76,4 +80,5 @@ export type IncomingMessageNode =
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues
-  | IncomingCommandNodeRefreshCCValues;
+  | IncomingCommandNodeRefreshCCValues
+  | IncomingCommandNodePing;
