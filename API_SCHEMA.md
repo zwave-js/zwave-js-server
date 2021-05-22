@@ -36,3 +36,4 @@ Base schema.
 # Schema 5
 
 - Added `deviceDatabaseUrl` property to Node
+- Removed `neighbors` property from Node
