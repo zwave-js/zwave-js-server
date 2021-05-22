@@ -24,6 +24,10 @@ import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { LoggingEventForwarder } from "./logging";
+import { VirtualNodeMessageHandler } from "./virtualnode/message_handler";
+import { IncomingMessageVirtualNode } from "./virtualnode/incoming_message";
+import { VirtualEndpointMessageHandler } from "./virtualendpoint/message_handler";
+import { IncomingMessageVirtualEndpoint } from "./virtualendpoint/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -54,6 +58,16 @@ export class Client {
         message as IncomingMessageNode,
         this.driver,
         this
+      ),
+    [Instance.virtualendpoint]: (message) =>
+      VirtualEndpointMessageHandler.handle(
+        message as IncomingMessageVirtualEndpoint,
+        this.driver
+      ),
+    [Instance.virtualnode]: (message) =>
+      VirtualNodeMessageHandler.handle(
+        message as IncomingMessageVirtualNode,
+        this.driver
       ),
   };
 

@@ -5,9 +5,11 @@ import { ControllerResultTypes } from "./controller/outgoing_message";
 import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
 import { ErrorCode } from "./error";
+import { VirtualEndpointResultTypes } from "./virtualendpoint/outgoing_message";
+import { VirtualNodeResultTypes } from "./virtualnode/outgoing_message";
 
 export interface OutgoingEvent {
-  source: "controller" | "node" | "driver";
+  source: "controller" | "node" | "driver" | "virtualnode" | "virtualendpoint";
   event: string;
   [key: string]: unknown;
 }
@@ -51,7 +53,9 @@ export interface ServerResultTypes {
 export type ResultTypes = ServerResultTypes &
   NodeResultTypes &
   ControllerResultTypes &
-  DriverResultTypes;
+  DriverResultTypes &
+  VirtualEndpointResultTypes &
+  VirtualNodeResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";
