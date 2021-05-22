@@ -423,6 +423,18 @@ interface {
 }
 ```
 
+#### [Ping](https://zwave-js.github.io/node-zwave-js/#/api/node?id=ping)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.ping";
+  nodeId: number;
+}
+```
+
 ## Schema Version
 
 In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.
