@@ -103,6 +103,12 @@ export interface IncomingCommandControllerRemoveNodeFromAllAssociations
   nodeId: number;
 }
 
+export interface IncomingCommandControllerGetNodeNeighbors
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getNodeNeighbors;
+  nodeId: number;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerStopInclusion
@@ -119,4 +125,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerIsAssociationAllowed
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations
-  | IncomingCommandControllerRemoveNodeFromAllAssociations;
+  | IncomingCommandControllerRemoveNodeFromAllAssociations
+  | IncomingCommandControllerGetNodeNeighbors;

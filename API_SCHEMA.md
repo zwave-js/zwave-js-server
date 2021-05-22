@@ -32,3 +32,7 @@ Base schema.
 # Schema 4
 
 - Node `interviewStage` property was changed from type `number` to type `string`
+
+# Schema 5
+
+- Added `deviceDatabaseUrl` property to Node

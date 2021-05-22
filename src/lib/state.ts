@@ -206,12 +206,21 @@ type NodeStateSchema3 = Omit<
 
 type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
 
+type NodeStateSchema5 = Omit<
+  Modify<
+    NodeStateSchema4,
+    { deviceDatabaseUrl: ZWaveNode["deviceDatabaseUrl"] }
+  >,
+  "neighbors"
+>;
+
 type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
   | NodeStateSchema2
   | NodeStateSchema3
-  | NodeStateSchema4;
+  | NodeStateSchema4
+  | NodeStateSchema5;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -378,7 +387,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     location: node.location,
     deviceConfig: node.deviceConfig,
     label: node.label,
-    neighbors: node.neighbors,
     endpointCountIsDynamic: node.endpointCountIsDynamic,
     endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
     individualEndpointCount: node.individualEndpointCount,
@@ -389,6 +397,8 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     ),
     values: getNodeValues(node, schemaVersion),
   };
+
+  if (schemaVersion <= 4) base.neighbors = node.neighbors;
 
   // In schema 4 we started using the interview stage string instead of the enum number
   if (schemaVersion <= 3) base.interviewStage = node.interviewStage;
@@ -445,24 +455,46 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     return node3;
   }
 
-  const node4 = base as NodeStateSchema4;
-  node4.isFrequentListening = node.isFrequentListening;
-  node4.maxDataRate = node.maxDataRate;
-  node4.supportedDataRates = node.supportedDataRates;
-  node4.protocolVersion = node.protocolVersion;
-  node4.supportsBeaming = node.supportsBeaming;
-  node4.supportsSecurity = node.supportsSecurity;
-  node4.nodeType = node.nodeType;
-  node4.zwavePlusNodeType = node.zwavePlusNodeType;
-  node4.zwavePlusRoleType = node.zwavePlusRoleType;
-  node4.deviceClass = node.deviceClass
+  if (schemaVersion == 4) {
+    const node4 = base as NodeStateSchema4;
+    node4.isFrequentListening = node.isFrequentListening;
+    node4.maxDataRate = node.maxDataRate;
+    node4.supportedDataRates = node.supportedDataRates;
+    node4.protocolVersion = node.protocolVersion;
+    node4.supportsBeaming = node.supportsBeaming;
+    node4.supportsSecurity = node.supportsSecurity;
+    node4.nodeType = node.nodeType;
+    node4.zwavePlusNodeType = node.zwavePlusNodeType;
+    node4.zwavePlusRoleType = node.zwavePlusRoleType;
+    node4.deviceClass = node.deviceClass
+      ? dumpDeviceClass(node.deviceClass)
+      : null;
+    node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+      dumpCommandClass(node, cc)
+    );
+    node4.interviewStage = InterviewStage[node.interviewStage];
+    return node4;
+  }
+
+  const node5 = base as NodeStateSchema5;
+  node5.isFrequentListening = node.isFrequentListening;
+  node5.maxDataRate = node.maxDataRate;
+  node5.supportedDataRates = node.supportedDataRates;
+  node5.protocolVersion = node.protocolVersion;
+  node5.supportsBeaming = node.supportsBeaming;
+  node5.supportsSecurity = node.supportsSecurity;
+  node5.nodeType = node.nodeType;
+  node5.zwavePlusNodeType = node.zwavePlusNodeType;
+  node5.zwavePlusRoleType = node.zwavePlusRoleType;
+  node5.deviceClass = node.deviceClass
     ? dumpDeviceClass(node.deviceClass)
     : null;
-  node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+  node5.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
     dumpCommandClass(node, cc)
   );
-  node4.interviewStage = InterviewStage[node.interviewStage];
-  return node4;
+  node5.interviewStage = InterviewStage[node.interviewStage];
+  node5.deviceDatabaseUrl = node.deviceDatabaseUrl;
+  return node5;
 };
 
 export const dumpEndpoint = (
