@@ -36,4 +36,4 @@ Base schema.
 # Schema 5
 
 - Added `deviceDatabaseUrl` property to Node
-- Removed `neighbors` property from Node
+- Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
