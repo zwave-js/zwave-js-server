@@ -1,6 +1,4 @@
 import { Driver } from "zwave-js";
-import { VirtualEndpoint } from "zwave-js/build/lib/node/VirtualEndpoint";
-import { VirtualNode } from "zwave-js/build/lib/node/VirtualNode";
 import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { MulticastGroupCommand } from "./command";
 import { IncomingMessageMulticastGroup } from "./incoming_message";
@@ -12,6 +10,7 @@ export class MulticastGroupMessageHandler {
     driver: Driver
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
+    let virtualEndpoint;
 
     const virtualNode = driver.controller.getMulticastGroup(message.nodeIDs);
 
@@ -26,33 +25,29 @@ export class MulticastGroupMessageHandler {
         const count = virtualNode.getEndpointCount();
         return { count };
       case MulticastGroupCommand.supportsCC:
-        const supported = getVirtualEndpoint(
-          virtualNode,
-          message.index,
-          message.nodeIDs
-        ).supportsCC(message.commandClass);
+        virtualEndpoint = virtualNode.getEndpoint(message.index);
+        if (!virtualEndpoint) {
+          throw new VirtualEndpointNotFoundError(
+            message.index,
+            message.nodeIDs,
+            undefined
+          );
+        }
+        const supported = virtualEndpoint.supportsCC(message.commandClass);
         return { supported };
       case MulticastGroupCommand.getCCVersion:
-        const version = getVirtualEndpoint(
-          virtualNode,
-          message.index,
-          message.nodeIDs
-        ).getCCVersion(message.commandClass);
+        virtualEndpoint = virtualNode.getEndpoint(message.index);
+        if (!virtualEndpoint) {
+          throw new VirtualEndpointNotFoundError(
+            message.index,
+            message.nodeIDs,
+            undefined
+          );
+        }
+        const version = virtualEndpoint.getCCVersion(message.commandClass);
         return { version };
       default:
         throw new UnknownCommandError(command);
     }
   }
 }
-
-const getVirtualEndpoint = (
-  virtualNode: VirtualNode,
-  index: number,
-  nodeIDs: number[]
-): VirtualEndpoint => {
-  const virtualEndpoint = virtualNode.getEndpoint(index);
-  if (!virtualEndpoint) {
-    throw new VirtualEndpointNotFoundError(index, nodeIDs, undefined);
-  }
-  return virtualEndpoint;
-};
