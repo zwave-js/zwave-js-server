@@ -24,10 +24,10 @@ import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { LoggingEventForwarder } from "./logging";
-import { VirtualNodeMessageHandler } from "./virtualnode/message_handler";
-import { IncomingMessageVirtualNode } from "./virtualnode/incoming_message";
-import { VirtualEndpointMessageHandler } from "./virtualendpoint/message_handler";
-import { IncomingMessageVirtualEndpoint } from "./virtualendpoint/incoming_message";
+import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
+import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
+import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
+import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -59,14 +59,14 @@ export class Client {
         this.driver,
         this
       ),
-    [Instance.virtualendpoint]: (message) =>
-      VirtualEndpointMessageHandler.handle(
-        message as IncomingMessageVirtualEndpoint,
+    [Instance.multicast_group]: (message) =>
+      MulticastGroupMessageHandler.handle(
+        message as IncomingMessageMulticastGroup,
         this.driver
       ),
-    [Instance.virtualnode]: (message) =>
-      VirtualNodeMessageHandler.handle(
-        message as IncomingMessageVirtualNode,
+    [Instance.broadcast_node]: (message) =>
+      BroadcastNodeMessageHandler.handle(
+        message as IncomingMessageBroadcastNode,
         this.driver
       ),
   };
