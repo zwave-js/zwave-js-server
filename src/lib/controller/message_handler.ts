@@ -100,6 +100,11 @@ export class ControllerMessageHandler {
         await driver.controller.removeNodeFromAllAssociations(message.nodeId);
         return {};
       }
+      case ControllerCommand.getNodeNeighbors:
+        let neighbors = await driver.controller.getNodeNeighbors(
+          message.nodeId
+        );
+        return { neighbors };
       default:
         throw new UnknownCommandError(command);
     }

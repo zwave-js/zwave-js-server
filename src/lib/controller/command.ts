@@ -18,4 +18,5 @@ export enum ControllerCommand {
   removeNodeFromAllAssocations = "controller.remove_node_from_all_assocations",
   // Schema version > 2
   removeNodeFromAllAssociations = "controller.remove_node_from_all_associations",
+  getNodeNeighbors = "controller.get_node_neighbors",
 }

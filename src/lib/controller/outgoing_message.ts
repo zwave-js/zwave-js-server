@@ -25,4 +25,5 @@ export interface ControllerResultTypes {
   [ControllerCommand.removeNodeFromAllAssocations]: Record<string, never>;
   // Schema version > 2
   [ControllerCommand.removeNodeFromAllAssociations]: Record<string, never>;
+  [ControllerCommand.getNodeNeighbors]: { neighbors: readonly number[] };
 }
