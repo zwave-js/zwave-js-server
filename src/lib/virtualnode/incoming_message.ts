@@ -4,6 +4,11 @@ import { VirtualNodeCommand } from "./command";
 
 export interface IncomingCommandVirtualNodeBase extends IncomingCommandBase {}
 
+export interface IncomingCommandVirtualNodeBaseMulticast
+  extends IncomingCommandVirtualNodeBase {
+  nodeIDs: number[];
+}
+
 export interface IncomingCommandVirtualNodeSetValueBroadcast
   extends IncomingCommandVirtualNodeBase {
   command: VirtualNodeCommand.setValueBroadcast;
@@ -12,9 +17,8 @@ export interface IncomingCommandVirtualNodeSetValueBroadcast
 }
 
 export interface IncomingCommandVirtualNodeSetValueMulticast
-  extends IncomingCommandVirtualNodeBase {
+  extends IncomingCommandVirtualNodeBaseMulticast {
   command: VirtualNodeCommand.setValueMulticast;
-  nodeIDs: number[];
   valueId: ValueID;
   value: unknown;
 }
@@ -25,9 +29,8 @@ export interface IncomingCommandVirtualNodeGetEndpointCountBroadcast
 }
 
 export interface IncomingCommandVirtualNodeGetEndpointCountMulticast
-  extends IncomingCommandVirtualNodeBase {
+  extends IncomingCommandVirtualNodeBaseMulticast {
   command: VirtualNodeCommand.getEndpointCountMulticast;
-  nodeIDs: number[];
 }
 
 export type IncomingMessageVirtualNode =

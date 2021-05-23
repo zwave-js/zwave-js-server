@@ -7,6 +7,11 @@ export interface IncomingCommandVirtualEndpointBase
   index: number;
 }
 
+export interface IncomingCommandVirtualEndpointBaseMulticast
+  extends IncomingCommandVirtualEndpointBase {
+  nodeIDs: number[];
+}
+
 export interface IncomingCommandVirtualEndpointSupportsCCBroadcast
   extends IncomingCommandVirtualEndpointBase {
   command: VirtualEndpointCommand.supportsCCBroadcast;
@@ -14,9 +19,8 @@ export interface IncomingCommandVirtualEndpointSupportsCCBroadcast
 }
 
 export interface IncomingCommandVirtualEndpointSupportsCCMulticast
-  extends IncomingCommandVirtualEndpointBase {
+  extends IncomingCommandVirtualEndpointBaseMulticast {
   command: VirtualEndpointCommand.supportsCCMulticast;
-  nodeIDs: number[];
   commandClass: CommandClasses;
 }
 
@@ -27,9 +31,8 @@ export interface IncomingCommandVirtualEndpointGetCCVersionBroadcast
 }
 
 export interface IncomingCommandVirtualEndpointGetCCVersionMulticast
-  extends IncomingCommandVirtualEndpointBase {
+  extends IncomingCommandVirtualEndpointBaseMulticast {
   command: VirtualEndpointCommand.getCCVersionMulticast;
-  nodeIDs: number[];
   commandClass: CommandClasses;
 }
 
