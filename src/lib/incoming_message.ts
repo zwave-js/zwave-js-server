@@ -4,8 +4,8 @@ import { ServerCommand } from "./command";
 import { IncomingCommandBase } from "./incoming_message_base";
 import { IncomingMessageNode } from "./node/incoming_message";
 import { IncomingMessageDriver } from "./driver/incoming_message";
-import { IncomingMessageVirtualEndpoint } from "./virtualendpoint/incoming_message";
-import { IncomingMessageVirtualNode } from "./virtualnode/incoming_message";
+import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
+import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: ServerCommand.startListening;
@@ -33,5 +33,5 @@ export type IncomingMessage =
   | IncomingMessageNode
   | IncomingMessageController
   | IncomingMessageDriver
-  | IncomingMessageVirtualEndpoint
-  | IncomingMessageVirtualNode;
+  | IncomingMessageMulticastGroup
+  | IncomingMessageBroadcastNode;

@@ -5,8 +5,8 @@ import { ControllerResultTypes } from "./controller/outgoing_message";
 import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
 import { ErrorCode } from "./error";
-import { VirtualEndpointResultTypes } from "./virtualendpoint/outgoing_message";
-import { VirtualNodeResultTypes } from "./virtualnode/outgoing_message";
+import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
+import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver" | "virtualnode" | "virtualendpoint";
@@ -54,8 +54,8 @@ export type ResultTypes = ServerResultTypes &
   NodeResultTypes &
   ControllerResultTypes &
   DriverResultTypes &
-  VirtualEndpointResultTypes &
-  VirtualNodeResultTypes;
+  MulticastGroupResultTypes &
+  BroadcastNodeResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";
