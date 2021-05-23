@@ -3,7 +3,6 @@ import { IncomingCommandBase } from "../incoming_message_base";
 import { MulticastGroupCommand } from "./command";
 
 export interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
-  index: number;
   nodeIDs: number[];
 }
 
@@ -22,12 +21,14 @@ export interface IncomingCommandMulticastGroupGetEndpointCount
 export interface IncomingCommandMulticastGroupSupportsCC
   extends IncomingCommandMulticastGroupBase {
   command: MulticastGroupCommand.supportsCC;
+  index: number;
   commandClass: CommandClasses;
 }
 
 export interface IncomingCommandMulticastGroupGetCCVersion
   extends IncomingCommandMulticastGroupBase {
   command: MulticastGroupCommand.getCCVersion;
+  index: number;
   commandClass: CommandClasses;
 }
 
