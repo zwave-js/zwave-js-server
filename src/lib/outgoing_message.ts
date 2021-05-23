@@ -9,7 +9,7 @@ import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
 import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 
 export interface OutgoingEvent {
-  source: "controller" | "node" | "driver" | "virtualnode" | "virtualendpoint";
+  source: "controller" | "node" | "driver";
   event: string;
   [key: string]: unknown;
 }
