@@ -28,15 +28,15 @@ export class MulticastGroupMessageHandler {
       case MulticastGroupCommand.supportsCC:
         const supported = getVirtualEndpoint(
           virtualNode,
-          message.nodeIDs,
-          message.index
+          message.index,
+          message.nodeIDs
         ).supportsCC(message.commandClass);
         return { supported };
       case MulticastGroupCommand.getCCVersion:
         const version = getVirtualEndpoint(
           virtualNode,
-          message.nodeIDs,
-          message.index
+          message.index,
+          message.nodeIDs
         ).getCCVersion(message.commandClass);
         return { version };
       default:
@@ -47,8 +47,8 @@ export class MulticastGroupMessageHandler {
 
 const getVirtualEndpoint = (
   virtualNode: VirtualNode,
-  nodeIDs: number[],
-  index: number
+  index: number,
+  nodeIDs: number[]
 ): VirtualEndpoint => {
   const virtualEndpoint = virtualNode.getEndpoint(index);
   if (!virtualEndpoint) {
