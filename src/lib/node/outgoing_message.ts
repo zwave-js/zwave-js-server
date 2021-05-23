@@ -12,4 +12,5 @@ export interface NodeResultTypes {
   [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
+  [NodeCommand.ping]: { responded: boolean };
 }

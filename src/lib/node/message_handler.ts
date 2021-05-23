@@ -80,6 +80,9 @@ export class NodeMessageHandler {
       case NodeCommand.refreshCCValues:
         await node.refreshCCValues(message.commandClass);
         return {};
+      case NodeCommand.ping:
+        const responded = await node.ping();
+        return { responded };
       default:
         throw new UnknownCommandError(command);
     }
