@@ -1,4 +1,6 @@
 export enum VirtualEndpointCommand {
-  supportsCC = "virtualendpoint.supports_cc",
-  getCCVersion = "virtualendpoint.get_cc_version",
+  supportsCCBroadcast = "virtualendpoint.supports_cc_broadcast",
+  supportsCCMulticast = "virtualendpoint.supports_cc_multicast",
+  getCCVersionBroadcast = "virtualendpoint.get_cc_version_broadcast",
+  getCCVersionMulticast = "virtualendpoint.get_cc_version_multicast",
 }

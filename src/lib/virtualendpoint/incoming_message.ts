@@ -4,23 +4,37 @@ import { VirtualEndpointCommand } from "./command";
 
 export interface IncomingCommandVirtualEndpointBase
   extends IncomingCommandBase {
-  broadcast?: boolean;
-  nodeIDs?: number[];
   index: number;
 }
 
-export interface IncomingCommandVirtualEndpointSupportsCC
+export interface IncomingCommandVirtualEndpointSupportsCCBroadcast
   extends IncomingCommandVirtualEndpointBase {
-  command: VirtualEndpointCommand.supportsCC;
+  command: VirtualEndpointCommand.supportsCCBroadcast;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandVirtualEndpointGetCCVersion
+export interface IncomingCommandVirtualEndpointSupportsCCMulticast
   extends IncomingCommandVirtualEndpointBase {
-  command: VirtualEndpointCommand.getCCVersion;
+  command: VirtualEndpointCommand.supportsCCMulticast;
+  nodeIDs: number[];
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandVirtualEndpointGetCCVersionBroadcast
+  extends IncomingCommandVirtualEndpointBase {
+  command: VirtualEndpointCommand.getCCVersionBroadcast;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandVirtualEndpointGetCCVersionMulticast
+  extends IncomingCommandVirtualEndpointBase {
+  command: VirtualEndpointCommand.getCCVersionMulticast;
+  nodeIDs: number[];
   commandClass: CommandClasses;
 }
 
 export type IncomingMessageVirtualEndpoint =
-  | IncomingCommandVirtualEndpointSupportsCC
-  | IncomingCommandVirtualEndpointGetCCVersion;
+  | IncomingCommandVirtualEndpointSupportsCCBroadcast
+  | IncomingCommandVirtualEndpointSupportsCCMulticast
+  | IncomingCommandVirtualEndpointGetCCVersionBroadcast
+  | IncomingCommandVirtualEndpointGetCCVersionMulticast;

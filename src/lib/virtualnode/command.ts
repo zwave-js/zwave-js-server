@@ -1,4 +1,6 @@
 export enum VirtualNodeCommand {
-  setValue = "virtualnode.set_value",
-  getEndpointCount = "virtualnode.get_endpoint_count",
+  setValueBroadcast = "virtualnode.set_value_broadcast",
+  setValueMulticast = "virtualnode.set_value_multicast",
+  getEndpointCountBroadcast = "virtualnode.get_endpoint_count_broadcast",
+  getEndpointCountMulticast = "virtualnode.get_endpoint_count_multicast",
 }

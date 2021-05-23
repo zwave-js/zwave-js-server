@@ -3,7 +3,6 @@ export enum ErrorCode {
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
   virtualEndpointNotFound = "virtual_endpoint_not_found",
-  missingInputParameteer = "missing_input_parameter",
   schemaIncompatible = "schema_incompatible",
   zwaveError = "zwave_error",
 }
@@ -53,14 +52,6 @@ export class VirtualEndpointNotFoundError extends BaseError {
     public nodeIDs?: number[],
     public broadcast?: boolean
   ) {
-    super();
-  }
-}
-
-export class MissingInputParameterError extends BaseError {
-  errorCode = ErrorCode.missingInputParameteer;
-
-  constructor(public command: string, public parameters: string[]) {
     super();
   }
 }

@@ -1,9 +1,5 @@
 import { Driver } from "zwave-js";
-import {
-  MissingInputParameterError,
-  UnknownCommandError,
-  VirtualEndpointNotFoundError,
-} from "../error";
+import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { VirtualEndpointCommand } from "./command";
 import { IncomingMessageVirtualEndpoint } from "./incoming_message";
 import { VirtualEndpointResultTypes } from "./outgoing_message";
@@ -15,26 +11,26 @@ export class VirtualEndpointMessageHandler {
   ): Promise<VirtualEndpointResultTypes[VirtualEndpointCommand]> {
     const { command } = message;
 
-    if (!message.broadcast && !message.nodeIDs) {
-      throw new MissingInputParameterError(command, ["broadcast", "nodeIDs"]);
-    }
-    const virtualNode = message.nodeIDs
-      ? driver.controller.getMulticastGroup(message.nodeIDs)
-      : driver.controller.getBroadcastNode();
+    const virtualNode =
+      "nodeIDs" in message
+        ? driver.controller.getMulticastGroup(message.nodeIDs)
+        : driver.controller.getBroadcastNode();
     const virtualEndpoint = virtualNode.getEndpoint(message.index);
     if (!virtualEndpoint) {
       throw new VirtualEndpointNotFoundError(
         message.index,
-        message.nodeIDs,
-        message.broadcast
+        "nodeIDs" in message ? message.nodeIDs : undefined,
+        "nodeIDs" in message ? undefined : true
       );
     }
 
     switch (message.command) {
-      case VirtualEndpointCommand.supportsCC:
+      case VirtualEndpointCommand.supportsCCBroadcast:
+      case VirtualEndpointCommand.supportsCCMulticast:
         const supported = virtualEndpoint.supportsCC(message.commandClass);
         return { supported };
-      case VirtualEndpointCommand.getCCVersion:
+      case VirtualEndpointCommand.getCCVersionBroadcast:
+      case VirtualEndpointCommand.getCCVersionMulticast:
         const version = virtualEndpoint.getCCVersion(message.commandClass);
         return { version };
       default:
