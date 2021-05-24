@@ -86,7 +86,7 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
-        result,
+        result: healNodeProgressMapToObject(result),
       })
     );
   }
