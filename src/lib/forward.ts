@@ -11,6 +11,7 @@ import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
+import { mapToObject } from "../util/map-to-object";
 
 export class EventForwarder {
   /**
@@ -79,14 +80,14 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
-        progress: healNodeProgressMapToObject(progress),
+        progress: mapToObject(progress),
       })
     );
     this.clients.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
-        result: healNodeProgressMapToObject(result),
+        result: mapToObject(result),
       })
     );
   }
@@ -264,13 +265,4 @@ export class EventForwarder {
       }
     );
   }
-}
-
-// https://2ality.com/2015/08/es6-map-json.html#converting-a-string-map-to-and-from-an-object
-function healNodeProgressMapToObject(map: ReadonlyMap<number, HealNodeStatus>) {
-  let obj = Object.create(null);
-  for (let [k, v] of map) {
-    obj[k] = v;
-  }
-  return obj;
 }
