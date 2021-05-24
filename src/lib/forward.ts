@@ -1,6 +1,7 @@
 import {
   ControllerEvents,
   FirmwareUpdateStatus,
+  HealNodeStatus,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
@@ -78,7 +79,7 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
-        progress: Array.from(progress.entries()),
+        progress: healNodeProgressMapToObject(progress),
       })
     );
     this.clients.driver.controller.on("heal network done", (result) =>
@@ -263,4 +264,13 @@ export class EventForwarder {
       }
     );
   }
+}
+
+// https://2ality.com/2015/08/es6-map-json.html#converting-a-string-map-to-and-from-an-object
+function healNodeProgressMapToObject(map: ReadonlyMap<number, HealNodeStatus>) {
+  let obj = Object.create(null);
+  for (let [k, v] of map) {
+    obj[k] = v;
+  }
+  return obj;
 }
