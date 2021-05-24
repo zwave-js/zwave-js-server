@@ -432,6 +432,7 @@ interface {
   messageId: string;
   command: "node.ping";
   nodeId: number;
+}
 ```
 
 ### Multicasting
