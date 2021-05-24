@@ -30,6 +30,13 @@ export class DriverMessageHandler {
         return { config: dumpLogConfig(driver, client.schemaVersion) };
       case DriverCommand.updateLogConfig:
         driver.updateLogConfig(message.config);
+        clientsController.clients.forEach((client) =>
+          client.sendEvent({
+            source: "driver",
+            event: "log config updated",
+            config: dumpLogConfig(driver, client.schemaVersion),
+          })
+        );
         return {};
       case DriverCommand.isStatisticsEnabled:
         return { statisticsEnabled: driver.statisticsEnabled };
