@@ -78,7 +78,7 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
-        progress,
+        progress: Array.from(progress.entries()),
       })
     );
     this.clients.driver.controller.on("heal network done", (result) =>
