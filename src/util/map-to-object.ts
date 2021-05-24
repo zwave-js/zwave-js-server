@@ -1,4 +1,4 @@
-// https://2ality.com/2015/08/es6-map-json.html#converting-a-string-map-to-and-from-an-object
+// Derived from https://2ality.com/2015/08/es6-map-json.html#converting-a-string-map-to-and-from-an-object
 export function mapToObject(
   map: ReadonlyMap<number | string, number | string>
 ) {
