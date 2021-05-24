@@ -31,7 +31,7 @@ export class DriverMessageHandler {
       case DriverCommand.updateLogConfig:
         driver.updateLogConfig(message.config);
         clientsController.clients.forEach((cl) =>
-          cl.sendEvent({
+          if(cl !== client) cl.sendEvent({
             source: "driver",
             event: "log config updated",
             config: dumpLogConfig(driver, cl.schemaVersion),
