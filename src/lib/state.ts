@@ -26,7 +26,7 @@ import { numberFromLogLevel } from "../util/logger";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
-type LogConfigState = Partial<LogConfig>;
+type LogConfigState = Omit<LogConfig, "transports">;
 export interface DriverState {
   logConfig: LogConfigState;
   statisticsEnabled: boolean;

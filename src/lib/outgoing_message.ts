@@ -8,10 +8,19 @@ import { ErrorCode } from "./error";
 import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
 import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 
+// https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver";
   event: string;
-  [key: string]: unknown;
+  [key: string]: JSONValue;
 }
 
 interface OutgoingVersionMessage {
