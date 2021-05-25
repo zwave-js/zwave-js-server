@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
 import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { BroadcastNodeCommand } from "./command";
 import { IncomingMessageBroadcastNode } from "./incoming_message";
@@ -25,29 +25,30 @@ export class BroadcastNodeMessageHandler {
         const count = virtualNode.getEndpointCount();
         return { count };
       case BroadcastNodeCommand.supportsCC:
-        virtualEndpoint = virtualNode.getEndpoint(message.index);
-        if (!virtualEndpoint) {
-          throw new VirtualEndpointNotFoundError(
-            message.index,
-            undefined,
-            true
-          );
-        }
-        const supported = virtualEndpoint.supportsCC(message.commandClass);
+        const supported = getVirtualEndpoint(
+          virtualNode,
+          message.index
+        ).supportsCC(message.commandClass);
         return { supported };
       case BroadcastNodeCommand.getCCVersion:
-        virtualEndpoint = virtualNode.getEndpoint(message.index);
-        if (!virtualEndpoint) {
-          throw new VirtualEndpointNotFoundError(
-            message.index,
-            undefined,
-            true
-          );
-        }
-        const version = virtualEndpoint.getCCVersion(message.commandClass);
+        const version = getVirtualEndpoint(
+          virtualNode,
+          message.index
+        ).getCCVersion(message.commandClass);
         return { version };
       default:
         throw new UnknownCommandError(command);
     }
   }
+}
+
+function getVirtualEndpoint(
+  virtualNode: VirtualNode,
+  index: number
+): VirtualEndpoint {
+  const virtualEndpoint = virtualNode.getEndpoint(index);
+  if (!virtualEndpoint) {
+    throw new VirtualEndpointNotFoundError(index, undefined, true);
+  }
+  return virtualEndpoint;
 }

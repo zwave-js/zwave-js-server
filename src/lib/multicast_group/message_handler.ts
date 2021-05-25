@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
 import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { MulticastGroupCommand } from "./command";
 import { IncomingMessageMulticastGroup } from "./incoming_message";
@@ -25,29 +25,33 @@ export class MulticastGroupMessageHandler {
         const count = virtualNode.getEndpointCount();
         return { count };
       case MulticastGroupCommand.supportsCC:
-        virtualEndpoint = virtualNode.getEndpoint(message.index);
-        if (!virtualEndpoint) {
-          throw new VirtualEndpointNotFoundError(
-            message.index,
-            message.nodeIDs,
-            undefined
-          );
-        }
-        const supported = virtualEndpoint.supportsCC(message.commandClass);
+        const supported = getVirtualEndpoint(
+          virtualNode,
+          message.index,
+          message.nodeIDs
+        ).supportsCC(message.commandClass);
         return { supported };
       case MulticastGroupCommand.getCCVersion:
-        virtualEndpoint = virtualNode.getEndpoint(message.index);
-        if (!virtualEndpoint) {
-          throw new VirtualEndpointNotFoundError(
-            message.index,
-            message.nodeIDs,
-            undefined
-          );
-        }
-        const version = virtualEndpoint.getCCVersion(message.commandClass);
+        const version = getVirtualEndpoint(
+          virtualNode,
+          message.index,
+          message.nodeIDs
+        ).getCCVersion(message.commandClass);
         return { version };
       default:
         throw new UnknownCommandError(command);
     }
   }
+}
+
+function getVirtualEndpoint(
+  virtualNode: VirtualNode,
+  index: number,
+  nodeIDs: number[]
+): VirtualEndpoint {
+  const virtualEndpoint = virtualNode.getEndpoint(index);
+  if (!virtualEndpoint) {
+    throw new VirtualEndpointNotFoundError(index, nodeIDs, undefined);
+  }
+  return virtualEndpoint;
 }
