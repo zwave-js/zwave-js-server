@@ -10,7 +10,6 @@ import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
-import { mapToObject } from "../util/map-to-object";
 
 export class EventForwarder {
   /**
@@ -79,14 +78,14 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "heal network progress",
-        progress: mapToObject(progress),
+        progress: Object.fromEntries(progress),
       })
     );
     this.clients.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
-        result: mapToObject(result),
+        result: Object.fromEntries(result),
       })
     );
   }
