@@ -254,6 +254,8 @@ interface {
 
 [compatible with schema version: 4+]
 
+Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more info.
+
 ```ts
 interface {
   messageId: string;
@@ -264,6 +266,8 @@ interface {
 #### Stop listening to logging events
 
 [compatible with schema version: 4+]
+
+Stop receiving logs as events.
 
 ```ts
 interface {
@@ -523,11 +527,20 @@ interface {
 
 All `zwave-js` events as documented are forwarded on to clients that have sent the `start_listening` command.
 
+```ts
+interface {
+  type: "event";
+  source: "driver" | "controller" | "node";
+  event: string;
+  ... // Additional parameters dependent on the event, see zwave-js docs for more details
+}
+```
+
 ### `zwave-js-server` Events
 
 #### `log config updated`
 
-This event is sent with the `driver` as `source` whenever a client issues the `driver.update_log_config` command with the updated log config.
+This event is sent whenever a client issues the `driver.update_log_config` command with the updated log config.
 
 ```ts
 interface {
@@ -536,6 +549,29 @@ interface {
     source: "driver";
     event: "log config updated";
     config: Partial<LogConfig>; // Includes everything but `transports`
+  }
+}
+```
+
+#### `logging`
+
+This event is sent whenever `zwave-js` logs a statement. Clients will only receive these events when they have issued the `driver.start_listening_logs` command.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "logging";
+    formattedMessage: string;
+    direction: string;
+    primaryTags?: string;
+    secondaryTags?: string;
+    secondaryTagPadding?: number;
+    multiline?: boolean;
+    timestamp?: string;
+    label?: string;
+    message: string | string[];
   }
 }
 ```
