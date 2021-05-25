@@ -11,7 +11,14 @@ import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver";
   event: string;
-  [key: string]: unknown;
+  [key: string]:
+    | number
+    | number[]
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | Object;
 }
 
 interface OutgoingVersionMessage {
