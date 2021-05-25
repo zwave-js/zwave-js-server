@@ -250,7 +250,7 @@ interface {
 }
 ```
 
-### Start listening to logging events
+#### Start listening to logging events
 
 [compatible with schema version: 4+]
 
@@ -261,7 +261,7 @@ interface {
 }
 ```
 
-### Stop listening to logging events
+#### Stop listening to logging events
 
 [compatible with schema version: 4+]
 
@@ -432,6 +432,88 @@ interface {
   messageId: string;
   command: "node.ping";
   nodeId: number;
+}
+```
+
+### Multicasting
+
+There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
+
+```ts
+interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
+  nodeIDs: number[];
+}
+```
+
+As an example, here's how you would call the `set_value` command for a multicast group (note the extra `nodeIDs` input parameter):
+
+```ts
+interface {
+  messageId: string;
+  command: "multicast_group.set_value";
+  nodeIDs: number[];
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+  value: any;
+}
+```
+
+#### [Set value](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=setvalue)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.set_value";
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+  value: any;
+}
+```
+
+#### [Get endpoint count](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=getendpointcount)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.get_endpoint_count"
+}
+```
+
+#### [Check if endpoint supports a Command Class](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=supportscc)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.supports_cc"
+  index: number
+  commandClass: CommandClasses
+}
+```
+
+#### [Get Command Class version on an endpoint](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=getccversion)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.get_cc_versiono"
+  index: number
+  commandClass: CommandClasses
 }
 ```
 

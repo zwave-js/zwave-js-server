@@ -24,6 +24,10 @@ import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { LoggingEventForwarder } from "./logging";
+import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
+import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
+import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
+import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -54,6 +58,16 @@ export class Client {
         message as IncomingMessageNode,
         this.driver,
         this
+      ),
+    [Instance.multicast_group]: (message) =>
+      MulticastGroupMessageHandler.handle(
+        message as IncomingMessageMulticastGroup,
+        this.driver
+      ),
+    [Instance.broadcast_node]: (message) =>
+      BroadcastNodeMessageHandler.handle(
+        message as IncomingMessageBroadcastNode,
+        this.driver
       ),
   };
 
