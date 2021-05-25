@@ -164,7 +164,7 @@ interface {
 }
 ```
 
-#### Update the logging configuration
+#### [Update the logging configuration](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updatelogconfig)
 
 [compatible with schema version: 4+]
 
@@ -184,7 +184,7 @@ interface {
 }
 ```
 
-#### Get the logging configuration
+#### [Get the logging configuration](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getlogconfig)
 
 [compatible with schema version: 4+]
 
@@ -209,7 +209,7 @@ interface {
 }
 ```
 
-#### Enable data usage statistics collection
+#### [Enable data usage statistics collection](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enablestatistics)
 
 [compatible with schema version: 4+]
 
@@ -217,10 +217,12 @@ interface {
 interface {
   messageId: string;
   command: "driver.enable_statistics";
+  applicationName: string;
+  applicationVersion: string;
 }
 ```
 
-#### Disable data usage statistics collection
+#### [Disable data usage statistics collection](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=disablestatistics)
 
 [compatible with schema version: 4+]
 
@@ -231,7 +233,7 @@ interface {
 }
 ```
 
-#### Get whether statistics are enabled
+#### [Get whether statistics are enabled](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=statisticsenabled)
 
 [compatible with schema version: 4+]
 
@@ -273,6 +275,28 @@ Stop receiving logs as events.
 interface {
   messageId: string;
   command: "driver.stop_listening_logs";
+}
+```
+
+#### [Check for config updates](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=checkforconfigupdates)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.check_for_config_updates";
+}
+```
+
+#### [Install config updates(https://zwave-js.github.io/node-zwave-js/#/api/driver?id=installconfigupdate)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.install_config_update";
 }
 ```
 
