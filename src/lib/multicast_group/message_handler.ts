@@ -10,7 +10,6 @@ export class MulticastGroupMessageHandler {
     driver: Driver
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
-    let virtualEndpoint;
 
     const virtualNode = driver.controller.getMulticastGroup(message.nodeIDs);
 

@@ -10,7 +10,6 @@ export class BroadcastNodeMessageHandler {
     driver: Driver
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
-    let virtualEndpoint;
 
     const virtualNode = driver.controller.getBroadcastNode();
 
