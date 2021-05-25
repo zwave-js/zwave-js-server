@@ -254,7 +254,7 @@ interface {
 
 [compatible with schema version: 4+]
 
-Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more info.
+Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more information about the events.
 
 ```ts
 interface {
