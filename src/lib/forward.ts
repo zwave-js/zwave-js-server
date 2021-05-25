@@ -33,7 +33,7 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node added",
-          node: dumpNode(node, client.schemaVersion),
+          node: dumpNode(node, client.schemaVersion) as any,
         })
       );
       this.setupNode(node);
@@ -70,7 +70,7 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node removed",
-          node: dumpNode(node, client.schemaVersion),
+          node: dumpNode(node, client.schemaVersion) as any,
         })
       )
     );
@@ -120,7 +120,7 @@ export class EventForwarder {
           source: "node",
           event: "ready",
           nodeId: changedNode.nodeId,
-          nodeState: dumpNode(changedNode, client.schemaVersion),
+          nodeState: dumpNode(changedNode, client.schemaVersion) as any,
         })
       );
     });
@@ -194,7 +194,7 @@ export class EventForwarder {
             source: "node",
             event: "metadata updated",
             nodeId: changedNode.nodeId,
-            args: newArgs,
+            args: newArgs as any,
           });
         });
       }
