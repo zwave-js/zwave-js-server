@@ -1,7 +1,6 @@
 import {
   ControllerEvents,
   FirmwareUpdateStatus,
-  HealNodeStatus,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
