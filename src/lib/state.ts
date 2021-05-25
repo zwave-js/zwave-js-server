@@ -1,4 +1,3 @@
-import type Transport from "winston-transport";
 import {
   Driver,
   ZWaveController,
