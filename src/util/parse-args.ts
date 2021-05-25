@@ -12,5 +12,5 @@ export const parseArgs = <T>(expectedKeys: string[]): T => {
     process.exit(1);
   }
 
-  return (args as unknown) as T;
+  return args as unknown as T;
 };
