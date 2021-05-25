@@ -511,9 +511,32 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "<prefix>.get_cc_versiono"
+  command: "<prefix>.get_cc_version"
   index: number
   commandClass: CommandClasses
+}
+```
+
+## Events
+
+### `zwave-js` Events
+
+All `zwave-js` events as documented are forwarded on to clients that have sent the `start_listening` command.
+
+### `zwave-js-server` Events
+
+#### `log config updated`
+
+This event is sent with the `driver` as `source` whenever a client issues the `driver.update_log_config` command with the updated log config.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "log config updated";
+    config: Partial<LogConfig>; // Includes everything but `transports`
+  }
 }
 ```
 
