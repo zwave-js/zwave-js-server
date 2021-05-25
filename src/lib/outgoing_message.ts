@@ -15,7 +15,7 @@ type JSONValue =
   | boolean
   | null
   | JSONValue[]
-  | { [key: string]: JSONValue };
+  | Record<string, JSONValue>;
 
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver";
