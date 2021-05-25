@@ -31,4 +31,4 @@ class MockDriver extends EventEmitter {
   async destroy() {}
 }
 
-export const createMockDriver = () => (new MockDriver() as unknown) as Driver;
+export const createMockDriver = () => new MockDriver() as unknown as Driver;
