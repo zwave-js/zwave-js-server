@@ -29,18 +29,14 @@ export class DriverMessageHandler {
       case DriverCommand.getLogConfig:
         return { config: dumpLogConfig(driver, client.schemaVersion) };
       case DriverCommand.updateLogConfig:
-        const currentLogConfig = dumpLogConfig(driver, client.schemaVersion);
         driver.updateLogConfig(message.config);
-        const newLogConfig = dumpLogConfig(driver, client.schemaVersion);
-        if (currentLogConfig !== newLogConfig) {
-          clientsController.clients.forEach((cl) => {
-            cl.sendEvent({
-              source: "driver",
-              event: "log config updated",
-              config: newLogConfig,
-            });
+        clientsController.clients.forEach((cl) => {
+          cl.sendEvent({
+            source: "driver",
+            event: "log config updated",
+            config: dumpLogConfig(driver, client.schemaVersion),
           });
-        }
+        });
         return {};
       case DriverCommand.isStatisticsEnabled:
         return { statisticsEnabled: driver.statisticsEnabled };
