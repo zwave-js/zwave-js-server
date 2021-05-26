@@ -8,5 +8,5 @@ export enum DriverCommand {
   startListeningLogs = "driver.start_listening_logs",
   stopListeningLogs = "driver.stop_listening_logs",
   checkForConfigUpdates = "driver.check_for_config_updates",
-  installConfigUpdate = "driver.install_config_updates",
+  installConfigUpdate = "driver.install_config_update",
 }

@@ -289,7 +289,7 @@ interface {
 }
 ```
 
-#### [Install config updates(https://zwave-js.github.io/node-zwave-js/#/api/driver?id=installconfigupdate)
+#### [Install config update](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=installconfigupdate)
 
 [compatible with schema version: 5+]
 
