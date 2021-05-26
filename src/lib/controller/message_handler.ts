@@ -107,8 +107,6 @@ export class ControllerMessageHandler {
           message.nodeId
         );
         return { neighbors };
-      case ControllerCommand.isHealNetworkActive:
-        return { active: driver.controller.isHealNetworkActive };
       default:
         throw new UnknownCommandError(command);
     }

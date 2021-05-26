@@ -26,5 +26,4 @@ export interface ControllerResultTypes {
   // Schema version > 2
   [ControllerCommand.removeNodeFromAllAssociations]: Record<string, never>;
   [ControllerCommand.getNodeNeighbors]: { neighbors: readonly number[] };
-  [ControllerCommand.isHealNetworkActive]: { active: boolean };
 }

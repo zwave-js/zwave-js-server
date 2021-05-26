@@ -109,11 +109,6 @@ export interface IncomingCommandControllerGetNodeNeighbors
   nodeId: number;
 }
 
-export interface IncomingCommandControllerIsHealNetworkActive
-  extends IncomingCommandControllerBase {
-  command: ControllerCommand.isHealNetworkActive;
-}
-
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerStopInclusion
@@ -131,5 +126,4 @@ export type IncomingMessageController =
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations
   | IncomingCommandControllerRemoveNodeFromAllAssociations
-  | IncomingCommandControllerGetNodeNeighbors
-  | IncomingCommandControllerIsHealNetworkActive;
+  | IncomingCommandControllerGetNodeNeighbors;

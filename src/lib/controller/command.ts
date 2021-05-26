@@ -19,5 +19,4 @@ export enum ControllerCommand {
   // Schema version > 2
   removeNodeFromAllAssociations = "controller.remove_node_from_all_associations",
   getNodeNeighbors = "controller.get_node_neighbors",
-  isHealNetworkActive = "controller.isHealNetworkActive",
 }

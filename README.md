@@ -280,17 +280,6 @@ interface {
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
 
-#### [Is network healing in progress](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=ishealnetworkactive)
-
-[compatible with schema version 5+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.is_heal_network_active";
-}
-```
-
 ### Node level commands
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
