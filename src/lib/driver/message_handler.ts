@@ -49,6 +49,13 @@ export class DriverMessageHandler {
         client.receiveLogs = false;
         clientsController.cleanupLoggingEventForwarder();
         return {};
+      case DriverCommand.checkForConfigUpdates:
+        const newVersion = await driver.checkForConfigUpdates();
+        const updateAvailable = newVersion !== undefined;
+        return { updateAvailable, newVersion };
+      case DriverCommand.installConfigUpdate:
+        const success = await driver.installConfigUpdate();
+        return { success };
       default:
         throw new UnknownCommandError(command);
     }

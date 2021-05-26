@@ -37,6 +37,14 @@ interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
   command: DriverCommand.stopListeningLogs;
 }
 
+interface IncomingCommandCheckForConfigUpdates extends IncomingCommandBase {
+  command: DriverCommand.checkForConfigUpdates;
+}
+
+interface IncomingCommandInstallConfigUpdate extends IncomingCommandBase {
+  command: DriverCommand.installConfigUpdate;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -45,4 +53,6 @@ export type IncomingMessageDriver =
   | IncomingCommandEnableStatistics
   | IncomingCommandIsStatisticsEnabled
   | IncomingCommandStartListeningLogs
-  | IncomingCommandStopListeningLogs;
+  | IncomingCommandStopListeningLogs
+  | IncomingCommandCheckForConfigUpdates
+  | IncomingCommandInstallConfigUpdate;

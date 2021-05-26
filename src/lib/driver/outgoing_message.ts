@@ -11,4 +11,9 @@ export interface DriverResultTypes {
   [DriverCommand.isStatisticsEnabled]: { statisticsEnabled: boolean };
   [DriverCommand.startListeningLogs]: Record<string, never>;
   [DriverCommand.stopListeningLogs]: Record<string, never>;
+  [DriverCommand.checkForConfigUpdates]: {
+    updateAvailable: boolean;
+    newVersion?: string;
+  };
+  [DriverCommand.installConfigUpdate]: { success: boolean };
 }
