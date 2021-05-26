@@ -52,6 +52,7 @@ export interface ZwaveState {
     supportedFunctionTypes: ZWaveController["supportedFunctionTypes"];
     sucNodeId: ZWaveController["sucNodeId"];
     supportsTimers: ZWaveController["supportsTimers"];
+    isHealNetworkActive: ZWaveController["isHealNetworkActive"];
   };
   nodes: NodeState[];
 }
@@ -595,6 +596,7 @@ export const dumpState = (
       supportedFunctionTypes: controller.supportedFunctionTypes,
       sucNodeId: controller.sucNodeId,
       supportsTimers: controller.supportsTimers,
+      isHealNetworkActive: controller.isHealNetworkActive,
     },
     nodes: Array.from(controller.nodes.values(), (node) =>
       dumpNode(node, schemaVersion)
