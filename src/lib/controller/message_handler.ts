@@ -103,7 +103,7 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.getNodeNeighbors:
-        let neighbors = await driver.controller.getNodeNeighbors(
+        const neighbors = await driver.controller.getNodeNeighbors(
           message.nodeId
         );
         return { neighbors };
