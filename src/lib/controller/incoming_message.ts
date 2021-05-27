@@ -1,4 +1,4 @@
-import { Association } from "zwave-js";
+import { AssociationAddress } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
@@ -64,12 +64,14 @@ export interface IncomingCommandControllerGetAssociationGroups
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getAssociationGroups;
   nodeId: number;
+  endpoint?: number;
 }
 
 export interface IncomingCommandControllerGetAssociations
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getAssociations;
   nodeId: number;
+  endpoint?: number;
 }
 
 export interface IncomingCommandControllerIsAssociationAllowed
@@ -77,7 +79,8 @@ export interface IncomingCommandControllerIsAssociationAllowed
   command: ControllerCommand.isAssociationAllowed;
   nodeId: number;
   group: number;
-  association: Association;
+  association: AssociationAddress;
+  endpoint?: number;
 }
 
 export interface IncomingCommandControllerAddAssociations
@@ -85,7 +88,8 @@ export interface IncomingCommandControllerAddAssociations
   command: ControllerCommand.addAssociations;
   nodeId: number;
   group: number;
-  associations: Association[];
+  associations: AssociationAddress[];
+  endpoint?: number;
 }
 
 export interface IncomingCommandControllerRemoveAssociations
@@ -93,7 +97,8 @@ export interface IncomingCommandControllerRemoveAssociations
   command: ControllerCommand.removeAssociations;
   nodeId: number;
   group: number;
-  associations: Association[];
+  associations: AssociationAddress[];
+  endpoint?: number;
 }
 export interface IncomingCommandControllerRemoveNodeFromAllAssociations
   extends IncomingCommandControllerBase {
