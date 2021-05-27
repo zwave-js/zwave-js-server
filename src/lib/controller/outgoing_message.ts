@@ -1,4 +1,4 @@
-import { Association, AssociationAddress, AssociationGroup } from "zwave-js";
+import { AssociationAddress, AssociationGroup } from "zwave-js";
 import { ControllerCommand } from "./command";
 
 export interface ControllerResultTypes {
