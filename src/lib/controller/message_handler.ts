@@ -1,4 +1,4 @@
-import { AssociationAddress, Driver } from "zwave-js";
+import { Driver } from "zwave-js";
 import { UnknownCommandError } from "../error";
 import { ControllerCommand } from "./command";
 import { IncomingMessageController } from "./incoming_message";
