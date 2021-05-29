@@ -166,7 +166,6 @@ interface NodeStateSchema0 {
   location: ZWaveNode["location"];
   deviceConfig: ZWaveNode["deviceConfig"];
   label: ZWaveNode["label"];
-  neighbors: ZWaveNode["neighbors"];
   endpointCountIsDynamic: ZWaveNode["endpointCountIsDynamic"];
   endpointsHaveIdenticalCapabilities: ZWaveNode["endpointsHaveIdenticalCapabilities"];
   individualEndpointCount: ZWaveNode["individualEndpointCount"];
@@ -207,12 +206,9 @@ type NodeStateSchema3 = Omit<
 
 type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
 
-type NodeStateSchema5 = Omit<
-  Modify<
-    NodeStateSchema4,
-    { deviceDatabaseUrl: ZWaveNode["deviceDatabaseUrl"] }
-  >,
-  "neighbors"
+type NodeStateSchema5 = Modify<
+  NodeStateSchema4,
+  { deviceDatabaseUrl: ZWaveNode["deviceDatabaseUrl"] }
 >;
 
 type NodeState =
@@ -398,8 +394,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     ),
     values: getNodeValues(node, schemaVersion),
   };
-
-  if (schemaVersion <= 4) base.neighbors = node.neighbors;
 
   // In schema 4 we started using the interview stage string instead of the enum number
   if (schemaVersion <= 3) base.interviewStage = node.interviewStage;
