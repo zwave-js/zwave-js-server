@@ -61,7 +61,10 @@ export class ControllerMessageHandler {
         const groups: ControllerResultTypes[ControllerCommand.getAssociationGroups]["groups"] =
           {};
         driver.controller
-          .getAssociationGroups(message.nodeId)
+          .getAssociationGroups({
+            nodeId: message.nodeId,
+            endpoint: message.endpoint,
+          })
           .forEach((value, key) => (groups[key] = value));
         return { groups };
       }
@@ -69,13 +72,16 @@ export class ControllerMessageHandler {
         const associations: ControllerResultTypes[ControllerCommand.getAssociations]["associations"] =
           {};
         driver.controller
-          .getAssociations(message.nodeId)
+          .getAssociations({
+            nodeId: message.nodeId,
+            endpoint: message.endpoint,
+          })
           .forEach((value, key) => (associations[key] = value));
         return { associations };
       }
       case ControllerCommand.isAssociationAllowed: {
         const allowed = driver.controller.isAssociationAllowed(
-          message.nodeId,
+          { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association
         );
@@ -83,7 +89,7 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.addAssociations: {
         await driver.controller.addAssociations(
-          message.nodeId,
+          { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.associations
         );
@@ -91,7 +97,7 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.removeAssociations: {
         await driver.controller.removeAssociations(
-          message.nodeId,
+          { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.associations
         );

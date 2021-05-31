@@ -1,4 +1,4 @@
-import { Association, AssociationGroup } from "zwave-js";
+import { AssociationAddress, AssociationGroup } from "zwave-js";
 import { ControllerCommand } from "./command";
 
 export interface ControllerResultTypes {
@@ -16,7 +16,7 @@ export interface ControllerResultTypes {
     groups: Record<number, AssociationGroup>;
   };
   [ControllerCommand.getAssociations]: {
-    associations: Record<number, readonly Association[]>;
+    associations: Record<number, readonly AssociationAddress[]>;
   };
   [ControllerCommand.isAssociationAllowed]: { allowed: boolean };
   [ControllerCommand.addAssociations]: Record<string, never>;
