@@ -1,4 +1,4 @@
-import { ConfigValue, ValueID } from "zwave-js";
+import { ConfigValue, SetValueAPIOptions, ValueID } from "zwave-js";
 import { CommandClasses, FirmwareFileFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
@@ -11,6 +11,7 @@ export interface IncomingCommandNodeSetValue extends IncomingCommandNodeBase {
   command: NodeCommand.setValue;
   valueId: ValueID;
   value: unknown;
+  options?: SetValueAPIOptions;
 }
 
 export interface IncomingCommandNodeRefreshInfo

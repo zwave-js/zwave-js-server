@@ -30,7 +30,11 @@ export class NodeMessageHandler {
 
     switch (message.command) {
       case NodeCommand.setValue:
-        const success = await node.setValue(message.valueId, message.value);
+        const success = await node.setValue(
+          message.valueId,
+          message.value,
+          message.options
+        );
         return { success };
       case NodeCommand.refreshInfo:
         await node.refreshInfo();

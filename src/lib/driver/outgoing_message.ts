@@ -16,4 +16,5 @@ export interface DriverResultTypes {
     newVersion?: string;
   };
   [DriverCommand.installConfigUpdate]: { success: boolean };
+  [DriverCommand.setPreferredScales]: Record<string, never>;
 }

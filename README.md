@@ -252,6 +252,20 @@ interface {
 }
 ```
 
+#### [Set preferred scales](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=setpreferredscales)
+
+[compatible with schema version: 6+]
+
+Set preferred sensor scales. The `scales` argument has the same type as `preferences.scales` in [ZWaveOptions](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions)
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.set_preferred_scales";
+  scales: ZWaveOptions["preferences"]["scales"];
+}
+```
+
 #### Start listening to logging events
 
 [compatible with schema version: 4+]
@@ -505,6 +519,7 @@ interface {
     propertyKey?: string | number;
   };
   value: any;
+  options?: SetValueAPIOptions;
 }
 ```
 
