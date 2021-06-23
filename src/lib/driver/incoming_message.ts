@@ -1,6 +1,7 @@
 import { LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "../incoming_message_base";
+import { ZWaveOptions } from "zwave-js";
 
 interface IncomingCommandGetConfig extends IncomingCommandBase {
   command: DriverCommand.getConfig;
@@ -45,6 +46,11 @@ interface IncomingCommandInstallConfigUpdate extends IncomingCommandBase {
   command: DriverCommand.installConfigUpdate;
 }
 
+interface IncomingCommandSetPreferredScales extends IncomingCommandBase {
+  command: DriverCommand.setPreferredScales;
+  scales: ZWaveOptions["preferences"]["scales"];
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -55,4 +61,5 @@ export type IncomingMessageDriver =
   | IncomingCommandStartListeningLogs
   | IncomingCommandStopListeningLogs
   | IncomingCommandCheckForConfigUpdates
-  | IncomingCommandInstallConfigUpdate;
+  | IncomingCommandInstallConfigUpdate
+  | IncomingCommandSetPreferredScales;

@@ -56,6 +56,9 @@ export class DriverMessageHandler {
       case DriverCommand.installConfigUpdate:
         const success = await driver.installConfigUpdate();
         return { success };
+      case DriverCommand.setPreferredScales:
+        driver.setPreferredScales(message.scales);
+        return {};
       default:
         throw new UnknownCommandError(command);
     }
