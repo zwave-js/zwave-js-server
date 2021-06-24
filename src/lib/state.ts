@@ -1,6 +1,5 @@
 import {
   Driver,
-  ZWaveController,
   ZWaveNode,
   Endpoint,
   TranslatedValueID,
@@ -8,13 +7,25 @@ import {
   DeviceClass,
   CommandClass,
   InterviewStage,
+  ZWaveLibraryTypes,
+  FunctionType,
+  ValueType,
+  NodeStatus,
+  DataRate,
+  ZWavePlusNodeType,
+  ZWavePlusRoleType,
+  FLiRS,
+  ProtocolVersion,
+  NodeType,
 } from "zwave-js";
+import { DeviceConfig } from "@zwave-js/config";
 import {
   CommandClasses,
   ConfigurationMetadata,
   ConfigValue,
   ConfigValueFormat,
   LogConfig,
+  Maybe,
   ValueMetadataAny,
   ValueMetadataBoolean,
   ValueMetadataBuffer,
@@ -35,24 +46,24 @@ export interface DriverState {
 export interface ZwaveState {
   driver: DriverState;
   controller: {
-    libraryVersion: ZWaveController["libraryVersion"];
-    type: ZWaveController["type"];
-    homeId: ZWaveController["homeId"];
-    ownNodeId: ZWaveController["ownNodeId"];
-    isSecondary: ZWaveController["isSecondary"];
-    isUsingHomeIdFromOtherNetwork: ZWaveController["isUsingHomeIdFromOtherNetwork"];
-    isSISPresent: ZWaveController["isSISPresent"];
-    wasRealPrimary: ZWaveController["wasRealPrimary"];
-    isStaticUpdateController: ZWaveController["isStaticUpdateController"];
-    isSlave: ZWaveController["isSlave"];
-    serialApiVersion: ZWaveController["serialApiVersion"];
-    manufacturerId: ZWaveController["manufacturerId"];
-    productType: ZWaveController["productType"];
-    productId: ZWaveController["productId"];
-    supportedFunctionTypes: ZWaveController["supportedFunctionTypes"];
-    sucNodeId: ZWaveController["sucNodeId"];
-    supportsTimers: ZWaveController["supportsTimers"];
-    isHealNetworkActive: ZWaveController["isHealNetworkActive"];
+    libraryVersion?: string;
+    type?: ZWaveLibraryTypes;
+    homeId?: number;
+    ownNodeId?: number;
+    isSecondary?: boolean;
+    isUsingHomeIdFromOtherNetwork?: boolean;
+    isSISPresent?: boolean;
+    wasRealPrimary?: boolean;
+    isStaticUpdateController?: boolean;
+    isSlave?: boolean;
+    serialApiVersion?: string;
+    manufacturerId?: number;
+    productType?: number;
+    productId?: number;
+    supportedFunctionTypes?: readonly FunctionType[];
+    sucNodeId?: number;
+    supportsTimers?: boolean;
+    isHealNetworkActive: boolean;
   };
   nodes: NodeState[];
 }
@@ -65,10 +76,10 @@ interface CommandClassState {
 }
 
 interface EndpointStateSchema0 {
-  nodeId: Endpoint["nodeId"];
-  index: Endpoint["index"];
-  installerIcon: Endpoint["installerIcon"];
-  userIcon: Endpoint["userIcon"];
+  nodeId: number;
+  index: number;
+  installerIcon?: number;
+  userIcon?: number;
 }
 
 type EndpointStateSchema1 = Modify<
@@ -91,8 +102,8 @@ interface DeviceClassState {
     key: number;
     label: string;
   };
-  mandatorySupportedCCs: DeviceClass["mandatorySupportedCCs"];
-  mandatoryControlledCCs: DeviceClass["mandatoryControlledCCs"];
+  mandatorySupportedCCs: readonly CommandClasses[];
+  mandatoryControlledCCs: readonly CommandClasses[];
 }
 
 interface ValueState extends TranslatedValueID {
@@ -102,13 +113,13 @@ interface ValueState extends TranslatedValueID {
 }
 
 interface MetadataState {
-  type: ValueMetadata["type"];
-  default?: ValueMetadata["default"];
-  readable: ValueMetadata["readable"];
-  writeable: ValueMetadata["writeable"];
-  description?: ValueMetadata["description"];
-  label?: ValueMetadata["label"];
-  ccSpecific?: ValueMetadata["ccSpecific"];
+  type: ValueType;
+  default?: any;
+  readable: boolean;
+  writeable: boolean;
+  description?: string;
+  label?: string;
+  ccSpecific?: Record<string, any>;
   min?: number;
   max?: number;
   minLength?: number;
@@ -119,7 +130,7 @@ interface MetadataState {
 }
 
 interface ConfigurationMetadataState {
-  type: ConfigurationMetadata["type"];
+  type: ValueType;
   readable: boolean;
   writeable: boolean;
   description?: string;
@@ -141,37 +152,33 @@ interface ConfigurationMetadataState {
   isFromConfig?: boolean;
 }
 
-interface NodeStateSchema0 {
-  nodeId: ZWaveNode["nodeId"];
-  index: ZWaveNode["index"];
-  installerIcon: ZWaveNode["installerIcon"];
-  userIcon: ZWaveNode["userIcon"];
-  status: ZWaveNode["status"];
-  ready: ZWaveNode["ready"];
-  isListening: ZWaveNode["isListening"];
+interface NodeStateSchema0 extends EndpointStateSchema0 {
+  status: NodeStatus;
+  ready: boolean;
+  isListening?: boolean;
   isFrequentListening: boolean | null;
-  isRouting: ZWaveNode["isRouting"];
-  maxBaudRate: ZWaveNode["maxDataRate"];
-  isSecure: ZWaveNode["isSecure"];
+  isRouting?: boolean;
+  maxBaudRate?: DataRate;
+  isSecure?: Maybe<boolean>;
   version: number | null;
-  isBeaming: ZWaveNode["supportsBeaming"];
-  manufacturerId: ZWaveNode["manufacturerId"];
-  productId: ZWaveNode["productId"];
-  productType: ZWaveNode["productType"];
-  firmwareVersion: ZWaveNode["firmwareVersion"];
-  zwavePlusVersion: ZWaveNode["zwavePlusVersion"];
-  nodeType: ZWaveNode["zwavePlusNodeType"];
-  roleType: ZWaveNode["zwavePlusRoleType"];
-  name: ZWaveNode["name"];
-  location: ZWaveNode["location"];
-  deviceConfig: ZWaveNode["deviceConfig"];
-  label: ZWaveNode["label"];
-  endpointCountIsDynamic: ZWaveNode["endpointCountIsDynamic"];
-  endpointsHaveIdenticalCapabilities: ZWaveNode["endpointsHaveIdenticalCapabilities"];
-  individualEndpointCount: ZWaveNode["individualEndpointCount"];
-  aggregatedEndpointCount: ZWaveNode["aggregatedEndpointCount"];
-  interviewAttempts: ZWaveNode["interviewAttempts"];
-  interviewStage: ZWaveNode["interviewStage"];
+  isBeaming?: boolean;
+  manufacturerId?: number;
+  productId?: number;
+  productType?: number;
+  firmwareVersion?: string;
+  zwavePlusVersion?: number;
+  nodeType?: ZWavePlusNodeType;
+  roleType?: ZWavePlusRoleType;
+  name?: string;
+  location?: string;
+  deviceConfig?: DeviceConfig;
+  label?: string;
+  endpointCountIsDynamic?: boolean;
+  endpointsHaveIdenticalCapabilities?: boolean;
+  individualEndpointCount?: number;
+  aggregatedEndpointCount?: number;
+  interviewAttempts: number;
+  interviewStage: InterviewStage;
 
   deviceClass: DeviceClass | null;
 
@@ -190,15 +197,15 @@ type NodeStateSchema3 = Omit<
   Modify<
     NodeStateSchema2,
     {
-      isFrequentListening: ZWaveNode["isFrequentListening"];
-      maxDataRate: ZWaveNode["maxDataRate"];
-      supportedDataRates: ZWaveNode["supportedDataRates"];
-      protocolVersion: ZWaveNode["protocolVersion"];
-      supportsBeaming: ZWaveNode["supportsBeaming"];
-      supportsSecurity: ZWaveNode["supportsSecurity"];
-      zwavePlusNodeType: ZWaveNode["zwavePlusNodeType"];
-      zwavePlusRoleType: ZWaveNode["zwavePlusRoleType"];
-      nodeType: ZWaveNode["nodeType"];
+      isFrequentListening?: FLiRS;
+      maxDataRate?: DataRate;
+      supportedDataRates?: readonly DataRate[];
+      protocolVersion?: ProtocolVersion;
+      supportsBeaming?: boolean;
+      supportsSecurity?: boolean;
+      zwavePlusNodeType?: ZWavePlusNodeType;
+      zwavePlusRoleType?: ZWavePlusRoleType;
+      nodeType?: NodeType;
     }
   >,
   "maxBaudRate" | "version" | "isBeaming" | "roleType"
@@ -208,7 +215,7 @@ type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
 
 type NodeStateSchema5 = Modify<
   NodeStateSchema4,
-  { deviceDatabaseUrl: ZWaveNode["deviceDatabaseUrl"] }
+  { deviceDatabaseUrl?: string }
 >;
 
 type NodeState =
