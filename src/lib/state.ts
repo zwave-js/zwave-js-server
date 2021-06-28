@@ -296,6 +296,7 @@ export const dumpConfigurationMetadata = (
     description: metadata.description,
     label: metadata.label,
     ccSpecific: metadata.ccSpecific,
+    valueChangeOptions: metadata.valueChangeOptions,
     default: metadata.default,
     min: metadata.min,
     max: metadata.max,
