@@ -26,6 +26,7 @@ import {
   ConfigValueFormat,
   LogConfig,
   Maybe,
+  ValueChangeOptions,
   ValueMetadataAny,
   ValueMetadataBoolean,
   ValueMetadataBuffer,
@@ -120,6 +121,7 @@ interface MetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
+  valueChangeOptions?: (keyof ValueChangeOptions)[];
   min?: number;
   max?: number;
   minLength?: number;
@@ -136,6 +138,7 @@ interface ConfigurationMetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
+  valueChangeOptions?: (keyof ValueChangeOptions)[];
   min?: ConfigValue;
   max?: ConfigValue;
   default?: ConfigValue;
@@ -293,6 +296,7 @@ export const dumpConfigurationMetadata = (
     description: metadata.description,
     label: metadata.label,
     ccSpecific: metadata.ccSpecific,
+    valueChangeOptions: metadata.valueChangeOptions,
     default: metadata.default,
     min: metadata.min,
     max: metadata.max,
@@ -334,6 +338,7 @@ export const dumpMetadata = (
     description: metadata.description,
     label: metadata.label,
     ccSpecific: metadata.ccSpecific,
+    valueChangeOptions: metadata.valueChangeOptions,
   };
 
   if ("min" in metadata) {
