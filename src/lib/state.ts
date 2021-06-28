@@ -337,11 +337,8 @@ export const dumpMetadata = (
     description: metadata.description,
     label: metadata.label,
     ccSpecific: metadata.ccSpecific,
+    valueChangeOptions: metadata.valueChangeOptions,
   };
-
-  if ("valueChangeOptions" in metadata) {
-    newMetadata.valueChangeOptions = metadata.valueChangeOptions;
-  }
 
   if ("min" in metadata) {
     newMetadata.min = metadata.min;
