@@ -9,6 +9,7 @@ import {
   InterviewStage,
   ZWaveLibraryTypes,
   FunctionType,
+  ValueChangeOptions,
   ValueType,
   NodeStatus,
   DataRate,
@@ -120,6 +121,7 @@ interface MetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
+  valueChangeOptions?: (keyof ValueChangeOptions)[];
   min?: number;
   max?: number;
   minLength?: number;
@@ -136,6 +138,7 @@ interface ConfigurationMetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
+  valueChangeOptions?: (keyof ValueChangeOptions)[];
   min?: ConfigValue;
   max?: ConfigValue;
   default?: ConfigValue;
@@ -335,6 +338,10 @@ export const dumpMetadata = (
     label: metadata.label,
     ccSpecific: metadata.ccSpecific,
   };
+
+  if ("valueChangeOptions" in metadata) {
+    newMetadata.valueChangeOptions = metadata.valueChangeOptions;
+  }
 
   if ("min" in metadata) {
     newMetadata.min = metadata.min;
