@@ -13,6 +13,4 @@ export interface NodeResultTypes {
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
   [NodeCommand.ping]: { responded: boolean };
-  [NodeCommand.supportsCCAPI]: { supported: boolean };
-  [NodeCommand.invokeCCAPI]: { response: unknown };
 }
