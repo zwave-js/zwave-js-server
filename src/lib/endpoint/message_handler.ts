@@ -31,16 +31,16 @@ export class EndpointMessageHandler {
     }
 
     switch (message.command) {
-      case EndpointCommand.supportsCCAPI:
-        const supported = endpoint.supportsCCAPI(message.commandClass);
-        return { supported };
       case EndpointCommand.invokeCCAPI:
         const response = await endpoint.invokeCCAPI(
           message.commandClass,
-          message.method,
+          message.methodName,
           ...message.args
         );
         return { response };
+      case EndpointCommand.supportsCCAPI:
+        const supported = endpoint.supportsCCAPI(message.commandClass);
+        return { supported };
       default:
         throw new UnknownCommandError(command);
     }

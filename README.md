@@ -477,6 +477,38 @@ interface {
 }
 ```
 
+### Endpoint level commands
+
+#### [Invoke a CC API method]
+
+[compatible with schema version: 7+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.invoke_cc_api";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+```
+
+#### [Check whether a given CC API is supported by the above method]
+
+[compatible with schema version: 7+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.supports_cc_api";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
 ### Multicasting
 
 There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:

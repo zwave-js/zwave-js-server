@@ -7,20 +7,20 @@ export interface IncomingCommandEndpointBase extends IncomingCommandBase {
   endpoint?: number;
 }
 
+export interface IncomingCommandEndpointInvokeCCAPI
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.invokeCCAPI;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+
 export interface IncomingCommandEndpointSupportsCCAPI
   extends IncomingCommandEndpointBase {
   command: EndpointCommand.supportsCCAPI;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointInvokeCCAPI
-  extends IncomingCommandEndpointBase {
-  command: EndpointCommand.invokeCCAPI;
-  commandClass: CommandClasses;
-  method: string;
-  args: unknown[];
-}
-
 export type IncomingMessageEndpoint =
-  | IncomingCommandEndpointSupportsCCAPI
-  | IncomingCommandEndpointInvokeCCAPI;
+  | IncomingCommandEndpointInvokeCCAPI
+  | IncomingCommandEndpointSupportsCCAPI;
