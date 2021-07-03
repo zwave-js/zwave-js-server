@@ -10,4 +10,6 @@ export enum NodeCommand {
   refreshValues = "node.refresh_values",
   refreshCCValues = "node.refresh_cc_values",
   ping = "node.ping",
+  supportsCCAPI = "node.supports_cc_api",
+  invokeCCAPI = "node.invoke_cc_ap",
 }

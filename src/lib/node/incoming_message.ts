@@ -7,6 +7,10 @@ export interface IncomingCommandNodeBase extends IncomingCommandBase {
   nodeId: number;
 }
 
+export interface IncomingCommandEndpointBase extends IncomingCommandNodeBase {
+  endpoint?: number;
+}
+
 export interface IncomingCommandNodeSetValue extends IncomingCommandNodeBase {
   command: NodeCommand.setValue;
   valueId: ValueID;
@@ -71,6 +75,20 @@ export interface IncomingCommandNodePing extends IncomingCommandNodeBase {
   command: NodeCommand.ping;
 }
 
+export interface IncomingCommandEndpointSupportsCCAPI
+  extends IncomingCommandEndpointBase {
+  command: NodeCommand.supportsCCAPI;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandEndpointInvokeCCAPI
+  extends IncomingCommandEndpointBase {
+  command: NodeCommand.invokeCCAPI;
+  commandClass: CommandClasses;
+  method: string;
+  args: unknown[];
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -82,4 +100,6 @@ export type IncomingMessageNode =
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues
   | IncomingCommandNodeRefreshCCValues
-  | IncomingCommandNodePing;
+  | IncomingCommandNodePing
+  | IncomingCommandEndpointSupportsCCAPI
+  | IncomingCommandEndpointInvokeCCAPI;

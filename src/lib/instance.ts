@@ -4,4 +4,5 @@ export enum Instance {
   driver = "driver",
   multicast_group = "multicast_group",
   node = "node",
+  endpoint = "endpoint",
 }

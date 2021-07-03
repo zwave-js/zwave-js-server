@@ -2,6 +2,7 @@ export enum ErrorCode {
   unknownError = "unknown_error",
   unknownCommand = "unknown_command",
   nodeNotFound = "node_not_found",
+  endpointNotFound = "endpoint_not_found",
   virtualEndpointNotFound = "virtual_endpoint_not_found",
   schemaIncompatible = "schema_incompatible",
   zwaveError = "zwave_error",
@@ -52,6 +53,14 @@ export class VirtualEndpointNotFoundError extends BaseError {
     public nodeIDs?: number[],
     public broadcast?: boolean
   ) {
+    super();
+  }
+}
+
+export class EndpointNotFoundError extends BaseError {
+  errorCode = ErrorCode.endpointNotFound;
+
+  constructor(public nodeId: number, public index: number) {
     super();
   }
 }

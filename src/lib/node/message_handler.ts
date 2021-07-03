@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, Endpoint, ZWaveNode } from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -6,7 +6,11 @@ import {
   Firmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
-import { NodeNotFoundError, UnknownCommandError } from "../error";
+import {
+  EndpointNotFoundError,
+  NodeNotFoundError,
+  UnknownCommandError,
+} from "../error";
 import { Client } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
@@ -22,6 +26,7 @@ export class NodeMessageHandler {
     const { nodeId, command } = message;
     let firmwareFile: Buffer;
     let actualFirmware: Firmware;
+    let endpoint: Endpoint;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -87,8 +92,31 @@ export class NodeMessageHandler {
       case NodeCommand.ping:
         const responded = await node.ping();
         return { responded };
+      case NodeCommand.supportsCCAPI:
+        endpoint = getEndpoint(node, message.endpoint);
+        const supported = endpoint.supportsCCAPI(message.commandClass);
+        return { supported };
+      case NodeCommand.invokeCCAPI:
+        endpoint = getEndpoint(node, message.endpoint);
+        const response = await endpoint.invokeCCAPI(
+          message.commandClass,
+          message.method,
+          ...message.args
+        );
+        return { response };
       default:
         throw new UnknownCommandError(command);
     }
   }
+}
+
+function getEndpoint(node: ZWaveNode, index?: number): Endpoint {
+  if (!index) {
+    return node;
+  }
+  const endpoint = node.getEndpoint(index);
+  if (!endpoint) {
+    throw new EndpointNotFoundError(index);
+  }
+  return endpoint;
 }
