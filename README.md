@@ -479,9 +479,11 @@ interface {
 
 ### Endpoint level commands
 
-#### [Invoke a CC API method]
+#### [Invoke a Command Classes API method]
 
 [compatible with schema version: 7+]
+
+You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index)
 
 ```ts
 interface {
@@ -495,7 +497,27 @@ interface {
 }
 ```
 
-#### [Check whether a given CC API is supported by the above method]
+##### Example - Invoking [UserCodeCC.set](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set)
+
+Send the following JSON to the server to invoke the method:
+
+```json
+{
+  "messageId": "invoke-usercode-cc-set",
+  "command": "endpoint.invoke_cc_api",
+  "nodeId": 2,
+  "endpoint": 1,
+  "commandClass": ,
+  "methodName": "set",
+  "args": [
+    1, // userId = 1
+    1, // userIdStatus = UserIDStatus.Enabled
+    "1234" // userCode = "1234"
+  ]
+}
+```
+
+#### [Check whether a given Command Classes API is supported by the above method]
 
 [compatible with schema version: 7+]
 
