@@ -507,7 +507,7 @@ Send the following JSON to the server to invoke the method:
   "command": "endpoint.invoke_cc_api",
   "nodeId": 2,
   "endpoint": 1,
-  "commandClass": ,
+  "commandClass": 99, // commandClass = CommandClasses["User Code"]
   "methodName": "set",
   "args": [
     1, // userId = 1
