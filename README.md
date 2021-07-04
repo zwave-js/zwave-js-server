@@ -486,7 +486,6 @@ interface {
 You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index)
 
 <details>
-
 <summary>Example: Invoking UserCodeCC.set</summary>
 
 Send the following JSON to the server to invoke [`UserCodeCC.set(1, UserIDStatus.Enabled, "1234")`](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set):
