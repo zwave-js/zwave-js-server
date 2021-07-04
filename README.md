@@ -485,18 +485,6 @@ interface {
 
 You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index)
 
-```ts
-interface {
-  messageId: string;
-  command: "endpoint.invoke_cc_api";
-  nodeId: number;
-  endpoint?: number;
-  commandClass: CommandClasses;
-  methodName: string;
-  args: unknown[];
-}
-```
-
 <details>
 
 <summary>Example: Invoking UserCodeCC.set</summary>
@@ -520,6 +508,18 @@ Send the following JSON to the server to invoke [`UserCodeCC.set(1, UserIDStatus
 ```
 
 </details>
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.invoke_cc_api";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+```
 
 #### [Check whether a given Command Classes API is supported by the above method]
 
