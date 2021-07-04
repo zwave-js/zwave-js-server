@@ -497,9 +497,9 @@ interface {
 }
 ```
 
-##### Example - Invoking [UserCodeCC.set](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set)
+**Example: Invoking [UserCodeCC.set](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set)**
 
-Send the following JSON to the server to invoke the method:
+Send the following JSON to the server to invoke `UserCodeCC.set(1, UserIDStatus.Enabled, "1234")`:
 
 ```jsonc
 {
