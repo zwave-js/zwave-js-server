@@ -497,9 +497,11 @@ interface {
 }
 ```
 
-**Example: Invoking [UserCodeCC.set](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set)**
+<details>
 
-Send the following JSON to the server to invoke `UserCodeCC.set(1, UserIDStatus.Enabled, "1234")`:
+<summary>Example: Invoking UserCodeCC.set</summary>
+
+Send the following JSON to the server to invoke [`UserCodeCC.set(1, UserIDStatus.Enabled, "1234")`](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set):
 
 ```jsonc
 {
@@ -516,6 +518,8 @@ Send the following JSON to the server to invoke `UserCodeCC.set(1, UserIDStatus.
   ]
 }
 ```
+
+</details>
 
 #### [Check whether a given Command Classes API is supported by the above method]
 
