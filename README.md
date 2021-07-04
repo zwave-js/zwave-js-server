@@ -501,7 +501,7 @@ interface {
 
 Send the following JSON to the server to invoke the method:
 
-```json
+```jsonc
 {
   "messageId": "invoke-usercode-cc-set",
   "command": "endpoint.invoke_cc_api",
