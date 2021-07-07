@@ -188,6 +188,7 @@ export class EventForwarder {
     node.on(
       "metadata updated",
       (changedNode: ZWaveNode, args: ZWaveNodeMetadataUpdatedArgs) => {
+        // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clients.clients.forEach((client) => {
           // Copy arguments for each client so transforms don't impact all clients
@@ -279,7 +280,6 @@ export class EventForwarder {
     );
 
     node.on("statistics updated", (statistics: NodeStatistics) => {
-      if (!node.ready) return;
       notifyNode(node, "statistics updated", { statistics });
     });
   }
