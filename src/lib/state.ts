@@ -17,6 +17,8 @@ import {
   FLiRS,
   ProtocolVersion,
   NodeType,
+  NodeStatistics,
+  ControllerStatistics,
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
@@ -65,6 +67,7 @@ export interface ZwaveState {
     sucNodeId?: number;
     supportsTimers?: boolean;
     isHealNetworkActive: boolean;
+    statistics: ControllerStatistics;
   };
   nodes: NodeState[];
 }
@@ -216,10 +219,15 @@ type NodeStateSchema3 = Omit<
 
 type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
 
-type NodeStateSchema5 = Modify<
-  NodeStateSchema4,
-  { deviceDatabaseUrl?: string }
->;
+interface NodeStateSchema5 extends NodeStateSchema4 {
+  deviceDatabaseUrl?: string;
+}
+
+type NodeStateSchema6 = NodeStateSchema5;
+
+interface NodeStateSchema7 extends NodeStateSchema6 {
+  statistics: NodeStatistics;
+}
 
 type NodeState =
   | NodeStateSchema0
@@ -227,7 +235,9 @@ type NodeState =
   | NodeStateSchema2
   | NodeStateSchema3
   | NodeStateSchema4
-  | NodeStateSchema5;
+  | NodeStateSchema5
+  | NodeStateSchema6
+  | NodeStateSchema7;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -462,46 +472,36 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     return node3;
   }
 
+  const node4 = base as NodeStateSchema4;
+  node4.isFrequentListening = node.isFrequentListening;
+  node4.maxDataRate = node.maxDataRate;
+  node4.supportedDataRates = node.supportedDataRates;
+  node4.protocolVersion = node.protocolVersion;
+  node4.supportsBeaming = node.supportsBeaming;
+  node4.supportsSecurity = node.supportsSecurity;
+  node4.nodeType = node.nodeType;
+  node4.zwavePlusNodeType = node.zwavePlusNodeType;
+  node4.zwavePlusRoleType = node.zwavePlusRoleType;
+  node4.deviceClass = node.deviceClass
+    ? dumpDeviceClass(node.deviceClass)
+    : null;
+  node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+    dumpCommandClass(node, cc)
+  );
+  node4.interviewStage = InterviewStage[node.interviewStage];
   if (schemaVersion == 4) {
-    const node4 = base as NodeStateSchema4;
-    node4.isFrequentListening = node.isFrequentListening;
-    node4.maxDataRate = node.maxDataRate;
-    node4.supportedDataRates = node.supportedDataRates;
-    node4.protocolVersion = node.protocolVersion;
-    node4.supportsBeaming = node.supportsBeaming;
-    node4.supportsSecurity = node.supportsSecurity;
-    node4.nodeType = node.nodeType;
-    node4.zwavePlusNodeType = node.zwavePlusNodeType;
-    node4.zwavePlusRoleType = node.zwavePlusRoleType;
-    node4.deviceClass = node.deviceClass
-      ? dumpDeviceClass(node.deviceClass)
-      : null;
-    node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-      dumpCommandClass(node, cc)
-    );
-    node4.interviewStage = InterviewStage[node.interviewStage];
     return node4;
   }
 
-  const node5 = base as NodeStateSchema5;
-  node5.isFrequentListening = node.isFrequentListening;
-  node5.maxDataRate = node.maxDataRate;
-  node5.supportedDataRates = node.supportedDataRates;
-  node5.protocolVersion = node.protocolVersion;
-  node5.supportsBeaming = node.supportsBeaming;
-  node5.supportsSecurity = node.supportsSecurity;
-  node5.nodeType = node.nodeType;
-  node5.zwavePlusNodeType = node.zwavePlusNodeType;
-  node5.zwavePlusRoleType = node.zwavePlusRoleType;
-  node5.deviceClass = node.deviceClass
-    ? dumpDeviceClass(node.deviceClass)
-    : null;
-  node5.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-    dumpCommandClass(node, cc)
-  );
-  node5.interviewStage = InterviewStage[node.interviewStage];
+  const node5 = node4 as NodeStateSchema5;
   node5.deviceDatabaseUrl = node.deviceDatabaseUrl;
-  return node5;
+  if (schemaVersion <= 6) {
+    return node5;
+  }
+
+  const node7 = node5 as NodeStateSchema7;
+  node7.statistics = node.statistics;
+  return node7;
 };
 
 export const dumpEndpoint = (
@@ -603,6 +603,7 @@ export const dumpState = (
       sucNodeId: controller.sucNodeId,
       supportsTimers: controller.supportsTimers,
       isHealNetworkActive: controller.isHealNetworkActive,
+      statistics: controller.statistics,
     },
     nodes: Array.from(controller.nodes.values(), (node) =>
       dumpNode(node, schemaVersion)
