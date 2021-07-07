@@ -1,6 +1,8 @@
 import {
   ControllerEvents,
+  ControllerStatistics,
   FirmwareUpdateStatus,
+  NodeStatistics,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
@@ -92,12 +94,14 @@ export class EventForwarder {
       })
     );
 
-    this.clients.driver.controller.on("statistics updated", (statistics) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "statistics updated",
-        statistics: statistics as any,
-      })
+    this.clients.driver.controller.on(
+      "statistics updated",
+      (statistics: ControllerStatistics) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "statistics updated",
+          statistics: statistics as any,
+        })
     );
   }
 
@@ -273,5 +277,10 @@ export class EventForwarder {
         });
       }
     );
+
+    node.on("statistics updated", (statistics: NodeStatistics) => {
+      if (!node.ready) return;
+      notifyNode(node, "statistics updated", { statistics });
+    });
   }
 }
