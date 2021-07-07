@@ -64,6 +64,7 @@ export class EventForwarder {
         secure,
       })
     );
+
     this.clients.driver.controller.on("node removed", (node) =>
       // forward event to all connected clients, respecting schemaVersion it supports
       this.clients.clients.forEach((client) =>
@@ -74,6 +75,7 @@ export class EventForwarder {
         })
       )
     );
+
     this.clients.driver.controller.on("heal network progress", (progress) =>
       this.forwardEvent({
         source: "controller",
@@ -81,11 +83,20 @@ export class EventForwarder {
         progress: Object.fromEntries(progress),
       })
     );
+
     this.clients.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
         result: Object.fromEntries(result),
+      })
+    );
+
+    this.clients.driver.controller.on("statistics updated", (statistics) =>
+      this.forwardEvent({
+        source: "controller",
+        event: "statistics updated",
+        statistics: statistics as any,
       })
     );
   }
