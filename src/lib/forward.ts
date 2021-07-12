@@ -100,7 +100,7 @@ export class EventForwarder {
         this.forwardEvent({
           source: "controller",
           event: "statistics updated",
-          statistics: Object.freeze(statistics),
+          statistics: statistics as any,
         })
     );
   }
