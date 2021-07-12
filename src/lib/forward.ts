@@ -1,6 +1,8 @@
 import {
   ControllerEvents,
+  ControllerStatistics,
   FirmwareUpdateStatus,
+  NodeStatistics,
   NodeStatus,
   ZWaveNode,
   ZWaveNodeEvents,
@@ -64,6 +66,7 @@ export class EventForwarder {
         secure,
       })
     );
+
     this.clients.driver.controller.on("node removed", (node) =>
       // forward event to all connected clients, respecting schemaVersion it supports
       this.clients.clients.forEach((client) =>
@@ -74,6 +77,7 @@ export class EventForwarder {
         })
       )
     );
+
     this.clients.driver.controller.on("heal network progress", (progress) =>
       this.forwardEvent({
         source: "controller",
@@ -81,12 +85,23 @@ export class EventForwarder {
         progress: Object.fromEntries(progress),
       })
     );
+
     this.clients.driver.controller.on("heal network done", (result) =>
       this.forwardEvent({
         source: "controller",
         event: "heal network done",
         result: Object.fromEntries(result),
       })
+    );
+
+    this.clients.driver.controller.on(
+      "statistics updated",
+      (statistics: ControllerStatistics) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "statistics updated",
+          statistics: statistics as any,
+        })
     );
   }
 
@@ -173,6 +188,7 @@ export class EventForwarder {
     node.on(
       "metadata updated",
       (changedNode: ZWaveNode, args: ZWaveNodeMetadataUpdatedArgs) => {
+        // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clients.clients.forEach((client) => {
           // Copy arguments for each client so transforms don't impact all clients
@@ -262,5 +278,9 @@ export class EventForwarder {
         });
       }
     );
+
+    node.on("statistics updated", (statistics: NodeStatistics) => {
+      notifyNode(node, "statistics updated", { statistics });
+    });
   }
 }
