@@ -28,6 +28,8 @@ import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
 import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
 import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
+import { EndpointMessageHandler } from "./endpoint/message_handler";
+import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -67,6 +69,11 @@ export class Client {
     [Instance.broadcast_node]: (message) =>
       BroadcastNodeMessageHandler.handle(
         message as IncomingMessageBroadcastNode,
+        this.driver
+      ),
+    [Instance.endpoint]: (message) =>
+      EndpointMessageHandler.handle(
+        message as IncomingMessageEndpoint,
         this.driver
       ),
   };

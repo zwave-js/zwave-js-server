@@ -477,6 +477,63 @@ interface {
 }
 ```
 
+### Endpoint level commands
+
+#### [Invoke a Command Classes API method]
+
+[compatible with schema version: 7+]
+
+You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index)
+
+<details>
+<summary>Example: Invoking UserCodeCC.set</summary>
+
+Send the following JSON to the server to invoke [`UserCodeCC.set(1, UserIDStatus.Enabled, "1234")`](https://zwave-js.github.io/node-zwave-js/#/api/CCs/UserCode?id=set):
+
+```jsonc
+{
+  "messageId": "invoke-usercode-cc-set",
+  "command": "endpoint.invoke_cc_api",
+  "nodeId": 2,
+  "endpoint": 1,
+  "commandClass": 99, // commandClass = CommandClasses["User Code"]
+  "methodName": "set",
+  "args": [
+    1, // userId = 1
+    1, // userIdStatus = UserIDStatus.Enabled
+    "1234" // userCode = "1234"
+  ]
+}
+```
+
+</details>
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.invoke_cc_api";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+```
+
+#### [Check whether a given Command Classes API is supported by the above method]
+
+[compatible with schema version: 7+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.supports_cc_api";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
 ### Multicasting
 
 There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
