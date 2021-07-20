@@ -17,7 +17,8 @@ export class BroadcastNodeMessageHandler {
       case BroadcastNodeCommand.setValue:
         const success = await virtualNode.setValue(
           message.valueId,
-          message.value
+          message.value,
+          message.options
         );
         return { success };
       case BroadcastNodeCommand.getEndpointCount:

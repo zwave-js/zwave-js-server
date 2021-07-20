@@ -336,6 +336,7 @@ interface {
     propertyKey?: string | number;
   };
   value: any;
+  options?: SetValueAPIOptions;
 }
 ```
 
@@ -558,6 +559,7 @@ interface {
     propertyKey?: string | number;
   };
   value: any;
+  options?: SetValueAPIOptions;
 }
 ```
 

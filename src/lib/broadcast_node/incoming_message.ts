@@ -1,4 +1,5 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
+import { SetValueAPIOptions } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { BroadcastNodeCommand } from "./command";
 
@@ -9,6 +10,7 @@ export interface IncomingCommandBroadcastNodeSetValue
   command: BroadcastNodeCommand.setValue;
   valueId: ValueID;
   value: unknown;
+  options?: SetValueAPIOptions;
 }
 
 export interface IncomingCommandBroadcastNodeGetEndpointCount

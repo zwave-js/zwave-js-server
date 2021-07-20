@@ -1,4 +1,5 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
+import { SetValueAPIOptions } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { MulticastGroupCommand } from "./command";
 
@@ -11,6 +12,7 @@ export interface IncomingCommandMulticastGroupSetValue
   command: MulticastGroupCommand.setValue;
   valueId: ValueID;
   value: unknown;
+  options?: SetValueAPIOptions;
 }
 
 export interface IncomingCommandMulticastGroupGetEndpointCount
