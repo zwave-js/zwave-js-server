@@ -279,8 +279,11 @@ export class EventForwarder {
       }
     );
 
-    node.on("statistics updated", (statistics: NodeStatistics) => {
-      notifyNode(node, "statistics updated", { statistics });
-    });
+    node.on(
+      "statistics updated",
+      (changedNode: ZWaveNode, statistics: NodeStatistics) => {
+        notifyNode(changedNode, "statistics updated", { statistics });
+      }
+    );
   }
 }
