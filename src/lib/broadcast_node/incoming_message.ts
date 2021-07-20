@@ -35,7 +35,7 @@ export interface IncomingCommandBroadcastNodeGetCCVersion
 export interface IncomingCommandBroadcastNodeInvokeCCAPI
   extends IncomingCommandBroadcastNodeBase {
   command: BroadcastNodeCommand.invokeCCAPI;
-  endpoint?: number;
+  index?: number;
   commandClass: CommandClasses;
   methodName: string;
   args: unknown[];
@@ -44,7 +44,7 @@ export interface IncomingCommandBroadcastNodeInvokeCCAPI
 export interface IncomingCommandBroadcastNodeSupportsCCAPI
   extends IncomingCommandBroadcastNodeBase {
   command: BroadcastNodeCommand.supportsCCAPI;
-  endpoint?: number;
+  index?: number;
   commandClass: CommandClasses;
 }
 

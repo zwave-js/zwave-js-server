@@ -39,7 +39,7 @@ export class BroadcastNodeMessageHandler {
       case BroadcastNodeCommand.invokeCCAPI:
         const response = await getVirtualEndpoint(
           virtualNode,
-          message.endpoint
+          message.index
         ).invokeCCAPI(
           message.commandClass,
           message.methodName,
@@ -49,7 +49,7 @@ export class BroadcastNodeMessageHandler {
       case BroadcastNodeCommand.supportsCCAPI:
         supported = await getVirtualEndpoint(
           virtualNode,
-          message.endpoint
+          message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
       default:

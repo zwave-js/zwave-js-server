@@ -43,7 +43,7 @@ export class MulticastGroupMessageHandler {
         const response = await getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.endpoint
+          message.index
         ).invokeCCAPI(
           message.commandClass,
           message.methodName,
@@ -54,7 +54,7 @@ export class MulticastGroupMessageHandler {
         supported = await getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.endpoint
+          message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
       default:

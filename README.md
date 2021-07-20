@@ -627,7 +627,7 @@ interface {
 interface {
   messageId: string;
   command: "<prefix>.invoke_cc_api"
-  endpoint?: number;
+  index?: number;  // Endpoint index
   commandClass: CommandClasses;
   methodName: string;
   args: unknown[];
@@ -642,7 +642,7 @@ interface {
 interface {
   messageId: string;
   command: "<prefix>.get_cc_version"
-  endpoint?: number;
+  index?: number;  // Endpoint index
   commandClass: CommandClasses;
 }
 ```
