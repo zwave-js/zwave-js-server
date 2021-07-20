@@ -1,4 +1,5 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
+import { SetValueAPIOptions } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { BroadcastNodeCommand } from "./command";
 
@@ -9,6 +10,7 @@ export interface IncomingCommandBroadcastNodeSetValue
   command: BroadcastNodeCommand.setValue;
   valueId: ValueID;
   value: unknown;
+  options?: SetValueAPIOptions;
 }
 
 export interface IncomingCommandBroadcastNodeGetEndpointCount
@@ -30,8 +32,26 @@ export interface IncomingCommandBroadcastNodeGetCCVersion
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandBroadcastNodeInvokeCCAPI
+  extends IncomingCommandBroadcastNodeBase {
+  command: BroadcastNodeCommand.invokeCCAPI;
+  index?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+
+export interface IncomingCommandBroadcastNodeSupportsCCAPI
+  extends IncomingCommandBroadcastNodeBase {
+  command: BroadcastNodeCommand.supportsCCAPI;
+  index?: number;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageBroadcastNode =
   | IncomingCommandBroadcastNodeSetValue
   | IncomingCommandBroadcastNodeGetEndpointCount
   | IncomingCommandBroadcastNodeSupportsCC
-  | IncomingCommandBroadcastNodeGetCCVersion;
+  | IncomingCommandBroadcastNodeGetCCVersion
+  | IncomingCommandBroadcastNodeInvokeCCAPI
+  | IncomingCommandBroadcastNodeSupportsCCAPI;

@@ -68,6 +68,9 @@ export class NodeMessageHandler {
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};
+      case NodeCommand.getFirmwareUpdateCapabilities:
+        const capabilities = await node.getFirmwareUpdateCapabilities();
+        return { capabilities };
       case NodeCommand.pollValue:
         const value = await node.pollValue<any>(message.valueId);
         return { value };

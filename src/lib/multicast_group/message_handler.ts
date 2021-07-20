@@ -10,6 +10,7 @@ export class MulticastGroupMessageHandler {
     driver: Driver
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
+    let supported: boolean;
 
     const virtualNode = driver.controller.getMulticastGroup(message.nodeIDs);
 
@@ -17,26 +18,45 @@ export class MulticastGroupMessageHandler {
       case MulticastGroupCommand.setValue:
         const success = await virtualNode.setValue(
           message.valueId,
-          message.value
+          message.value,
+          message.options
         );
         return { success };
       case MulticastGroupCommand.getEndpointCount:
         const count = virtualNode.getEndpointCount();
         return { count };
       case MulticastGroupCommand.supportsCC:
-        const supported = getVirtualEndpoint(
+        supported = getVirtualEndpoint(
           virtualNode,
-          message.index,
-          message.nodeIDs
+          message.nodeIDs,
+          message.index
         ).supportsCC(message.commandClass);
         return { supported };
       case MulticastGroupCommand.getCCVersion:
         const version = getVirtualEndpoint(
           virtualNode,
-          message.index,
-          message.nodeIDs
+          message.nodeIDs,
+          message.index
         ).getCCVersion(message.commandClass);
         return { version };
+      case MulticastGroupCommand.invokeCCAPI:
+        const response = await getVirtualEndpoint(
+          virtualNode,
+          message.nodeIDs,
+          message.index
+        ).invokeCCAPI(
+          message.commandClass,
+          message.methodName,
+          ...message.args
+        );
+        return { response };
+      case MulticastGroupCommand.supportsCCAPI:
+        supported = await getVirtualEndpoint(
+          virtualNode,
+          message.nodeIDs,
+          message.index
+        ).supportsCCAPI(message.commandClass);
+        return { supported };
       default:
         throw new UnknownCommandError(command);
     }
@@ -45,9 +65,10 @@ export class MulticastGroupMessageHandler {
 
 function getVirtualEndpoint(
   virtualNode: VirtualNode,
-  index: number,
-  nodeIDs: number[]
+  nodeIDs: number[],
+  index?: number
 ): VirtualEndpoint {
+  if (!index) return virtualNode;
   const virtualEndpoint = virtualNode.getEndpoint(index);
   if (!virtualEndpoint) {
     throw new VirtualEndpointNotFoundError(index, nodeIDs, undefined);

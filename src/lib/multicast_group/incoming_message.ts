@@ -1,4 +1,5 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
+import { SetValueAPIOptions } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { MulticastGroupCommand } from "./command";
 
@@ -11,6 +12,7 @@ export interface IncomingCommandMulticastGroupSetValue
   command: MulticastGroupCommand.setValue;
   valueId: ValueID;
   value: unknown;
+  options?: SetValueAPIOptions;
 }
 
 export interface IncomingCommandMulticastGroupGetEndpointCount
@@ -32,8 +34,26 @@ export interface IncomingCommandMulticastGroupGetCCVersion
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandMulticastGroupInvokeCCAPI
+  extends IncomingCommandMulticastGroupBase {
+  command: MulticastGroupCommand.invokeCCAPI;
+  index?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+
+export interface IncomingCommandMulticastGroupSupportsCCAPI
+  extends IncomingCommandMulticastGroupBase {
+  command: MulticastGroupCommand.supportsCCAPI;
+  index?: number;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageMulticastGroup =
   | IncomingCommandMulticastGroupSetValue
   | IncomingCommandMulticastGroupGetEndpointCount
   | IncomingCommandMulticastGroupSupportsCC
-  | IncomingCommandMulticastGroupGetCCVersion;
+  | IncomingCommandMulticastGroupGetCCVersion
+  | IncomingCommandMulticastGroupInvokeCCAPI
+  | IncomingCommandMulticastGroupSupportsCCAPI;

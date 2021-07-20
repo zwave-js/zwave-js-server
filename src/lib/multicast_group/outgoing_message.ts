@@ -5,4 +5,6 @@ export interface MulticastGroupResultTypes {
   [MulticastGroupCommand.getEndpointCount]: { count: number };
   [MulticastGroupCommand.supportsCC]: { supported: boolean };
   [MulticastGroupCommand.getCCVersion]: { version: number };
+  [MulticastGroupCommand.invokeCCAPI]: { response: unknown };
+  [MulticastGroupCommand.supportsCCAPI]: { supported: boolean };
 }

@@ -5,4 +5,6 @@ export interface BroadcastNodeResultTypes {
   [BroadcastNodeCommand.getEndpointCount]: { count: number };
   [BroadcastNodeCommand.supportsCC]: { supported: boolean };
   [BroadcastNodeCommand.getCCVersion]: { version: number };
+  [BroadcastNodeCommand.invokeCCAPI]: { response: unknown };
+  [BroadcastNodeCommand.supportsCCAPI]: { supported: boolean };
 }
