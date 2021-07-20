@@ -1,4 +1,8 @@
-import { TranslatedValueID, ValueMetadata } from "zwave-js";
+import {
+  FirmwareUpdateCapabilities,
+  TranslatedValueID,
+  ValueMetadata,
+} from "zwave-js";
 import { NodeCommand } from "./command";
 
 export interface NodeResultTypes {
@@ -8,6 +12,9 @@ export interface NodeResultTypes {
   [NodeCommand.getValueMetadata]: ValueMetadata;
   [NodeCommand.beginFirmwareUpdate]: Record<string, never>;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
+  [NodeCommand.getFirmwareUpdateCapabilities]: {
+    capabilities: FirmwareUpdateCapabilities;
+  };
   [NodeCommand.pollValue]: { value: any | undefined };
   [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
   [NodeCommand.refreshValues]: Record<string, never>;

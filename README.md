@@ -619,6 +619,34 @@ interface {
 }
 ```
 
+#### [Invoke a Command Class specific API](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=invokeccapi)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.invoke_cc_api"
+  endpoint?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+```
+
+#### [Check if a Command Class is supported by invoke_cc_api](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=supportsccapi)
+
+[compatible with schema version: 5+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.get_cc_version"
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
 ## Events
 
 ### `zwave-js` Events

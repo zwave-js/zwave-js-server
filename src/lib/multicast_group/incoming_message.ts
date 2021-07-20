@@ -34,8 +34,26 @@ export interface IncomingCommandMulticastGroupGetCCVersion
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandMulticastGroupInvokeCCAPI
+  extends IncomingCommandMulticastGroupBase {
+  command: MulticastGroupCommand.invokeCCAPI;
+  endpoint?: number;
+  commandClass: CommandClasses;
+  methodName: string;
+  args: unknown[];
+}
+
+export interface IncomingCommandMulticastGroupSupportsCCAPI
+  extends IncomingCommandMulticastGroupBase {
+  command: MulticastGroupCommand.supportsCCAPI;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageMulticastGroup =
   | IncomingCommandMulticastGroupSetValue
   | IncomingCommandMulticastGroupGetEndpointCount
   | IncomingCommandMulticastGroupSupportsCC
-  | IncomingCommandMulticastGroupGetCCVersion;
+  | IncomingCommandMulticastGroupGetCCVersion
+  | IncomingCommandMulticastGroupInvokeCCAPI
+  | IncomingCommandMulticastGroupSupportsCCAPI;
