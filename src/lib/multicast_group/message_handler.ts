@@ -40,7 +40,7 @@ export class MulticastGroupMessageHandler {
         ).getCCVersion(message.commandClass);
         return { version };
       case MulticastGroupCommand.invokeCCAPI:
-        const response = await getVirtualEndpoint(
+        const response = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
           message.index
@@ -51,7 +51,7 @@ export class MulticastGroupMessageHandler {
         );
         return { response };
       case MulticastGroupCommand.supportsCCAPI:
-        supported = await getVirtualEndpoint(
+        supported = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
           message.index

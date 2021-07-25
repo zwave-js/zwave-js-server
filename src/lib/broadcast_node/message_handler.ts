@@ -37,7 +37,7 @@ export class BroadcastNodeMessageHandler {
         ).getCCVersion(message.commandClass);
         return { version };
       case BroadcastNodeCommand.invokeCCAPI:
-        const response = await getVirtualEndpoint(
+        const response = getVirtualEndpoint(
           virtualNode,
           message.index
         ).invokeCCAPI(
@@ -47,7 +47,7 @@ export class BroadcastNodeMessageHandler {
         );
         return { response };
       case BroadcastNodeCommand.supportsCCAPI:
-        supported = await getVirtualEndpoint(
+        supported = getVirtualEndpoint(
           virtualNode,
           message.index
         ).supportsCCAPI(message.commandClass);
