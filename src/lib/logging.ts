@@ -26,7 +26,7 @@ export class LoggingEventForwarder {
   start() {
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
-    this.logger.info("Starting log forwarder at " + level + " level");
+    this.logger.info("Starting logging event forwarder at " + level + " level");
     this.serverTransport = new WebSocketLogTransport(
       level as string,
       this.clients
@@ -37,7 +37,7 @@ export class LoggingEventForwarder {
   }
 
   stop() {
-    this.logger.info("Stopping log forwarder");
+    this.logger.info("Stopping logging event forwarder");
     const transports = this.driver
       .getLogConfig()
       .transports.filter((transport) => transport !== this.serverTransport);
