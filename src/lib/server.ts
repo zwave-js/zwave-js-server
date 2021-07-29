@@ -284,9 +284,17 @@ export class ClientsController {
     return this.loggingEventForwarder?.started === true;
   }
 
+  public restartLoggingEventForwarderIfNeeded() {
+    this.loggingEventForwarder?.restartIfNeeded();
+  }
+
   public configureLoggingEventForwarder() {
     if (this.loggingEventForwarder === undefined) {
-      this.loggingEventForwarder = new LoggingEventForwarder(this, this.driver);
+      this.loggingEventForwarder = new LoggingEventForwarder(
+        this,
+        this.driver,
+        this.logger
+      );
     }
     if (!this.loggingEventForwarderStarted) {
       this.loggingEventForwarder?.start();

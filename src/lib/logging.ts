@@ -13,15 +13,20 @@ export class LoggingEventForwarder {
    */
   private serverTransport?: WebSocketLogTransport;
 
-  constructor(private clients: ClientsController, private driver: Driver) {}
+  constructor(
+    private clients: ClientsController,
+    private driver: Driver,
+    private logger: Logger
+  ) {}
 
   public get started(): boolean {
-    return this.serverTransport != undefined;
+    return this.serverTransport !== undefined;
   }
 
   start() {
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
+    this.logger.info("Starting logging event forwarder at " + level + " level");
     this.serverTransport = new WebSocketLogTransport(
       level as string,
       this.clients
@@ -32,11 +37,20 @@ export class LoggingEventForwarder {
   }
 
   stop() {
+    this.logger.info("Stopping logging event forwarder");
     const transports = this.driver
       .getLogConfig()
       .transports.filter((transport) => transport !== this.serverTransport);
     this.driver.updateLogConfig({ transports });
     delete this.serverTransport;
+  }
+
+  restartIfNeeded() {
+    var { level } = this.driver.getLogConfig();
+    if (this.started && this.serverTransport?.level != level) {
+      this.stop();
+      this.start();
+    }
   }
 }
 
