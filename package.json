@@ -22,7 +22,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "minimist": "^1.2.5",
-    "ws": "^7.4.2"
+    "ws": "^8.0.0"
   },
   "peerDependencies": {
     "zwave-js": "^8.0.3"
