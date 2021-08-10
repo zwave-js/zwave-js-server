@@ -154,7 +154,7 @@ interface {
   config: {
     logConfig: {
       enabled: boolean;
-      level: number;
+      level: string | number; // type depends on schema version, the latest schemas use string
       logToFile: boolean;
       filename: string;
       forceConsole: boolean;
@@ -176,7 +176,7 @@ interface {
   command: "driver.update_log_config";
   config: {
     enabled?: boolean;
-    level?: number;
+    level?: string | number;
     logToFile?: boolean;
     filename?: string;
     forceConsole?: boolean;
@@ -201,7 +201,7 @@ Returns:
 interface {
   config: {
     enabled: boolean;
-    level: number;
+    level: string | number; // type depends on schema version, the latest schemas use string
     logToFile: boolean;
     filename: string;
     forceConsole: boolean;
