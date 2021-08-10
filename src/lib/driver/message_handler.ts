@@ -30,11 +30,11 @@ export class DriverMessageHandler {
         return { config: dumpLogConfig(driver, client.schemaVersion) };
       case DriverCommand.updateLogConfig:
         driver.updateLogConfig(message.config);
-        const config = dumpLogConfig(driver, client.schemaVersion);
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
         clientsController.restartLoggingEventForwarderIfNeeded();
         clientsController.clients.forEach((cl) => {
+          const config = dumpLogConfig(driver, cl.schemaVersion);
           cl.sendEvent({
             source: "driver",
             event: "log config updated",
