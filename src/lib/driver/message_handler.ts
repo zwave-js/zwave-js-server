@@ -34,11 +34,10 @@ export class DriverMessageHandler {
         // it so that it picks up the new config.
         clientsController.restartLoggingEventForwarderIfNeeded();
         clientsController.clients.forEach((cl) => {
-          const config = dumpLogConfig(driver, cl.schemaVersion);
           cl.sendEvent({
             source: "driver",
             event: "log config updated",
-            config,
+            config: dumpLogConfig(driver, cl.schemaVersion),
           });
         });
         return {};
