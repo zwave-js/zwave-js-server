@@ -159,6 +159,7 @@ function processInclusionOptions(
   client: Client,
   message: IncomingMessageController
 ): InclusionOptions | ReplaceNodeOptions {
+  // Schema 8+ inclusion handling
   if ("options" in message) {
     if (
       message.options.strategy === InclusionStrategy.Default ||
@@ -199,6 +200,7 @@ function processInclusionOptions(
     }
     return message.options;
   }
+  // Schema <=7 inclusion handling (backwards compatibility logic)
   if ("includeNonSecure" in message && message.includeNonSecure)
     return {
       strategy: InclusionStrategy.Insecure,
