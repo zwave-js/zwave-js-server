@@ -685,7 +685,7 @@ interface {
 }
 ```
 
-### `zwave-js-server` Events
+### `zwave-js-server` Driver Events
 
 #### `log config updated`
 
@@ -721,6 +721,52 @@ interface {
     timestamp?: string;
     label?: string;
     message: string | string[];
+  }
+}
+```
+
+### `zwave-js-server` Controller Events
+
+#### `grant security classes`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that [the user needs to choose which security classes to grant the node](https://zwave-js.github.io/node-zwave-js/#/getting-started/security-s2?id=granting-security-classes).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "grant security classes";
+    requested: InclusionGrant;
+  }
+}
+```
+
+#### `validate dsk and enter pin`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that [the user needs to confirm the provided DSK is valid and enter the PIN from the device](https://zwave-js.github.io/node-zwave-js/#/getting-started/security-s2?id=validating-the-dsk-and-entering-the-device-pin).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "validate dsk and enter pin";
+    dsk: string;
+  }
+}
+```
+
+#### `inclusion aborted`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that the controller aborted the inclusion process. The logs will likely have more details on why the inclusion process had to be aborted.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "inclusion aborted";
   }
 }
 ```
