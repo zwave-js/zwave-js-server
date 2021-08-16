@@ -2,6 +2,7 @@ import ws from "ws";
 import type WebSocket from "ws";
 import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { libVersion } from "zwave-js";
+import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
@@ -30,7 +31,6 @@ import { MulticastGroupMessageHandler } from "./multicast_group/message_handler"
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { EndpointMessageHandler } from "./endpoint/message_handler";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
-import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 
 export class Client {
   public receiveEvents = false;
