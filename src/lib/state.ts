@@ -229,9 +229,7 @@ interface NodeStateSchema7 extends NodeStateSchema6 {
   statistics: NodeStatistics;
 }
 
-type NodeStateSchema8 = NodeStateSchema7 & {
-  isSecure: boolean | "unknown";
-};
+type NodeStateSchema8 = NodeStateSchema7;
 
 type NodeState =
   | NodeStateSchema0
@@ -506,13 +504,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node7 = node5 as NodeStateSchema7;
   node7.statistics = node.statistics;
-  if (schemaVersion == 7) {
-    return node7;
-  }
-
-  const node8 = node7 as NodeStateSchema8;
-  node8.isSecure = node.isSecure;
-  return node8;
+  return node7;
 };
 
 export const dumpEndpoint = (
