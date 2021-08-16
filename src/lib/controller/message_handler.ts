@@ -165,12 +165,11 @@ function processInclusionOptions(
       message.options.strategy === InclusionStrategy.Security_S2
     ) {
       message.options.userCallbacks = {
-        grantSecurityClasses: async (
+        grantSecurityClasses: (
           requested: InclusionGrant
         ): Promise<InclusionGrant | false> => {
-          clientsController.grantSecurityClassesPromise = createDeferredPromise<
-            InclusionGrant | false
-          >();
+          clientsController.grantSecurityClassesPromise =
+            createDeferredPromise();
           client.sendEvent({
             source: "controller",
             event: "grant security classes",
@@ -178,11 +177,9 @@ function processInclusionOptions(
           });
           return clientsController.grantSecurityClassesPromise;
         },
-        validateDSKAndEnterPIN: async (
-          dsk: string
-        ): Promise<string | false> => {
+        validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
           clientsController.validateDSKAndEnterPinPromise =
-            createDeferredPromise<string | false>();
+            createDeferredPromise();
           client.sendEvent({
             source: "controller",
             event: "validate dsk and enter pin",
