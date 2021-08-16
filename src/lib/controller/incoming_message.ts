@@ -1,14 +1,26 @@
-import { AssociationAddress } from "zwave-js";
+import {
+  AssociationAddress,
+  InclusionGrant,
+  InclusionOptions,
+  ReplaceNodeOptions,
+} from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 
-export interface IncomingCommandControllerBeginInclusion
-  extends IncomingCommandControllerBase {
-  command: ControllerCommand.beginInclusion;
-  includeNonSecure?: boolean;
-}
+export type IncomingCommandControllerBeginInclusion =
+  IncomingCommandControllerBase &
+    (
+      | {
+          command: ControllerCommand.beginInclusion;
+          options: InclusionOptions;
+        }
+      | {
+          command: ControllerCommand.beginInclusion;
+          includeNonSecure?: boolean;
+        }
+    );
 
 export interface IncomingCommandControllerStopInclusion
   extends IncomingCommandControllerBase {
@@ -31,12 +43,20 @@ export interface IncomingCommandControllerRemoveFailedNode
   nodeId: number;
 }
 
-export interface IncomingCommandControllerReplaceFailedNode
-  extends IncomingCommandControllerBase {
-  command: ControllerCommand.replaceFailedNode;
-  nodeId: number;
-  includeNonSecure?: boolean;
-}
+export type IncomingCommandControllerReplaceFailedNode =
+  IncomingCommandControllerBase &
+    (
+      | {
+          command: ControllerCommand.replaceFailedNode;
+          nodeId: number;
+          options: ReplaceNodeOptions;
+        }
+      | {
+          command: ControllerCommand.replaceFailedNode;
+          nodeId: number;
+          includeNonSecure?: boolean;
+        }
+    );
 
 export interface IncomingCommandControllerHealNode
   extends IncomingCommandControllerBase {
@@ -114,6 +134,18 @@ export interface IncomingCommandControllerGetNodeNeighbors
   nodeId: number;
 }
 
+export interface IncomingCommandControllerGrantSecurityClasses
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.grantSecurityClasses;
+  inclusionGrant: InclusionGrant;
+}
+
+export interface IncomingCommandControllerValidateDSKAndEnterPIN
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.validateDSKAndEnterPIN;
+  pin: string;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerStopInclusion
@@ -131,4 +163,6 @@ export type IncomingMessageController =
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations
   | IncomingCommandControllerRemoveNodeFromAllAssociations
-  | IncomingCommandControllerGetNodeNeighbors;
+  | IncomingCommandControllerGetNodeNeighbors
+  | IncomingCommandControllerGrantSecurityClasses
+  | IncomingCommandControllerValidateDSKAndEnterPIN;

@@ -6,6 +6,7 @@ export enum ErrorCode {
   virtualEndpointNotFound = "virtual_endpoint_not_found",
   schemaIncompatible = "schema_incompatible",
   zwaveError = "zwave_error",
+  inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
 }
 
 export class BaseError extends Error {
@@ -61,6 +62,14 @@ export class EndpointNotFoundError extends BaseError {
   errorCode = ErrorCode.endpointNotFound;
 
   constructor(public nodeId: number, public index: number) {
+    super();
+  }
+}
+
+export class InclusionPhaseNotInProgressError extends BaseError {
+  errorCode = ErrorCode.inclusionPhaseNotInProgress;
+
+  constructor(public phase: string) {
     super();
   }
 }
