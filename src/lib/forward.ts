@@ -2,6 +2,7 @@ import {
   ControllerEvents,
   ControllerStatistics,
   FirmwareUpdateStatus,
+  InclusionResult,
   NodeStatistics,
   NodeStatus,
   ZWaveNode,
@@ -29,17 +30,21 @@ export class EventForwarder {
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
 
-    this.clients.driver.controller.on("node added", (node: ZWaveNode) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clients.clients.forEach((client) =>
-        this.sendEvent(client, {
-          source: "controller",
-          event: "node added",
-          node: dumpNode(node, client.schemaVersion) as any,
-        })
-      );
-      this.setupNode(node);
-    });
+    this.clients.driver.controller.on(
+      "node added",
+      (node: ZWaveNode, result: InclusionResult) => {
+        // forward event to all connected clients, respecting schemaVersion it supports
+        this.clients.clients.forEach((client) =>
+          this.sendEvent(client, {
+            source: "controller",
+            event: "node added",
+            node: dumpNode(node, client.schemaVersion) as any,
+            result: result as any,
+          })
+        );
+        this.setupNode(node);
+      }
+    );
 
     {
       const events: ControllerEvents[] = [
