@@ -478,6 +478,29 @@ interface {
 }
 ```
 
+#### [Check if node has security class](https://zwave-js.github.io/node-zwave-js/#/api/node?id=hassecurityclass)
+
+[compatible with schema version: 8+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.has_security_class";
+  securityClass: SecurityClass;
+}
+```
+
+#### [Return the highest security class the node has](https://zwave-js.github.io/node-zwave-js/#/api/node?id=gethighestsecurityclass)
+
+[compatible with schema version: 8+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_highest_security_class";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method]

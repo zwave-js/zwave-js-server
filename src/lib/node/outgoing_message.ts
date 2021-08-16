@@ -3,6 +3,7 @@ import {
   TranslatedValueID,
   ValueMetadata,
 } from "zwave-js";
+import { SecurityClass } from "@zwave-js/core";
 import { NodeCommand } from "./command";
 
 export interface NodeResultTypes {
@@ -20,4 +21,8 @@ export interface NodeResultTypes {
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
   [NodeCommand.ping]: { responded: boolean };
+  [NodeCommand.hasSecurityClass]: { hasSecurityClass: boolean | "unknown" };
+  [NodeCommand.getHighestSecurityClass]: {
+    highestSecurityClass: SecurityClass | undefined;
+  };
 }
