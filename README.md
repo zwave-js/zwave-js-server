@@ -759,7 +759,7 @@ interface {
 
 #### `inclusion aborted`
 
-This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that the controller aborted the inclusion process. The logs will likely have more details on why the inclusion process had to be aborted.
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that the controller aborted the security bootstrapping process (this will occur after inclusion has already been successful). The logs may have more details on why this security bootstrapping process was aborted.
 
 ```ts
 interface {
