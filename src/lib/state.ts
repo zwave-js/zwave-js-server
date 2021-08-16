@@ -229,6 +229,10 @@ interface NodeStateSchema7 extends NodeStateSchema6 {
   statistics: NodeStatistics;
 }
 
+type NodeStateSchema8 = NodeStateSchema7 & {
+  isSecure: boolean | "unknown";
+};
+
 type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -237,7 +241,8 @@ type NodeState =
   | NodeStateSchema4
   | NodeStateSchema5
   | NodeStateSchema6
-  | NodeStateSchema7;
+  | NodeStateSchema7
+  | NodeStateSchema8;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -501,7 +506,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node7 = node5 as NodeStateSchema7;
   node7.statistics = node.statistics;
-  return node7;
+  if (schemaVersion == 7) {
+    return node7;
+  }
+
+  const node8 = node7 as NodeStateSchema8;
+  node8.isSecure = node.isSecure;
+  return node8;
 };
 
 export const dumpEndpoint = (
