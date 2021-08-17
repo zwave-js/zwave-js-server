@@ -486,6 +486,7 @@ interface {
 interface {
   messageId: string;
   command: "node.has_security_class";
+  nodeId: number;
   securityClass: SecurityClass;
 }
 ```
@@ -497,6 +498,7 @@ interface {
 ```ts
 interface {
   messageId: string;
+  nodeId: number;
   command: "node.get_highest_security_class";
 }
 ```
