@@ -171,16 +171,23 @@ function processInclusionOptions(
         ): Promise<InclusionGrant | false> => {
           clientsController.grantSecurityClassesPromise =
             createDeferredPromise();
+          clientsController.grantSecurityClassesPromise.finally(() => {
+            delete clientsController.grantSecurityClassesPromise;
+          });
           client.sendEvent({
             source: "controller",
             event: "grant security classes",
             requested: requested as any,
           });
+
           return clientsController.grantSecurityClassesPromise;
         },
         validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
           clientsController.validateDSKAndEnterPinPromise =
             createDeferredPromise();
+          clientsController.validateDSKAndEnterPinPromise.finally(() => {
+            delete clientsController.validateDSKAndEnterPinPromise;
+          });
           client.sendEvent({
             source: "controller",
             event: "validate dsk and enter pin",

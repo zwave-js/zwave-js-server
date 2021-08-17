@@ -33,9 +33,6 @@ export class EventForwarder {
     this.clients.driver.controller.on(
       "node added",
       (node: ZWaveNode, result: InclusionResult) => {
-        // clean up any promises that were stored for inclusion
-        delete this.clients.grantSecurityClassesPromise;
-        delete this.clients.validateDSKAndEnterPinPromise;
         // forward event to all connected clients, respecting schemaVersion it supports
         this.clients.clients.forEach((client) =>
           this.sendEvent(client, {
