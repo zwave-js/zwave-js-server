@@ -9,18 +9,17 @@ import { ControllerCommand } from "./command";
 
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 
-export type IncomingCommandControllerBeginInclusion =
-  IncomingCommandControllerBase &
-    (
-      | {
-          command: ControllerCommand.beginInclusion;
-          options: InclusionOptions;
-        }
-      | {
-          command: ControllerCommand.beginInclusion;
-          includeNonSecure?: boolean;
-        }
-    );
+export interface IncomingCommandControllerBeginInclusion
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginInclusion;
+  options: InclusionOptions;
+}
+
+export interface IncomingCommandControllerBeginInclusionLegacy
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginInclusion;
+  includeNonSecure?: boolean;
+}
 
 export interface IncomingCommandControllerStopInclusion
   extends IncomingCommandControllerBase {
@@ -43,20 +42,19 @@ export interface IncomingCommandControllerRemoveFailedNode
   nodeId: number;
 }
 
-export type IncomingCommandControllerReplaceFailedNode =
-  IncomingCommandControllerBase &
-    (
-      | {
-          command: ControllerCommand.replaceFailedNode;
-          nodeId: number;
-          options: ReplaceNodeOptions;
-        }
-      | {
-          command: ControllerCommand.replaceFailedNode;
-          nodeId: number;
-          includeNonSecure?: boolean;
-        }
-    );
+export interface IncomingCommandControllerReplaceFailedNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.replaceFailedNode;
+  nodeId: number;
+  options: ReplaceNodeOptions;
+}
+
+export interface IncomingCommandControllerReplaceFailedNodeLegacy
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.replaceFailedNode;
+  nodeId: number;
+  includeNonSecure?: boolean;
+}
 
 export interface IncomingCommandControllerHealNode
   extends IncomingCommandControllerBase {
@@ -148,11 +146,13 @@ export interface IncomingCommandControllerValidateDSKAndEnterPIN
 
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
+  | IncomingCommandControllerBeginInclusionLegacy
   | IncomingCommandControllerStopInclusion
   | IncomingCommandControllerBeginExclusion
   | IncomingCommandControllerStopExclusion
   | IncomingCommandControllerRemoveFailedNode
   | IncomingCommandControllerReplaceFailedNode
+  | IncomingCommandControllerReplaceFailedNodeLegacy
   | IncomingCommandControllerHealNode
   | IncomingCommandControllerBeginHealingNetwork
   | IncomingCommandControllerStopHealingNetwork
