@@ -196,8 +196,8 @@ function processInclusionOptions(
           return clientsController.validateDSKAndEnterPinPromise;
         },
         abort: (): void => {
-          delete clientsController.grantSecurityClassesPromise;
-          delete clientsController.validateDSKAndEnterPinPromise;
+          clientsController.grantSecurityClassesPromise?.reject("aborted");
+          clientsController.validateDSKAndEnterPinPromise?.reject("aborted");
           client.sendEvent({
             source: "controller",
             event: "inclusion aborted",
