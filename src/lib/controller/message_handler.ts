@@ -14,7 +14,7 @@ export class ControllerMessageHandler {
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
         const success = await driver.controller.beginInclusion(
-          message.includeNonSecure!
+          message.includeNonSecure
         );
         return { success };
       }
@@ -37,7 +37,7 @@ export class ControllerMessageHandler {
       case ControllerCommand.replaceFailedNode: {
         const success = await driver.controller.replaceFailedNode(
           message.nodeId,
-          message.includeNonSecure!
+          message.includeNonSecure
         );
         return { success };
       }
