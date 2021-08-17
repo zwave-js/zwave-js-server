@@ -9,12 +9,14 @@ import { ControllerCommand } from "./command";
 
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 
+// Schema >= 8
 export interface IncomingCommandControllerBeginInclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginInclusion;
   options: InclusionOptions;
 }
 
+// Schema <= 7
 export interface IncomingCommandControllerBeginInclusionLegacy
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginInclusion;
@@ -42,6 +44,7 @@ export interface IncomingCommandControllerRemoveFailedNode
   nodeId: number;
 }
 
+// Schema >= 8
 export interface IncomingCommandControllerReplaceFailedNode
   extends IncomingCommandControllerBase {
   command: ControllerCommand.replaceFailedNode;
@@ -49,6 +52,7 @@ export interface IncomingCommandControllerReplaceFailedNode
   options: ReplaceNodeOptions;
 }
 
+// Schema <= 7
 export interface IncomingCommandControllerReplaceFailedNodeLegacy
   extends IncomingCommandControllerBase {
   command: ControllerCommand.replaceFailedNode;
