@@ -12,7 +12,13 @@ import {
 } from "../error";
 import { Client, ClientsController } from "../server";
 import { ControllerCommand } from "./command";
-import { IncomingMessageController } from "./incoming_message";
+import {
+  IncomingCommandControllerBeginInclusion,
+  IncomingCommandControllerBeginInclusionLegacy,
+  IncomingCommandControllerReplaceFailedNode,
+  IncomingCommandControllerReplaceFailedNodeLegacy,
+  IncomingMessageController,
+} from "./incoming_message";
 import { ControllerResultTypes } from "./outgoing_message";
 
 export class ControllerMessageHandler {
@@ -157,15 +163,20 @@ export class ControllerMessageHandler {
 function processInclusionOptions(
   clientsController: ClientsController,
   client: Client,
-  message: IncomingMessageController
+  message:
+    | IncomingCommandControllerBeginInclusion
+    | IncomingCommandControllerBeginInclusionLegacy
+    | IncomingCommandControllerReplaceFailedNode
+    | IncomingCommandControllerReplaceFailedNodeLegacy
 ): InclusionOptions | ReplaceNodeOptions {
   // Schema 8+ inclusion handling
   if ("options" in message) {
+    const options = message.options;
     if (
-      message.options.strategy === InclusionStrategy.Default ||
-      message.options.strategy === InclusionStrategy.Security_S2
+      options.strategy === InclusionStrategy.Default ||
+      options.strategy === InclusionStrategy.Security_S2
     ) {
-      message.options.userCallbacks = {
+      options.userCallbacks = {
         grantSecurityClasses: (
           requested: InclusionGrant
         ): Promise<InclusionGrant | false> => {
@@ -205,7 +216,7 @@ function processInclusionOptions(
         },
       };
     }
-    return message.options;
+    return options;
   }
   // Schema <=7 inclusion handling (backwards compatibility logic)
   if ("includeNonSecure" in message && message.includeNonSecure)
