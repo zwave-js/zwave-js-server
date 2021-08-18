@@ -11,4 +11,6 @@ export enum NodeCommand {
   refreshCCValues = "node.refresh_cc_values",
   ping = "node.ping",
   getFirmwareUpdateCapabilities = "node.get_firmware_update_capabilities",
+  hasSecurityClass = "node.has_security_class",
+  getHighestSecurityClass = "node.get_highest_security_class",
 }

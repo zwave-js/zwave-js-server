@@ -1,7 +1,8 @@
 import ws from "ws";
 import type WebSocket from "ws";
-import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { libVersion } from "zwave-js";
+import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
 import { IncomingMessage } from "./incoming_message";
@@ -46,7 +47,9 @@ export class Client {
     [Instance.controller]: (message) =>
       ControllerMessageHandler.handle(
         message as IncomingMessageController,
-        this.driver
+        this.clientsController,
+        this.driver,
+        this
       ),
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
@@ -241,6 +244,8 @@ export class ClientsController {
   private eventForwarder?: EventForwarder;
   private cleanupScheduled = false;
   private loggingEventForwarder?: LoggingEventForwarder;
+  public grantSecurityClassesPromise?: DeferredPromise<InclusionGrant | false>;
+  public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
 
   constructor(public driver: Driver, private logger: Logger) {}
 

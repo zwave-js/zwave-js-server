@@ -478,6 +478,31 @@ interface {
 }
 ```
 
+#### [Check if node has security class](https://zwave-js.github.io/node-zwave-js/#/api/node?id=hassecurityclass)
+
+[compatible with schema version: 8+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.has_security_class";
+  nodeId: number;
+  securityClass: SecurityClass;
+}
+```
+
+#### [Return the highest security class the node has](https://zwave-js.github.io/node-zwave-js/#/api/node?id=gethighestsecurityclass)
+
+[compatible with schema version: 8+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.get_highest_security_class";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method]
@@ -662,7 +687,7 @@ interface {
 }
 ```
 
-### `zwave-js-server` Events
+### `zwave-js-server` Driver Events
 
 #### `log config updated`
 
@@ -698,6 +723,52 @@ interface {
     timestamp?: string;
     label?: string;
     message: string | string[];
+  }
+}
+```
+
+### `zwave-js-server` Controller Events
+
+#### `grant security classes`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that [the user needs to choose which security classes to grant the node](https://zwave-js.github.io/node-zwave-js/#/getting-started/security-s2?id=granting-security-classes).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "grant security classes";
+    requested: InclusionGrant;
+  }
+}
+```
+
+#### `validate dsk and enter pin`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that [the user needs to confirm the provided DSK is valid and enter the PIN from the device](https://zwave-js.github.io/node-zwave-js/#/getting-started/security-s2?id=validating-the-dsk-and-entering-the-device-pin).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "validate dsk and enter pin";
+    dsk: string;
+  }
+}
+```
+
+#### `inclusion aborted`
+
+This event is sent as part of the node inclusion process (including when replacing a failed node). The event indicates to the client that the controller aborted the security bootstrapping process (this will occur after inclusion has already been successful). The logs may have more details on why this security bootstrapping process was aborted.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "inclusion aborted";
   }
 }
 ```

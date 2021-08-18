@@ -1,10 +1,23 @@
-import { AssociationAddress } from "zwave-js";
+import {
+  AssociationAddress,
+  InclusionGrant,
+  InclusionOptions,
+  ReplaceNodeOptions,
+} from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 
+// Schema >= 8
 export interface IncomingCommandControllerBeginInclusion
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginInclusion;
+  options: InclusionOptions;
+}
+
+// Schema <= 7
+export interface IncomingCommandControllerBeginInclusionLegacy
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginInclusion;
   includeNonSecure?: boolean;
@@ -31,7 +44,16 @@ export interface IncomingCommandControllerRemoveFailedNode
   nodeId: number;
 }
 
+// Schema >= 8
 export interface IncomingCommandControllerReplaceFailedNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.replaceFailedNode;
+  nodeId: number;
+  options: ReplaceNodeOptions;
+}
+
+// Schema <= 7
+export interface IncomingCommandControllerReplaceFailedNodeLegacy
   extends IncomingCommandControllerBase {
   command: ControllerCommand.replaceFailedNode;
   nodeId: number;
@@ -114,13 +136,27 @@ export interface IncomingCommandControllerGetNodeNeighbors
   nodeId: number;
 }
 
+export interface IncomingCommandControllerGrantSecurityClasses
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.grantSecurityClasses;
+  inclusionGrant: InclusionGrant;
+}
+
+export interface IncomingCommandControllerValidateDSKAndEnterPIN
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.validateDSKAndEnterPIN;
+  pin: string;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
+  | IncomingCommandControllerBeginInclusionLegacy
   | IncomingCommandControllerStopInclusion
   | IncomingCommandControllerBeginExclusion
   | IncomingCommandControllerStopExclusion
   | IncomingCommandControllerRemoveFailedNode
   | IncomingCommandControllerReplaceFailedNode
+  | IncomingCommandControllerReplaceFailedNodeLegacy
   | IncomingCommandControllerHealNode
   | IncomingCommandControllerBeginHealingNetwork
   | IncomingCommandControllerStopHealingNetwork
@@ -131,4 +167,6 @@ export type IncomingMessageController =
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations
   | IncomingCommandControllerRemoveNodeFromAllAssociations
-  | IncomingCommandControllerGetNodeNeighbors;
+  | IncomingCommandControllerGetNodeNeighbors
+  | IncomingCommandControllerGrantSecurityClasses
+  | IncomingCommandControllerValidateDSKAndEnterPIN;

@@ -1,5 +1,9 @@
 import { ConfigValue, SetValueAPIOptions, ValueID } from "zwave-js";
-import { CommandClasses, FirmwareFileFormat } from "@zwave-js/core";
+import {
+  CommandClasses,
+  FirmwareFileFormat,
+  SecurityClass,
+} from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { NodeCommand } from "./command";
 
@@ -76,6 +80,17 @@ export interface IncomingCommandNodePing extends IncomingCommandNodeBase {
   command: NodeCommand.ping;
 }
 
+export interface IncomingCommandHasSecurityClass
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.hasSecurityClass;
+  securityClass: SecurityClass;
+}
+
+export interface IncomingCommandGetHighestSecurityClass
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getHighestSecurityClass;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -88,4 +103,6 @@ export type IncomingMessageNode =
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues
   | IncomingCommandNodeRefreshCCValues
-  | IncomingCommandNodePing;
+  | IncomingCommandNodePing
+  | IncomingCommandHasSecurityClass
+  | IncomingCommandGetHighestSecurityClass;

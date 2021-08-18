@@ -19,4 +19,6 @@ export enum ControllerCommand {
   // Schema version > 2
   removeNodeFromAllAssociations = "controller.remove_node_from_all_associations",
   getNodeNeighbors = "controller.get_node_neighbors",
+  grantSecurityClasses = "controller.grant_security_classes",
+  validateDSKAndEnterPIN = "controller.validate_dsk_and_enter_pin",
 }

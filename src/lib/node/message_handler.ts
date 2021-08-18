@@ -90,6 +90,12 @@ export class NodeMessageHandler {
       case NodeCommand.ping:
         const responded = await node.ping();
         return { responded };
+      case NodeCommand.hasSecurityClass:
+        const hasSecurityClass = node.hasSecurityClass(message.securityClass);
+        return { hasSecurityClass };
+      case NodeCommand.getHighestSecurityClass:
+        const highestSecurityClass = node.getHighestSecurityClass();
+        return { highestSecurityClass };
       default:
         throw new UnknownCommandError(command);
     }

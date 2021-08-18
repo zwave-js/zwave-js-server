@@ -229,6 +229,8 @@ interface NodeStateSchema7 extends NodeStateSchema6 {
   statistics: NodeStatistics;
 }
 
+type NodeStateSchema8 = NodeStateSchema7;
+
 type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -237,7 +239,8 @@ type NodeState =
   | NodeStateSchema4
   | NodeStateSchema5
   | NodeStateSchema6
-  | NodeStateSchema7;
+  | NodeStateSchema7
+  | NodeStateSchema8;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
