@@ -1,4 +1,7 @@
-import { createDeferredPromise } from "alcalzone-shared/deferred-promise";
+import {
+  createDeferredPromise,
+  DeferredPromise,
+} from "alcalzone-shared/deferred-promise";
 import {
   Driver,
   InclusionGrant,
@@ -7,6 +10,7 @@ import {
   ReplaceNodeOptions,
 } from "zwave-js";
 import {
+  InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
   UnknownCommandError,
 } from "../error";
@@ -32,6 +36,11 @@ export class ControllerMessageHandler {
 
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
+        if (
+          clientsController.grantSecurityClassesPromise ||
+          clientsController.validateDSKAndEnterPinPromise
+        )
+          throw new InclusionAlreadyInProgressError();
         const success = await driver.controller.beginInclusion(
           processInclusionOptions(clientsController, client, message)
         );
@@ -176,14 +185,25 @@ function processInclusionOptions(
       options.strategy === InclusionStrategy.Default ||
       options.strategy === InclusionStrategy.Security_S2
     ) {
+      let grantSecurityClassesPromise:
+        | DeferredPromise<InclusionGrant | false>
+        | undefined;
+      let validateDSKAndEnterPinPromise:
+        | DeferredPromise<string | false>
+        | undefined;
       options.userCallbacks = {
         grantSecurityClasses: (
           requested: InclusionGrant
         ): Promise<InclusionGrant | false> => {
           clientsController.grantSecurityClassesPromise =
-            createDeferredPromise();
-          clientsController.grantSecurityClassesPromise.finally(() => {
-            delete clientsController.grantSecurityClassesPromise;
+            grantSecurityClassesPromise = createDeferredPromise();
+          grantSecurityClassesPromise.finally(() => {
+            if (
+              clientsController.grantSecurityClassesPromise ===
+              grantSecurityClassesPromise
+            ) {
+              delete clientsController.grantSecurityClassesPromise;
+            }
           });
           client.sendEvent({
             source: "controller",
@@ -195,9 +215,14 @@ function processInclusionOptions(
         },
         validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
           clientsController.validateDSKAndEnterPinPromise =
-            createDeferredPromise();
-          clientsController.validateDSKAndEnterPinPromise.finally(() => {
-            delete clientsController.validateDSKAndEnterPinPromise;
+            validateDSKAndEnterPinPromise = createDeferredPromise();
+          validateDSKAndEnterPinPromise.finally(() => {
+            if (
+              clientsController.validateDSKAndEnterPinPromise ===
+              validateDSKAndEnterPinPromise
+            ) {
+              delete clientsController.validateDSKAndEnterPinPromise;
+            }
           });
           client.sendEvent({
             source: "controller",
@@ -207,8 +232,8 @@ function processInclusionOptions(
           return clientsController.validateDSKAndEnterPinPromise;
         },
         abort: (): void => {
-          clientsController.grantSecurityClassesPromise?.reject("aborted");
-          clientsController.validateDSKAndEnterPinPromise?.reject("aborted");
+          grantSecurityClassesPromise?.reject("aborted");
+          validateDSKAndEnterPinPromise?.reject("aborted");
           client.sendEvent({
             source: "controller",
             event: "inclusion aborted",
