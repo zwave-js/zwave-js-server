@@ -10,13 +10,14 @@ import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 import { EndpointResultTypes } from "./endpoint/outgoing_message";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
-type JSONValue =
+export type JSONValue =
   | string
   | number
   | boolean
   | null
   | JSONValue[]
-  | { [key: string]: JSONValue };
+  | { [key: string]: JSONValue }
+  | {};
 
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver";
@@ -43,6 +44,7 @@ interface OutgoingResultMessageError {
   messageId: string;
   success: false;
   errorCode: Omit<ErrorCode, "zwaveError">;
+  args: JSONValue;
 }
 
 interface OutgoingResultMessageZWaveError {
