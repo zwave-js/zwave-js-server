@@ -70,13 +70,16 @@ interface Args {
         "S2_Unauthenticated",
       ];
       // We prefer the securityKeys option over the networkKey one
-      if (options.securityKeys)
-        for (const key of securityKeyNames)
-          if (key in options.securityKeys)
+      if (options.securityKeys) {
+        for (const key of securityKeyNames) {
+          if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
               `securityKeys.${key}`
             );
+          }
+        }
+      }
       // If we get here, securityKeys.S0_Legacy is not defined, so we can safely use networkKey
       // make sure that networkKey is passed as buffer and accept both zwave2mqtt format and ozw format
       if (options.networkKey) {
