@@ -6,7 +6,7 @@ import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
 
 const normalizeKey = (
-  key: string,
+  key: Buffer | string,
   keyName: string,
   supportOZWFormat: boolean = false
 ): Buffer => {
