@@ -68,12 +68,11 @@ interface Args {
       // We prefer the securityKeys option over the networkKey one
       if (options.securityKeys) {
         for (const key of securityKeyNames) {
-          if (key in options.securityKeys) {
+          if (key in options.securityKeys)
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
               `securityKeys.${key}`
             );
-          }
         }
       }
       // If we get here, securityKeys.S0_Legacy is not defined, so we can safely use networkKey
