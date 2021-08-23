@@ -10,6 +10,7 @@ const normalizeKey = (
   keyName: string,
   supportOZWFormat: boolean = false
 ): Buffer => {
+  if (Buffer.isBuffer(key)) return key; 
   if (key.length === 32) return Buffer.from(key, "hex");
   if (supportOZWFormat && key.includes("0x"))
     return Buffer.from(key.replace(/0x/g, "").replace(/, /g, ""), "hex");
