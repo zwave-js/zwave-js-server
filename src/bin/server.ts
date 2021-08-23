@@ -47,7 +47,7 @@ interface Args {
   if (configPath) {
     try {
       options = require(configPath);
-      // If both securityKeys.S0_Legacy and networkKey are defined, prefer securityKeys.S0_Legacy
+      // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (
         options.securityKeys &&
         options.securityKeys.S0_Legacy &&
@@ -90,10 +90,8 @@ interface Args {
             "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
-      } else if (!options.networkKey && !options.securityKeys.S0_Legacy) {
-        console.error("Error: `securityKeys.S0_Legacy` key is missing.");
-        return;
-      }
+      } else if (!options.networkKey && !options.securityKeys.S0_Legacy)
+        throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
       console.error(err);
