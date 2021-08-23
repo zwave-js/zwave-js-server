@@ -76,7 +76,9 @@ interface Args {
             "hex"
           );
         } else if (options.securityKeys && options.securityKeys[key]) {
-          console.error("Error: Invalid securityKeys." + key + " defined.");
+          console.error(
+            "Error: Invalid securityKeys." + key + " value defined."
+          );
           return;
         }
       }
