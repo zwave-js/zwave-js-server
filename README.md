@@ -505,7 +505,7 @@ interface {
 
 ### Endpoint level commands
 
-#### [Invoke a Command Classes API method]
+#### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
 
 [compatible with schema version: 7+]
 
@@ -546,7 +546,7 @@ interface {
 }
 ```
 
-#### [Check whether a given Command Classes API is supported by the above method]
+#### [Check whether a given Command Classes API is supported by the above method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=supportsccapi)
 
 [compatible with schema version: 7+]
 
