@@ -46,16 +46,70 @@ interface Args {
   if (configPath) {
     try {
       options = require(configPath);
+      // We prefer the securityKeys option over the networkKey one
+      for (const key of [
+        "S0_Legacy",
+        "S2_AccessControl",
+        "S2_Authenticated",
+        "S2_Unauthenticated",
+      ]) {
+        if (
+          options.securityKeys &&
+          options.securityKeys[key] &&
+          options.securityKeys[key].length === 32
+        ) {
+          options.securityKeys[key] = Buffer.from(
+            options.securityKeys[key],
+            "hex"
+          );
+        } else if (
+          options.securityKeys &&
+          options.securityKeys[key] &&
+          options.securityKeys[key].includes("0x")
+        ) {
+          options.securityKeys[key] = options.securityKeys[key]
+            .replace(/0x/g, "")
+            .replace(/, /g, "");
+          options.securityKeys[key] = Buffer.from(
+            options.securityKeys[key],
+            "hex"
+          );
+        } else if (options.securityKeys && options.securityKeys[key]) {
+          console.error("Error: Invalid securityKeys." + key + " defined.");
+          return;
+        }
+      }
+      // If both securityKeys.S0_Legacy and networkKey are defined, prefer securityKeys.S0_Legacy
+      if (options.securityKeys.S0_Legacy && options.networkKey) {
+        console.warn(
+          "`networkKey` option is being ignored because `securityKeys.S0_Legacy` option is present"
+        );
+        delete options.networkKey;
+      }
       // make sure that networkKey is passed as buffer.
       // accept both zwave2mqtt format as ozw format
-      if (options.networkKey && options.networkKey.length === 32) {
-        options.networkKey = Buffer.from(options.networkKey, "hex");
+      else if (options.networkKey && options.networkKey.length === 32) {
+        options.securityKeys["S0_Legacy"] = Buffer.from(
+          options.networkKey,
+          "hex"
+        );
+        console.warn(
+          "`networkKey` option is deprecated in favor of `securityKeys` option. Refer to Z-Wave JS docs for more information"
+        );
+        delete options.networkKey;
       } else if (options.networkKey && options.networkKey.includes("0x")) {
         options.networkKey = options.networkKey
           .replace(/0x/g, "")
           .replace(/, /g, "");
-        options.networkKey = Buffer.from(options.networkKey, "hex");
-      } else {
+        options.securityKeys["S0_Legacy"] = Buffer.from(
+          options.networkKey,
+          "hex"
+        );
+        console.warn(
+          "`networkKey` option is deprecated in favor of `securityKeys` option. Refer to Z-Wave JS docs for more information"
+        );
+        delete options.networkKey;
+      } else if (options.networkKey) {
         console.error("Error: Invalid networkKey defined");
         return;
       }
