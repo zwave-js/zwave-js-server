@@ -90,10 +90,7 @@ interface Args {
       // If we get here, securityKeys.S0_Legacy is not defined, so we can safely use networkKey
       // make sure that networkKey is passed as buffer and accept both zwave2mqtt format and ozw format
       else if (options.networkKey && options.networkKey.length === 32) {
-        options.securityKeys["S0_Legacy"] = Buffer.from(
-          options.networkKey,
-          "hex"
-        );
+        options.securityKeys.S0_Legacy = Buffer.from(options.networkKey, "hex");
         console.warn(
           "`networkKey` option is deprecated in favor of `securityKeys` option. Refer to Z-Wave JS docs for more information"
         );
@@ -102,10 +99,7 @@ interface Args {
         options.networkKey = options.networkKey
           .replace(/0x/g, "")
           .replace(/, /g, "");
-        options.securityKeys["S0_Legacy"] = Buffer.from(
-          options.networkKey,
-          "hex"
-        );
+        options.securityKeys.S0_Legacy = Buffer.from(options.networkKey, "hex");
         console.warn(
           "`networkKey` option is deprecated in favor of `securityKeys` option. Refer to Z-Wave JS docs for more information"
         );
