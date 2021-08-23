@@ -49,8 +49,7 @@ interface Args {
       options = require(configPath);
       // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (
-        options.securityKeys &&
-        options.securityKeys.S0_Legacy &&
+        options.securityKeys?.S0_Legacy &&
         options.networkKey
       ) {
         throw new Error(
