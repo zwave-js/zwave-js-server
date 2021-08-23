@@ -1,12 +1,20 @@
 #!/usr/bin/env node
-
-import { exit } from "process";
 import { resolve } from "path";
 import { Driver } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
-import { normalizeKey } from "../util/normalize-key";
+
+const normalizeKey = (
+  key: string,
+  keyName: string,
+  supportOZWFormat: boolean = false
+): Buffer => {
+  if (key.length === 32) return Buffer.from(key, "hex");
+  if (supportOZWFormat && key.includes("0x"))
+    return Buffer.from(key.replace(/0x/g, "").replace(/, /g, ""), "hex");
+  throw new Error(`Invalid key format for ${keyName} option`);
+};
 
 interface Args {
   _: Array<string>;
