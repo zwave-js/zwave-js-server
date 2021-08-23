@@ -46,13 +46,14 @@ interface Args {
   if (configPath) {
     try {
       options = require(configPath);
-      // We prefer the securityKeys option over the networkKey one
-      for (const key of [
+      const securityKeyNames = [
         "S0_Legacy",
         "S2_AccessControl",
         "S2_Authenticated",
         "S2_Unauthenticated",
-      ]) {
+      ];
+      // We prefer the securityKeys option over the networkKey one
+      for (const key of securityKeyNames) {
         if (
           options.securityKeys &&
           options.securityKeys[key] &&
