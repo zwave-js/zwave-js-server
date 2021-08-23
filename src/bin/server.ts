@@ -59,8 +59,7 @@ interface Args {
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
           "Both `networkKey` and `securityKeys.S0_Legacy` options are both present in the " +
-            "config and we only need one. `securityKeys.S0_Legacy` is preferred over `networkKey` " +
-            "and should match your old `networkKey` if you were using it before."
+            "config. Remove `networkKey`."
         );
       }
       const securityKeyNames = [
