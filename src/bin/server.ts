@@ -58,7 +58,7 @@ interface Args {
       // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
-          "Both `networkKey` and `securityKeys.S0_Legacy` options are both present in the " +
+          "Both `networkKey` and `securityKeys.S0_Legacy` options are present in the " +
             "config. Remove `networkKey`."
         );
       }
