@@ -83,6 +83,7 @@ interface Args {
       // If we get here, securityKeys.S0_Legacy is not defined, so we can safely use networkKey
       // make sure that networkKey is passed as buffer and accept both zwave2mqtt format and ozw format
       if (options.networkKey) {
+        if (!options.securityKeys) options.securityKeys = {};
         options.securityKeys.S0_Legacy = normalizeKey(
           options.networkKey,
           "networkKey",
