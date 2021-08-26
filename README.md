@@ -509,7 +509,16 @@ interface {
 
 [compatible with schema version: 7+]
 
-You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index)
+You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index).
+
+For arguments that expect a Buffer, use the following JSON format to represent the Buffer:
+
+```jsonc
+{
+  "type": "Buffer",
+  "data": [] // array of numbers
+}
+```
 
 <details>
 <summary>Example: Invoking UserCodeCC.set</summary>
