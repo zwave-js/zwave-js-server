@@ -19,21 +19,15 @@ const isBufferObject = (obj: any): boolean => {
   );
 };
 
-const deserializeBufferInObject = (obj: any): any => {
-  // If obj is a simple data type, we can return it as is
-  if (!(obj instanceof Object)) {
-    return obj;
+const deserializeBufferInArray = (array: Array<any>): Array<any> => {
+  // Iterate over all items in array and recursively deserialize them
+  for (var key = 0; key < array.length; key++) {
+    const value = array[key];
+    if (isBufferObject(value)) {
+      array[key] = Buffer.from(value.data);
+    }
   }
-  // If obj matches the signature of a deserialized JSON serialized buffer, return the
-  // deserialized version of it
-  if (isBufferObject(obj)) {
-    return Buffer.from(obj.data);
-  }
-  // Iterate over all properties of obj and recursively deserialize them
-  for (const key of Object.keys(obj)) {
-    obj[key] = deserializeBufferInObject(obj[key]);
-  }
-  return obj;
+  return array;
 };
 
 export class EndpointMessageHandler {
@@ -63,7 +57,7 @@ export class EndpointMessageHandler {
         const response = await endpoint.invokeCCAPI(
           message.commandClass,
           message.methodName,
-          ...deserializeBufferInObject(message.args)
+          ...deserializeBufferInArray(message.args)
         );
         return { response };
       case EndpointCommand.supportsCCAPI:
