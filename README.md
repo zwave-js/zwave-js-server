@@ -546,7 +546,7 @@ interface {
 }
 ```
 
-For arguments with a Buffer type, use the following JSON format to represent the argument:
+For `Buffer` type arguments, use the following JSON format to represent the argument:
 
 ```jsonc
 {
