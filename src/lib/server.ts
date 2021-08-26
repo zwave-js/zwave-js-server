@@ -32,6 +32,42 @@ import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_messag
 import { EndpointMessageHandler } from "./endpoint/message_handler";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 
+const isBufferObject = (obj: any): boolean => {
+  return (
+    obj instanceof Object &&
+    Object.keys(obj).length === 2 &&
+    "type" in obj &&
+    obj.type === "Buffer" &&
+    "data" in obj &&
+    obj.data instanceof Array
+  );
+};
+
+const deserializeBufferInObject = (obj: any): any => {
+  // If obj is a simple data type, we can return it as is
+  if (!(obj instanceof Object)) {
+    return obj;
+  }
+  // If obj matches the signature of a deserialized JSON serialized buffer, return the
+  // deserialized version of it
+  if (isBufferObject(obj)) {
+    return Buffer.from(obj.data);
+  }
+  // Iterate through object keys
+  for (const key of Object.keys(obj)) {
+    const value = obj[key];
+    // If value matches the signature of a deserialized JSON serialized buffer, we can
+    // deserialize it
+    if (isBufferObject(value)) {
+      obj[key] = Buffer.from(value.data);
+    } else {
+      // Recursive call to handle objects within objects
+      obj[key] = deserializeBufferInObject(value);
+    }
+  }
+  return obj;
+};
+
 export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -100,7 +136,7 @@ export class Client {
   async receiveMessage(data: string) {
     let msg: IncomingMessage;
     try {
-      msg = JSON.parse(data);
+      msg = deserializeBufferInObject(JSON.parse(data));
     } catch (err) {
       // We don't have the message ID. Just close it.
       this.logger.debug(`Unable to parse data: ${data}`);
