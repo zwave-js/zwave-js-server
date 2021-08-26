@@ -53,17 +53,9 @@ const deserializeBufferInObject = (obj: any): any => {
   if (isBufferObject(obj)) {
     return Buffer.from(obj.data);
   }
-  // Iterate through object keys
+  // Iterate over all properties of obj and recursively deserialize them
   for (const key of Object.keys(obj)) {
-    const value = obj[key];
-    // If value matches the signature of a deserialized JSON serialized buffer, we can
-    // deserialize it
-    if (isBufferObject(value)) {
-      obj[key] = Buffer.from(value.data);
-    } else {
-      // Recursive call to handle objects within objects
-      obj[key] = deserializeBufferInObject(value);
-    }
+    obj[key] = deserializeBufferInObject(obj[key]);
   }
   return obj;
 };
