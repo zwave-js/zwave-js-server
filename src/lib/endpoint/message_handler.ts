@@ -21,10 +21,10 @@ const isBufferObject = (obj: any): boolean => {
 
 const deserializeBufferInArray = (array: Array<any>): Array<any> => {
   // Iterate over all items in array and recursively deserialize them
-  for (var key = 0; key < array.length; key++) {
-    const value = array[key];
+  for (var idx = 0; idx < array.length; idx++) {
+    const value = array[idx];
     if (isBufferObject(value)) {
-      array[key] = Buffer.from(value.data);
+      array[idx] = Buffer.from(value.data);
     }
   }
   return array;
