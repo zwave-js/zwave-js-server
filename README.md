@@ -511,15 +511,6 @@ interface {
 
 You can find all of the CC API methods in the [Z-Wave JS docs](https://zwave-js.github.io/node-zwave-js/#/api/CCs/index).
 
-For arguments that expect a Buffer, use the following JSON format to represent the Buffer:
-
-```jsonc
-{
-  "type": "Buffer",
-  "data": [] // array of numbers
-}
-```
-
 <details>
 <summary>Example: Invoking UserCodeCC.set</summary>
 
@@ -552,6 +543,15 @@ interface {
   commandClass: CommandClasses;
   methodName: string;
   args: unknown[];
+}
+```
+
+For arguments with a Buffer type, use the following JSON format to represent the argument:
+
+```jsonc
+{
+  "type": "Buffer",
+  "data": [] // array of numbers
 }
 ```
 
