@@ -15,12 +15,12 @@ const isBufferObject = (obj: any): boolean => {
     "type" in obj &&
     obj.type === "Buffer" &&
     "data" in obj &&
-    obj.data instanceof Array
+    Array.isArray(obj.data)
   );
 };
 
 const deserializeBufferInArray = (array: Array<any>): Array<any> => {
-  // Iterate over all items in array and recursively deserialize them
+  // Iterate over all items in array and deserialize any Buffer objects
   for (var idx = 0; idx < array.length; idx++) {
     const value = array[idx];
     if (isBufferObject(value)) {
