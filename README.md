@@ -4,7 +4,7 @@ Small server wrapper around Z-Wave JS to access it via a WebSocket.
 
 ## Trying it out
 
-These instructions are for development only. These CLIs will be available as `zwave-server` and `zwave-client` after installing the NPM package.
+These instructions are for development only. These CLIs will be available as `zwave-server` and `zwave-client` after installing the [NPM package](https://www.npmjs.com/package/@zwave-js/server).
 
 ### Start server
 
