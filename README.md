@@ -8,14 +8,15 @@ These instructions are for development only. These CLIs will be available as `zw
 
 ### Requirements
 
-This is tested on Debian 10/11:
 
 Npm is required to run. It is possible to install [from a repository](https://github.com/nodesource/distributions/blob/master/README.md#deb)
 
-Install required packages:
-```sh
-apt install nodejos make g++ gcc git
-```
+The following packages are required and need to be installed:
+* nodejs
+* make
+* g++ 
+* gcc 
+* git
 
 Recommended to run zwave-js-server as another user and create the required directories:
 ```sh
