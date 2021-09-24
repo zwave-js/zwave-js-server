@@ -6,7 +6,54 @@ Small server wrapper around Z-Wave JS to access it via a WebSocket.
 
 These instructions are for development only. These CLIs will be available as `zwave-server` and `zwave-client` after installing the [NPM package](https://www.npmjs.com/package/@zwave-js/server).
 
-### Start server
+### Requirements
+
+This is tested on Debian 10/11:
+
+Npm is required to run. It is possible to install [from a repository](https://github.com/nodesource/distributions/blob/master/README.md#deb)
+
+Install required packages:
+```sh
+apt install nodejos make g++ gcc git
+```
+
+Recommended to run zwave-js-server as another user and create the required directories:
+```sh
+export USER=zwave
+useradd --home-dir /opt/zwave_js_server -m --shell /bin/nologin --system $USER
+mkdir -p /opt/zwave_js_server/data /opt/zwave_js_server/logs/git
+chown -R $USER:$USER /opt/zwave_js_server
+```
+
+Clone the repository and install the dependencies:
+```sh
+git clone https://github.com/zwave-js/zwave-js-server.git /opt/zwave_js_server/git
+chown -R $USER:$USER /opt/zwave_js_server/git
+```
+
+Create the configuration file by first generating a network key for extra security, and use that in the config file:
+```sh
+< /dev/urandom tr -dc A-F0-9 | head -c32 ; echo
+cat << EOF > /opt/zwave_js_server/config.jstest123
+module.exports = {
+  logConfig: {
+    filename: "/var/log/zwave/zwave",
+    forceConsole: true,
+    logToFile: true,
+    level: "info",
+  },
+
+  storage: {
+      cacheDir: "/opt/zwave_js_server/data",
+      deviceConfigPriorityDir: "/opt/zwave_js_server/data/config",
+  },
+
+  networkKey: "<NETWORK KEY>",
+};
+EOF
+```
+
+### Start and test the server
 
 ```shell
 ts-node src/bin/server.ts /dev/tty0
@@ -19,6 +66,27 @@ You can specify a configuration file with `--config`. This can be a JSON file or
 You can specify a different port for the websocket server to listen on with `--port`.
 
 If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
+
+### Running as daemon with systemctl
+
+You can run zwave-js-server as daemon, an example systemctl file would look like:
+```sh
+cat << EOF > /etc/systemd/system/zwave-js-server.service
+[Unit]
+Description=zwave-js-server
+
+[Service]
+ExecStart=/opt/zwave_js_server/git/node_modules/.bin/ts-node /opt/zwave_js_server/git/src/bin/server.ts /dev/ttyACM0 --config /opt/zwave_js_server/config.js
+WorkingDirectory=/opt/zwave_js_server
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=zwave
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
 
 ### Start client
 
