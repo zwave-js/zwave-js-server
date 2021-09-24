@@ -1,9 +1,6 @@
 import {
   ControllerEvents,
-  ControllerStatistics,
   FirmwareUpdateStatus,
-  HealNodeStatus,
-  InclusionResult,
   NodeStatistics,
   NodeStatus,
   ZWaveNode,
@@ -31,21 +28,18 @@ export class EventForwarder {
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
 
-    this.clients.driver.controller.on(
-      "node added",
-      (node: ZWaveNode, result: InclusionResult) => {
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clients.clients.forEach((client) =>
-          this.sendEvent(client, {
-            source: "controller",
-            event: "node added",
-            node: dumpNode(node, client.schemaVersion) as any,
-            result: result as any,
-          })
-        );
-        this.setupNode(node);
-      }
-    );
+    this.clients.driver.controller.on("node added", (node, result) => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clients.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "controller",
+          event: "node added",
+          node: dumpNode(node, client.schemaVersion) as any,
+          result: result as any,
+        })
+      );
+      this.setupNode(node);
+    });
 
     {
       const events: ControllerEvents[] = [
@@ -65,7 +59,7 @@ export class EventForwarder {
       }
     }
 
-    this.clients.driver.controller.on("inclusion started", (secure: boolean) =>
+    this.clients.driver.controller.on("inclusion started", (secure) =>
       this.forwardEvent({
         source: "controller",
         event: "inclusion started",
@@ -73,48 +67,40 @@ export class EventForwarder {
       })
     );
 
-    this.clients.driver.controller.on(
-      "node removed",
-      (node: ZWaveNode, replaced: boolean) =>
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clients.clients.forEach((client) =>
-          this.sendEvent(client, {
-            source: "controller",
-            event: "node removed",
-            node: dumpNode(node, client.schemaVersion) as any,
-            replaced,
-          })
-        )
+    this.clients.driver.controller.on("node removed", (node, replaced) =>
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clients.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "controller",
+          event: "node removed",
+          node: dumpNode(node, client.schemaVersion) as any,
+          replaced,
+        })
+      )
     );
 
-    this.clients.driver.controller.on(
-      "heal network progress",
-      (progress: ReadonlyMap<number, HealNodeStatus>) =>
-        this.forwardEvent({
-          source: "controller",
-          event: "heal network progress",
-          progress: Object.fromEntries(progress),
-        })
+    this.clients.driver.controller.on("heal network progress", (progress) =>
+      this.forwardEvent({
+        source: "controller",
+        event: "heal network progress",
+        progress: Object.fromEntries(progress),
+      })
     );
 
-    this.clients.driver.controller.on(
-      "heal network done",
-      (result: ReadonlyMap<number, HealNodeStatus>) =>
-        this.forwardEvent({
-          source: "controller",
-          event: "heal network done",
-          result: Object.fromEntries(result),
-        })
+    this.clients.driver.controller.on("heal network done", (result) =>
+      this.forwardEvent({
+        source: "controller",
+        event: "heal network done",
+        result: Object.fromEntries(result),
+      })
     );
 
-    this.clients.driver.controller.on(
-      "statistics updated",
-      (statistics: ControllerStatistics) =>
-        this.forwardEvent({
-          source: "controller",
-          event: "statistics updated",
-          statistics: statistics as any,
-        })
+    this.clients.driver.controller.on("statistics updated", (statistics) =>
+      this.forwardEvent({
+        source: "controller",
+        event: "statistics updated",
+        statistics: statistics as any,
+      })
     );
   }
 
