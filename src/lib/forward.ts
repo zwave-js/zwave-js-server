@@ -2,6 +2,7 @@ import {
   ControllerEvents,
   ControllerStatistics,
   FirmwareUpdateStatus,
+  HealNodeStatus,
   InclusionResult,
   NodeStatistics,
   NodeStatus,
@@ -64,7 +65,7 @@ export class EventForwarder {
       }
     }
 
-    this.clients.driver.controller.on("inclusion started", (secure) =>
+    this.clients.driver.controller.on("inclusion started", (secure: boolean) =>
       this.forwardEvent({
         source: "controller",
         event: "inclusion started",
@@ -72,31 +73,38 @@ export class EventForwarder {
       })
     );
 
-    this.clients.driver.controller.on("node removed", (node) =>
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clients.clients.forEach((client) =>
-        this.sendEvent(client, {
+    this.clients.driver.controller.on(
+      "node removed",
+      (node: ZWaveNode, replaced: boolean) =>
+        // forward event to all connected clients, respecting schemaVersion it supports
+        this.clients.clients.forEach((client) =>
+          this.sendEvent(client, {
+            source: "controller",
+            event: "node removed",
+            node: dumpNode(node, client.schemaVersion) as any,
+            replaced,
+          })
+        )
+    );
+
+    this.clients.driver.controller.on(
+      "heal network progress",
+      (progress: ReadonlyMap<number, HealNodeStatus>) =>
+        this.forwardEvent({
           source: "controller",
-          event: "node removed",
-          node: dumpNode(node, client.schemaVersion) as any,
+          event: "heal network progress",
+          progress: Object.fromEntries(progress),
         })
-      )
     );
 
-    this.clients.driver.controller.on("heal network progress", (progress) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "heal network progress",
-        progress: Object.fromEntries(progress),
-      })
-    );
-
-    this.clients.driver.controller.on("heal network done", (result) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "heal network done",
-        result: Object.fromEntries(result),
-      })
+    this.clients.driver.controller.on(
+      "heal network done",
+      (result: ReadonlyMap<number, HealNodeStatus>) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "heal network done",
+          result: Object.fromEntries(result),
+        })
     );
 
     this.clients.driver.controller.on(
