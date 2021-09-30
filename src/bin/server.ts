@@ -5,14 +5,11 @@ import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
 
-const normalizeKey = (
-  key: Buffer | string,
-  keyName: string,
-  supportOZWFormat: boolean = false
-): Buffer => {
+const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;
   if (key.length === 32) return Buffer.from(key, "hex");
-  if (supportOZWFormat && key.includes("0x"))
+  // Convert from OpenZWave format
+  if (key.includes("0x"))
     return Buffer.from(key.replace(/0x/g, "").replace(/, /g, ""), "hex");
   throw new Error(`Invalid key format for ${keyName} option`);
 };
@@ -86,8 +83,7 @@ interface Args {
         if (!options.securityKeys) options.securityKeys = {};
         options.securityKeys.S0_Legacy = normalizeKey(
           options.networkKey,
-          "networkKey",
-          true
+          "networkKey"
         );
         console.warn(
           "The `networkKey` option is deprecated in favor of `securityKeys` option. To eliminate " +
