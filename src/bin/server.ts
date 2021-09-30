@@ -7,6 +7,7 @@ import { parseArgs } from "../util/parse-args";
 
 const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;
+  key = key.trim();
   if (key.length === 32) return Buffer.from(key, "hex");
   // Convert from OpenZWave format
   if (key.includes("0x"))
