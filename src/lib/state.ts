@@ -28,6 +28,7 @@ import {
   ConfigValueFormat,
   LogConfig,
   Maybe,
+  SecurityClass,
   ValueChangeOptions,
   ValueMetadataAny,
   ValueMetadataBoolean,
@@ -231,6 +232,12 @@ interface NodeStateSchema7 extends NodeStateSchema6 {
 
 type NodeStateSchema8 = NodeStateSchema7;
 
+type NodeStateSchema9 = NodeStateSchema8;
+
+interface NodeStateSchema10 extends NodeStateSchema9 {
+  highestSecurityClass: SecurityClass | undefined;
+}
+
 type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -240,7 +247,9 @@ type NodeState =
   | NodeStateSchema5
   | NodeStateSchema6
   | NodeStateSchema7
-  | NodeStateSchema8;
+  | NodeStateSchema8
+  | NodeStateSchema9
+  | NodeStateSchema10;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -504,7 +513,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node7 = node5 as NodeStateSchema7;
   node7.statistics = node.statistics;
-  return node7;
+  if (schemaVersion <= 9) {
+    return node7;
+  }
+
+  const node10 = node7 as NodeStateSchema10;
+  node10.highestSecurityClass = node.getHighestSecurityClass();
+  return node10;
 };
 
 export const dumpEndpoint = (
