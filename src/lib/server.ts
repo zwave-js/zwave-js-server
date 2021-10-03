@@ -389,7 +389,10 @@ export class ZwavejsServer extends EventEmitter {
     }
 
     this.server = createServer();
-    this.wsServer = new ws.Server({ server: this.server });
+    this.wsServer = new ws.Server({
+      server: this.server,
+      perMessageDeflate: true,
+    });
     this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
