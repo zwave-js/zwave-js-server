@@ -123,9 +123,13 @@ export class Client {
       }
 
       if (msg.command === ServerCommand.startListening) {
-        this.sendResultSuccess(msg.messageId, {
-          state: dumpState(this.driver, this.schemaVersion),
-        });
+        this.sendResultSuccess(
+          msg.messageId,
+          {
+            state: dumpState(this.driver, this.schemaVersion),
+          },
+          true
+        );
         this.receiveEvents = true;
         return;
       }
@@ -181,14 +185,18 @@ export class Client {
 
   sendResultSuccess(
     messageId: string,
-    result: OutgoingMessages.OutgoingResultMessageSuccess["result"]
+    result: OutgoingMessages.OutgoingResultMessageSuccess["result"],
+    compress = false
   ) {
-    this.sendData({
-      type: "result",
-      success: true,
-      messageId,
-      result,
-    });
+    this.sendData(
+      {
+        type: "result",
+        success: true,
+        messageId,
+        result,
+      },
+      compress
+    );
   }
 
   sendResultError(
@@ -227,8 +235,8 @@ export class Client {
     });
   }
 
-  sendData(data: OutgoingMessages.OutgoingMessage) {
-    this.socket.send(JSON.stringify(data));
+  sendData(data: OutgoingMessages.OutgoingMessage, compress = false) {
+    this.socket.send(JSON.stringify(data), { compress });
   }
 
   checkAlive() {
@@ -381,7 +389,10 @@ export class ZwavejsServer extends EventEmitter {
     }
 
     this.server = createServer();
-    this.wsServer = new ws.Server({ server: this.server });
+    this.wsServer = new ws.Server({
+      server: this.server,
+      perMessageDeflate: true,
+    });
     this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
