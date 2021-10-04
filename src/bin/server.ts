@@ -9,6 +9,7 @@ const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;
   if (key.length === 32) return Buffer.from(key, "hex");
   // Convert from OpenZWave format
+  key = key.toLowerCase();
   if (key.includes("0x"))
     return Buffer.from(key.replace(/0x/g, "").replace(/, /g, ""), "hex");
   throw new Error(`Invalid key format for ${keyName} option`);
