@@ -681,6 +681,17 @@ interface {
 }
 ```
 
+#### [Get defined value IDs](https://zwave-js.github.io/node-zwave-js/#/api/virtual-node-endpoint?id=getdefinedvalueids)
+
+[compatible with schema version: 11+]
+
+```ts
+interface {
+  messageId: string;
+  command: "<prefix>.get_defined_value_ids"
+}
+```
+
 ## Events
 
 ### `zwave-js` Events
