@@ -1,3 +1,4 @@
+import { VirtualValueID } from "zwave-js/lib/node/VirtualNode";
 import { MulticastGroupCommand } from "./command";
 
 export interface MulticastGroupResultTypes {
@@ -7,4 +8,5 @@ export interface MulticastGroupResultTypes {
   [MulticastGroupCommand.getCCVersion]: { version: number };
   [MulticastGroupCommand.invokeCCAPI]: { response: unknown };
   [MulticastGroupCommand.supportsCCAPI]: { supported: boolean };
+  [MulticastGroupCommand.getDefinedValueIDs]: { valueIDs: VirtualValueID[] };
 }

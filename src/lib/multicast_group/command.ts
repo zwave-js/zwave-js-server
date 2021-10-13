@@ -5,4 +5,5 @@ export enum MulticastGroupCommand {
   getCCVersion = "multicast_group.get_cc_version",
   invokeCCAPI = "multicast_group.invoke_cc_api",
   supportsCCAPI = "multicast_group.supports_cc_api",
+  getDefinedValueIDs = "multicast_group.get_defined_value_ids",
 }

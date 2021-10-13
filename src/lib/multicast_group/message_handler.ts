@@ -57,6 +57,9 @@ export class MulticastGroupMessageHandler {
           message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
+      case MulticastGroupCommand.getDefinedValueIDs:
+        const valueIDs = virtualNode.getDefinedValueIDs();
+        return { valueIDs };
       default:
         throw new UnknownCommandError(command);
     }
