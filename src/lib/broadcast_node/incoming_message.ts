@@ -48,10 +48,16 @@ export interface IncomingCommandBroadcastNodeSupportsCCAPI
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandBroadcastNodeGetDefinedValueIDs
+  extends IncomingCommandBroadcastNodeBase {
+  command: BroadcastNodeCommand.getDefinedValueIDs;
+}
+
 export type IncomingMessageBroadcastNode =
   | IncomingCommandBroadcastNodeSetValue
   | IncomingCommandBroadcastNodeGetEndpointCount
   | IncomingCommandBroadcastNodeSupportsCC
   | IncomingCommandBroadcastNodeGetCCVersion
   | IncomingCommandBroadcastNodeInvokeCCAPI
-  | IncomingCommandBroadcastNodeSupportsCCAPI;
+  | IncomingCommandBroadcastNodeSupportsCCAPI
+  | IncomingCommandBroadcastNodeGetDefinedValueIDs;

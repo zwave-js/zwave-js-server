@@ -50,10 +50,16 @@ export interface IncomingCommandMulticastGroupSupportsCCAPI
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandBroadcastNodeGetDefinedValueIDs
+  extends IncomingCommandMulticastGroupBase {
+  command: MulticastGroupCommand.getDefinedValueIDs;
+}
+
 export type IncomingMessageMulticastGroup =
   | IncomingCommandMulticastGroupSetValue
   | IncomingCommandMulticastGroupGetEndpointCount
   | IncomingCommandMulticastGroupSupportsCC
   | IncomingCommandMulticastGroupGetCCVersion
   | IncomingCommandMulticastGroupInvokeCCAPI
-  | IncomingCommandMulticastGroupSupportsCCAPI;
+  | IncomingCommandMulticastGroupSupportsCCAPI
+  | IncomingCommandBroadcastNodeGetDefinedValueIDs;

@@ -1,3 +1,4 @@
+import { VirtualValueID } from "zwave-js/lib/node/VirtualNode";
 import { BroadcastNodeCommand } from "./command";
 
 export interface BroadcastNodeResultTypes {
@@ -7,4 +8,5 @@ export interface BroadcastNodeResultTypes {
   [BroadcastNodeCommand.getCCVersion]: { version: number };
   [BroadcastNodeCommand.invokeCCAPI]: { response: unknown };
   [BroadcastNodeCommand.supportsCCAPI]: { supported: boolean };
+  [BroadcastNodeCommand.getDefinedValueIDs]: { valueIDs: VirtualValueID[] };
 }

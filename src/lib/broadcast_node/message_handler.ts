@@ -52,6 +52,9 @@ export class BroadcastNodeMessageHandler {
           message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
+      case BroadcastNodeCommand.getDefinedValueIDs:
+        const valueIDs = virtualNode.getDefinedValueIDs();
+        return { valueIDs };
       default:
         throw new UnknownCommandError(command);
     }
