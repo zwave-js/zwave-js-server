@@ -20,6 +20,12 @@ const normalizeKey = (
   throw new Error(`Invalid key format for ${keyName} option`);
 };
 
+const sleep = async (seconds: number): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
 interface Args {
   _: Array<string>;
   config?: string;
@@ -118,6 +124,8 @@ interface Args {
       error instanceof ZWaveError &&
       error.code === ZWaveErrorCodes.Driver_Failed
     ) {
+      console.error("Attempting to restart driver in 5 seconds...");
+      await sleep(5);
       await startServer(server, driver);
     }
   };
@@ -156,7 +164,10 @@ interface Args {
 
       await driver.start();
     } catch (err: any) {
-      console.error(`Error while restarting driver: ${err.message}`);
+      console.error(
+        `Error while starting driver, trying again in 5 seconds: ${err.message}`
+      );
+      await sleep(5);
       await startServer(server, driver);
     }
   };
