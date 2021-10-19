@@ -108,7 +108,7 @@ interface Args {
   let server: ZwavejsServer | null = null;
 
   const onDriverError = async (
-    server: ZwavejsServer,
+    server: ZwavejsServer | null,
     driver: Driver,
     error: Error,
     skipRestart = false
@@ -143,7 +143,7 @@ interface Args {
 
       driver.on("error", (e: Error) => {
         console.error("Error in driver", e);
-        onDriverError(server as ZwavejsServer, driver as Driver, e);
+        onDriverError(server, driver as Driver, e);
       });
 
       driver.on("driver ready", async () => {
