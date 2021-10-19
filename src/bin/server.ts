@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver } from "zwave-js";
+import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -105,8 +105,33 @@ interface Args {
     ? createMockDriver()
     : new Driver(serialPort, options);
 
-  driver.on("error", (e) => {
+  const onDriverError = async (
+    driver: Driver,
+    server: ZwavejsServer,
+    error: Error,
+    skipRestart = false
+  ): Promise<void> => {
+    if (
+      !skipRestart &&
+      error instanceof ZWaveError &&
+      error.code === ZWaveErrorCodes.Driver_Failed
+    ) {
+      // this cannot be recovered by zwave-js, requires a manual restart
+      try {
+        if (server) {
+          server.destroy();
+        }
+        await driver.destroy();
+        await driver.start();
+      } catch (err: any) {
+        console.error(`Error while restarting driver: ${err.message}`);
+      }
+    }
+  };
+
+  driver.on("error", (e: Error) => {
     console.error("Error in driver", e);
+    onDriverError(driver, server, e);
   });
 
   let server: ZwavejsServer;
