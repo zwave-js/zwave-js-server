@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { resolve } from "path";
+import { start } from "repl";
 import { Driver, ZWaveError, ZWaveErrorCodes, ZWaveOptions } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
@@ -107,8 +108,8 @@ interface Args {
   let server: ZwavejsServer | null = null;
 
   const onDriverError = async (
-    driver: Driver,
     server: ZwavejsServer,
+    driver: Driver,
     error: Error,
     skipRestart = false
   ): Promise<void> => {
@@ -140,7 +141,7 @@ interface Args {
 
       driver.on("error", (e: Error) => {
         console.error("Error in driver", e);
-        onDriverError(driver as Driver, server as ZwavejsServer, e);
+        onDriverError(server as ZwavejsServer, driver as Driver, e);
       });
 
       driver.on("driver ready", async () => {
@@ -156,7 +157,7 @@ interface Args {
       await driver.start();
     } catch (err: any) {
       console.error(`Error while restarting driver: ${err.message}`);
-      await onDriverError(driver as Driver, server as ZwavejsServer, err);
+      await startServer(server, driver);
     }
   };
 
