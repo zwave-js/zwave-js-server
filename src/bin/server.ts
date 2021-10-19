@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { start } from "repl";
 import { Driver, ZWaveError, ZWaveErrorCodes, ZWaveOptions } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
