@@ -132,7 +132,7 @@ interface Args {
     // this cannot be recovered by zwave-js, requires a manual restart
     try {
       if (server) {
-        server.destroy();
+        await server.destroy();
       }
       if (driver) {
         await driver.destroy();
