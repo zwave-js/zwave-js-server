@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import { Driver, ZWaveError, ZWaveErrorCodes, ZWaveOptions } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
 
-const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
+const normalizeKey = (
+  key: Buffer | string | undefined,
+  keyName: string
+): Buffer => {
+  if (key === undefined) throw new Error("");
   if (Buffer.isBuffer(key)) return key;
   if (key.length === 32) return Buffer.from(key, "hex");
   // Convert from OpenZWave format
@@ -49,7 +53,7 @@ interface Args {
     configPath = resolve(process.cwd(), configPath);
   }
 
-  let options;
+  let options: Partial<ZWaveOptions> = {};
 
   if (configPath) {
     try {
@@ -61,15 +65,10 @@ interface Args {
             "config. Remove `networkKey`."
         );
       }
-      const securityKeyNames = [
-        "S0_Legacy",
-        "S2_AccessControl",
-        "S2_Authenticated",
-        "S2_Unauthenticated",
-      ];
       // We prefer the securityKeys option over the networkKey one
       if (options.securityKeys) {
-        for (const key of securityKeyNames) {
+        let key: keyof typeof options.securityKeys;
+        for (key in options.securityKeys) {
           if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
@@ -92,7 +91,10 @@ interface Args {
             "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
-      } else if (!options.networkKey && !options.securityKeys.S0_Legacy)
+      } else if (
+        !options.networkKey &&
+        (!options.securityKeys || !options.securityKeys.S0_Legacy)
+      )
         throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
@@ -101,7 +103,7 @@ interface Args {
     }
   }
 
-  const driver = args["mock-driver"]
+  let driver = args["mock-driver"]
     ? createMockDriver()
     : new Driver(serialPort, options);
 
@@ -122,6 +124,9 @@ interface Args {
           server.destroy();
         }
         await driver.destroy();
+        driver = args["mock-driver"]
+          ? createMockDriver()
+          : new Driver(serialPort, options);
         await driver.start();
       } catch (err: any) {
         console.error(`Error while restarting driver: ${err.message}`);
