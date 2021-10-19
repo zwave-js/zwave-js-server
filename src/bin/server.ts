@@ -103,9 +103,8 @@ interface Args {
     }
   }
 
-  let driver = args["mock-driver"]
-    ? createMockDriver()
-    : new Driver(serialPort, options);
+  let driver: Driver | null = null;
+  let server: ZwavejsServer | null = null;
 
   const onDriverError = async (
     driver: Driver,
@@ -118,40 +117,50 @@ interface Args {
       error instanceof ZWaveError &&
       error.code === ZWaveErrorCodes.Driver_Failed
     ) {
-      // this cannot be recovered by zwave-js, requires a manual restart
-      try {
-        if (server) {
-          server.destroy();
-        }
-        await driver.destroy();
-        driver = args["mock-driver"]
-          ? createMockDriver()
-          : new Driver(serialPort, options);
-        await driver.start();
-      } catch (err: any) {
-        console.error(`Error while restarting driver: ${err.message}`);
-      }
+      await startServer(server, driver);
     }
   };
 
-  driver.on("error", (e: Error) => {
-    console.error("Error in driver", e);
-    onDriverError(driver, server, e);
-  });
-
-  let server: ZwavejsServer;
-
-  driver.on("driver ready", async () => {
+  const startServer = async (
+    server: ZwavejsServer | null,
+    driver: Driver | null
+  ): Promise<void> => {
+    // this cannot be recovered by zwave-js, requires a manual restart
     try {
-      server = new ZwavejsServer(driver, { port: wsPort });
-      await server.start();
-      console.info("Server listening on port", wsPort);
-    } catch (error) {
-      console.error("Unable to start Server", error);
-    }
-  });
+      if (server) {
+        server.destroy();
+      }
+      if (driver) {
+        await driver.destroy();
+      }
 
-  await driver.start();
+      driver = args["mock-driver"]
+        ? createMockDriver()
+        : new Driver(serialPort, options);
+
+      driver.on("error", (e: Error) => {
+        console.error("Error in driver", e);
+        onDriverError(driver as Driver, server as ZwavejsServer, e);
+      });
+
+      driver.on("driver ready", async () => {
+        try {
+          server = new ZwavejsServer(driver as Driver, { port: wsPort });
+          await server.start();
+          console.info("Server listening on port", wsPort);
+        } catch (error) {
+          console.error("Unable to start Server", error);
+        }
+      });
+
+      await driver.start();
+    } catch (err: any) {
+      console.error(`Error while restarting driver: ${err.message}`);
+      await onDriverError(driver as Driver, server as ZwavejsServer, err);
+    }
+  };
+
+  await startServer(server, driver);
 
   let closing = false;
 
@@ -167,7 +176,9 @@ interface Args {
     if (server) {
       await server.destroy();
     }
-    await driver.destroy();
+    if (driver) {
+      await driver.destroy();
+    }
     process.exit();
   };
 
