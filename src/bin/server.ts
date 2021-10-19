@@ -10,6 +10,7 @@ const normalizeKey = (
   key: Buffer | string | undefined,
   keyName: string
 ): Buffer => {
+  // This is here to make TypeScript happy, we should never throw this error
   if (key === undefined) throw new Error("");
   if (Buffer.isBuffer(key)) return key;
   if (key.length === 32) return Buffer.from(key, "hex");
