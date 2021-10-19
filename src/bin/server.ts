@@ -4,6 +4,7 @@ import { Driver, ZWaveError, ZWaveErrorCodes, ZWaveOptions } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
+import { sleep } from "../util/sleep";
 
 const normalizeKey = (
   key: Buffer | string | undefined,
@@ -17,12 +18,6 @@ const normalizeKey = (
   if (key.includes("0x"))
     return Buffer.from(key.replace(/0x/g, "").replace(/, /g, ""), "hex");
   throw new Error(`Invalid key format for ${keyName} option`);
-};
-
-const sleep = async (seconds: number): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
 };
 
 interface Args {
