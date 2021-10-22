@@ -108,27 +108,18 @@ interface Args {
   let driver: Driver | null = null;
   let server: ZwavejsServer | null = null;
 
-  const onDriverError = async (
-    server: ZwavejsServer | null,
-    driver: Driver,
-    error: Error,
-    skipRestart = false
-  ): Promise<void> => {
+  const onDriverError = async (error: Error): Promise<void> => {
     if (
-      !skipRestart &&
       error instanceof ZWaveError &&
       error.code === ZWaveErrorCodes.Driver_Failed
     ) {
       console.error("Attempting to restart driver in 5 seconds...");
       await sleep(5);
-      await startServer(server, driver);
+      await startServer();
     }
   };
 
-  const startServer = async (
-    server: ZwavejsServer | null,
-    driver: Driver | null
-  ): Promise<void> => {
+  const startServer = async (): Promise<void> => {
     // this cannot be recovered by zwave-js, requires a manual restart
     try {
       if (server) {
@@ -144,7 +135,7 @@ interface Args {
 
       driver.on("error", (e: Error) => {
         console.error("Error in driver", e);
-        onDriverError(server, driver as Driver, e);
+        onDriverError(e);
       });
 
       driver.on("driver ready", async () => {
@@ -163,11 +154,11 @@ interface Args {
         `Error while starting driver, trying again in 5 seconds: ${err.message}`
       );
       await sleep(5);
-      await startServer(server, driver);
+      await startServer();
     }
   };
 
-  await startServer(server, driver);
+  await startServer();
 
   let closing = false;
 
