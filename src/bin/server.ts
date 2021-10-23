@@ -6,12 +6,7 @@ import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
 import { sleep } from "../util/sleep";
 
-const normalizeKey = (
-  key: Buffer | string | undefined,
-  keyName: string
-): Buffer => {
-  // This is here to make TypeScript happy, we should never throw this error
-  if (key === undefined) throw new Error("");
+const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;
   if (key.length === 32) return Buffer.from(key, "hex");
   // Convert from OpenZWave format
@@ -73,7 +68,7 @@ interface Args {
         for (key in options.securityKeys) {
           if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
-              options.securityKeys[key],
+              options.securityKeys[key]!,
               `securityKeys.${key}`
             );
           }
@@ -93,10 +88,7 @@ interface Args {
             "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
-      } else if (
-        !options.networkKey &&
-        (!options.securityKeys || !options.securityKeys.S0_Legacy)
-      )
+      } else if (!options.networkKey && !options.securityKeys!.S0_Legacy)
         throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
