@@ -109,6 +109,7 @@ interface Args {
   let server: ZwavejsServer | null = null;
 
   const onDriverError = async (error: Error): Promise<void> => {
+    console.error("Error in driver", error);
     if (
       error instanceof ZWaveError &&
       error.code === ZWaveErrorCodes.Driver_Failed
@@ -133,10 +134,7 @@ interface Args {
         ? createMockDriver()
         : new Driver(serialPort, options);
 
-      driver.on("error", (e: Error) => {
-        console.error("Error in driver", e);
-        onDriverError(e);
-      });
+      driver.on("error", onDriverError);
 
       driver.on("driver ready", async () => {
         try {
