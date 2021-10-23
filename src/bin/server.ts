@@ -102,6 +102,7 @@ interface Args {
 
   const onDriverError = async (error: Error): Promise<void> => {
     console.error("Error in driver", error);
+    // Driver_Failed cannot be recovered by zwave-js, requires a manual restart
     if (
       error instanceof ZWaveError &&
       error.code === ZWaveErrorCodes.Driver_Failed
@@ -113,7 +114,6 @@ interface Args {
   };
 
   const startServer = async (): Promise<void> => {
-    // this cannot be recovered by zwave-js, requires a manual restart
     try {
       if (server) {
         await server.destroy();
