@@ -120,6 +120,7 @@ async () => {
       }
       if (driver) {
         await driver.destroy();
+        driver = null;
       }
 
       driver = args["mock-driver"]
