@@ -4,7 +4,7 @@ import { Driver, ZWaveError, ZWaveErrorCodes, ZWaveOptions } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
-import { sleep } from "../util/sleep";
+import { clearTimeout, setTimeout } from "timers";
 
 const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;
@@ -23,7 +23,7 @@ interface Args {
   port: number;
 }
 
-(async () => {
+async () => {
   const args = parseArgs<Args>(["_", "config", "mock-driver", "port"]);
 
   let wsPort = 3000;
@@ -99,6 +99,7 @@ interface Args {
 
   let driver: Driver | null = null;
   let server: ZwavejsServer | null = null;
+  let handle: NodeJS.Timeout | undefined = undefined;
 
   const onDriverError = async (error: Error): Promise<void> => {
     console.error("Error in driver", error);
@@ -108,8 +109,7 @@ interface Args {
       error.code === ZWaveErrorCodes.Driver_Failed
     ) {
       console.error("Attempting to restart driver in 5 seconds...");
-      await sleep(5);
-      await startServer();
+      handle = setTimeout(startServer, 5000);
     }
   };
 
@@ -143,8 +143,7 @@ interface Args {
       console.error(
         `Error while starting driver, trying again in 5 seconds: ${err.message}`
       );
-      await sleep(5);
-      await startServer();
+      handle = setTimeout(startServer, 5000);
     }
   };
 
@@ -153,6 +152,10 @@ interface Args {
   let closing = false;
 
   const handleShutdown = async () => {
+    if (handle) {
+      clearTimeout(handle);
+    }
+
     // Pressing ctrl+c twice.
     if (closing) {
       process.exit();
@@ -172,6 +175,4 @@ interface Args {
 
   process.on("SIGINT", handleShutdown);
   process.on("SIGTERM", handleShutdown);
-})().catch((err) => {
-  console.error("Unable to start driver", err);
-});
+};
