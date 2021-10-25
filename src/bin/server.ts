@@ -114,9 +114,11 @@ async () => {
   };
 
   const startServer = async (): Promise<void> => {
+    handle = undefined;
     try {
       if (server) {
         await server.destroy();
+        server = null;
       }
       if (driver) {
         await driver.destroy();
