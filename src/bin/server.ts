@@ -66,12 +66,10 @@ async () => {
       if (options.securityKeys) {
         let key: keyof typeof options.securityKeys;
         for (key in options.securityKeys) {
-          if (key in options.securityKeys) {
-            options.securityKeys[key] = normalizeKey(
-              options.securityKeys[key]!,
-              `securityKeys.${key}`
-            );
-          }
+          options.securityKeys[key] = normalizeKey(
+            options.securityKeys[key]!,
+            `securityKeys.${key}`
+          );
         }
       }
       // If we get here, securityKeys.S0_Legacy is not defined, so we can safely use networkKey
@@ -88,7 +86,7 @@ async () => {
             "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
-      } else if (!options.networkKey && !options.securityKeys!.S0_Legacy)
+      } else if (!options.networkKey)
         throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
