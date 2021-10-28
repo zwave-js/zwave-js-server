@@ -155,4 +155,5 @@ interface Args {
   process.on("SIGTERM", handleShutdown);
 })().catch((err) => {
   console.error("Unable to start driver", err);
+  process.exit(1);
 });
