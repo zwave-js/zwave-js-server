@@ -109,7 +109,7 @@ interface Args {
     console.error("Error in driver", e);
     // Driver_Failed cannot be recovered by zwave-js so we shut down
     if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
-      handleShutdown(false);
+      handleShutdown(1);
     }
   });
 
@@ -129,13 +129,7 @@ interface Args {
 
   let closing = false;
 
-  const handleShutdown = async (success = true) => {
-    let exitCode: number;
-    if (success) {
-      exitCode = 0;
-    } else {
-      exitCode = 1;
-    }
+  const handleShutdown = async (exitCode = 0) => {
     // Pressing ctrl+c twice.
     if (closing) {
       process.exit(exitCode);
@@ -147,7 +141,9 @@ interface Args {
     if (server) {
       await server.destroy();
     }
-    await driver.destroy();
+    if (driver) {
+      await driver.destroy();
+    }
     process.exit(exitCode);
   };
 
