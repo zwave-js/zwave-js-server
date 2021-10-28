@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver } from "zwave-js";
+import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -107,6 +107,10 @@ interface Args {
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
+    // Driver_Failed cannot be recovered by zwave-js so we shut down
+    if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
+      handleShutdown(false);
+    }
   });
 
   let server: ZwavejsServer;
@@ -125,10 +129,16 @@ interface Args {
 
   let closing = false;
 
-  const handleShutdown = async () => {
+  const handleShutdown = async (success = true) => {
+    let exitCode: number;
+    if (success) {
+      exitCode = 0;
+    } else {
+      exitCode = 1;
+    }
     // Pressing ctrl+c twice.
     if (closing) {
-      process.exit();
+      process.exit(exitCode);
     }
 
     // Close gracefully
@@ -138,7 +148,7 @@ interface Args {
       await server.destroy();
     }
     await driver.destroy();
-    process.exit();
+    process.exit(exitCode);
   };
 
   process.on("SIGINT", handleShutdown);
