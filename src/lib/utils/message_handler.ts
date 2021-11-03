@@ -1,24 +1,12 @@
-import { Driver } from "zwave-js";
-import {
-  CommandClasses,
-  ConfigurationMetadata,
-  extractFirmware,
-  Firmware,
-  guessFirmwareFileFormat,
-  parseQRCodeString,
-} from "@zwave-js/core";
-import { UtilsNotFoundError, UnknownCommandError } from "../error";
-import { Client } from "../server";
-import { dumpConfigurationMetadata, dumpMetadata } from "../state";
+import { parseQRCodeString } from "@zwave-js/core";
+import { UnknownCommandError } from "../error";
 import { UtilsCommand } from "./command";
 import { IncomingMessageUtils } from "./incoming_message";
 import { UtilsResultTypes } from "./outgoing_message";
 
 export class UtilsMessageHandler {
   static async handle(
-    message: IncomingMessageUtils,
-    driver: Driver,
-    client: Client
+    message: IncomingMessageUtils
   ): Promise<UtilsResultTypes[UtilsCommand]> {
     const { command } = message;
 
