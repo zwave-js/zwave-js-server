@@ -172,7 +172,6 @@ export interface IncomingCommandControllerGetProvisioningEntry
 export interface IncomingCommandControllerGetProvisioningEntries
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getProvisioningEntries;
-  pin: string;
 }
 
 export type IncomingMessageController =
