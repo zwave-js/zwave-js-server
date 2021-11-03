@@ -209,7 +209,11 @@ function processInclusionOptions(
       options.strategy === InclusionStrategy.Default ||
       options.strategy === InclusionStrategy.Security_S2
     ) {
-      if (!("provisioning" in options)) {
+      if ("provisioning" in options) {
+        if (typeof options.provisioning === "string") {
+          options.provisioning = parseQRCodeString(options.provisioning);
+        }
+      } else {
         let grantSecurityClassesPromise:
           | DeferredPromise<InclusionGrant | false>
           | undefined;
