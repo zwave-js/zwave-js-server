@@ -93,7 +93,9 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success = await driver.controller.beginExclusion();
+        const success = await driver.controller.beginExclusion(
+          message.unprovision
+        );
         return { success };
       }
       case ControllerCommand.stopExclusion: {
