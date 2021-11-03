@@ -153,7 +153,7 @@ export interface IncomingCommandControllerValidateDSKAndEnterPIN
 export interface IncomingCommandControllerProvisionSmartStartNode
   extends IncomingCommandControllerBase {
   command: ControllerCommand.provisionSmartStartNode;
-  entry: PlannedProvisioningEntry | string;
+  entry: PlannedProvisioningEntry | string | QRProvisioningInformation;
 }
 
 export interface IncomingCommandControllerUnprovisionSmartStartNode
