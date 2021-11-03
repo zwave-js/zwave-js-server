@@ -2,6 +2,14 @@
   "name": "@zwave-js/server",
   "version": "1.10.8",
   "description": "Full access to zwave-js driver through Websockets",
+  "homepage": "https://github.com/zwave-js/zwave-js-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zwave-js/zwave-js-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zwave-js/zwave-js-server/issues"
+  },
   "main": "dist/lib/index.js",
   "bin": {
     "zwave-server": "dist/bin/server.js",

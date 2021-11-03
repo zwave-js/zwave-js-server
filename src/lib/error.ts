@@ -8,6 +8,7 @@ export enum ErrorCode {
   zwaveError = "zwave_error",
   inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
   inclusionAlreadyInProgress = "inclusion_already_in_progress",
+  invalidParamsPassedToCommand = "invalid_params_passed_to_command",
 }
 
 export class BaseError extends Error {
@@ -77,4 +78,8 @@ export class InclusionPhaseNotInProgressError extends BaseError {
 
 export class InclusionAlreadyInProgressError extends BaseError {
   errorCode = ErrorCode.inclusionAlreadyInProgress;
+}
+
+export class InvalidParamsPassedToCommandError extends BaseError {
+  errorCode = ErrorCode.invalidParamsPassedToCommand;
 }

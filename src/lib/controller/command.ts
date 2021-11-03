@@ -21,4 +21,8 @@ export enum ControllerCommand {
   getNodeNeighbors = "controller.get_node_neighbors",
   grantSecurityClasses = "controller.grant_security_classes",
   validateDSKAndEnterPIN = "controller.validate_dsk_and_enter_pin",
+  provisionSmartStartNode = "controller.provision_smart_start_node",
+  unprovisionSmartStartNode = "controller.unprovision_smart_start_node",
+  getProvisioningEntry = "controller.get_provisioning_entry",
+  getProvisioningEntries = "controller.get_provisioning_entries",
 }

@@ -2,8 +2,10 @@ import {
   AssociationAddress,
   InclusionGrant,
   InclusionOptions,
+  PlannedProvisioningEntry,
   ReplaceNodeOptions,
 } from "zwave-js";
+import type { QRProvisioningInformation } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
@@ -148,6 +150,30 @@ export interface IncomingCommandControllerValidateDSKAndEnterPIN
   pin: string;
 }
 
+export interface IncomingCommandControllerProvisionSmartStartNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.provisionSmartStartNode;
+  entry: PlannedProvisioningEntry | string;
+}
+
+export interface IncomingCommandControllerUnprovisionSmartStartNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.unprovisionSmartStartNode;
+  dskOrNodeId: string | number;
+}
+
+export interface IncomingCommandControllerGetProvisioningEntry
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getProvisioningEntry;
+  dsk: string;
+}
+
+export interface IncomingCommandControllerGetProvisioningEntries
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getProvisioningEntries;
+  pin: string;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -169,4 +195,8 @@ export type IncomingMessageController =
   | IncomingCommandControllerRemoveNodeFromAllAssociations
   | IncomingCommandControllerGetNodeNeighbors
   | IncomingCommandControllerGrantSecurityClasses
-  | IncomingCommandControllerValidateDSKAndEnterPIN;
+  | IncomingCommandControllerValidateDSKAndEnterPIN
+  | IncomingCommandControllerProvisionSmartStartNode
+  | IncomingCommandControllerUnprovisionSmartStartNode
+  | IncomingCommandControllerGetProvisioningEntry
+  | IncomingCommandControllerGetProvisioningEntries;
