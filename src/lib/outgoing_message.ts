@@ -8,6 +8,7 @@ import { ErrorCode } from "./error";
 import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
 import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 import { EndpointResultTypes } from "./endpoint/outgoing_message";
+import { UtilsResultTypes } from "./utils/outgoing_message";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -68,7 +69,8 @@ export type ResultTypes = ServerResultTypes &
   DriverResultTypes &
   MulticastGroupResultTypes &
   BroadcastNodeResultTypes &
-  EndpointResultTypes;
+  EndpointResultTypes &
+  UtilsResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";

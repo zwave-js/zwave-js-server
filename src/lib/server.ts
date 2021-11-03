@@ -31,6 +31,8 @@ import { MulticastGroupMessageHandler } from "./multicast_group/message_handler"
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { EndpointMessageHandler } from "./endpoint/message_handler";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
+import { UtilsMessageHandler } from "./utils/message_handler";
+import { IncomingMessageUtils } from "./utils/incoming_message";
 
 export class Client {
   public receiveEvents = false;
@@ -79,6 +81,8 @@ export class Client {
         message as IncomingMessageEndpoint,
         this.driver
       ),
+    [Instance.utils]: (message) =>
+      UtilsMessageHandler.handle(message as IncomingMessageUtils),
   };
 
   constructor(

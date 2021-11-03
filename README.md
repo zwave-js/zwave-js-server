@@ -694,6 +694,10 @@ interface {
 }
 ```
 
+### Utility commands
+
+`zwave-js-server` supports all of the utility methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/utils). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `utils.`, so `parseQRCodeString` is called using the `utils.parse_qr_code_string` command.
+
 ## Events
 
 ### `zwave-js` Events
