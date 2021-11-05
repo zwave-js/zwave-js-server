@@ -211,7 +211,15 @@ function processInclusionOptions(
       options.strategy === InclusionStrategy.Default ||
       options.strategy === InclusionStrategy.Security_S2
     ) {
+      // When using Security_S2 inclusion, the user can either provide the provisioning details ahead
+      // of time or go through a standard inclusion process and let the driver/client prompt them
+      // for provisioning details based on information received from the device. We have to handle
+      // each scenario separately.
       if ("provisioning" in options) {
+        // There are three input options when providing provisioning details ahead of time:
+        // PlannedProvisioningEntry, QRProvisioningInformation, or a QR code string which the server
+        // will automatically parse into a QRProvisioningInformation object before proceeding with the
+        // inclusion process
         if (typeof options.provisioning === "string") {
           options.provisioning = parseQRCodeString(options.provisioning);
         }
