@@ -191,55 +191,57 @@ function processInclusionOptions(
       let validateDSKAndEnterPinPromise:
         | DeferredPromise<string | false>
         | undefined;
-      options.userCallbacks = {
-        grantSecurityClasses: (
-          requested: InclusionGrant
-        ): Promise<InclusionGrant | false> => {
-          clientsController.grantSecurityClassesPromise =
-            grantSecurityClassesPromise = createDeferredPromise();
-          grantSecurityClassesPromise.finally(() => {
-            if (
-              clientsController.grantSecurityClassesPromise ===
-              grantSecurityClassesPromise
-            ) {
-              delete clientsController.grantSecurityClassesPromise;
-            }
-          });
-          client.sendEvent({
-            source: "controller",
-            event: "grant security classes",
-            requested: requested as any,
-          });
+      if (!("provisioning" in options)) {
+        options.userCallbacks = {
+          grantSecurityClasses: (
+            requested: InclusionGrant
+          ): Promise<InclusionGrant | false> => {
+            clientsController.grantSecurityClassesPromise =
+              grantSecurityClassesPromise = createDeferredPromise();
+            grantSecurityClassesPromise.finally(() => {
+              if (
+                clientsController.grantSecurityClassesPromise ===
+                grantSecurityClassesPromise
+              ) {
+                delete clientsController.grantSecurityClassesPromise;
+              }
+            });
+            client.sendEvent({
+              source: "controller",
+              event: "grant security classes",
+              requested: requested as any,
+            });
 
-          return clientsController.grantSecurityClassesPromise;
-        },
-        validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
-          clientsController.validateDSKAndEnterPinPromise =
-            validateDSKAndEnterPinPromise = createDeferredPromise();
-          validateDSKAndEnterPinPromise.finally(() => {
-            if (
-              clientsController.validateDSKAndEnterPinPromise ===
-              validateDSKAndEnterPinPromise
-            ) {
-              delete clientsController.validateDSKAndEnterPinPromise;
-            }
-          });
-          client.sendEvent({
-            source: "controller",
-            event: "validate dsk and enter pin",
-            dsk,
-          });
-          return clientsController.validateDSKAndEnterPinPromise;
-        },
-        abort: (): void => {
-          grantSecurityClassesPromise?.reject("aborted");
-          validateDSKAndEnterPinPromise?.reject("aborted");
-          client.sendEvent({
-            source: "controller",
-            event: "inclusion aborted",
-          });
-        },
-      };
+            return clientsController.grantSecurityClassesPromise;
+          },
+          validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
+            clientsController.validateDSKAndEnterPinPromise =
+              validateDSKAndEnterPinPromise = createDeferredPromise();
+            validateDSKAndEnterPinPromise.finally(() => {
+              if (
+                clientsController.validateDSKAndEnterPinPromise ===
+                validateDSKAndEnterPinPromise
+              ) {
+                delete clientsController.validateDSKAndEnterPinPromise;
+              }
+            });
+            client.sendEvent({
+              source: "controller",
+              event: "validate dsk and enter pin",
+              dsk,
+            });
+            return clientsController.validateDSKAndEnterPinPromise;
+          },
+          abort: (): void => {
+            grantSecurityClassesPromise?.reject("aborted");
+            validateDSKAndEnterPinPromise?.reject("aborted");
+            client.sendEvent({
+              source: "controller",
+              event: "inclusion aborted",
+            });
+          },
+        };
+      }
     }
     return options;
   }
