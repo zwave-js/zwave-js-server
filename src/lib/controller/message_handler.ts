@@ -3,6 +3,7 @@ import {
   DeferredPromise,
 } from "alcalzone-shared/deferred-promise";
 import {
+  parseQRCodeString,
   Driver,
   InclusionGrant,
   InclusionOptions,
@@ -12,6 +13,7 @@ import {
 import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
+  InvalidParamsPassedToCommandError,
   UnknownCommandError,
 } from "../error";
 import { Client, ClientsController } from "../server";
@@ -64,12 +66,36 @@ export class ControllerMessageHandler {
         clientsController.validateDSKAndEnterPinPromise.resolve(message.pin);
         return {};
       }
+      case ControllerCommand.provisionSmartStartNode: {
+        if (typeof message.entry === "string") {
+          driver.controller.provisionSmartStartNode(
+            parseQRCodeString(message.entry)
+          );
+        } else {
+          driver.controller.provisionSmartStartNode(message.entry);
+        }
+        return {};
+      }
+      case ControllerCommand.unprovisionSmartStartNode: {
+        driver.controller.unprovisionSmartStartNode(message.dskOrNodeId);
+        return {};
+      }
+      case ControllerCommand.getProvisioningEntry: {
+        const entry = driver.controller.getProvisioningEntry(message.dsk);
+        return { entry };
+      }
+      case ControllerCommand.getProvisioningEntries: {
+        const entries = driver.controller.getProvisioningEntries();
+        return { entries };
+      }
       case ControllerCommand.stopInclusion: {
         const success = await driver.controller.stopInclusion();
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success = await driver.controller.beginExclusion();
+        const success = await driver.controller.beginExclusion(
+          message.unprovision
+        );
         return { success };
       }
       case ControllerCommand.stopExclusion: {
@@ -185,13 +211,25 @@ function processInclusionOptions(
       options.strategy === InclusionStrategy.Default ||
       options.strategy === InclusionStrategy.Security_S2
     ) {
-      let grantSecurityClassesPromise:
-        | DeferredPromise<InclusionGrant | false>
-        | undefined;
-      let validateDSKAndEnterPinPromise:
-        | DeferredPromise<string | false>
-        | undefined;
-      if (!("provisioning" in options)) {
+      // When using Security_S2 inclusion, the user can either provide the provisioning details ahead
+      // of time or go through a standard inclusion process and let the driver/client prompt them
+      // for provisioning details based on information received from the device. We have to handle
+      // each scenario separately.
+      if ("provisioning" in options) {
+        // There are three input options when providing provisioning details ahead of time:
+        // PlannedProvisioningEntry, QRProvisioningInformation, or a QR code string which the server
+        // will automatically parse into a QRProvisioningInformation object before proceeding with the
+        // inclusion process
+        if (typeof options.provisioning === "string") {
+          options.provisioning = parseQRCodeString(options.provisioning);
+        }
+      } else {
+        let grantSecurityClassesPromise:
+          | DeferredPromise<InclusionGrant | false>
+          | undefined;
+        let validateDSKAndEnterPinPromise:
+          | DeferredPromise<string | false>
+          | undefined;
         options.userCallbacks = {
           grantSecurityClasses: (
             requested: InclusionGrant

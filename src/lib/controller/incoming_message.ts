@@ -2,8 +2,10 @@ import {
   AssociationAddress,
   InclusionGrant,
   InclusionOptions,
+  PlannedProvisioningEntry,
   ReplaceNodeOptions,
 } from "zwave-js";
+import type { QRProvisioningInformation } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ControllerCommand } from "./command";
 
@@ -31,6 +33,7 @@ export interface IncomingCommandControllerStopInclusion
 export interface IncomingCommandControllerBeginExclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginExclusion;
+  unprovision?: boolean;
 }
 
 export interface IncomingCommandControllerStopExclusion
@@ -148,6 +151,29 @@ export interface IncomingCommandControllerValidateDSKAndEnterPIN
   pin: string;
 }
 
+export interface IncomingCommandControllerProvisionSmartStartNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.provisionSmartStartNode;
+  entry: PlannedProvisioningEntry | string | QRProvisioningInformation;
+}
+
+export interface IncomingCommandControllerUnprovisionSmartStartNode
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.unprovisionSmartStartNode;
+  dskOrNodeId: string | number;
+}
+
+export interface IncomingCommandControllerGetProvisioningEntry
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getProvisioningEntry;
+  dsk: string;
+}
+
+export interface IncomingCommandControllerGetProvisioningEntries
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getProvisioningEntries;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -169,4 +195,8 @@ export type IncomingMessageController =
   | IncomingCommandControllerRemoveNodeFromAllAssociations
   | IncomingCommandControllerGetNodeNeighbors
   | IncomingCommandControllerGrantSecurityClasses
-  | IncomingCommandControllerValidateDSKAndEnterPIN;
+  | IncomingCommandControllerValidateDSKAndEnterPIN
+  | IncomingCommandControllerProvisionSmartStartNode
+  | IncomingCommandControllerUnprovisionSmartStartNode
+  | IncomingCommandControllerGetProvisioningEntry
+  | IncomingCommandControllerGetProvisioningEntries;

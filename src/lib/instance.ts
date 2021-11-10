@@ -5,4 +5,5 @@ export enum Instance {
   multicast_group = "multicast_group",
   node = "node",
   endpoint = "endpoint",
+  utils = "utils",
 }

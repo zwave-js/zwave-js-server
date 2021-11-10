@@ -7,6 +7,7 @@ import { IncomingMessageDriver } from "./driver/incoming_message";
 import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
+import { IncomingMessageUtils } from "./utils/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: ServerCommand.startListening;
@@ -36,4 +37,5 @@ export type IncomingMessage =
   | IncomingMessageDriver
   | IncomingMessageMulticastGroup
   | IncomingMessageBroadcastNode
-  | IncomingMessageEndpoint;
+  | IncomingMessageEndpoint
+  | IncomingMessageUtils;

@@ -318,6 +318,8 @@ interface {
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
 
+> NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The two exceptions are `controller.begin_inclusion` and `controller.provision_smart_start_node`; in addition to the input types that are documented, these commands will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+
 ### Node level commands
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
@@ -691,6 +693,10 @@ interface {
   command: "<prefix>.get_defined_value_ids"
 }
 ```
+
+### Utility commands
+
+`zwave-js-server` supports all of the utility methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/utils). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `utils.`, so `parseQRCodeString` is called using the `utils.parse_qr_code_string` command.
 
 ## Events
 
