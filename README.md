@@ -20,6 +20,8 @@ You can specify a different port for the websocket server to listen on with `--p
 
 If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
 
+> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+
 ### Start client
 
 Requires server to be running.

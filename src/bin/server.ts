@@ -101,7 +101,8 @@ interface Args {
     }
   }
 
-  options["emitValueUpdateAfterSetValue"] = true;
+  if (!("emitValueUpdateAfterSetValue" in options))
+    options["emitValueUpdateAfterSetValue"] = true;
 
   const driver = args["mock-driver"]
     ? createMockDriver()
