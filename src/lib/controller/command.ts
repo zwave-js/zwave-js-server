@@ -25,4 +25,5 @@ export enum ControllerCommand {
   unprovisionSmartStartNode = "controller.unprovision_smart_start_node",
   getProvisioningEntry = "controller.get_provisioning_entry",
   getProvisioningEntries = "controller.get_provisioning_entries",
+  supportsFeature = "controller.supports_feature",
 }

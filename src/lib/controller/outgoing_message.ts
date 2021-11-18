@@ -40,4 +40,5 @@ export interface ControllerResultTypes {
   [ControllerCommand.getProvisioningEntries]: {
     entries: SmartStartProvisioningEntry[];
   };
+  [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
 }

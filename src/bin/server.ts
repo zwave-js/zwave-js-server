@@ -101,6 +101,8 @@ interface Args {
     }
   }
 
+  options["emitValueUpdateAfterSetValue"] = true;
+
   const driver = args["mock-driver"]
     ? createMockDriver()
     : new Driver(serialPort, options);
