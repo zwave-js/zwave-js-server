@@ -101,8 +101,15 @@ interface Args {
     }
   }
 
-  if (!("emitValueUpdateAfterSetValue" in options))
+  if (!("emitValueUpdateAfterSetValue" in options)) {
     options["emitValueUpdateAfterSetValue"] = true;
+  } else if (!options["emitValueUpdateAfterSetValue"]) {
+    console.warn(
+      "Because `emitValueUpdateAfterSetValue` is set to false, multi-client setups will not work " +
+        "as expected. In particular, clients will not see value updates that are initiated by " +
+        "another client."
+    );
+  }
 
   const driver = args["mock-driver"]
     ? createMockDriver()
