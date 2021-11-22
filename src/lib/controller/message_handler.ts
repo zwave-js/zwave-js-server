@@ -189,6 +189,9 @@ export class ControllerMessageHandler {
           message.nodeId
         );
         return { neighbors };
+      case ControllerCommand.supportsFeature:
+        const supported = driver.controller.supportsFeature(message.feature);
+        return { supported };
       default:
         throw new UnknownCommandError(command);
     }

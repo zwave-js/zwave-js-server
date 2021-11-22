@@ -4,6 +4,7 @@ import {
   InclusionOptions,
   PlannedProvisioningEntry,
   ReplaceNodeOptions,
+  ZWaveFeature,
 } from "zwave-js";
 import type { QRProvisioningInformation } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
@@ -174,6 +175,12 @@ export interface IncomingCommandControllerGetProvisioningEntries
   command: ControllerCommand.getProvisioningEntries;
 }
 
+export interface IncomingCommandControllerSupportsFeature
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.supportsFeature;
+  feature: ZWaveFeature;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -199,4 +206,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerProvisionSmartStartNode
   | IncomingCommandControllerUnprovisionSmartStartNode
   | IncomingCommandControllerGetProvisioningEntry
-  | IncomingCommandControllerGetProvisioningEntries;
+  | IncomingCommandControllerGetProvisioningEntries
+  | IncomingCommandControllerSupportsFeature;
