@@ -353,6 +353,7 @@ interface {
   messageId: string;
   command: "node.refresh_info";
   nodeId: number;
+  options?: RefreshInfoOptions;
 }
 ```
 
@@ -504,6 +505,48 @@ interface {
   messageId: string;
   nodeId: number;
   command: "node.get_highest_security_class";
+}
+```
+
+#### [Test Powerlevel](https://zwave-js.github.io/node-zwave-js/#/api/node?id=testpowerlevel)
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.test_powerlevel";
+  testNodeId: number;
+  powerlevel: Powerlevel;
+  testFrameCount: number;
+}
+```
+
+#### [Check Lifeline Health](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklifelinehealth)
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.check_lifeline_health";
+  rounds?: number;
+}
+```
+
+#### [Check Route Health](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checkroutehealth)
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.check_route_health";
+  targetNodeId: number;
+  rounds?: number;
 }
 ```
 
