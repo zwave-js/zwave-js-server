@@ -1,5 +1,7 @@
 import {
   FirmwareUpdateCapabilities,
+  LifelineHealthCheckSummary,
+  RouteHealthCheckSummary,
   TranslatedValueID,
   ValueMetadata,
 } from "zwave-js";
@@ -25,4 +27,7 @@ export interface NodeResultTypes {
   [NodeCommand.getHighestSecurityClass]: {
     highestSecurityClass: SecurityClass | undefined;
   };
+  [NodeCommand.testPowerlevel]: { framesAcked: number };
+  [NodeCommand.checkLifelineHealth]: { summary: LifelineHealthCheckSummary };
+  [NodeCommand.checkRouteHealth]: { summary: RouteHealthCheckSummary };
 }

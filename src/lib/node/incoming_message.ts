@@ -1,4 +1,10 @@
-import { ConfigValue, SetValueAPIOptions, ValueID } from "zwave-js";
+import {
+  ConfigValue,
+  Powerlevel,
+  RefreshInfoOptions,
+  SetValueAPIOptions,
+  ValueID,
+} from "zwave-js";
 import {
   CommandClasses,
   FirmwareFileFormat,
@@ -21,6 +27,7 @@ export interface IncomingCommandNodeSetValue extends IncomingCommandNodeBase {
 export interface IncomingCommandNodeRefreshInfo
   extends IncomingCommandNodeBase {
   command: NodeCommand.refreshInfo;
+  options?: RefreshInfoOptions;
 }
 
 export interface IncomingCommandNodeGetDefinedValueIDs
@@ -91,6 +98,26 @@ export interface IncomingCommandGetHighestSecurityClass
   command: NodeCommand.getHighestSecurityClass;
 }
 
+export interface IncomingCommandTestPowerlevel extends IncomingCommandNodeBase {
+  command: NodeCommand.testPowerlevel;
+  testNodeId: number;
+  powerlevel: Powerlevel;
+  testFrameCount: number;
+}
+
+export interface IncomingCommandCheckLifelineHealth
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.checkLifelineHealth;
+  rounds?: number;
+}
+
+export interface IncomingCommandCheckRouteHealth
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.checkRouteHealth;
+  targetNodeId: number;
+  rounds?: number;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -105,4 +132,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeRefreshCCValues
   | IncomingCommandNodePing
   | IncomingCommandHasSecurityClass
-  | IncomingCommandGetHighestSecurityClass;
+  | IncomingCommandGetHighestSecurityClass
+  | IncomingCommandTestPowerlevel
+  | IncomingCommandCheckLifelineHealth
+  | IncomingCommandCheckRouteHealth;

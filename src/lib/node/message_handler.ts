@@ -1,4 +1,8 @@
-import { Driver } from "zwave-js";
+import {
+  Driver,
+  LifelineHealthCheckSummary,
+  RouteHealthCheckSummary,
+} from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -7,7 +11,7 @@ import {
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
-import { Client } from "../server";
+import { Client, ClientsController } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
@@ -17,11 +21,13 @@ export class NodeMessageHandler {
   static async handle(
     message: IncomingMessageNode,
     driver: Driver,
+    clientsController: ClientsController,
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
     let firmwareFile: Buffer;
     let actualFirmware: Firmware;
+    let summary: LifelineHealthCheckSummary | RouteHealthCheckSummary;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -37,7 +43,7 @@ export class NodeMessageHandler {
         );
         return { success };
       case NodeCommand.refreshInfo:
-        await node.refreshInfo();
+        await node.refreshInfo(message.options);
         return {};
       case NodeCommand.getDefinedValueIDs:
         const valueIds = node.getDefinedValueIDs();
@@ -96,6 +102,59 @@ export class NodeMessageHandler {
       case NodeCommand.getHighestSecurityClass:
         const highestSecurityClass = node.getHighestSecurityClass();
         return { highestSecurityClass };
+      case NodeCommand.testPowerlevel:
+        const framesAcked = await node.testPowerlevel(
+          message.testNodeId,
+          message.powerlevel,
+          message.testFrameCount,
+          (acknowledged: number, total: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "node",
+                event: "test powerlevel progress",
+                nodeId: message.nodeId,
+                acknowledged,
+                total,
+              })
+            );
+          }
+        );
+        return { framesAcked };
+      case NodeCommand.checkLifelineHealth:
+        summary = await node.checkLifelineHealth(
+          message.rounds,
+          (round: number, totalRounds: number, lastRating: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "node",
+                event: "check lifeline health progress",
+                nodeId: message.nodeId,
+                round,
+                totalRounds,
+                lastRating,
+              })
+            );
+          }
+        );
+        return { summary };
+      case NodeCommand.checkRouteHealth:
+        summary = await node.checkRouteHealth(
+          message.targetNodeId,
+          message.rounds,
+          (round: number, totalRounds: number, lastRating: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "node",
+                event: "check route health progress",
+                nodeId: message.nodeId,
+                round,
+                totalRounds,
+                lastRating,
+              })
+            );
+          }
+        );
+        return { summary };
       default:
         throw new UnknownCommandError(command);
     }
