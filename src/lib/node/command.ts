@@ -13,4 +13,7 @@ export enum NodeCommand {
   getFirmwareUpdateCapabilities = "node.get_firmware_update_capabilities",
   hasSecurityClass = "node.has_security_class",
   getHighestSecurityClass = "node.get_highest_security_class",
+  testPowerlevel = "node.test_powerlevel",
+  checkLifelineHealth = "node.check_lifeline_health",
+  checkRouteHealth = "node.check_route_health",
 }

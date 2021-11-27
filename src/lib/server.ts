@@ -64,6 +64,7 @@ export class Client {
       NodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.driver,
+        this.clientsController,
         this
       ),
     [Instance.multicast_group]: (message) =>
