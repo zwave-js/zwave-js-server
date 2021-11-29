@@ -49,7 +49,7 @@ interface Args {
     configPath = resolve(process.cwd(), configPath);
   }
 
-  let options = {};
+  let options;
 
   if (configPath) {
     try {
@@ -100,8 +100,10 @@ interface Args {
       return;
     }
   }
-
-  if (!("emitValueUpdateAfterSetValue" in options)) {
+  
+  if (!options) {
+   options = { emitValueUpdateAfterSetValue: true }; 
+  } else if (!("emitValueUpdateAfterSetValue" in options)) {
     options["emitValueUpdateAfterSetValue"] = true;
   } else if (!options["emitValueUpdateAfterSetValue"]) {
     console.warn(
