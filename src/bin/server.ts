@@ -58,7 +58,7 @@ interface Args {
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
           "Both `networkKey` and `securityKeys.S0_Legacy` options are present in the " +
-            "config. Remove `networkKey`."
+          "config. Remove `networkKey`."
         );
       }
       const securityKeyNames = [
@@ -88,8 +88,8 @@ interface Args {
         );
         console.warn(
           "The `networkKey` option is deprecated in favor of `securityKeys` option. To eliminate " +
-            "this warning, move your networkKey into the securityKeys.S0_Legacy option. Refer to " +
-            "the Z-Wave JS docs for more information"
+          "this warning, move your networkKey into the securityKeys.S0_Legacy option. Refer to " +
+          "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
       } else if (!options.networkKey && !options.securityKeys.S0_Legacy)
@@ -100,16 +100,16 @@ interface Args {
       return;
     }
   }
-  
+
   if (!options) {
-   options = { emitValueUpdateAfterSetValue: true }; 
+    options = { emitValueUpdateAfterSetValue: true };
   } else if (!("emitValueUpdateAfterSetValue" in options)) {
     options["emitValueUpdateAfterSetValue"] = true;
   } else if (!options["emitValueUpdateAfterSetValue"]) {
     console.warn(
       "Because `emitValueUpdateAfterSetValue` is set to false, multi-client setups will not work " +
-        "as expected. In particular, clients will not see value updates that are initiated by " +
-        "another client."
+      "as expected. In particular, clients will not see value updates that are initiated by " +
+      "another client."
     );
   }
 
