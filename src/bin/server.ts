@@ -49,7 +49,7 @@ interface Args {
     configPath = resolve(process.cwd(), configPath);
   }
 
-  let options;
+  let options = {};
 
   if (configPath) {
     try {
