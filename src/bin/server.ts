@@ -101,7 +101,9 @@ interface Args {
     }
   }
 
-  if (!("emitValueUpdateAfterSetValue" in options)) {
+  if (!options) {
+    options = { emitValueUpdateAfterSetValue: true };
+  } else if (!("emitValueUpdateAfterSetValue" in options)) {
     options["emitValueUpdateAfterSetValue"] = true;
   } else if (!options["emitValueUpdateAfterSetValue"]) {
     console.warn(
