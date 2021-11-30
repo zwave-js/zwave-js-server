@@ -512,6 +512,8 @@ interface {
 
 [compatible with schema version: 13+]
 
+This command emits [events](#test-powerlevel-progress).
+
 ```ts
 interface {
   messageId: string;
@@ -527,6 +529,8 @@ interface {
 
 [compatible with schema version: 13+]
 
+This command emits [events](#check-lifeline-health-progress).
+
 ```ts
 interface {
   messageId: string;
@@ -539,6 +543,8 @@ interface {
 #### [Check Route Health](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checkroutehealth)
 
 [compatible with schema version: 13+]
+
+This command emits [events](#check-route-health-progress).
 
 ```ts
 interface {
@@ -755,6 +761,61 @@ interface {
   source: "driver" | "controller" | "node";
   event: string;
   ... // Additional parameters dependent on the event, see zwave-js docs for more details
+}
+```
+
+### `zwave-js-server` Node Events
+
+#### `test powerlevel progress`
+
+This event is sent after a `node.test_powerlevel` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=testpowerlevel) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "test powerlevel progress";
+    nodeId: number;
+    acknowledged: number;
+    total: number;
+  }
+}
+```
+
+#### `check lifeline health progress`
+
+This event is sent after a `node.check_lifeline_health` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklifelinehealth) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check lifeline health progress";
+    nodeId: number;
+    round: number;
+    totalRounds: number;
+    lastRating: number;
+  }
+}
+```
+
+#### `check route health progress`
+
+This event is sent after a `node.check_route_health` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=testpowerlevel) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check route health progress";
+    nodeId: number;
+    rounds: number;
+    totalRounds: number;
+    lastRating: number;
+  }
 }
 ```
 
