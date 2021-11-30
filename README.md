@@ -758,9 +758,11 @@ All `zwave-js` events as documented are forwarded on to clients that have sent t
 ```ts
 interface {
   type: "event";
-  source: "driver" | "controller" | "node";
-  event: string;
-  ... // Additional parameters dependent on the event, see zwave-js docs for more details
+  event: {
+    source: "driver" | "controller" | "node";
+    event: string;
+    ... // Additional parameters dependent on the event, see zwave-js docs for more details
+  }
 }
 ```
 
