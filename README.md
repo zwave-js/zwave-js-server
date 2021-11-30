@@ -977,7 +977,7 @@ The following error codes exist:
 | zwave_error         | Error from Z-Wave JS |
 | unknown_error       | Unknown exception    |
 
-In the case of `zwave_error`, the extra keys `zwave_error_code` and `zwave_error_message` will be added.
+In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
 {
 "type": "result",
