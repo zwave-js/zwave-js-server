@@ -512,6 +512,8 @@ interface {
 
 [compatible with schema version: 13+]
 
+This command emits [events](#test-powerlevel-progress).
+
 ```ts
 interface {
   messageId: string;
@@ -527,6 +529,8 @@ interface {
 
 [compatible with schema version: 13+]
 
+This command emits [events](#check-lifeline-health-progress).
+
 ```ts
 interface {
   messageId: string;
@@ -539,6 +543,8 @@ interface {
 #### [Check Route Health](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checkroutehealth)
 
 [compatible with schema version: 13+]
+
+This command emits [events](#check-route-health-progress).
 
 ```ts
 interface {
@@ -752,9 +758,66 @@ All `zwave-js` events as documented are forwarded on to clients that have sent t
 ```ts
 interface {
   type: "event";
-  source: "driver" | "controller" | "node";
-  event: string;
-  ... // Additional parameters dependent on the event, see zwave-js docs for more details
+  event: {
+    source: "driver" | "controller" | "node";
+    event: string;
+    ... // Additional parameters dependent on the event, see zwave-js docs for more details
+  }
+}
+```
+
+### `zwave-js-server` Node Events
+
+#### `test powerlevel progress`
+
+This event is sent after a `node.test_powerlevel` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=testpowerlevel) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "test powerlevel progress";
+    nodeId: number;
+    acknowledged: number;
+    total: number;
+  }
+}
+```
+
+#### `check lifeline health progress`
+
+This event is sent after a `node.check_lifeline_health` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklifelinehealth) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check lifeline health progress";
+    nodeId: number;
+    round: number;
+    totalRounds: number;
+    lastRating: number;
+  }
+}
+```
+
+#### `check route health progress`
+
+This event is sent after a `node.check_route_health` command is issued and contains test results from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=testpowerlevel) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check route health progress";
+    nodeId: number;
+    rounds: number;
+    totalRounds: number;
+    lastRating: number;
+  }
 }
 ```
 
@@ -914,7 +977,7 @@ The following error codes exist:
 | zwave_error         | Error from Z-Wave JS |
 | unknown_error       | Unknown exception    |
 
-In the case of `zwave_error`, the extra keys `zwave_error_code` and `zwave_error_message` will be added.
+In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
 {
 "type": "result",
