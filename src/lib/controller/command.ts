@@ -26,4 +26,5 @@ export enum ControllerCommand {
   getProvisioningEntry = "controller.get_provisioning_entry",
   getProvisioningEntries = "controller.get_provisioning_entries",
   supportsFeature = "controller.supports_feature",
+  getInclusionState = "controller.get_inclusion_state",
 }

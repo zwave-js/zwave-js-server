@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   AssociationGroup,
+  InclusionState,
   SmartStartProvisioningEntry,
 } from "zwave-js";
 import { ControllerCommand } from "./command";
@@ -41,4 +42,5 @@ export interface ControllerResultTypes {
     entries: SmartStartProvisioningEntry[];
   };
   [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
+  [ControllerCommand.getInclusionState]: { inclusionState: InclusionState };
 }

@@ -192,6 +192,9 @@ export class ControllerMessageHandler {
       case ControllerCommand.supportsFeature:
         const supported = driver.controller.supportsFeature(message.feature);
         return { supported };
+      case ControllerCommand.getInclusionState:
+        const inclusionState = driver.controller.inclusionState;
+        return { inclusionState };
       default:
         throw new UnknownCommandError(command);
     }
