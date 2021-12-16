@@ -358,8 +358,14 @@ export class ClientsController {
     this.cleanupLoggingEventForwarder();
   }
 }
-interface ZwavejsServerOptions {
+
+interface HostConfig {
   port: number;
+  host: string;
+}
+
+interface ZwavejsServerOptions {
+  port: number | HostConfig;
   logger?: Logger;
 }
 
