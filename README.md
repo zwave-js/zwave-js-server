@@ -387,6 +387,24 @@ interface {
 }
 ```
 
+#### [Get value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getvalue)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_value";
+  nodeId: number;
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
+}
+```
+
 #### [Begin Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=beginfirmwareupdate)
 
 [compatible with schema version: 5+]
@@ -455,6 +473,19 @@ interface {
   messageId: string;
   command: "node.refresh_values";
   nodeId: number;
+}
+```
+
+#### [Interview command class](https://zwave-js.github.io/node-zwave-js/#/api/node?id=interviewcc)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.interview_cc";
+  commandClass: CommandClasses;
 }
 ```
 
@@ -553,6 +584,30 @@ interface {
   command: "node.check_route_health";
   targetNodeId: number;
   rounds?: number;
+}
+```
+
+#### [Get endpoint count](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getendpointcount)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.get_endpoint_count";
+}
+```
+
+#### [Check if node is controller](https://zwave-js.github.io/node-zwave-js/#/api/node?id=iscontrollernode)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.is_controller_node";
 }
 ```
 
