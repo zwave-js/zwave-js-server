@@ -359,13 +359,9 @@ export class ClientsController {
   }
 }
 
-interface HostConfig {
-  port: number;
-  host: string;
-}
-
 interface ZwavejsServerOptions {
-  port: number | HostConfig;
+  port: number;
+  host?: string;
   logger?: Logger;
 }
 
@@ -410,7 +406,7 @@ export class ZwavejsServer extends EventEmitter {
     this.logger.debug(`Starting server on port ${this.options.port}`);
 
     this.server.on("error", this.onError.bind(this));
-    this.server.listen(this.options.port);
+    this.server.listen(this.options.port, this.options.host);
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on port ${this.options.port}`);
