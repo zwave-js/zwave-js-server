@@ -403,13 +403,16 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    this.logger.debug(`Starting server on port ${this.options.port}`);
+    const localEndpoint =
+      (this.options.host || "0.0.0.0") + ":" + this.options.port;
+
+    this.logger.debug(`Starting server on ${localEndpoint}`);
 
     this.server.on("error", this.onError.bind(this));
     this.server.listen(this.options.port, this.options.host);
     await once(this.server, "listening");
     this.emit("listening");
-    this.logger.info(`ZwaveJS server listening on port ${this.options.port}`);
+    this.logger.info(`ZwaveJS server listening on ${localEndpoint}`);
   }
 
   private onError(error: Error) {
