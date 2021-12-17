@@ -42,5 +42,5 @@ export interface ControllerResultTypes {
     entries: SmartStartProvisioningEntry[];
   };
   [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
-  [ControllerCommand.getInclusionState]: { inclusionState: InclusionState };
+  [ControllerCommand.inclusionState]: { inclusionState: InclusionState };
 }

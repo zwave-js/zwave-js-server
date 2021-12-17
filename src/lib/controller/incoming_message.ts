@@ -181,9 +181,9 @@ export interface IncomingCommandControllerSupportsFeature
   feature: ZWaveFeature;
 }
 
-export interface IncomingCommandControllerGetInclusionState
+export interface IncomingCommandControllerInclusionState
   extends IncomingCommandControllerBase {
-  command: ControllerCommand.getInclusionState;
+  command: ControllerCommand.inclusionState;
 }
 
 export type IncomingMessageController =
@@ -213,4 +213,4 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetProvisioningEntry
   | IncomingCommandControllerGetProvisioningEntries
   | IncomingCommandControllerSupportsFeature
-  | IncomingCommandControllerGetInclusionState;
+  | IncomingCommandControllerInclusionState;
