@@ -12,11 +12,11 @@ These instructions are for development only. These CLIs will be available as `zw
 ts-node src/bin/server.ts /dev/tty0
 ```
 
-Opens server on `ws://localhost:3000`.
+Opens server on `ws://0.0.0.0:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
-You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to `--host`.
+You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to using `--host`, the default host is **0.0.0.0** i.e all interfaces.
 
 If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
 

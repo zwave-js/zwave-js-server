@@ -360,7 +360,7 @@ export class ClientsController {
 }
 
 interface ZwavejsServerOptions {
-  port: number;
+  port?: number;
   host?: string;
   logger?: Logger;
 }
@@ -384,8 +384,13 @@ export class ZwavejsServer extends EventEmitter {
   private wsServer?: ws.Server;
   private sockets?: ClientsController;
   private logger: Logger;
+  private defaultPort: number = 3000;
+  private defaultHost: string = "0.0.0.0";
 
-  constructor(private driver: Driver, private options: ZwavejsServerOptions) {
+  constructor(
+    private driver: Driver,
+    private options: ZwavejsServerOptions = {}
+  ) {
     super();
     this.logger = options.logger ?? console;
   }
@@ -403,16 +408,20 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    const localEndpoint =
-      (this.options.host || "0.0.0.0") + ":" + this.options.port;
+    const localEndpointString = `${this.options.host || this.defaultHost}:${
+      this.options.port || this.defaultPort
+    }`;
 
-    this.logger.debug(`Starting server on ${localEndpoint}`);
+    this.logger.debug(`Starting server on ${localEndpointString}`);
 
     this.server.on("error", this.onError.bind(this));
-    this.server.listen(this.options.port, this.options.host);
+    this.server.listen(
+      this.options.port || this.defaultPort,
+      this.options.host || this.defaultHost
+    );
     await once(this.server, "listening");
     this.emit("listening");
-    this.logger.info(`ZwaveJS server listening on ${localEndpoint}`);
+    this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
   }
 
   private onError(error: Error) {

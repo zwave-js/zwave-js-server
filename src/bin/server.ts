@@ -26,16 +26,10 @@ interface Args {
 (async () => {
   const args = parseArgs<Args>(["_", "config", "mock-driver", "port", "host"]);
 
-  let wsPort = 3000;
-  if (args["port"]) {
+  if (args.port) {
     if (typeof args["port"] !== "number") {
       throw new Error("port must be a valid integer");
     }
-    wsPort = args["port"];
-  }
-  let wsHost = "0.0.0.0";
-  if (args["host"]) {
-    wsHost = args["host"];
   }
 
   if (args["mock-driver"]) {
@@ -134,10 +128,8 @@ interface Args {
 
   driver.on("driver ready", async () => {
     try {
-      server = new ZwavejsServer(driver, { port: wsPort, host: wsHost });
+      server = new ZwavejsServer(driver, { port: args.port, host: args.host });
       await server.start();
-      const localEndpoint = wsHost + ":" + wsPort;
-      console.info("Server listening on", localEndpoint);
     } catch (error) {
       console.error("Unable to start Server", error);
     }
