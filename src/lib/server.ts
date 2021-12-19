@@ -408,17 +408,14 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new ClientsController(this.driver, this.logger);
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    const localEndpointString = `${this.options.host || this.defaultHost}:${
-      this.options.port || this.defaultPort
-    }`;
+    const port = this.options.port || this.defaultPort;
+    const host = this.options.host || this.defaultHost;
+    const localEndpointString = `${host}:${port}`;
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
 
     this.server.on("error", this.onError.bind(this));
-    this.server.listen(
-      this.options.port || this.defaultPort,
-      this.options.host || this.defaultHost
-    );
+    this.server.listen(port, host);
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
