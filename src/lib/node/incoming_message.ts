@@ -128,11 +128,6 @@ export interface IncomingCommandGetEndpointCount
   command: NodeCommand.getEndpointCount;
 }
 
-export interface IncomingCommandIsControllerNode
-  extends IncomingCommandNodeBase {
-  command: NodeCommand.isControllerNode;
-}
-
 export interface IncomingCommandInterviewCC extends IncomingCommandNodeBase {
   command: NodeCommand.interviewCC;
   commandClass: CommandClasses;
@@ -158,5 +153,4 @@ export type IncomingMessageNode =
   | IncomingCommandCheckRouteHealth
   | IncomingCommandGetValue
   | IncomingCommandGetEndpointCount
-  | IncomingCommandIsControllerNode
   | IncomingCommandInterviewCC;

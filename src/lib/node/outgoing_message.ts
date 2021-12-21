@@ -32,6 +32,5 @@ export interface NodeResultTypes {
   [NodeCommand.checkRouteHealth]: { summary: RouteHealthCheckSummary };
   [NodeCommand.getValue]: { value?: any };
   [NodeCommand.getEndpointCount]: { count: number };
-  [NodeCommand.isControllerNode]: { isControllerNode: boolean };
   [NodeCommand.interviewCC]: Record<string, never>;
 }

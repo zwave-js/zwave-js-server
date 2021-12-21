@@ -18,6 +18,5 @@ export enum NodeCommand {
   checkRouteHealth = "node.check_route_health",
   getValue = "node.get_value",
   getEndpointCount = "node.get_endpoint_count",
-  isControllerNode = "node.is_controller_node",
   interviewCC = "node.interview_cc",
 }

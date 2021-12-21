@@ -162,9 +162,6 @@ export class NodeMessageHandler {
       case NodeCommand.getEndpointCount:
         const count = node.getEndpointCount();
         return { count };
-      case NodeCommand.isControllerNode:
-        const isControllerNode = node.isControllerNode();
-        return { isControllerNode };
       case NodeCommand.interviewCC:
         node.interviewCC(message.commandClass);
         return {};

@@ -599,18 +599,6 @@ interface {
 }
 ```
 
-#### [Check if node is controller](https://zwave-js.github.io/node-zwave-js/#/api/node?id=iscontrollernode)
-
-[compatible with schema version: 14+]
-
-```ts
-interface {
-  messageId: string;
-  nodeId: number;
-  command: "node.is_controller_node";
-}
-```
-
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
