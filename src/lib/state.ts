@@ -250,6 +250,7 @@ type NodeStateSchema13 = NodeStateSchema12;
 
 interface NodeStateSchema14 extends NodeStateSchema13 {
   isControllerNode: boolean;
+  keepAwake: boolean;
 }
 
 export type NodeState =
@@ -543,6 +544,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node14 = node10 as NodeStateSchema14;
   node14.isControllerNode = node.isControllerNode();
+  node14.keepAwake = node.keepAwake;
   return node14;
 };
 
