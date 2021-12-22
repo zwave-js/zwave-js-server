@@ -622,6 +622,44 @@ interface {
 }
 ```
 
+#### [Set name](https://zwave-js.github.io/node-zwave-js/#/api/node?id=name)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.set_name";
+  updateCC?: boolean; // This parameter defaults to true if not included
+}
+```
+
+#### [Set location](https://zwave-js.github.io/node-zwave-js/#/api/node?id=location)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.set_location";
+  updateCC?: boolean; // This parameter defaults to true if not included
+}
+```
+
+#### [Set keep awake](https://zwave-js.github.io/node-zwave-js/#/api/node?id=keepawake)
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.set_keep_awake";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)

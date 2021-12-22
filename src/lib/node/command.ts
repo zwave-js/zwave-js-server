@@ -20,4 +20,7 @@ export enum NodeCommand {
   getEndpointCount = "node.get_endpoint_count",
   interviewCC = "node.interview_cc",
   getState = "node.get_state",
+  setName = "node.set_name",
+  setLocation = "node.set_location",
+  setKeepAwake = "node.set_keep_awake",
 }

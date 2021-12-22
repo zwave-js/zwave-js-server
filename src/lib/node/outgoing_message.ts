@@ -35,4 +35,7 @@ export interface NodeResultTypes {
   [NodeCommand.getEndpointCount]: { count: number };
   [NodeCommand.interviewCC]: Record<string, never>;
   [NodeCommand.getState]: { state: NodeState };
+  [NodeCommand.setName]: Record<string, never>;
+  [NodeCommand.setLocation]: Record<string, never>;
+  [NodeCommand.setKeepAwake]: Record<string, never>;
 }

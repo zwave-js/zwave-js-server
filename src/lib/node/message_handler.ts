@@ -2,6 +2,7 @@ import {
   Driver,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
+  ZWaveNode,
 } from "zwave-js";
 import {
   CommandClasses,
@@ -169,8 +170,41 @@ export class NodeMessageHandler {
       case NodeCommand.getState:
         const state = dumpNode(node, client.schemaVersion);
         return { state };
+      case NodeCommand.setKeepAwake:
+        node.keepAwake = message.keepAwake;
+        return {};
+      case NodeCommand.setLocation:
+        node.location = message.location;
+        if (updateNodeNamingAndLocationCC(node, message)) {
+          await node.commandClasses["Node Naming and Location"].setLocation(
+            message.location
+          );
+        }
+        return {};
+      case NodeCommand.setName:
+        node.name = message.name;
+        if (updateNodeNamingAndLocationCC(node, message)) {
+          await node.commandClasses["Node Naming and Location"].setName(
+            message.name
+          );
+        }
+        return {};
       default:
         throw new UnknownCommandError(command);
     }
   }
+}
+
+/** Checks if the Node Naming and Location CC should be updated as well. We default to true for the input boolean. */
+function updateNodeNamingAndLocationCC(
+  node: ZWaveNode,
+  message: IncomingMessageNode
+): boolean {
+  if (
+    (!("updateCC" in message) || message.updateCC) &&
+    node.supportsCC(CommandClasses["Node Naming and Location"])
+  ) {
+    return true;
+  }
+  return false;
 }
