@@ -10,6 +10,7 @@ import {
   InclusionStrategy,
   ReplaceNodeOptions,
 } from "zwave-js";
+import { dumpController } from "..";
 import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
@@ -252,6 +253,10 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.getPowerlevel: {
         return await driver.controller.getPowerlevel();
+      }
+      case ControllerCommand.getState: {
+        const state = dumpController(driver);
+        return { state };
       }
       default:
         throw new UnknownCommandError(command);

@@ -215,6 +215,10 @@ export interface IncomingCommandControllerGetPowerlevel
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getPowerlevel;
 }
+export interface IncomingCommandControllerGetState
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getState;
+}
 
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
@@ -248,4 +252,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerSetRFRegion
   | IncomingCommandControllerGetRFRegion
   | IncomingCommandControllerSetPowerlevel
-  | IncomingCommandControllerGetPowerlevel;
+  | IncomingCommandControllerGetPowerlevel
+  | IncomingCommandControllerGetState;

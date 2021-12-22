@@ -4,6 +4,7 @@ import {
   RFRegion,
   SmartStartProvisioningEntry,
 } from "zwave-js";
+import { ControllerState } from "..";
 import { ControllerCommand } from "./command";
 
 export interface ControllerResultTypes {
@@ -51,4 +52,5 @@ export interface ControllerResultTypes {
     powerlevel: number;
     measured0dBm: number;
   };
+  [ControllerCommand.getState]: { state: ControllerState };
 }

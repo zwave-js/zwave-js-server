@@ -16,6 +16,7 @@ import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
+import { dumpNode } from "..";
 
 export class NodeMessageHandler {
   static async handle(
@@ -165,6 +166,9 @@ export class NodeMessageHandler {
       case NodeCommand.interviewCC:
         node.interviewCC(message.commandClass);
         return {};
+      case NodeCommand.getState:
+        const state = dumpNode(node, client.schemaVersion);
+        return { state };
       default:
         throw new UnknownCommandError(command);
     }

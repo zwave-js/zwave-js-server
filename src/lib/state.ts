@@ -19,6 +19,7 @@ import {
   NodeType,
   NodeStatistics,
   ControllerStatistics,
+  InclusionState,
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
@@ -47,29 +48,32 @@ export interface DriverState {
   statisticsEnabled: boolean;
 }
 
+export interface ControllerState {
+  libraryVersion?: string;
+  type?: ZWaveLibraryTypes;
+  homeId?: number;
+  ownNodeId?: number;
+  isSecondary?: boolean;
+  isUsingHomeIdFromOtherNetwork?: boolean;
+  isSISPresent?: boolean;
+  wasRealPrimary?: boolean;
+  isStaticUpdateController?: boolean;
+  isSlave?: boolean;
+  serialApiVersion?: string;
+  manufacturerId?: number;
+  productType?: number;
+  productId?: number;
+  supportedFunctionTypes?: readonly FunctionType[];
+  sucNodeId?: number;
+  supportsTimers?: boolean;
+  isHealNetworkActive: boolean;
+  statistics: ControllerStatistics;
+  inclusionState: InclusionState;
+}
+
 export interface ZwaveState {
   driver: DriverState;
-  controller: {
-    libraryVersion?: string;
-    type?: ZWaveLibraryTypes;
-    homeId?: number;
-    ownNodeId?: number;
-    isSecondary?: boolean;
-    isUsingHomeIdFromOtherNetwork?: boolean;
-    isSISPresent?: boolean;
-    wasRealPrimary?: boolean;
-    isStaticUpdateController?: boolean;
-    isSlave?: boolean;
-    serialApiVersion?: string;
-    manufacturerId?: number;
-    productType?: number;
-    productId?: number;
-    supportedFunctionTypes?: readonly FunctionType[];
-    sucNodeId?: number;
-    supportsTimers?: boolean;
-    isHealNetworkActive: boolean;
-    statistics: ControllerStatistics;
-  };
+  controller: ControllerState;
   nodes: NodeState[];
 }
 
@@ -238,7 +242,17 @@ interface NodeStateSchema10 extends NodeStateSchema9 {
   highestSecurityClass: SecurityClass | undefined;
 }
 
-type NodeState =
+type NodeStateSchema11 = NodeStateSchema10;
+
+type NodeStateSchema12 = NodeStateSchema11;
+
+type NodeStateSchema13 = NodeStateSchema12;
+
+interface NodeStateSchema14 extends NodeStateSchema13 {
+  isControllerNode: boolean;
+}
+
+export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
   | NodeStateSchema2
@@ -249,7 +263,11 @@ type NodeState =
   | NodeStateSchema7
   | NodeStateSchema8
   | NodeStateSchema9
-  | NodeStateSchema10;
+  | NodeStateSchema10
+  | NodeStateSchema11
+  | NodeStateSchema12
+  | NodeStateSchema13
+  | NodeStateSchema14;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -519,7 +537,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node10 = node7 as NodeStateSchema10;
   node10.highestSecurityClass = node.getHighestSecurityClass();
-  return node10;
+  if (schemaVersion <= 11) {
+    return node10;
+  }
+
+  const node14 = node10 as NodeStateSchema14;
+  node14.isControllerNode = node.isControllerNode();
+  return node14;
 };
 
 export const dumpEndpoint = (
@@ -595,6 +619,32 @@ export const dumpDriver = (
   };
 };
 
+export const dumpController = (driver: Driver): ControllerState => {
+  const controller = driver.controller;
+  return {
+    libraryVersion: controller.libraryVersion,
+    type: controller.type,
+    homeId: controller.homeId,
+    ownNodeId: controller.ownNodeId,
+    isSecondary: controller.isSecondary,
+    isUsingHomeIdFromOtherNetwork: controller.isUsingHomeIdFromOtherNetwork,
+    isSISPresent: controller.isSISPresent,
+    wasRealPrimary: controller.wasRealPrimary,
+    isStaticUpdateController: controller.isStaticUpdateController,
+    isSlave: controller.isSlave,
+    serialApiVersion: controller.serialApiVersion,
+    manufacturerId: controller.manufacturerId,
+    productType: controller.productType,
+    productId: controller.productId,
+    supportedFunctionTypes: controller.supportedFunctionTypes,
+    sucNodeId: controller.sucNodeId,
+    supportsTimers: controller.supportsTimers,
+    isHealNetworkActive: controller.isHealNetworkActive,
+    statistics: controller.statistics,
+    inclusionState: controller.inclusionState,
+  };
+};
+
 export const dumpState = (
   driver: Driver,
   schemaVersion: number
@@ -602,27 +652,7 @@ export const dumpState = (
   const controller = driver.controller;
   return {
     driver: dumpDriver(driver, schemaVersion),
-    controller: {
-      libraryVersion: controller.libraryVersion,
-      type: controller.type,
-      homeId: controller.homeId,
-      ownNodeId: controller.ownNodeId,
-      isSecondary: controller.isSecondary,
-      isUsingHomeIdFromOtherNetwork: controller.isUsingHomeIdFromOtherNetwork,
-      isSISPresent: controller.isSISPresent,
-      wasRealPrimary: controller.wasRealPrimary,
-      isStaticUpdateController: controller.isStaticUpdateController,
-      isSlave: controller.isSlave,
-      serialApiVersion: controller.serialApiVersion,
-      manufacturerId: controller.manufacturerId,
-      productType: controller.productType,
-      productId: controller.productId,
-      supportedFunctionTypes: controller.supportedFunctionTypes,
-      sucNodeId: controller.sucNodeId,
-      supportsTimers: controller.supportsTimers,
-      isHealNetworkActive: controller.isHealNetworkActive,
-      statistics: controller.statistics,
-    },
+    controller: dumpController(driver),
     nodes: Array.from(controller.nodes.values(), (node) =>
       dumpNode(node, schemaVersion)
     ),

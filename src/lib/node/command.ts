@@ -19,4 +19,5 @@ export enum NodeCommand {
   getValue = "node.get_value",
   getEndpointCount = "node.get_endpoint_count",
   interviewCC = "node.interview_cc",
+  getState = "node.get_state",
 }

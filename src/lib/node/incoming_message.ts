@@ -133,6 +133,10 @@ export interface IncomingCommandInterviewCC extends IncomingCommandNodeBase {
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandGetState extends IncomingCommandNodeBase {
+  command: NodeCommand.getState;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -153,4 +157,5 @@ export type IncomingMessageNode =
   | IncomingCommandCheckRouteHealth
   | IncomingCommandGetValue
   | IncomingCommandGetEndpointCount
-  | IncomingCommandInterviewCC;
+  | IncomingCommandInterviewCC
+  | IncomingCommandGetState;

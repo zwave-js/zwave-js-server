@@ -26,10 +26,14 @@ export enum ControllerCommand {
   getProvisioningEntry = "controller.get_provisioning_entry",
   getProvisioningEntries = "controller.get_provisioning_entries",
   supportsFeature = "controller.supports_feature",
+<<<<<<< HEAD
   backupNVMRaw = "controller.backup_nvm_raw",
   restoreNVM = "controller.restore_nvm",
   setRFRegion = "controller.set_rf_region",
   getRFRegion = "controller.get_rf_region",
   setPowerlevel = "controller.set_powerlevel",
   getPowerlevel = "controller.get_powerlevel",
+=======
+  getState = "controller.get_state",
+>>>>>>> ee6a9d3 (Add new commands to get the current controller and node state)
 }

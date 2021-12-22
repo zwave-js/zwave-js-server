@@ -322,6 +322,17 @@ interface {
 
 > NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The two exceptions are `controller.begin_inclusion` and `controller.provision_smart_start_node`; in addition to the input types that are documented, these commands will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
 
+#### Get controller state
+
+[compatibile with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  command: "controller.get_state";
+}
+```
+
 ### Node level commands
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
@@ -402,6 +413,18 @@ interface {
     property: string | number;
     propertyKey?: string | number;
   };
+}
+```
+
+#### Get node state
+
+[compatible with schema version: 14+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_state";
+  nodeId: number;
 }
 ```
 
