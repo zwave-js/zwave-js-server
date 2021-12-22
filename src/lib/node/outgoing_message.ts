@@ -30,4 +30,7 @@ export interface NodeResultTypes {
   [NodeCommand.testPowerlevel]: { framesAcked: number };
   [NodeCommand.checkLifelineHealth]: { summary: LifelineHealthCheckSummary };
   [NodeCommand.checkRouteHealth]: { summary: RouteHealthCheckSummary };
+  [NodeCommand.getValue]: { value?: any };
+  [NodeCommand.getEndpointCount]: { count: number };
+  [NodeCommand.interviewCC]: Record<string, never>;
 }

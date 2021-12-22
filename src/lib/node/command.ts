@@ -16,4 +16,7 @@ export enum NodeCommand {
   testPowerlevel = "node.test_powerlevel",
   checkLifelineHealth = "node.check_lifeline_health",
   checkRouteHealth = "node.check_route_health",
+  getValue = "node.get_value",
+  getEndpointCount = "node.get_endpoint_count",
+  interviewCC = "node.interview_cc",
 }

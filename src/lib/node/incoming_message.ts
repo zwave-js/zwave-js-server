@@ -118,6 +118,21 @@ export interface IncomingCommandCheckRouteHealth
   rounds?: number;
 }
 
+export interface IncomingCommandGetValue extends IncomingCommandNodeBase {
+  command: NodeCommand.getValue;
+  valueId: ValueID;
+}
+
+export interface IncomingCommandGetEndpointCount
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getEndpointCount;
+}
+
+export interface IncomingCommandInterviewCC extends IncomingCommandNodeBase {
+  command: NodeCommand.interviewCC;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -135,4 +150,7 @@ export type IncomingMessageNode =
   | IncomingCommandGetHighestSecurityClass
   | IncomingCommandTestPowerlevel
   | IncomingCommandCheckLifelineHealth
-  | IncomingCommandCheckRouteHealth;
+  | IncomingCommandCheckRouteHealth
+  | IncomingCommandGetValue
+  | IncomingCommandGetEndpointCount
+  | IncomingCommandInterviewCC;

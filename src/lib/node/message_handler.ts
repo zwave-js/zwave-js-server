@@ -25,6 +25,7 @@ export class NodeMessageHandler {
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
+    let value: any;
     let firmwareFile: Buffer;
     let actualFirmware: Firmware;
     let summary: LifelineHealthCheckSummary | RouteHealthCheckSummary;
@@ -78,7 +79,7 @@ export class NodeMessageHandler {
         const capabilities = await node.getFirmwareUpdateCapabilities();
         return { capabilities };
       case NodeCommand.pollValue:
-        const value = await node.pollValue<any>(message.valueId);
+        value = await node.pollValue<any>(message.valueId);
         return { value };
       case NodeCommand.setRawConfigParameterValue:
         await node.commandClasses.Configuration.set(
@@ -155,6 +156,15 @@ export class NodeMessageHandler {
           }
         );
         return { summary };
+      case NodeCommand.getValue:
+        value = node.getValue<any>(message.valueId);
+        return { value };
+      case NodeCommand.getEndpointCount:
+        const count = node.getEndpointCount();
+        return { count };
+      case NodeCommand.interviewCC:
+        node.interviewCC(message.commandClass);
+        return {};
       default:
         throw new UnknownCommandError(command);
     }
