@@ -538,7 +538,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node10 = node7 as NodeStateSchema10;
   node10.highestSecurityClass = node.getHighestSecurityClass();
-  if (schemaVersion <= 11) {
+  if (schemaVersion <= 13) {
     return node10;
   }
 
