@@ -15,11 +15,7 @@ import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
-import {
-  IncomingMessageNode,
-  IncomingMessageSetLocation,
-  IncomingMessageSetName,
-} from "./incoming_message";
+import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
