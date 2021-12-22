@@ -631,7 +631,7 @@ interface {
   messageId: string;
   nodeId: number;
   command: "node.set_name";
-  updateCC?: boolean; // This parameter defaults to true if not included
+  updateCC?: boolean = true;
 }
 ```
 
@@ -644,7 +644,7 @@ interface {
   messageId: string;
   nodeId: number;
   command: "node.set_location";
-  updateCC?: boolean; // This parameter defaults to true if not included
+  updateCC?: boolean = true;
 }
 ```
 
