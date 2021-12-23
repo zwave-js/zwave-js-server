@@ -950,6 +950,54 @@ interface {
 }
 ```
 
+#### `nvm backup progress`
+
+This event is sent on progress updates to the NVM backup process when the [`controller.backup_nvm_raw`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and a backup is in progress.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "nvm backup progress";
+    bytesRead: number;
+    total: number;
+  }
+}
+```
+
+#### `nvm convert progress`
+
+This event is sent on progress updates to the NVM conversion process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM file that was passed in is being converted to the right format.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "nvm backup progress";
+    bytesRead: number;
+    total: number;
+  }
+}
+```
+
+#### `nvm restore progress`
+
+This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM data is being restored to the controller.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "nvm backup progress";
+    bytesWritten: number;
+    total: number;
+  }
+}
+```
+
 ## Schema Version
 
 In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.
