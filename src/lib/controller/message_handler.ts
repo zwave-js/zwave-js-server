@@ -13,7 +13,6 @@ import {
 import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
-  InvalidParamsPassedToCommandError,
   UnknownCommandError,
 } from "../error";
 import { Client, ClientsController } from "../server";
@@ -184,14 +183,76 @@ export class ControllerMessageHandler {
         await driver.controller.removeNodeFromAllAssociations(message.nodeId);
         return {};
       }
-      case ControllerCommand.getNodeNeighbors:
+      case ControllerCommand.getNodeNeighbors: {
         const neighbors = await driver.controller.getNodeNeighbors(
           message.nodeId
         );
         return { neighbors };
-      case ControllerCommand.supportsFeature:
+      }
+      case ControllerCommand.supportsFeature: {
         const supported = driver.controller.supportsFeature(message.feature);
         return { supported };
+      }
+      case ControllerCommand.backupNVMRaw: {
+        const nvmDataRaw = await driver.controller.backupNVMRaw(
+          (bytesRead: number, total: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "controller",
+                event: "nvm backup progress",
+                bytesRead,
+                total,
+              })
+            );
+          }
+        );
+        return { nvmData: nvmDataRaw.toString("base64") };
+      }
+      case ControllerCommand.restoreNVM: {
+        const nvmData = Buffer.from(message.nvmData, "base64");
+        driver.controller.restoreNVM(
+          nvmData,
+          (bytesRead: number, total: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "controller",
+                event: "nvm convert progress",
+                bytesRead,
+                total,
+              })
+            );
+          },
+          (bytesWritten: number, total: number) => {
+            clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "controller",
+                event: "nvm restore progress",
+                bytesWritten,
+                total,
+              })
+            );
+          }
+        );
+        return {};
+      }
+      case ControllerCommand.setRFRegion: {
+        const success = await driver.controller.setRFRegion(message.region);
+        return { success };
+      }
+      case ControllerCommand.getRFRegion: {
+        const region = await driver.controller.getRFRegion();
+        return { region };
+      }
+      case ControllerCommand.setPowerlevel: {
+        const success = await driver.controller.setPowerlevel(
+          message.powerlevel,
+          message.measured0dBm
+        );
+        return { success };
+      }
+      case ControllerCommand.getPowerlevel: {
+        return await driver.controller.getPowerlevel();
+      }
       default:
         throw new UnknownCommandError(command);
     }

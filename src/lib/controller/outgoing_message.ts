@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   AssociationGroup,
+  RFRegion,
   SmartStartProvisioningEntry,
 } from "zwave-js";
 import { ControllerCommand } from "./command";
@@ -41,4 +42,13 @@ export interface ControllerResultTypes {
     entries: SmartStartProvisioningEntry[];
   };
   [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
+  [ControllerCommand.backupNVMRaw]: { nvmData: string };
+  [ControllerCommand.restoreNVM]: Record<string, never>;
+  [ControllerCommand.setRFRegion]: { success: boolean };
+  [ControllerCommand.getRFRegion]: { region: RFRegion };
+  [ControllerCommand.setPowerlevel]: { success: boolean };
+  [ControllerCommand.getPowerlevel]: {
+    powerlevel: number;
+    measured0dBm: number;
+  };
 }

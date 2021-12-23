@@ -4,6 +4,7 @@ import {
   InclusionOptions,
   PlannedProvisioningEntry,
   ReplaceNodeOptions,
+  RFRegion,
   ZWaveFeature,
 } from "zwave-js";
 import type { QRProvisioningInformation } from "@zwave-js/core";
@@ -181,6 +182,40 @@ export interface IncomingCommandControllerSupportsFeature
   feature: ZWaveFeature;
 }
 
+export interface IncomingCommandControllerBackupNVMRaw
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.backupNVMRaw;
+}
+
+export interface IncomingCommandControllerRestoreNVM
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.restoreNVM;
+  nvmData: string;
+}
+
+export interface IncomingCommandControllerSetRFRegion
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.setRFRegion;
+  region: RFRegion;
+}
+
+export interface IncomingCommandControllerGetRFRegion
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getRFRegion;
+}
+
+export interface IncomingCommandControllerSetPowerlevel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.setPowerlevel;
+  powerlevel: number;
+  measured0dBm: number;
+}
+
+export interface IncomingCommandControllerGetPowerlevel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getPowerlevel;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -207,4 +242,10 @@ export type IncomingMessageController =
   | IncomingCommandControllerUnprovisionSmartStartNode
   | IncomingCommandControllerGetProvisioningEntry
   | IncomingCommandControllerGetProvisioningEntries
-  | IncomingCommandControllerSupportsFeature;
+  | IncomingCommandControllerSupportsFeature
+  | IncomingCommandControllerBackupNVMRaw
+  | IncomingCommandControllerRestoreNVM
+  | IncomingCommandControllerSetRFRegion
+  | IncomingCommandControllerGetRFRegion
+  | IncomingCommandControllerSetPowerlevel
+  | IncomingCommandControllerGetPowerlevel;

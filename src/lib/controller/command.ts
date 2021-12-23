@@ -26,4 +26,10 @@ export enum ControllerCommand {
   getProvisioningEntry = "controller.get_provisioning_entry",
   getProvisioningEntries = "controller.get_provisioning_entries",
   supportsFeature = "controller.supports_feature",
+  backupNVMRaw = "controller.backup_nvm_raw",
+  restoreNVM = "controller.restore_nvm",
+  setRFRegion = "controller.set_rf_region",
+  getRFRegion = "controller.get_rf_region",
+  setPowerlevel = "controller.set_powerlevel",
+  getPowerlevel = "controller.get_powerlevel",
 }
