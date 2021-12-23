@@ -251,8 +251,7 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.getPowerlevel: {
-        const powerlevelResponse = await driver.controller.getPowerlevel();
-        return powerlevelResponse;
+        return await driver.controller.getPowerlevel();
       }
       default:
         throw new UnknownCommandError(command);
