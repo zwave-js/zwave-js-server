@@ -2,6 +2,7 @@ import {
   Driver,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
+  ZWaveNode,
 } from "zwave-js";
 import {
   CommandClasses,
@@ -16,6 +17,7 @@ import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
+import { dumpNode } from "..";
 
 export class NodeMessageHandler {
   static async handle(
@@ -164,6 +166,34 @@ export class NodeMessageHandler {
         return { count };
       case NodeCommand.interviewCC:
         node.interviewCC(message.commandClass);
+        return {};
+      case NodeCommand.getState:
+        const state = dumpNode(node, client.schemaVersion);
+        return { state };
+      case NodeCommand.setKeepAwake:
+        node.keepAwake = message.keepAwake;
+        return {};
+      case NodeCommand.setLocation:
+        node.location = message.location;
+        if (
+          (message.updateCC ?? true) &&
+          node.supportsCC(CommandClasses["Node Naming and Location"])
+        ) {
+          await node.commandClasses["Node Naming and Location"].setLocation(
+            message.location
+          );
+        }
+        return {};
+      case NodeCommand.setName:
+        node.name = message.name;
+        if (
+          (message.updateCC ?? true) &&
+          node.supportsCC(CommandClasses["Node Naming and Location"])
+        ) {
+          await node.commandClasses["Node Naming and Location"].setName(
+            message.name
+          );
+        }
         return {};
       default:
         throw new UnknownCommandError(command);

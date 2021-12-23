@@ -7,6 +7,7 @@ import {
 } from "zwave-js";
 import { SecurityClass } from "@zwave-js/core";
 import { NodeCommand } from "./command";
+import { NodeState } from "../state";
 
 export interface NodeResultTypes {
   [NodeCommand.setValue]: { success: boolean };
@@ -33,4 +34,8 @@ export interface NodeResultTypes {
   [NodeCommand.getValue]: { value?: any };
   [NodeCommand.getEndpointCount]: { count: number };
   [NodeCommand.interviewCC]: Record<string, never>;
+  [NodeCommand.getState]: { state: NodeState };
+  [NodeCommand.setName]: Record<string, never>;
+  [NodeCommand.setLocation]: Record<string, never>;
+  [NodeCommand.setKeepAwake]: Record<string, never>;
 }

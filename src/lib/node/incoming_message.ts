@@ -133,6 +133,27 @@ export interface IncomingCommandInterviewCC extends IncomingCommandNodeBase {
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandGetState extends IncomingCommandNodeBase {
+  command: NodeCommand.getState;
+}
+
+export interface IncomingCommandSetName extends IncomingCommandNodeBase {
+  command: NodeCommand.setName;
+  name: string;
+  updateCC?: boolean;
+}
+
+export interface IncomingCommandSetLocation extends IncomingCommandNodeBase {
+  command: NodeCommand.setLocation;
+  location: string;
+  updateCC?: boolean;
+}
+
+export interface IncomingCommandSetKeepAwake extends IncomingCommandNodeBase {
+  command: NodeCommand.setKeepAwake;
+  keepAwake: boolean;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -153,4 +174,8 @@ export type IncomingMessageNode =
   | IncomingCommandCheckRouteHealth
   | IncomingCommandGetValue
   | IncomingCommandGetEndpointCount
-  | IncomingCommandInterviewCC;
+  | IncomingCommandInterviewCC
+  | IncomingCommandGetState
+  | IncomingCommandSetName
+  | IncomingCommandSetLocation
+  | IncomingCommandSetKeepAwake;

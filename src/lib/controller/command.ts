@@ -32,4 +32,5 @@ export enum ControllerCommand {
   getRFRegion = "controller.get_rf_region",
   setPowerlevel = "controller.set_powerlevel",
   getPowerlevel = "controller.get_powerlevel",
+  getState = "controller.get_state",
 }
