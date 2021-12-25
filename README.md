@@ -320,7 +320,12 @@ interface {
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
 
-> NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The two exceptions are `controller.begin_inclusion` and `controller.provision_smart_start_node`; in addition to the input types that are documented, these commands will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The exceptions are:
+>
+> - `controller.begin_inclusion`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> - `controller.provision_smart_start_node`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data.
+> - `controller.restore_nvm`: The NVM input should be a base64 encoded string.
 
 #### Get controller state
 
