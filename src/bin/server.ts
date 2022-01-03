@@ -91,7 +91,7 @@ interface Args {
             "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
-      } else if (!options.networkKey && !options.securityKeys.S0_Legacy)
+      } else if (!options.securityKeys?.S0_Legacy)
         throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
