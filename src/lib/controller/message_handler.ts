@@ -239,6 +239,7 @@ function processInclusionOptions(
           ): Promise<InclusionGrant | false> => {
             clientsController.grantSecurityClassesPromise =
               grantSecurityClassesPromise = createDeferredPromise();
+            grantSecurityClassesPromise.catch(() => false as const);
             grantSecurityClassesPromise.finally(() => {
               if (
                 clientsController.grantSecurityClassesPromise ===
@@ -258,6 +259,7 @@ function processInclusionOptions(
           validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
             clientsController.validateDSKAndEnterPinPromise =
               validateDSKAndEnterPinPromise = createDeferredPromise();
+            validateDSKAndEnterPinPromise.catch(() => false as const);
             validateDSKAndEnterPinPromise.finally(() => {
               if (
                 clientsController.validateDSKAndEnterPinPromise ===
