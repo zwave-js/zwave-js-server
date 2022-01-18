@@ -305,6 +305,7 @@ function processInclusionOptions(
           ): Promise<InclusionGrant | false> => {
             clientsController.grantSecurityClassesPromise =
               grantSecurityClassesPromise = createDeferredPromise();
+            grantSecurityClassesPromise.catch(() => {});
             grantSecurityClassesPromise.finally(() => {
               if (
                 clientsController.grantSecurityClassesPromise ===
@@ -324,6 +325,7 @@ function processInclusionOptions(
           validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
             clientsController.validateDSKAndEnterPinPromise =
               validateDSKAndEnterPinPromise = createDeferredPromise();
+            validateDSKAndEnterPinPromise.catch(() => {});
             validateDSKAndEnterPinPromise.finally(() => {
               if (
                 clientsController.validateDSKAndEnterPinPromise ===
@@ -340,8 +342,9 @@ function processInclusionOptions(
             return clientsController.validateDSKAndEnterPinPromise;
           },
           abort: (): void => {
-            grantSecurityClassesPromise?.reject("aborted");
-            validateDSKAndEnterPinPromise?.reject("aborted");
+            // settle the promises to ensure finally is triggered for the cleanup.
+            grantSecurityClassesPromise?.resolve(false);
+            validateDSKAndEnterPinPromise?.resolve(false);
             client.sendEvent({
               source: "controller",
               event: "inclusion aborted",
