@@ -276,8 +276,9 @@ function processInclusionOptions(
             return clientsController.validateDSKAndEnterPinPromise;
           },
           abort: (): void => {
-            grantSecurityClassesPromise?.reject("aborted");
-            validateDSKAndEnterPinPromise?.reject("aborted");
+            // settle the promises to ensure finally is triggered for the cleanup.
+            grantSecurityClassesPromise?.resolve(false);
+            validateDSKAndEnterPinPromise?.resolve(false);
             client.sendEvent({
               source: "controller",
               event: "inclusion aborted",
