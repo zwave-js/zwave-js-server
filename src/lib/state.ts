@@ -96,7 +96,15 @@ type EndpointStateSchema1 = Modify<
   { deviceClass: DeviceClassState | null }
 >;
 
-type EndpointState = EndpointStateSchema0 | EndpointStateSchema1;
+type EndpointStateSchema2 = Modify<
+  EndpointStateSchema1,
+  { commandClasses: CommandClassState[] }
+>;
+
+type EndpointState =
+  | EndpointStateSchema0
+  | EndpointStateSchema1
+  | EndpointStateSchema2;
 
 interface DeviceClassState {
   basic: {
@@ -565,7 +573,16 @@ export const dumpEndpoint = (
   endpoint3.deviceClass = endpoint.deviceClass
     ? dumpDeviceClass(endpoint.deviceClass)
     : null;
-  return endpoint3;
+
+  if (schemaVersion < 15) {
+    return endpoint3;
+  }
+  const endpoint15 = base as EndpointStateSchema2;
+  endpoint15.commandClasses = Array.from(
+    endpoint.getSupportedCCInstances(),
+    (cc) => dumpCommandClass(endpoint, cc)
+  );
+  return endpoint15;
 };
 
 export const dumpDeviceClass = (
@@ -588,13 +605,13 @@ export const dumpDeviceClass = (
 });
 
 export const dumpCommandClass = (
-  node: ZWaveNode,
+  endpoint: Endpoint,
   commandClass: CommandClass
 ): CommandClassState => ({
   id: commandClass.ccId,
   name: CommandClasses[commandClass.ccId],
   version: commandClass.version,
-  isSecure: node.isCCSecure(commandClass.ccId),
+  isSecure: endpoint.isCCSecure(commandClass.ccId),
 });
 
 export const dumpLogConfig = (
