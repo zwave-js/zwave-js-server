@@ -96,7 +96,15 @@ type EndpointStateSchema1 = Modify<
   { deviceClass: DeviceClassState | null }
 >;
 
-type EndpointState = EndpointStateSchema0 | EndpointStateSchema1;
+type EndpointStateSchema2 = Modify<
+  EndpointStateSchema1,
+  { commandClasses: CommandClassState[] }
+>;
+
+type EndpointState =
+  | EndpointStateSchema0
+  | EndpointStateSchema1
+  | EndpointStateSchema2;
 
 interface DeviceClassState {
   basic: {
@@ -253,6 +261,8 @@ interface NodeStateSchema14 extends NodeStateSchema13 {
   keepAwake: boolean;
 }
 
+type NodeStateSchema15 = Omit<NodeStateSchema14, "commandClasses">;
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -268,7 +278,8 @@ export type NodeState =
   | NodeStateSchema11
   | NodeStateSchema12
   | NodeStateSchema13
-  | NodeStateSchema14;
+  | NodeStateSchema14
+  | NodeStateSchema15;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -516,9 +527,11 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   node4.deviceClass = node.deviceClass
     ? dumpDeviceClass(node.deviceClass)
     : null;
-  node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-    dumpCommandClass(node, cc)
-  );
+  if (schemaVersion <= 14) {
+    node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
+      dumpCommandClass(node, cc)
+    );
+  }
   node4.interviewStage = InterviewStage[node.interviewStage];
   if (schemaVersion == 4) {
     return node4;
@@ -545,7 +558,11 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   const node14 = node10 as NodeStateSchema14;
   node14.isControllerNode = node.isControllerNode();
   node14.keepAwake = node.keepAwake;
-  return node14;
+  if (schemaVersion == 14) {
+    return node14;
+  }
+
+  return node14 as NodeStateSchema15;
 };
 
 export const dumpEndpoint = (
@@ -565,7 +582,16 @@ export const dumpEndpoint = (
   endpoint3.deviceClass = endpoint.deviceClass
     ? dumpDeviceClass(endpoint.deviceClass)
     : null;
-  return endpoint3;
+
+  if (schemaVersion < 15) {
+    return endpoint3;
+  }
+  const endpoint15 = base as EndpointStateSchema2;
+  endpoint15.commandClasses = Array.from(
+    endpoint.getSupportedCCInstances(),
+    (cc) => dumpCommandClass(endpoint, cc)
+  );
+  return endpoint15;
 };
 
 export const dumpDeviceClass = (
@@ -588,13 +614,13 @@ export const dumpDeviceClass = (
 });
 
 export const dumpCommandClass = (
-  node: ZWaveNode,
+  endpoint: Endpoint,
   commandClass: CommandClass
 ): CommandClassState => ({
   id: commandClass.ccId,
   name: CommandClasses[commandClass.ccId],
   version: commandClass.version,
-  isSecure: node.isCCSecure(commandClass.ccId),
+  isSecure: endpoint.isCCSecure(commandClass.ccId),
 });
 
 export const dumpLogConfig = (
