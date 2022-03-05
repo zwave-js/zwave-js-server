@@ -39,6 +39,7 @@ import {
   ValueMetadataString,
 } from "@zwave-js/core";
 import { numberFromLogLevel } from "../util/logger";
+import { SDKVersion } from "zwave-js/lib/controller/Controller";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
@@ -48,7 +49,7 @@ export interface DriverState {
   statisticsEnabled: boolean;
 }
 
-export interface ControllerState {
+export interface ControllerStateSchema0 {
   libraryVersion?: string;
   type?: ZWaveLibraryTypes;
   homeId?: number;
@@ -70,6 +71,19 @@ export interface ControllerState {
   statistics: ControllerStatistics;
   inclusionState: InclusionState;
 }
+
+type ControllerStateSchema1 = Omit<
+  Modify<
+    ControllerStateSchema0,
+    {
+      sdkVersion?: string;
+      firmwareVersion?: string;
+    }
+  >,
+  "libraryVersion" | "serialApiVersion"
+>;
+
+export type ControllerState = ControllerStateSchema0 | ControllerStateSchema1;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -556,7 +570,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   const node14 = node10 as NodeStateSchema14;
-  node14.isControllerNode = node.isControllerNode();
+  node14.isControllerNode = node.isControllerNode;
   node14.keepAwake = node.keepAwake;
   if (schemaVersion == 14) {
     return node14;
@@ -647,10 +661,12 @@ export const dumpDriver = (
   };
 };
 
-export const dumpController = (driver: Driver): ControllerState => {
+export const dumpController = (
+  driver: Driver,
+  schemaVersion: number
+): ControllerState => {
   const controller = driver.controller;
-  return {
-    libraryVersion: controller.libraryVersion,
+  const base: Partial<ControllerState> = {
     type: controller.type,
     homeId: controller.homeId,
     ownNodeId: controller.ownNodeId,
@@ -660,7 +676,6 @@ export const dumpController = (driver: Driver): ControllerState => {
     wasRealPrimary: controller.wasRealPrimary,
     isStaticUpdateController: controller.isStaticUpdateController,
     isSlave: controller.isSlave,
-    serialApiVersion: controller.serialApiVersion,
     manufacturerId: controller.manufacturerId,
     productType: controller.productType,
     productId: controller.productId,
@@ -671,6 +686,16 @@ export const dumpController = (driver: Driver): ControllerState => {
     statistics: controller.statistics,
     inclusionState: controller.inclusionState,
   };
+  if (schemaVersion < 16) {
+    const controller0 = base as ControllerStateSchema0;
+    controller0.libraryVersion = controller.sdkVersion;
+    controller0.serialApiVersion = controller.firmwareVersion;
+    return controller0;
+  }
+  const controller1 = base as ControllerStateSchema1;
+  controller1.sdkVersion = controller.sdkVersion;
+  controller1.firmwareVersion = controller.firmwareVersion;
+  return controller1;
 };
 
 export const dumpState = (
@@ -680,7 +705,7 @@ export const dumpState = (
   const controller = driver.controller;
   return {
     driver: dumpDriver(driver, schemaVersion),
-    controller: dumpController(driver),
+    controller: dumpController(driver, schemaVersion),
     nodes: Array.from(controller.nodes.values(), (node) =>
       dumpNode(node, schemaVersion)
     ),

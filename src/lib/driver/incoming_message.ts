@@ -51,6 +51,10 @@ interface IncomingCommandSetPreferredScales extends IncomingCommandBase {
   scales: ZWaveOptions["preferences"]["scales"];
 }
 
+interface IncomingCommandEnableErrorReporting extends IncomingCommandBase {
+  command: DriverCommand.enableErrorReporting;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -62,4 +66,5 @@ export type IncomingMessageDriver =
   | IncomingCommandStopListeningLogs
   | IncomingCommandCheckForConfigUpdates
   | IncomingCommandInstallConfigUpdate
-  | IncomingCommandSetPreferredScales;
+  | IncomingCommandSetPreferredScales
+  | IncomingCommandEnableErrorReporting;

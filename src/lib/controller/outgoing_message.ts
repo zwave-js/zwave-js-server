@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   AssociationGroup,
+  LifelineRoutes,
   RFRegion,
   SmartStartProvisioningEntry,
 } from "zwave-js";
@@ -53,4 +54,7 @@ export interface ControllerResultTypes {
     measured0dBm: number;
   };
   [ControllerCommand.getState]: { state: ControllerState };
+  [ControllerCommand.getKnownLifelineRoutes]: {
+    routes: ReadonlyMap<number, LifelineRoutes>;
+  };
 }

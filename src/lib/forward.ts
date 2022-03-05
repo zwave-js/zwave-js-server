@@ -34,8 +34,8 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node added",
-          node: dumpNode(node, client.schemaVersion) as any,
-          result: result as any,
+          node: dumpNode(node, client.schemaVersion),
+          result,
         })
       );
       this.setupNode(node);
@@ -73,7 +73,7 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node removed",
-          node: dumpNode(node, client.schemaVersion) as any,
+          node: dumpNode(node, client.schemaVersion),
           replaced,
         })
       )
@@ -99,7 +99,7 @@ export class EventForwarder {
       this.forwardEvent({
         source: "controller",
         event: "statistics updated",
-        statistics: statistics as any,
+        statistics,
       })
     );
   }
@@ -134,7 +134,7 @@ export class EventForwarder {
           source: "node",
           event: "ready",
           nodeId: changedNode.nodeId,
-          nodeState: dumpNode(changedNode, client.schemaVersion) as any,
+          nodeState: dumpNode(changedNode, client.schemaVersion),
         })
       );
     });
@@ -186,30 +186,27 @@ export class EventForwarder {
 
     node.on(
       "metadata updated",
-      (changedNode: ZWaveNode, args: ZWaveNodeMetadataUpdatedArgs) => {
+      (changedNode: ZWaveNode, oldArgs: ZWaveNodeMetadataUpdatedArgs) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clients.clients.forEach((client) => {
           // Copy arguments for each client so transforms don't impact all clients
-          const newArgs = { ...args };
-          if (newArgs.metadata != undefined) {
-            if (newArgs.commandClass === CommandClasses.Configuration) {
-              newArgs.metadata = dumpConfigurationMetadata(
-                newArgs.metadata as ConfigurationMetadata,
+          const args = { ...oldArgs };
+          if (args.metadata != undefined) {
+            if (args.commandClass === CommandClasses.Configuration) {
+              args.metadata = dumpConfigurationMetadata(
+                args.metadata as ConfigurationMetadata,
                 client.schemaVersion
               );
             } else {
-              newArgs.metadata = dumpMetadata(
-                newArgs.metadata,
-                client.schemaVersion
-              );
+              args.metadata = dumpMetadata(args.metadata, client.schemaVersion);
             }
           }
           this.sendEvent(client, {
             source: "node",
             event: "metadata updated",
             nodeId: changedNode.nodeId,
-            args: newArgs as any,
+            args,
           });
         });
       }
