@@ -61,6 +61,9 @@ export class DriverMessageHandler {
       case DriverCommand.setPreferredScales:
         driver.setPreferredScales(message.scales);
         return {};
+      case DriverCommand.enableErrorReporting:
+        driver.enableErrorReporting();
+        return {};
       default:
         throw new UnknownCommandError(command);
     }

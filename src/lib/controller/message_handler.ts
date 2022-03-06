@@ -255,8 +255,12 @@ export class ControllerMessageHandler {
         return await driver.controller.getPowerlevel();
       }
       case ControllerCommand.getState: {
-        const state = dumpController(driver);
+        const state = dumpController(driver, client.schemaVersion);
         return { state };
+      }
+      case ControllerCommand.getKnownLifelineRoutes: {
+        const routes = driver.controller.getKnownLifelineRoutes();
+        return { routes };
       }
       default:
         throw new UnknownCommandError(command);

@@ -10,4 +10,5 @@ export enum DriverCommand {
   checkForConfigUpdates = "driver.check_for_config_updates",
   installConfigUpdate = "driver.install_config_update",
   setPreferredScales = "driver.set_preferred_scales",
+  enableErrorReporting = "driver.enable_error_reporting",
 }

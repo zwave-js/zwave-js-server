@@ -220,6 +220,11 @@ export interface IncomingCommandControllerGetState
   command: ControllerCommand.getState;
 }
 
+export interface IncomingCommandControllerGetKnownLifelineRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getKnownLifelineRoutes;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -253,4 +258,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetRFRegion
   | IncomingCommandControllerSetPowerlevel
   | IncomingCommandControllerGetPowerlevel
-  | IncomingCommandControllerGetState;
+  | IncomingCommandControllerGetState
+  | IncomingCommandControllerGetKnownLifelineRoutes;

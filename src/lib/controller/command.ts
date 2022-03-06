@@ -33,4 +33,5 @@ export enum ControllerCommand {
   setPowerlevel = "controller.set_powerlevel",
   getPowerlevel = "controller.get_powerlevel",
   getState = "controller.get_state",
+  getKnownLifelineRoutes = "controller.get_known_lifeline_routes",
 }
