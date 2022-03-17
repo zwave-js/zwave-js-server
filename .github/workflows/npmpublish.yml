@@ -11,10 +11,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 12
+          cache: 'npm'
       - run: npm ci
       - run: npm test
 
@@ -22,12 +23,27 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
+          cache: 'npm'
       - run: npm ci
-      - run: npm publish
+
+      - name: Determine dist-tag
+        id: dist_tag
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            const semver = require("semver");
+            const version = require(`${process.env.GITHUB_WORKSPACE}/package.json`).version;
+            const parsed = semver.parse(version);
+            return parsed.prerelease.length ? "--tag next" : "";
+
+      - name: Publish to NPM
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          TAG: ${{ steps.dist_tag.outputs.result }}
+        run: npm publish $TAG
