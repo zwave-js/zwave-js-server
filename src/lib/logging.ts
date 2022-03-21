@@ -84,6 +84,13 @@ class WebSocketLogTransport extends Transport {
     if (
       !this.filter ||
       Object.keys(this.filter).every((key) => {
+        if (key == "formattedMessage") {
+          return (
+            this.filter &&
+            key in info &&
+            this.filter[key] === info[this.messageSymbol as any]
+          );
+        }
         return this.filter && key in info && this.filter[key] === info[key];
       }, this)
     ) {
