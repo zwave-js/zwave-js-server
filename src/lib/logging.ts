@@ -5,6 +5,7 @@ import type { ZWaveLogInfo } from "@zwave-js/core";
 import { SerialLogContext } from "@zwave-js/serial";
 import { ClientsController, Logger } from "./server";
 import { ControllerLogContext, DriverLogContext, Driver } from "zwave-js";
+import { InformationEvent } from "http";
 
 export type LogContexts =
   | ConfigLogContext
@@ -79,15 +80,14 @@ class WebSocketLogTransport extends Transport {
   }
 
   public log(info: ZWaveLogInfo, next: () => void): any {
+    const context: { [key: string]: any } = info.context;
     // If there is no filter or if all key/value pairs match from filter, forward
     // the message to the client
     if (
       !this.filter ||
       Object.keys(this.filter).every((key) => {
         return (
-          this.filter &&
-          key in info.context &&
-          this.filter[key] === info.context[key]
+          this.filter && key in context && this.filter[key] === context[key]
         );
       }, this)
     ) {
