@@ -45,7 +45,7 @@ export class DriverMessageHandler {
         return { statisticsEnabled: driver.statisticsEnabled };
       case DriverCommand.startListeningLogs:
         client.receiveLogs = true;
-        clientsController.configureLoggingEventForwarder();
+        clientsController.configureLoggingEventForwarder(message.filter);
         return {};
       case DriverCommand.stopListeningLogs:
         client.receiveLogs = false;

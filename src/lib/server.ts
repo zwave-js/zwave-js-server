@@ -24,7 +24,7 @@ import { IncomingMessageNode } from "./node/incoming_message";
 import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
-import { LoggingEventForwarder } from "./logging";
+import { LogContexts, LoggingEventForwarder } from "./logging";
 import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
 import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
 import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
@@ -312,7 +312,7 @@ export class ClientsController {
     this.loggingEventForwarder?.restartIfNeeded();
   }
 
-  public configureLoggingEventForwarder() {
+  public configureLoggingEventForwarder(filter?: LogContexts) {
     if (this.loggingEventForwarder === undefined) {
       this.loggingEventForwarder = new LoggingEventForwarder(
         this,
@@ -321,7 +321,7 @@ export class ClientsController {
       );
     }
     if (!this.loggingEventForwarderStarted) {
-      this.loggingEventForwarder?.start();
+      this.loggingEventForwarder?.start(filter);
     }
   }
 
