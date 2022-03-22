@@ -272,7 +272,7 @@ interface {
 
 [compatible with schema version: 4+]
 
-Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more information about the events.
+Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more information about the events. If `filter` is included, only logs that match the `filter` will be sent as events, the rest will be skipped.
 
 ```ts
 interface {
