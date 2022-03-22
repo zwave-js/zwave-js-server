@@ -32,7 +32,7 @@ export class LoggingEventForwarder {
     return this.serverTransport !== undefined;
   }
 
-  start(filter?: LogContexts) {
+  start(filter?: Partial<LogContexts>) {
     var { transports, level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
     this.logger.info("Starting logging event forwarder at " + level + " level");
@@ -70,7 +70,7 @@ class WebSocketLogTransport extends Transport {
   public constructor(
     level: string,
     private clients: ClientsController,
-    private filter?: LogContexts
+    private filter?: Partial<LogContexts>
   ) {
     super({
       format: createDefaultTransportFormat(false, false),

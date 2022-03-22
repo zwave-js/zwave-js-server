@@ -278,7 +278,7 @@ Start receiving logs as events. Look at the [`logging` event documentation](#log
 interface {
   messageId: string;
   command: "driver.start_listening_logs";
-  filter?: NodeLogContext| DriverLogContext | ControllerLogContext | SerialLogContext | ConfigLogContext;
+  filter?: Partial<NodeLogContext| DriverLogContext | ControllerLogContext | SerialLogContext | ConfigLogContext>;
 }
 ```
 

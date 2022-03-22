@@ -312,7 +312,7 @@ export class ClientsController {
     this.loggingEventForwarder?.restartIfNeeded();
   }
 
-  public configureLoggingEventForwarder(filter?: LogContexts) {
+  public configureLoggingEventForwarder(filter?: Partial<LogContexts>) {
     if (this.loggingEventForwarder === undefined) {
       this.loggingEventForwarder = new LoggingEventForwarder(
         this,

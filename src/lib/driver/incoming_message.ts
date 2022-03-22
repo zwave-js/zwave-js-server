@@ -33,7 +33,7 @@ interface IncomingCommandIsStatisticsEnabled extends IncomingCommandBase {
 
 interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
   command: DriverCommand.startListeningLogs;
-  filter?: LogContexts;
+  filter?: Partial<LogContexts>;
 }
 
 interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
