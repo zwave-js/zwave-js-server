@@ -2,6 +2,7 @@ import { LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { ZWaveOptions } from "zwave-js";
+import { LogContexts } from "../logging";
 
 interface IncomingCommandGetConfig extends IncomingCommandBase {
   command: DriverCommand.getConfig;
@@ -32,6 +33,7 @@ interface IncomingCommandIsStatisticsEnabled extends IncomingCommandBase {
 
 interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
   command: DriverCommand.startListeningLogs;
+  filter?: Partial<LogContexts>;
 }
 
 interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
