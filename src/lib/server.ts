@@ -467,7 +467,7 @@ export class ZwavejsServer extends EventEmitter {
       await this.service.destroy();
     }
     if (this.responder) {
-      await this.responder!.shutdown();
+      await this.responder.shutdown();
     }
     this.logger.info(`Server closed`);
   }
