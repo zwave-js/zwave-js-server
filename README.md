@@ -16,11 +16,13 @@ Opens server on `ws://0.0.0.0:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
+> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+
 You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to using `--host`, the default host is **0.0.0.0** i.e all interfaces.
 
 If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
 
-> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+DNS-SD is enabled in the server by default. If you would like to disable it, add `--disable-dns-sd`.
 
 ### Start client
 

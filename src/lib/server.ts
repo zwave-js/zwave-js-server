@@ -375,6 +375,7 @@ interface ZwavejsServerOptions {
   port?: number;
   host?: string;
   logger?: Logger;
+  enableDNSServiceDiscovery?: boolean;
 }
 
 export interface Logger {
@@ -433,19 +434,21 @@ export class ZwavejsServer extends EventEmitter {
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
-    this.responder = getResponder();
-    this.service = this.responder.createService({
-      name: this.driver.controller.homeId!.toString(),
-      port,
-      type: bonjourServiceType,
-      protocol: Protocol.TCP,
-      txt: {
-        homeId: this.driver.controller.homeId!,
-      },
-    });
-    this.service.advertise().then(() => {
-      this.logger.info(`Bonjour service published`);
-    });
+    if (this.options.enableDNSServiceDiscovery) {
+      this.responder = getResponder();
+      this.service = this.responder.createService({
+        name: this.driver.controller.homeId!.toString(),
+        port,
+        type: bonjourServiceType,
+        protocol: Protocol.TCP,
+        txt: {
+          homeId: this.driver.controller.homeId!,
+        },
+      });
+      this.service.advertise().then(() => {
+        this.logger.info(`DNS Service Discovery enabled`);
+      });
+    }
   }
 
   private onError(error: Error) {
