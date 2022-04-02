@@ -30,7 +30,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "minimist": "^1.2.5",
-    "ws": "^8.0.0"
+    "ws": "^8.0.0",
+    "@homebridge/ciao": "^1.1.3"
   },
   "peerDependencies": {
     "zwave-js": "^9.0.0-beta.9"

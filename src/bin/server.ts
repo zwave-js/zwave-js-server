@@ -21,10 +21,18 @@ interface Args {
   "mock-driver": boolean;
   port?: number;
   host?: string;
+  "disable-dns-sd": boolean;
 }
 
 (async () => {
-  const args = parseArgs<Args>(["_", "config", "mock-driver", "port", "host"]);
+  const args = parseArgs<Args>([
+    "_",
+    "config",
+    "mock-driver",
+    "port",
+    "host",
+    "disable-dns-sd",
+  ]);
 
   if (args.port) {
     if (typeof args["port"] !== "number") {
@@ -128,7 +136,11 @@ interface Args {
 
   driver.on("driver ready", async () => {
     try {
-      server = new ZwavejsServer(driver, { port: args.port, host: args.host });
+      server = new ZwavejsServer(driver, {
+        port: args.port,
+        host: args.host,
+        enableDNSServiceDiscovery: !args["disable-dns-sd"],
+      });
       await server.start();
     } catch (error) {
       console.error("Unable to start Server", error);
