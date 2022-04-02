@@ -1,5 +1,12 @@
 import ws from "ws";
 import type WebSocket from "ws";
+import {
+  getResponder,
+  CiaoService,
+  Protocol,
+  Responder,
+} from "@homebridge/ciao";
+import { networkInterfaces } from "os";
 import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
@@ -9,7 +16,12 @@ import { IncomingMessage } from "./incoming_message";
 import { dumpLogConfig, dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
-import { version, minSchemaVersion, maxSchemaVersion } from "./const";
+import {
+  bonjourServiceType,
+  version,
+  minSchemaVersion,
+  maxSchemaVersion,
+} from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
 import { IncomingMessageController } from "./controller/incoming_message";
@@ -386,6 +398,8 @@ export class ZwavejsServer extends EventEmitter {
   private logger: Logger;
   private defaultPort: number = 3000;
   private defaultHost: string = "0.0.0.0";
+  private responder?: Responder;
+  private service?: CiaoService;
 
   constructor(
     private driver: Driver,
@@ -419,6 +433,19 @@ export class ZwavejsServer extends EventEmitter {
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
+    this.responder = getResponder();
+    this.service = this.responder.createService({
+      name: this.driver.controller.homeId!.toString(),
+      port,
+      type: bonjourServiceType,
+      protocol: Protocol.TCP,
+      txt: {
+        homeId: this.driver.controller.homeId!,
+      },
+    });
+    this.service.advertise().then(() => {
+      this.logger.info(`Bonjour service published`);
+    });
   }
 
   private onError(error: Error) {
@@ -435,7 +462,13 @@ export class ZwavejsServer extends EventEmitter {
       this.server.close();
       await once(this.server, "close");
     }
-
+    if (this.service) {
+      await this.service.end();
+      await this.service.destroy();
+    }
+    if (this.responder) {
+      await this.responder!.shutdown();
+    }
     this.logger.info(`Server closed`);
   }
 }
