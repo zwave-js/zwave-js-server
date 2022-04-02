@@ -6,7 +6,6 @@ import {
   Protocol,
   Responder,
 } from "@homebridge/ciao";
-import { networkInterfaces } from "os";
 import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
@@ -17,7 +16,7 @@ import { dumpLogConfig, dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
 import {
-  bonjourServiceType,
+  dnssdServiceType,
   version,
   minSchemaVersion,
   maxSchemaVersion,
@@ -439,7 +438,7 @@ export class ZwavejsServer extends EventEmitter {
       this.service = this.responder.createService({
         name: this.driver.controller.homeId!.toString(),
         port,
-        type: bonjourServiceType,
+        type: dnssdServiceType,
         protocol: Protocol.TCP,
         txt: {
           homeId: this.driver.controller.homeId!,
