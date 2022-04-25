@@ -1,4 +1,4 @@
-import { VirtualValueID } from "zwave-js/lib/node/VirtualNode";
+import { VirtualValueID } from "zwave-js/Node";
 import { MulticastGroupCommand } from "./command";
 
 export interface MulticastGroupResultTypes {
