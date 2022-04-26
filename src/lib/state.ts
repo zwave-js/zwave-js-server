@@ -39,7 +39,6 @@ import {
   ValueMetadataString,
 } from "@zwave-js/core";
 import { numberFromLogLevel } from "../util/logger";
-import { SDKVersion } from "zwave-js/lib/controller/Controller";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 

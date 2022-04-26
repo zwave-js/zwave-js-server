@@ -1,4 +1,4 @@
-import { VirtualValueID } from "zwave-js/lib/node/VirtualNode";
+import { VirtualValueID } from "zwave-js/Node";
 import { BroadcastNodeCommand } from "./command";
 
 export interface BroadcastNodeResultTypes {
