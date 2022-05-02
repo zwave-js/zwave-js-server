@@ -1,5 +1,4 @@
 import {
-  ConfigValue,
   Powerlevel,
   RefreshInfoOptions,
   SetValueAPIOptions,
@@ -7,6 +6,7 @@ import {
 } from "zwave-js";
 import {
   CommandClasses,
+  ConfigValue,
   FirmwareFileFormat,
   SecurityClass,
 } from "@zwave-js/core";
