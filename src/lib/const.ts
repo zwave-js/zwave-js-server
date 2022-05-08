@@ -4,6 +4,6 @@ export const version = require("../../package.json").version;
 export const minSchemaVersion = 0;
 
 // maximal/current schema version the server supports
-export const maxSchemaVersion = 16;
+export const maxSchemaVersion = 17;
 
 export const dnssdServiceType = "zwave-js-server";
