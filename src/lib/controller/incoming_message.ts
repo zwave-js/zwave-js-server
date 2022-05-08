@@ -168,7 +168,10 @@ export interface IncomingCommandControllerUnprovisionSmartStartNode
 export interface IncomingCommandControllerGetProvisioningEntry
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getProvisioningEntry;
-  dsk: string;
+  // schema version < 17
+  dsk?: string;
+  // schema version > 16
+  dskOrNodeId?: string | number;
 }
 
 export interface IncomingCommandControllerGetProvisioningEntries
