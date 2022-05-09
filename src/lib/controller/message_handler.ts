@@ -83,13 +83,12 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.getProvisioningEntry: {
-        if (message.dskOrNodeId) {
-          return {
-            entry: driver.controller.getProvisioningEntry(message.dskOrNodeId),
-          };
-        }
-        if (message.dsk) {
-          return { entry: driver.controller.getProvisioningEntry(message.dsk) };
+        const dskOrNodeId = message.dskOrNodeId || message.dsk;
+        if (dskOrNodeId) {
+          const entry = driver.controller.getProvisioningEntry(
+            message.dskOrNodeId
+          );
+          return { entry };
         }
         throw new InvalidParamsPassedToCommandError(
           "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry"
