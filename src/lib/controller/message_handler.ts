@@ -84,13 +84,13 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.getProvisioningEntry: {
         const dskOrNodeId = message.dskOrNodeId || message.dsk;
-        if (dskOrNodeId) {
-          const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
-          return { entry };
+        if (!dskOrNodeId) {
+          throw new InvalidParamsPassedToCommandError(
+            "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry"
+          );
         }
-        throw new InvalidParamsPassedToCommandError(
-          "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry"
-        );
+        const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
+        return { entry };
       }
       case ControllerCommand.getProvisioningEntries: {
         const entries = driver.controller.getProvisioningEntries();
