@@ -85,9 +85,7 @@ export class ControllerMessageHandler {
       case ControllerCommand.getProvisioningEntry: {
         const dskOrNodeId = message.dskOrNodeId || message.dsk;
         if (dskOrNodeId) {
-          const entry = driver.controller.getProvisioningEntry(
-            message.dskOrNodeId
-          );
+          const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
           return { entry };
         }
         throw new InvalidParamsPassedToCommandError(
