@@ -9,11 +9,13 @@ import {
   InclusionOptions,
   InclusionStrategy,
   ReplaceNodeOptions,
+  SmartStartProvisioningEntry,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
+  InvalidParamsPassedToCommandError,
   UnknownCommandError,
 } from "../error";
 import { Client, ClientsController } from "../server";
@@ -81,7 +83,13 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.getProvisioningEntry: {
-        const entry = driver.controller.getProvisioningEntry(message.dsk);
+        const dskOrNodeId = message.dskOrNodeId || message.dsk;
+        if (!dskOrNodeId) {
+          throw new InvalidParamsPassedToCommandError(
+            "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry"
+          );
+        }
+        const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
         return { entry };
       }
       case ControllerCommand.getProvisioningEntries: {
