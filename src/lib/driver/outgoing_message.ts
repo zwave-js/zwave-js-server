@@ -12,6 +12,7 @@ export interface DriverResultTypes {
   [DriverCommand.startListeningLogs]: Record<string, never>;
   [DriverCommand.stopListeningLogs]: Record<string, never>;
   [DriverCommand.checkForConfigUpdates]: {
+    installedVersion: string;
     updateAvailable: boolean;
     newVersion?: string;
   };
