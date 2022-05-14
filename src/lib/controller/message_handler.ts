@@ -219,7 +219,7 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.restoreNVM: {
         const nvmData = Buffer.from(message.nvmData, "base64");
-        driver.controller.restoreNVM(
+        await driver.controller.restoreNVM(
           nvmData,
           (bytesRead: number, total: number) => {
             clientsController.clients.forEach((client) =>
