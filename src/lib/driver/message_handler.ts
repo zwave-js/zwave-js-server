@@ -52,9 +52,10 @@ export class DriverMessageHandler {
         clientsController.cleanupLoggingEventForwarder();
         return {};
       case DriverCommand.checkForConfigUpdates:
+        const installedVersion = driver.configVersion;
         const newVersion = await driver.checkForConfigUpdates();
         const updateAvailable = newVersion !== undefined;
-        return { updateAvailable, newVersion };
+        return { installedVersion, updateAvailable, newVersion };
       case DriverCommand.installConfigUpdate:
         const success = await driver.installConfigUpdate();
         return { success };
