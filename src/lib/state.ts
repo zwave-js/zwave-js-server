@@ -584,7 +584,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   if (schemaVersion < 17) {
-    node14 as NodeStateSchema15;
+    return node14 as NodeStateSchema15;
   }
   const node17 = node14 as NodeStateSchema17;
   node17.statistics = node.statistics;
