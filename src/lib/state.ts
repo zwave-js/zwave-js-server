@@ -276,6 +276,12 @@ interface NodeStateSchema14 extends NodeStateSchema13 {
 
 type NodeStateSchema15 = Omit<NodeStateSchema14, "commandClasses">;
 
+type NodeStateSchema16 = NodeStateSchema15;
+
+interface NodeStateSchema17 extends NodeStateSchema16 {
+  statistics: NodeStatistics;
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -292,7 +298,9 @@ export type NodeState =
   | NodeStateSchema12
   | NodeStateSchema13
   | NodeStateSchema14
-  | NodeStateSchema15;
+  | NodeStateSchema15
+  | NodeStateSchema16
+  | NodeStateSchema17;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -575,7 +583,12 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     return node14;
   }
 
-  return node14 as NodeStateSchema15;
+  if (schemaVersion < 17) {
+    node14 as NodeStateSchema15;
+  }
+  const node17 = node14 as NodeStateSchema17;
+  node17.statistics = node.statistics;
+  return node17;
 };
 
 export const dumpEndpoint = (
