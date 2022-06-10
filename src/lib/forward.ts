@@ -250,8 +250,6 @@ export class EventForwarder {
         sentFragments: number,
         totalFragments: number
       ) => {
-        this.nodeMessageHandler.firmwareUpdateQueued[changedNode.nodeId] =
-          false;
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         notifyNode(changedNode, "firmware update progress", {
