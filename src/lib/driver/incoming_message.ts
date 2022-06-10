@@ -57,6 +57,11 @@ interface IncomingCommandEnableErrorReporting extends IncomingCommandBase {
   command: DriverCommand.enableErrorReporting;
 }
 
+interface IncomingCommandInterviewNode extends IncomingCommandBase {
+  command: DriverCommand.interviewNode;
+  nodeId: number;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -69,4 +74,5 @@ export type IncomingMessageDriver =
   | IncomingCommandCheckForConfigUpdates
   | IncomingCommandInstallConfigUpdate
   | IncomingCommandSetPreferredScales
-  | IncomingCommandEnableErrorReporting;
+  | IncomingCommandEnableErrorReporting
+  | IncomingCommandInterviewNode;
