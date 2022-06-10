@@ -8,7 +8,6 @@ import {
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
 import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
-import { NodeMessageHandler } from "./node/message_handler";
 import { OutgoingEvent } from "./outgoing_message";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
 import { Client, ClientsController } from "./server";
@@ -19,10 +18,7 @@ export class EventForwarder {
    *
    * @param clients
    */
-  constructor(
-    private clients: ClientsController,
-    private nodeMessageHandler: NodeMessageHandler
-  ) {}
+  constructor(private clients: ClientsController) {}
 
   start() {
     this.clients.driver.controller.nodes.forEach((node) =>
@@ -272,8 +268,6 @@ export class EventForwarder {
         status: FirmwareUpdateStatus,
         waitTime?: number
       ) => {
-        this.nodeMessageHandler.firmwareUpdateQueued[changedNode.nodeId] =
-          false;
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         notifyNode(changedNode, "firmware update finished", {

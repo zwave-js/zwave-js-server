@@ -2,6 +2,7 @@ import {
   Driver,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
+  ZWaveNode,
 } from "zwave-js";
 import {
   CommandClasses,
@@ -19,7 +20,7 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  public firmwareUpdateQueued: { [key: number]: boolean };
+  private firmwareUpdateQueued: { [key: number]: boolean };
 
   constructor() {
     this.firmwareUpdateQueued = {};
@@ -79,6 +80,9 @@ export class NodeMessageHandler {
           actualFirmware.firmwareTarget
         );
         this.firmwareUpdateQueued[nodeId] = true;
+        node.once("firmware update progress", (_, __, ___) => {
+          this.firmwareUpdateQueued[nodeId] = false;
+        });
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
