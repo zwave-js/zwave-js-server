@@ -20,7 +20,10 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  private firmwareUpdateQueued: Record<number, boolean> = {};
+  private firmwareUpdateInProgress: Record<number, boolean> = {};
+  private _callback = (changedNode: ZWaveNode, __: number) => {
+    this.firmwareUpdateInProgress[changedNode.nodeId] = false;
+  };
 
   public async handle(
     message: IncomingMessageNode,
@@ -66,6 +69,9 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdate:
+        if (this.firmwareUpdateInProgress[nodeId] === true) {
+          throw new Error("Firmware update already in progress");
+        }
         firmwareFile = Buffer.from(message.firmwareFile, "base64");
         const format = message.firmwareFileFormat
           ? message.firmwareFileFormat
@@ -75,14 +81,13 @@ export class NodeMessageHandler {
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
-        this.firmwareUpdateQueued[nodeId] = true;
-        node.once("firmware update progress", (_, __, ___) => {
-          this.firmwareUpdateQueued[nodeId] = false;
-        });
+        this.firmwareUpdateInProgress[nodeId] = true;
+        node.once("firmware update finished", this._callback);
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
-        this.firmwareUpdateQueued[nodeId] = false;
+        node.removeListener("firmware update finished", this._callback);
+        this.firmwareUpdateInProgress[nodeId] = false;
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
         const capabilities = await node.getFirmwareUpdateCapabilities();
@@ -202,9 +207,9 @@ export class NodeMessageHandler {
           );
         }
         return {};
-      case NodeCommand.getFirmwareUpdateQueued:
+      case NodeCommand.getFirmwareUpdateInProgress:
         return {
-          queued: this.firmwareUpdateQueued[nodeId] === true,
+          inProgress: this.firmwareUpdateInProgress[nodeId] === true,
         };
       default:
         throw new UnknownCommandError(command);

@@ -679,9 +679,9 @@ interface {
 }
 ```
 
-#### Get Firmware Update Queued status
+#### Get Firmware Update In Progress status
 
-When `true`, the controller has a queued firmware update for this node.
+Indicates whether a firmware update is in progress for this node.
 
 [compatible with schema version: 18+]
 
@@ -689,7 +689,7 @@ When `true`, the controller has a queued firmware update for this node.
 interface {
   messageId: string;
   nodeId: number;
-  command: "node.get_firmware_update_queued";
+  command: "node.get_firmware_update_in_progress";
 }
 ```
 

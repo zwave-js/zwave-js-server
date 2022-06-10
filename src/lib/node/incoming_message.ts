@@ -154,9 +154,9 @@ export interface IncomingCommandSetKeepAwake extends IncomingCommandNodeBase {
   keepAwake: boolean;
 }
 
-export interface IncomingCommandGetFirmwareUpdateQueued
+export interface IncomingCommandGetFirmwareUpdateInProgress
   extends IncomingCommandNodeBase {
-  command: NodeCommand.getFirmwareUpdateQueued;
+  command: NodeCommand.getFirmwareUpdateInProgress;
 }
 
 export type IncomingMessageNode =
@@ -184,4 +184,4 @@ export type IncomingMessageNode =
   | IncomingCommandSetName
   | IncomingCommandSetLocation
   | IncomingCommandSetKeepAwake
-  | IncomingCommandGetFirmwareUpdateQueued;
+  | IncomingCommandGetFirmwareUpdateInProgress;
