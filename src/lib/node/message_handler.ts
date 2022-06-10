@@ -2,7 +2,6 @@ import {
   Driver,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
-  ZWaveNode,
 } from "zwave-js";
 import {
   CommandClasses,
@@ -20,7 +19,13 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  static async handle(
+  public firmwareUpdateQueued: { [key: number]: boolean };
+
+  constructor() {
+    this.firmwareUpdateQueued = {};
+  }
+
+  public async handle(
     message: IncomingMessageNode,
     driver: Driver,
     clientsController: ClientsController,
@@ -73,9 +78,11 @@ export class NodeMessageHandler {
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
+        this.firmwareUpdateQueued[nodeId] = true;
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
+        this.firmwareUpdateQueued[nodeId] = false;
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
         const capabilities = await node.getFirmwareUpdateCapabilities();
@@ -195,6 +202,10 @@ export class NodeMessageHandler {
           );
         }
         return {};
+      case NodeCommand.getFirmwareUpdateQueued:
+        return {
+          queued: this.firmwareUpdateQueued[nodeId] === true,
+        };
       default:
         throw new UnknownCommandError(command);
     }
