@@ -20,11 +20,7 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  private firmwareUpdateQueued: { [key: number]: boolean };
-
-  constructor() {
-    this.firmwareUpdateQueued = {};
-  }
+  private firmwareUpdateQueued: Record<number, boolean> = {};
 
   public async handle(
     message: IncomingMessageNode,
