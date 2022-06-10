@@ -679,7 +679,7 @@ interface {
 }
 ```
 
-#### Get Firmware Update In Progress status
+#### Get Firmware Update Progress status
 
 Indicates whether a firmware update is in progress for this node.
 
@@ -689,7 +689,7 @@ Indicates whether a firmware update is in progress for this node.
 interface {
   messageId: string;
   nodeId: number;
-  command: "node.get_firmware_update_in_progress";
+  command: "node.get_firmware_update_progress";
 }
 ```
 

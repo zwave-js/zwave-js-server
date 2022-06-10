@@ -211,9 +211,9 @@ export class NodeMessageHandler {
           );
         }
         return {};
-      case NodeCommand.getFirmwareUpdateInProgress:
+      case NodeCommand.getFirmwareUpdateProgress:
         return {
-          inProgress: this.firmwareUpdateInProgress[nodeId] === true,
+          progress: this.firmwareUpdateInProgress[nodeId] === true,
         };
       default:
         throw new UnknownCommandError(command);

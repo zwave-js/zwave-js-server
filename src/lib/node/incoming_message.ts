@@ -156,7 +156,7 @@ export interface IncomingCommandSetKeepAwake extends IncomingCommandNodeBase {
 
 export interface IncomingCommandGetFirmwareUpdateInProgress
   extends IncomingCommandNodeBase {
-  command: NodeCommand.getFirmwareUpdateInProgress;
+  command: NodeCommand.getFirmwareUpdateProgress;
 }
 
 export type IncomingMessageNode =
