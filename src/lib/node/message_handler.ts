@@ -20,7 +20,7 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  private firmwareUpdateInProgress: Record<number, boolean> = {};
+  private firmwareUpdateProgress: Record<number, boolean> = {};
 
   public async handle(
     message: IncomingMessageNode,
@@ -66,7 +66,7 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdate:
-        if (this.firmwareUpdateInProgress[nodeId]) {
+        if (this.firmwareUpdateProgress[nodeId]) {
           throw new Error("Firmware update already in progress");
         }
         firmwareFile = Buffer.from(message.firmwareFile, "base64");
@@ -78,20 +78,20 @@ export class NodeMessageHandler {
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
-        if (!(nodeId in this.firmwareUpdateInProgress)) {
+        if (!(nodeId in this.firmwareUpdateProgress)) {
           node.on(
             "firmware update finished",
             (changedNode: ZWaveNode, __: number) => {
-              this.firmwareUpdateInProgress[changedNode.nodeId] = false;
+              this.firmwareUpdateProgress[changedNode.nodeId] = false;
             }
           );
         }
-        this.firmwareUpdateInProgress[nodeId] = true;
+        this.firmwareUpdateProgress[nodeId] = true;
 
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
-        this.firmwareUpdateInProgress[nodeId] = false;
+        this.firmwareUpdateProgress[nodeId] = false;
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
         const capabilities = await node.getFirmwareUpdateCapabilities();
@@ -213,7 +213,7 @@ export class NodeMessageHandler {
         return {};
       case NodeCommand.getFirmwareUpdateProgress:
         return {
-          progress: this.firmwareUpdateInProgress[nodeId] === true,
+          progress: this.firmwareUpdateProgress[nodeId] === true,
         };
       default:
         throw new UnknownCommandError(command);
