@@ -21,9 +21,6 @@ import { dumpNode } from "..";
 
 export class NodeMessageHandler {
   private firmwareUpdateInProgress: Record<number, boolean> = {};
-  private _callback = (changedNode: ZWaveNode, __: number) => {
-    this.firmwareUpdateInProgress[changedNode.nodeId] = false;
-  };
 
   public async handle(
     message: IncomingMessageNode,
@@ -69,7 +66,7 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdate:
-        if (this.firmwareUpdateInProgress[nodeId] === true) {
+        if (this.firmwareUpdateInProgress[nodeId]) {
           throw new Error("Firmware update already in progress");
         }
         firmwareFile = Buffer.from(message.firmwareFile, "base64");
@@ -81,12 +78,19 @@ export class NodeMessageHandler {
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
+        if (!(nodeId in this.firmwareUpdateInProgress)) {
+          node.on(
+            "firmware update finished",
+            (changedNode: ZWaveNode, __: number) => {
+              this.firmwareUpdateInProgress[changedNode.nodeId] = false;
+            }
+          );
+        }
         this.firmwareUpdateInProgress[nodeId] = true;
-        node.once("firmware update finished", this._callback);
+
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
-        node.removeListener("firmware update finished", this._callback);
         this.firmwareUpdateInProgress[nodeId] = false;
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
