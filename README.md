@@ -679,6 +679,20 @@ interface {
 }
 ```
 
+#### Get Firmware Update Progress status
+
+Indicates whether a firmware update is in progress for this node.
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.get_firmware_update_progress";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)

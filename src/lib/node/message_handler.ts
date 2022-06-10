@@ -20,7 +20,9 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 
 export class NodeMessageHandler {
-  static async handle(
+  private firmwareUpdateProgress: Record<number, boolean> = {};
+
+  public async handle(
     message: IncomingMessageNode,
     driver: Driver,
     clientsController: ClientsController,
@@ -64,6 +66,9 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdate:
+        if (this.firmwareUpdateProgress[nodeId]) {
+          throw new Error("Firmware update already in progress");
+        }
         firmwareFile = Buffer.from(message.firmwareFile, "base64");
         const format = message.firmwareFileFormat
           ? message.firmwareFileFormat
@@ -73,9 +78,20 @@ export class NodeMessageHandler {
           actualFirmware.data,
           actualFirmware.firmwareTarget
         );
+        if (!(nodeId in this.firmwareUpdateProgress)) {
+          node.on(
+            "firmware update finished",
+            (changedNode: ZWaveNode, __: number) => {
+              this.firmwareUpdateProgress[changedNode.nodeId] = false;
+            }
+          );
+        }
+        this.firmwareUpdateProgress[nodeId] = true;
+
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
+        this.firmwareUpdateProgress[nodeId] = false;
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
         const capabilities = await node.getFirmwareUpdateCapabilities();
@@ -195,6 +211,10 @@ export class NodeMessageHandler {
           );
         }
         return {};
+      case NodeCommand.getFirmwareUpdateProgress:
+        return {
+          progress: this.firmwareUpdateProgress[nodeId] === true,
+        };
       default:
         throw new UnknownCommandError(command);
     }

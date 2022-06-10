@@ -72,7 +72,7 @@ export class Client {
         this
       ),
     [Instance.node]: (message) =>
-      NodeMessageHandler.handle(
+      this.clientsController.nodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.driver,
         this.clientsController,
@@ -276,6 +276,7 @@ export class ClientsController {
   private loggingEventForwarder?: LoggingEventForwarder;
   public grantSecurityClassesPromise?: DeferredPromise<InclusionGrant | false>;
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
+  public nodeMessageHandler = new NodeMessageHandler();
 
   constructor(public driver: Driver, private logger: Logger) {}
 
