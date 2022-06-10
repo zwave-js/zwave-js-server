@@ -679,6 +679,20 @@ interface {
 }
 ```
 
+#### Get Firmware Update Queued status
+
+When `true`, the controller has a queued firmware update for this node.
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.get_firmware_update_queued";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
