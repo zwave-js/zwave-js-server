@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { UnknownCommandError } from "../error";
+import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
