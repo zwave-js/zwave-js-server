@@ -65,13 +65,6 @@ export class DriverMessageHandler {
       case DriverCommand.enableErrorReporting:
         driver.enableErrorReporting();
         return {};
-      case DriverCommand.interviewNode:
-        const node = driver.controller.nodes.get(message.nodeId);
-        if (!node) {
-          throw new NodeNotFoundError(message.nodeId);
-        }
-        driver.interviewNode(node);
-        return {};
       default:
         throw new UnknownCommandError(command);
     }

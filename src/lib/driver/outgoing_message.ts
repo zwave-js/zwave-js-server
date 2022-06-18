@@ -19,5 +19,4 @@ export interface DriverResultTypes {
   [DriverCommand.installConfigUpdate]: { success: boolean };
   [DriverCommand.setPreferredScales]: Record<string, never>;
   [DriverCommand.enableErrorReporting]: Record<string, never>;
-  [DriverCommand.interviewNode]: Record<string, never>;
 }

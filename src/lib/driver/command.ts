@@ -11,5 +11,4 @@ export enum DriverCommand {
   installConfigUpdate = "driver.install_config_update",
   setPreferredScales = "driver.set_preferred_scales",
   enableErrorReporting = "driver.enable_error_reporting",
-  interviewNode = "driver.interview_node",
 }
