@@ -461,6 +461,7 @@ interface {
   firmwareFilename: string;
   firmwareFile: string; // use base64 encoding for the file
   firmwareFileFormat?: FileFormat;
+  target?: number;
 }
 ```
 
