@@ -87,7 +87,6 @@ export class NodeMessageHandler {
           );
         }
         this.firmwareUpdateProgress[nodeId] = true;
-
         return {};
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
@@ -215,6 +214,9 @@ export class NodeMessageHandler {
         return {
           progress: this.firmwareUpdateProgress[nodeId] === true,
         };
+      case NodeCommand.waitForWakeup:
+        await node.waitForWakeup();
+        return {};
       default:
         throw new UnknownCommandError(command);
     }

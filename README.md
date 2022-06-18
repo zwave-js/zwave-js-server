@@ -476,6 +476,18 @@ interface {
 }
 ```
 
+#### [Get Firmware Update Capabilities](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdatecapabilities)
+
+[compatible with schema version: 0+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_capabilities";
+  nodeId: number;
+}
+```
+
 #### [Poll value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=pollvalue)
 
 [compatible with schema version: 1+]
@@ -690,6 +702,18 @@ interface {
   messageId: string;
   nodeId: number;
   command: "node.get_firmware_update_progress";
+}
+```
+
+#### [Wait for wakeup](https://zwave-js.github.io/node-zwave-js/#/api/node?id=waitforwakeup)
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.wait_for_wakeup";
 }
 ```
 
