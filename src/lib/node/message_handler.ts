@@ -76,7 +76,7 @@ export class NodeMessageHandler {
         actualFirmware = extractFirmware(firmwareFile, format);
         await node.beginFirmwareUpdate(
           actualFirmware.data,
-          actualFirmware.firmwareTarget
+          message.target ?? actualFirmware.firmwareTarget
         );
         if (!(nodeId in this.firmwareUpdateProgress)) {
           node.on(

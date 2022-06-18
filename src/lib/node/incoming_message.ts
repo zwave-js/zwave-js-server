@@ -47,6 +47,7 @@ export interface IncomingCommandNodeBeginFirmwareUpdate
   firmwareFilename: string;
   firmwareFile: string; // use base64 encoding for the file
   firmwareFileFormat?: FirmwareFileFormat;
+  target?: number;
 }
 
 export interface IncomingCommandNodeAbortFirmwareUpdate
