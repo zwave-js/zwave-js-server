@@ -39,4 +39,5 @@ export interface NodeResultTypes {
   [NodeCommand.setLocation]: Record<string, never>;
   [NodeCommand.setKeepAwake]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateProgress]: { progress: boolean };
+  [NodeCommand.waitForWakeup]: Record<string, never>;
 }
