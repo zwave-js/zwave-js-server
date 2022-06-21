@@ -50,7 +50,6 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node found",
-          node: dumpNode(node, client.schemaVersion),
         })
       );
       this.setupNode(node);
