@@ -294,9 +294,11 @@ export type NodeState =
   | NodeStateSchema14
   | NodeStateSchema15;
 
-interface FoundNodeStateSchema19 extends EndpointStateSchema0 {
+interface FoundNodeStateSchema19 {
+  nodeId: number;
   deviceClass: DeviceClassState | null;
   status: NodeStatus;
+  commandClasses: CommandClassState[];
 }
 
 export type FoundNodeState = FoundNodeStateSchema19;
@@ -586,14 +588,19 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 };
 
 export const dumpFoundNode = (
-  node: ZWaveNode,
+  foundNode: ZWaveNode,
   schemaVersion: number
 ): FoundNodeState => {
   const base: FoundNodeStateSchema19 = {
-    nodeId: node.nodeId,
-    index: node.index,
-    deviceClass: node.deviceClass ? dumpDeviceClass(node.deviceClass) : null,
-    status: node.status,
+    nodeId: foundNode.nodeId,
+    index: foundNode.index,
+    deviceClass: foundNode.deviceClass
+      ? dumpDeviceClass(foundNode.deviceClass)
+      : null,
+    status: foundNode.status,
+    commandClasses: Array.from(foundNode.getSupportedCCInstances(), (cc) =>
+      dumpCommandClass(foundNode, cc)
+    ),
   };
   return base;
 };
