@@ -296,6 +296,7 @@ export type NodeState =
 
 interface FoundNodeStateSchema19 extends EndpointStateSchema0 {
   deviceClass: DeviceClassState | null;
+  status: NodeStatus;
 }
 
 export type FoundNodeState = FoundNodeStateSchema19;
@@ -592,6 +593,7 @@ export const dumpFoundNode = (
     nodeId: node.nodeId,
     index: node.index,
     deviceClass: node.deviceClass ? dumpDeviceClass(node.deviceClass) : null,
+    status: node.status,
   };
   return base;
 };
