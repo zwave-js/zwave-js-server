@@ -298,7 +298,6 @@ interface FoundNodeStateSchema19 {
   nodeId: number;
   deviceClass: DeviceClassState | null;
   status: NodeStatus;
-  commandClasses: CommandClassState[];
 }
 
 export type FoundNodeState = FoundNodeStateSchema19;
@@ -597,9 +596,6 @@ export const dumpFoundNode = (
       ? dumpDeviceClass(foundNode.deviceClass)
       : null,
     status: foundNode.status,
-    commandClasses: Array.from(foundNode.getSupportedCCInstances(), (cc) =>
-      dumpCommandClass(foundNode, cc)
-    ),
   };
   return base;
 };
