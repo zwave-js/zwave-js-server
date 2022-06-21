@@ -593,7 +593,6 @@ export const dumpFoundNode = (
 ): FoundNodeState => {
   const base: FoundNodeStateSchema19 = {
     nodeId: foundNode.nodeId,
-    index: foundNode.index,
     deviceClass: foundNode.deviceClass
       ? dumpDeviceClass(foundNode.deviceClass)
       : null,
