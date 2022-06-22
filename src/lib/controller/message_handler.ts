@@ -9,7 +9,6 @@ import {
   InclusionOptions,
   InclusionStrategy,
   ReplaceNodeOptions,
-  SmartStartProvisioningEntry,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -269,6 +268,11 @@ export class ControllerMessageHandler {
       case ControllerCommand.getKnownLifelineRoutes: {
         const routes = driver.controller.getKnownLifelineRoutes();
         return { routes };
+      }
+      case ControllerCommand.getAnyFirmwareUpdateProgress: {
+        const progress =
+          clientsController.nodeMessageHandler.anyFirmwareUpdateProgress;
+        return { progress };
       }
       default:
         throw new UnknownCommandError(command);
