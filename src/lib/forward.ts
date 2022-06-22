@@ -51,13 +51,15 @@ export class EventForwarder {
 
     this.clientsController.driver.controller.on("node found", (node) => {
       // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) =>
-        this.sendEvent(client, {
-          source: "controller",
-          event: "node found",
-          node: dumpFoundNode(node, client.schemaVersion),
-        })
-      );
+      this.clientsController.clients
+        .filter((client) => client.schemaVersion > 18)
+        .forEach((client) =>
+          this.sendEvent(client, {
+            source: "controller",
+            event: "node found",
+            node: dumpFoundNode(node, client.schemaVersion),
+          })
+        );
       this.setupNode(node);
     });
 
