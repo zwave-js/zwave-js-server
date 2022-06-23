@@ -343,12 +343,23 @@ interface {
 
 #### Get controller state
 
-[compatibile with schema version: 14+]
+[compatible with schema version: 14+]
 
 ```ts
 interface {
   messageId: string;
   command: "controller.get_state";
+}
+```
+
+#### Get whether any firmware updates are in progress
+
+[compatible with schema version: 20+]
+
+```ts
+interface {
+  messageId: string;
+  command: "controller.get_any_firmware_update_progress";
 }
 ```
 

@@ -57,4 +57,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getKnownLifelineRoutes]: {
     routes: ReadonlyMap<number, LifelineRoutes>;
   };
+  [ControllerCommand.getAnyFirmwareUpdateProgress]: {
+    progress: boolean;
+  };
 }

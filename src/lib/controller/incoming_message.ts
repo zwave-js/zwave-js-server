@@ -227,6 +227,10 @@ export interface IncomingCommandControllerGetKnownLifelineRoutes
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getKnownLifelineRoutes;
 }
+export interface IncomingCommandControllerGetAnyFirmwareUpdateProgress
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getAnyFirmwareUpdateProgress;
+}
 
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
@@ -262,4 +266,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerSetPowerlevel
   | IncomingCommandControllerGetPowerlevel
   | IncomingCommandControllerGetState
-  | IncomingCommandControllerGetKnownLifelineRoutes;
+  | IncomingCommandControllerGetKnownLifelineRoutes
+  | IncomingCommandControllerGetAnyFirmwareUpdateProgress;

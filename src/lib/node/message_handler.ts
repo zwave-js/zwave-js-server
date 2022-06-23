@@ -22,6 +22,10 @@ import { dumpNode } from "..";
 export class NodeMessageHandler {
   private firmwareUpdateProgress: Record<number, boolean> = {};
 
+  public get anyFirmwareUpdateProgress(): boolean {
+    return Object.values(this.firmwareUpdateProgress).includes(true);
+  }
+
   public async handle(
     message: IncomingMessageNode,
     driver: Driver,
