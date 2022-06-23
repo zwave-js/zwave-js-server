@@ -9,7 +9,12 @@ import {
 } from "zwave-js";
 import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
 import { OutgoingEvent } from "./outgoing_message";
-import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "./state";
+import {
+  dumpConfigurationMetadata,
+  dumpFoundNode,
+  dumpMetadata,
+  dumpNode,
+} from "./state";
 import { Client, ClientsController } from "./server";
 
 export class EventForwarder {
@@ -50,6 +55,7 @@ export class EventForwarder {
         this.sendEvent(client, {
           source: "controller",
           event: "node found",
+          node: dumpFoundNode(node, client.schemaVersion),
         })
       );
       this.setupNode(node);

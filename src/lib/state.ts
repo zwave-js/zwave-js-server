@@ -294,6 +294,14 @@ export type NodeState =
   | NodeStateSchema14
   | NodeStateSchema15;
 
+interface FoundNodeStateSchema19 {
+  nodeId: number;
+  deviceClass: DeviceClassState | null;
+  status: NodeStatus;
+}
+
+export type FoundNodeState = FoundNodeStateSchema19;
+
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
     // guard: do not request all values (and their metadata) while the node is still being interviewed.
@@ -576,6 +584,20 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   return node14 as NodeStateSchema15;
+};
+
+export const dumpFoundNode = (
+  foundNode: ZWaveNode,
+  schemaVersion: number
+): FoundNodeState => {
+  const base: FoundNodeStateSchema19 = {
+    nodeId: foundNode.nodeId,
+    deviceClass: foundNode.deviceClass
+      ? dumpDeviceClass(foundNode.deviceClass)
+      : null,
+    status: foundNode.status,
+  };
+  return base;
 };
 
 export const dumpEndpoint = (
