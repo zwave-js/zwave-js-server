@@ -692,17 +692,15 @@ interface {
 }
 ```
 
-#### [Is Any Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=isfirmwareupdateinprogress)
+#### [Is Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=isfirmwareupdateinprogress)
 
-Indicates whether a firmware update is in progress for this node.
-
-[compatible with schema version: 19+]
+[compatible with schema version: 11+]
 
 ```ts
 interface {
   messageId: string;
   nodeId: number;
-  command: "node.is_any_firmware_update_in_progress";
+  command: "node.is_firmware_update_in_progress";
 }
 ```
 
