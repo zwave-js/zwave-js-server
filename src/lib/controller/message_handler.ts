@@ -269,10 +269,11 @@ export class ControllerMessageHandler {
         const routes = driver.controller.getKnownLifelineRoutes();
         return { routes };
       }
-      case ControllerCommand.getAnyFirmwareUpdateProgress: {
-        const progress =
-          clientsController.nodeMessageHandler.anyFirmwareUpdateProgress;
-        return { progress };
+      case ControllerCommand.getAnyFirmwareUpdateProgress:
+      case ControllerCommand.isAnyOTAFirmwareUpdateInProgress: {
+        return {
+          progress: driver.controller.isAnyOTAFirmwareUpdateInProgress(),
+        };
       }
       default:
         throw new UnknownCommandError(command);

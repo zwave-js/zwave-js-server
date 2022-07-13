@@ -60,4 +60,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAnyFirmwareUpdateProgress]: {
     progress: boolean;
   };
+  [ControllerCommand.isAnyOTAFirmwareUpdateInProgress]: {
+    progress: boolean;
+  };
 }

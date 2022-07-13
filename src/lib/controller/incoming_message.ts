@@ -231,6 +231,10 @@ export interface IncomingCommandControllerGetAnyFirmwareUpdateProgress
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getAnyFirmwareUpdateProgress;
 }
+export interface IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.isAnyOTAFirmwareUpdateInProgress;
+}
 
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
@@ -267,4 +271,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetPowerlevel
   | IncomingCommandControllerGetState
   | IncomingCommandControllerGetKnownLifelineRoutes
-  | IncomingCommandControllerGetAnyFirmwareUpdateProgress;
+  | IncomingCommandControllerGetAnyFirmwareUpdateProgress
+  | IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress;
