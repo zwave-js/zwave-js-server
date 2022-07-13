@@ -269,10 +269,25 @@ export class ControllerMessageHandler {
         const routes = driver.controller.getKnownLifelineRoutes();
         return { routes };
       }
-      case ControllerCommand.getAnyFirmwareUpdateProgress: {
-        const progress =
-          clientsController.nodeMessageHandler.anyFirmwareUpdateProgress;
-        return { progress };
+      case ControllerCommand.getAnyFirmwareUpdateProgress:
+      case ControllerCommand.isAnyOTAFirmwareUpdateInProgress: {
+        return {
+          progress: driver.controller.isAnyOTAFirmwareUpdateInProgress(),
+        };
+      }
+      case ControllerCommand.getAvailableFirmwareUpdates: {
+        return {
+          updates: await driver.controller.getAvailableFirmwareUpdates(
+            message.nodeId
+          ),
+        };
+      }
+      case ControllerCommand.beginOTAFirmwareUpdate: {
+        await driver.controller.beginOTAFirmwareUpdate(
+          message.nodeId,
+          message.update
+        );
+        return {};
       }
       default:
         throw new UnknownCommandError(command);

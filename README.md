@@ -352,17 +352,6 @@ interface {
 }
 ```
 
-#### Get whether any firmware updates are in progress
-
-[compatible with schema version: 20+]
-
-```ts
-interface {
-  messageId: string;
-  command: "controller.get_any_firmware_update_progress";
-}
-```
-
 ### Node level commands
 
 #### [Set value on a node](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setvalue)
@@ -703,17 +692,15 @@ interface {
 }
 ```
 
-#### Get Firmware Update Progress status
+#### [Is Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=isfirmwareupdateinprogress)
 
-Indicates whether a firmware update is in progress for this node.
-
-[compatible with schema version: 18+]
+[compatible with schema version: 21+]
 
 ```ts
 interface {
   messageId: string;
   nodeId: number;
-  command: "node.get_firmware_update_progress";
+  command: "node.is_firmware_update_in_progress";
 }
 ```
 

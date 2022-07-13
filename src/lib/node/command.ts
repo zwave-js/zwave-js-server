@@ -24,5 +24,6 @@ export enum NodeCommand {
   setLocation = "node.set_location",
   setKeepAwake = "node.set_keep_awake",
   getFirmwareUpdateProgress = "node.get_firmware_update_progress",
+  isFirmwareUpdateInProgress = "node.is_firmware_update_in_progress",
   waitForWakeup = "node.wait_for_wakeup",
 }

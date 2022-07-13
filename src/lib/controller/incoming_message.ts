@@ -1,5 +1,6 @@
 import {
   AssociationAddress,
+  FirmwareUpdateFileInfo,
   InclusionGrant,
   InclusionOptions,
   PlannedProvisioningEntry,
@@ -227,9 +228,25 @@ export interface IncomingCommandControllerGetKnownLifelineRoutes
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getKnownLifelineRoutes;
 }
-export interface IncomingCommandControllerGetAnyFirmwareUpdateProgress
+
+export interface IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
   extends IncomingCommandControllerBase {
-  command: ControllerCommand.getAnyFirmwareUpdateProgress;
+  command:
+    | ControllerCommand.isAnyOTAFirmwareUpdateInProgress
+    | ControllerCommand.getAnyFirmwareUpdateProgress;
+}
+
+export interface IncomingCommandControllerGetAvailableFirmwareUpdates
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getAvailableFirmwareUpdates;
+  nodeId: number;
+}
+
+export interface IncomingCommandControllerBeginOTAFirmwareUpdate
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginOTAFirmwareUpdate;
+  nodeId: number;
+  update: FirmwareUpdateFileInfo;
 }
 
 export type IncomingMessageController =
@@ -267,4 +284,6 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetPowerlevel
   | IncomingCommandControllerGetState
   | IncomingCommandControllerGetKnownLifelineRoutes
-  | IncomingCommandControllerGetAnyFirmwareUpdateProgress;
+  | IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
+  | IncomingCommandControllerGetAvailableFirmwareUpdates
+  | IncomingCommandControllerBeginOTAFirmwareUpdate;

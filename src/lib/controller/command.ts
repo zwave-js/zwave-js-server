@@ -35,4 +35,7 @@ export enum ControllerCommand {
   getState = "controller.get_state",
   getKnownLifelineRoutes = "controller.get_known_lifeline_routes",
   getAnyFirmwareUpdateProgress = "controller.get_any_firmware_update_progress",
+  isAnyOTAFirmwareUpdateInProgress = "controller.is_any_ota_firmware_update_in_progress",
+  getAvailableFirmwareUpdates = "controller.get_available_firmware_updates",
+  beginOTAFirmwareUpdate = "controller.begin_ota_firmware_update",
 }
