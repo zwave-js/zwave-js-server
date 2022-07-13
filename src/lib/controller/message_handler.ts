@@ -275,6 +275,20 @@ export class ControllerMessageHandler {
           progress: driver.controller.isAnyOTAFirmwareUpdateInProgress(),
         };
       }
+      case ControllerCommand.getAvailableFirmwareUpdates: {
+        return {
+          updates: await driver.controller.getAvailableFirmwareUpdates(
+            message.nodeId
+          ),
+        };
+      }
+      case ControllerCommand.beginOTAFirmwareUpdate: {
+        await driver.controller.beginOTAFirmwareUpdate(
+          message.nodeId,
+          message.update
+        );
+        return {};
+      }
       default:
         throw new UnknownCommandError(command);
     }

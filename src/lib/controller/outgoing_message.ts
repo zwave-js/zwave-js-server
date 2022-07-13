@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   AssociationGroup,
+  FirmwareUpdateInfo,
   LifelineRoutes,
   RFRegion,
   SmartStartProvisioningEntry,
@@ -63,4 +64,8 @@ export interface ControllerResultTypes {
   [ControllerCommand.isAnyOTAFirmwareUpdateInProgress]: {
     progress: boolean;
   };
+  [ControllerCommand.getAvailableFirmwareUpdates]: {
+    updates: FirmwareUpdateInfo[];
+  };
+  [ControllerCommand.beginOTAFirmwareUpdate]: Record<string, never>;
 }
