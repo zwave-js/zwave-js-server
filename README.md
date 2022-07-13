@@ -694,7 +694,7 @@ interface {
 
 #### [Is Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=isfirmwareupdateinprogress)
 
-[compatible with schema version: 11+]
+[compatible with schema version: 21+]
 
 ```ts
 interface {
