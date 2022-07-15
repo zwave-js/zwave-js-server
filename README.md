@@ -489,7 +489,7 @@ interface {
 }
 ```
 
-#### [Get Cached Firmware Update Capabilities](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdatecapabilitiescached)
+#### [Get Firmware Update Capabilities Cached](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdatecapabilitiescached)
 
 [compatible with schema version: 21+]
 
