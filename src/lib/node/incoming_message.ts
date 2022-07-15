@@ -60,6 +60,11 @@ export interface IncomingCommandGetFirmwareUpdateCapabilities
   command: NodeCommand.getFirmwareUpdateCapabilities;
 }
 
+export interface IncomingCommandGetFirmwareUpdateCapabilitiesCached
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getFirmwareUpdateCapabilitiesCached;
+}
+
 export interface IncomingCommandNodePollValue extends IncomingCommandNodeBase {
   command: NodeCommand.pollValue;
   valueId: ValueID;
@@ -174,6 +179,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeBeginFirmwareUpdate
   | IncomingCommandNodeAbortFirmwareUpdate
   | IncomingCommandGetFirmwareUpdateCapabilities
+  | IncomingCommandGetFirmwareUpdateCapabilitiesCached
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues

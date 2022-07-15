@@ -1,5 +1,6 @@
 import {
   Driver,
+  FirmwareUpdateCapabilities,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
   ZWaveNode,
@@ -31,6 +32,7 @@ export class NodeMessageHandler {
     let firmwareFile: Buffer;
     let actualFirmware: Firmware;
     let summary: LifelineHealthCheckSummary | RouteHealthCheckSummary;
+    let capabilities: FirmwareUpdateCapabilities;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -81,7 +83,10 @@ export class NodeMessageHandler {
         await node.abortFirmwareUpdate();
         return {};
       case NodeCommand.getFirmwareUpdateCapabilities:
-        const capabilities = await node.getFirmwareUpdateCapabilities();
+        capabilities = await node.getFirmwareUpdateCapabilities();
+        return { capabilities };
+      case NodeCommand.getFirmwareUpdateCapabilitiesCached:
+        capabilities = node.getFirmwareUpdateCapabilitiesCached();
         return { capabilities };
       case NodeCommand.pollValue:
         value = await node.pollValue<any>(message.valueId);

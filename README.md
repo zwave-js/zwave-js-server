@@ -489,6 +489,18 @@ interface {
 }
 ```
 
+#### [Get Firmware Update Capabilities Cached](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdatecapabilitiescached)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_capabilities_cached";
+  nodeId: number;
+}
+```
+
 #### [Poll value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=pollvalue)
 
 [compatible with schema version: 1+]

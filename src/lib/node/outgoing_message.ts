@@ -19,6 +19,9 @@ export interface NodeResultTypes {
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;
   };
+  [NodeCommand.getFirmwareUpdateCapabilitiesCached]: {
+    capabilities: FirmwareUpdateCapabilities;
+  };
   [NodeCommand.pollValue]: { value: any | undefined };
   [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
   [NodeCommand.refreshValues]: Record<string, never>;
