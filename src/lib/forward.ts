@@ -260,17 +260,11 @@ export class EventForwarder {
               eventData["parameters"] = args.parameters;
             }
             this.sendEvent(client, eventData);
-          } else if (client.schemaVersion >= 3 && client.schemaVersion < 21) {
-            delete args.eventTypeLabel;
-            delete args.dataTypeLabel;
-            this.sendEvent(client, {
-              source: "node",
-              event: "notification",
-              nodeId: changedNode.nodeId,
-              ccId,
-              args,
-            });
-          } else if (client.schemaVersion >= 21) {
+          } else if (client.schemaVersion >= 3) {
+            if (client.schemaVersion < 21) {
+              delete args.eventTypeLabel;
+              delete args.dataTypeLabel;
+            }
             this.sendEvent(client, {
               source: "node",
               event: "notification",
