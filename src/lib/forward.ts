@@ -262,8 +262,17 @@ export class EventForwarder {
             this.sendEvent(client, eventData);
           } else if (client.schemaVersion >= 3) {
             if (client.schemaVersion < 21) {
-              delete args.eventTypeLabel;
-              delete args.dataTypeLabel;
+              if (
+                [
+                  CommandClasses["Multilevel Switch"],
+                  CommandClasses["Entry Control"],
+                ].includes(ccId)
+              ) {
+                delete args.eventTypeLabel;
+              }
+              if (ccId == CommandClasses["Entry Control"]) {
+                delete args.dataTypeLabel;
+              }
             }
             this.sendEvent(client, {
               source: "node",
