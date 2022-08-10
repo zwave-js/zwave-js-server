@@ -100,9 +100,15 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success = await driver.controller.beginExclusion(
-          message.unprovision
-        );
+        const success =
+          message.unprovision !== undefined
+            ? await driver.controller.beginExclusion(message.unprovision)
+            : await driver.controller.beginExclusion(
+                message.strategy !== undefined
+                  ? { strategy: message.strategy }
+                  : undefined
+              );
+
         return { success };
       }
       case ControllerCommand.stopExclusion: {

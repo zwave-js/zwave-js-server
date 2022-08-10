@@ -60,7 +60,6 @@ export class EventForwarder {
             node: dumpFoundNode(node, client.schemaVersion),
           })
         );
-      this.setupNode(node);
     });
 
     {

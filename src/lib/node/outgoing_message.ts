@@ -44,4 +44,5 @@ export interface NodeResultTypes {
   [NodeCommand.getFirmwareUpdateProgress]: { progress: boolean };
   [NodeCommand.isFirmwareUpdateInProgress]: { progress: boolean };
   [NodeCommand.waitForWakeup]: Record<string, never>;
+  [NodeCommand.interview]: Record<string, never>;
 }

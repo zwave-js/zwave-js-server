@@ -171,6 +171,10 @@ export interface IncomingCommandWaitForWakeup extends IncomingCommandNodeBase {
   command: NodeCommand.waitForWakeup;
 }
 
+export interface IncomingCommandInterview extends IncomingCommandNodeBase {
+  command: NodeCommand.interview;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -198,4 +202,5 @@ export type IncomingMessageNode =
   | IncomingCommandSetLocation
   | IncomingCommandSetKeepAwake
   | IncomingCommandIsFirmwareUpdateInProgress
-  | IncomingCommandWaitForWakeup;
+  | IncomingCommandWaitForWakeup
+  | IncomingCommandInterview;

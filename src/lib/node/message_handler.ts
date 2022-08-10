@@ -92,11 +92,11 @@ export class NodeMessageHandler {
         value = await node.pollValue<any>(message.valueId);
         return { value };
       case NodeCommand.setRawConfigParameterValue:
-        await node.commandClasses.Configuration.set(
-          message.parameter,
-          message.value,
-          message.valueSize
-        );
+        await node.commandClasses.Configuration.set({
+          parameter: message.parameter,
+          value: message.value,
+          valueSize: message.valueSize,
+        });
         return {};
       case NodeCommand.refreshValues:
         await node.refreshValues();
@@ -210,6 +210,9 @@ export class NodeMessageHandler {
         };
       case NodeCommand.waitForWakeup:
         await node.waitForWakeup();
+        return {};
+      case NodeCommand.interview:
+        node.interview();
         return {};
       default:
         throw new UnknownCommandError(command);

@@ -728,6 +728,18 @@ interface {
 }
 ```
 
+#### [Interview](https://zwave-js.github.io/node-zwave-js/#/api/node?id=interview)
+
+[compatible with schema version: 22+]
+
+```ts
+interface {
+  messageId: string;
+  nodeId: number;
+  command: "node.interview";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
