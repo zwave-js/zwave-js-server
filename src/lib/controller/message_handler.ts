@@ -284,7 +284,10 @@ export class ControllerMessageHandler {
       case ControllerCommand.getAvailableFirmwareUpdates: {
         return {
           updates: await driver.controller.getAvailableFirmwareUpdates(
-            message.nodeId
+            message.nodeId,
+            message.apiKey !== undefined
+              ? { apiKey: message.apiKey }
+              : undefined
           ),
         };
       }

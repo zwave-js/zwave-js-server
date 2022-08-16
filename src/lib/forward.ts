@@ -243,7 +243,7 @@ export class EventForwarder {
 
     node.on(
       "notification",
-      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) => {
+      (changedNode: any, ccId: CommandClasses, args: any) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clientsController.clients.forEach((client) => {

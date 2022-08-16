@@ -242,6 +242,7 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getAvailableFirmwareUpdates;
   nodeId: number;
+  apiKey?: string;
 }
 
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
