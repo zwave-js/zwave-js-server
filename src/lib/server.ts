@@ -62,7 +62,7 @@ export class Client {
         message as IncomingMessageController,
         this.clientsController,
         this.driver,
-        this
+        this,
       ),
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
