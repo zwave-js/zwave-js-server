@@ -339,6 +339,7 @@ function processInclusionOptions(
         let validateDSKAndEnterPinPromise:
           | DeferredPromise<string | false>
           | undefined;
+        // @ts-expect-error
         options.userCallbacks = {
           grantSecurityClasses: (
             requested: InclusionGrant
