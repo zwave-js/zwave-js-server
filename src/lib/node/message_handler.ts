@@ -173,7 +173,7 @@ export class NodeMessageHandler {
         const count = node.getEndpointCount();
         return { count };
       case NodeCommand.interviewCC:
-        node.interviewCC(message.commandClass);
+        await node.interviewCC(message.commandClass);
         return {};
       case NodeCommand.getState:
         const state = dumpNode(node, client.schemaVersion);
@@ -212,7 +212,7 @@ export class NodeMessageHandler {
         await node.waitForWakeup();
         return {};
       case NodeCommand.interview:
-        node.interview();
+        await node.interview();
         return {};
       default:
         throw new UnknownCommandError(command);
