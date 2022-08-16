@@ -20,6 +20,7 @@ import {
   NodeStatistics,
   ControllerStatistics,
   InclusionState,
+  FoundNode,
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
@@ -71,7 +72,7 @@ export interface ControllerStateSchema0 {
   inclusionState: InclusionState;
 }
 
-type ControllerStateSchema1 = Omit<
+type ControllerStateSchema16 = Omit<
   Modify<
     ControllerStateSchema0,
     {
@@ -82,7 +83,22 @@ type ControllerStateSchema1 = Omit<
   "libraryVersion" | "serialApiVersion"
 >;
 
-export type ControllerState = ControllerStateSchema0 | ControllerStateSchema1;
+type ControllerStateSchema22 = Omit<
+  Modify<
+    ControllerStateSchema16,
+    {
+      isPrimary?: boolean;
+      isSUC?: boolean;
+      nodeType?: NodeType;
+    }
+  >,
+  "isSlave" | "isSecondary" | "isStaticUpdateController"
+>;
+
+export type ControllerState =
+  | ControllerStateSchema0
+  | ControllerStateSchema16
+  | ControllerStateSchema22;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -150,7 +166,7 @@ interface MetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
-  valueChangeOptions?: (keyof ValueChangeOptions)[];
+  valueChangeOptions?: readonly (keyof ValueChangeOptions)[];
   min?: number;
   max?: number;
   minLength?: number;
@@ -167,7 +183,7 @@ interface ConfigurationMetadataState {
   description?: string;
   label?: string;
   ccSpecific?: Record<string, any>;
-  valueChangeOptions?: (keyof ValueChangeOptions)[];
+  valueChangeOptions?: readonly (keyof ValueChangeOptions)[];
   min?: ConfigValue;
   max?: ConfigValue;
   default?: ConfigValue;
@@ -300,7 +316,9 @@ interface FoundNodeStateSchema19 {
   status: NodeStatus;
 }
 
-export type FoundNodeState = FoundNodeStateSchema19;
+type FoundNodeStateSchema22 = Omit<FoundNodeStateSchema19, "status">;
+
+export type FoundNodeState = FoundNodeStateSchema19 | FoundNodeStateSchema22;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -587,17 +605,21 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 };
 
 export const dumpFoundNode = (
-  foundNode: ZWaveNode,
+  foundNode: FoundNode,
   schemaVersion: number
 ): FoundNodeState => {
-  const base: FoundNodeStateSchema19 = {
-    nodeId: foundNode.nodeId,
+  const base: Partial<FoundNodeStateSchema19> = {
+    nodeId: foundNode.id,
     deviceClass: foundNode.deviceClass
       ? dumpDeviceClass(foundNode.deviceClass)
       : null,
-    status: foundNode.status,
   };
-  return base;
+  if (schemaVersion < 22) {
+    base.status = NodeStatus.Unknown;
+    return base as FoundNodeStateSchema19;
+  }
+  const node22 = base as FoundNodeStateSchema22;
+  return node22;
 };
 
 export const dumpEndpoint = (
@@ -687,16 +709,13 @@ export const dumpController = (
   schemaVersion: number
 ): ControllerState => {
   const controller = driver.controller;
-  const base: Partial<ControllerState> = {
+  const base: Partial<ControllerStateSchema0> = {
     type: controller.type,
     homeId: controller.homeId,
     ownNodeId: controller.ownNodeId,
-    isSecondary: controller.isSecondary,
     isUsingHomeIdFromOtherNetwork: controller.isUsingHomeIdFromOtherNetwork,
     isSISPresent: controller.isSISPresent,
     wasRealPrimary: controller.wasRealPrimary,
-    isStaticUpdateController: controller.isStaticUpdateController,
-    isSlave: controller.isSlave,
     manufacturerId: controller.manufacturerId,
     productType: controller.productType,
     productId: controller.productId,
@@ -707,16 +726,33 @@ export const dumpController = (
     statistics: controller.statistics,
     inclusionState: controller.inclusionState,
   };
+
+  if (schemaVersion < 22) {
+    if (controller.isPrimary !== undefined) {
+      base.isSecondary = !controller.isPrimary;
+    }
+    base.isStaticUpdateController = controller.isSUC;
+    base.isSlave = controller.nodeType === NodeType["End Node"];
+  }
+
   if (schemaVersion < 16) {
     const controller0 = base as ControllerStateSchema0;
     controller0.libraryVersion = controller.sdkVersion;
     controller0.serialApiVersion = controller.firmwareVersion;
     return controller0;
   }
-  const controller1 = base as ControllerStateSchema1;
-  controller1.sdkVersion = controller.sdkVersion;
-  controller1.firmwareVersion = controller.firmwareVersion;
-  return controller1;
+  const controller16 = base as ControllerStateSchema16;
+  controller16.sdkVersion = controller.sdkVersion;
+  controller16.firmwareVersion = controller.firmwareVersion;
+  if (schemaVersion < 22) {
+    return controller16;
+  }
+
+  const controller22 = base as ControllerStateSchema22;
+  controller22.isPrimary = controller.isPrimary;
+  controller22.isSUC = controller.isSUC;
+  controller22.nodeType = controller.nodeType;
+  return controller22;
 };
 
 export const dumpState = (

@@ -1,5 +1,6 @@
 import {
   AssociationAddress,
+  ExclusionStrategy,
   FirmwareUpdateFileInfo,
   InclusionGrant,
   InclusionOptions,
@@ -37,6 +38,7 @@ export interface IncomingCommandControllerBeginExclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginExclusion;
   unprovision?: boolean | "inactive";
+  strategy?: ExclusionStrategy;
 }
 
 export interface IncomingCommandControllerStopExclusion
@@ -240,6 +242,7 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   extends IncomingCommandControllerBase {
   command: ControllerCommand.getAvailableFirmwareUpdates;
   nodeId: number;
+  apiKey?: string;
 }
 
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
