@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "1.22.0",
+  "version": "1.22.1",
   "description": "Full access to zwave-js driver through Websockets",
   "homepage": "https://github.com/zwave-js/zwave-js-server#readme",
   "repository": {
@@ -34,7 +34,7 @@
     "@homebridge/ciao": "^1.1.3"
   },
   "peerDependencies": {
-    "zwave-js": "10.0.0"
+    "zwave-js": "^10.0.1"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.1",
@@ -53,7 +53,7 @@
     "semver": "^7.3.5",
     "ts-node": "^10.5.0",
     "typescript": "^4.1.3",
-    "zwave-js": "10.0.0"
+    "zwave-js": "^10.0.1"
   },
   "husky": {
     "hooks": {
