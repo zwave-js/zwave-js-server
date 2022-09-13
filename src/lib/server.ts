@@ -91,7 +91,8 @@ export class Client {
     [Instance.endpoint]: (message) =>
       EndpointMessageHandler.handle(
         message as IncomingMessageEndpoint,
-        this.driver
+        this.driver,
+        this
       ),
     [Instance.utils]: (message) =>
       UtilsMessageHandler.handle(message as IncomingMessageUtils),

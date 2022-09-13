@@ -21,6 +21,40 @@ export interface IncomingCommandEndpointSupportsCCAPI
   commandClass: CommandClasses;
 }
 
+export interface IncomingCommandEndpointSupportsCC
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.supportsCC;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandEndpointControlsCC
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.controlsCC;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandEndpointIsCCSecure
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.isCCSecure;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandEndpointGetCCVersion
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.getCCVersion;
+  commandClass: CommandClasses;
+}
+
+export interface IncomingCommandEndpointGetNodeUnsafe
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.getNodeUnsafe;
+}
+
 export type IncomingMessageEndpoint =
   | IncomingCommandEndpointInvokeCCAPI
-  | IncomingCommandEndpointSupportsCCAPI;
+  | IncomingCommandEndpointSupportsCCAPI
+  | IncomingCommandEndpointSupportsCC
+  | IncomingCommandEndpointControlsCC
+  | IncomingCommandEndpointIsCCSecure
+  | IncomingCommandEndpointGetCCVersion
+  | IncomingCommandEndpointGetNodeUnsafe;
