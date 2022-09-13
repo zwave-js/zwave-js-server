@@ -318,7 +318,15 @@ interface FoundNodeStateSchema19 {
 
 type FoundNodeStateSchema22 = Omit<FoundNodeStateSchema19, "status">;
 
-export type FoundNodeState = FoundNodeStateSchema19 | FoundNodeStateSchema22;
+type FoundNodeStateSchema23 = Modify<
+  FoundNodeStateSchema22,
+  { supportedCCs?: CommandClasses[]; controlledCCs?: CommandClasses[] }
+>;
+
+export type FoundNodeState =
+  | FoundNodeStateSchema19
+  | FoundNodeStateSchema22
+  | FoundNodeStateSchema23;
 
 function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
   if (!node.ready) {
@@ -618,8 +626,14 @@ export const dumpFoundNode = (
     base.status = NodeStatus.Unknown;
     return base as FoundNodeStateSchema19;
   }
-  const node22 = base as FoundNodeStateSchema22;
-  return node22;
+  if (schemaVersion < 23) {
+    const node22 = base as FoundNodeStateSchema22;
+    return node22;
+  }
+  const node23 = base as FoundNodeStateSchema23;
+  node23.controlledCCs = foundNode.controlledCCs;
+  node23.supportedCCs = foundNode.supportedCCs;
+  return node23;
 };
 
 export const dumpEndpoint = (
