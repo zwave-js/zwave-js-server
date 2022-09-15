@@ -285,8 +285,13 @@ export class ControllerMessageHandler {
         return {
           updates: await driver.controller.getAvailableFirmwareUpdates(
             message.nodeId,
-            message.apiKey !== undefined
-              ? { apiKey: message.apiKey }
+            message.apiKey !== undefined ||
+              message.additionalUserAgentComponents !== undefined
+              ? {
+                  apiKey: message.apiKey,
+                  additionalUserAgentComponents:
+                    message.additionalUserAgentComponents,
+                }
               : undefined
           ),
         };
