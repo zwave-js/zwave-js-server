@@ -386,8 +386,8 @@ export interface Logger {
 }
 
 export interface ZwavejsServer {
-  start(): void;
-  destroy(): void;
+  start(): Promise<void>;
+  destroy(): Promise<void>;
   on(event: "listening", listener: () => void): this;
   on(event: "error", listener: (error: Error) => void): this;
 }
