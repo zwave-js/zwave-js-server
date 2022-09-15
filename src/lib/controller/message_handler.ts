@@ -288,7 +288,7 @@ export class ControllerMessageHandler {
             {
               apiKey: message.apiKey,
               additionalUserAgentComponents:
-                message.additionalUserAgentComponents,
+                client.additionalUserAgentComponents,
             }
           ),
         };

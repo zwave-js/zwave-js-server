@@ -243,7 +243,6 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   command: ControllerCommand.getAvailableFirmwareUpdates;
   nodeId: number;
   apiKey?: string;
-  additionalUserAgentComponents?: Record<string, string>;
 }
 
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
