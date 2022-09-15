@@ -7,3 +7,4 @@ export const minSchemaVersion = 0;
 export const maxSchemaVersion = 22;
 
 export const applicationName = "zwave-js-server";
+export const dnssdServiceType = applicationName;
