@@ -16,7 +16,7 @@ import { dumpLogConfig, dumpState } from "./state";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
 import {
-  dnssdServiceType,
+  applicationName,
   version,
   minSchemaVersion,
   maxSchemaVersion,
@@ -408,6 +408,7 @@ export class ZwavejsServer extends EventEmitter {
   ) {
     super();
     this.logger = options.logger ?? console;
+    this.driver.updateUserAgent({ applicationName: version });
   }
 
   async start() {
@@ -439,7 +440,7 @@ export class ZwavejsServer extends EventEmitter {
       this.service = this.responder.createService({
         name: this.driver.controller.homeId!.toString(),
         port,
-        type: dnssdServiceType,
+        type: applicationName,
         protocol: Protocol.TCP,
         txt: {
           homeId: this.driver.controller.homeId!,
