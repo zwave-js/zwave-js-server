@@ -4,6 +4,8 @@ import {
   NodeNotFoundError,
   UnknownCommandError,
 } from "../error";
+import { Client } from "../server";
+import { dumpNode } from "../state";
 import { EndpointCommand } from "./command";
 import { IncomingMessageEndpoint } from "./incoming_message";
 import { EndpointResultTypes } from "./outgoing_message";
@@ -33,7 +35,8 @@ const deserializeBufferInArray = (array: Array<any>): Array<any> => {
 export class EndpointMessageHandler {
   static async handle(
     message: IncomingMessageEndpoint,
-    driver: Driver
+    driver: Driver,
+    client: Client
   ): Promise<EndpointResultTypes[EndpointCommand]> {
     const { nodeId, command } = message;
     let endpoint;
@@ -61,8 +64,21 @@ export class EndpointMessageHandler {
         );
         return { response };
       case EndpointCommand.supportsCCAPI:
-        const supported = endpoint.supportsCCAPI(message.commandClass);
-        return { supported };
+        return { supported: endpoint.supportsCCAPI(message.commandClass) };
+      case EndpointCommand.supportsCC:
+        return { supported: endpoint.supportsCC(message.commandClass) };
+      case EndpointCommand.controlsCC:
+        return { controlled: endpoint.controlsCC(message.commandClass) };
+      case EndpointCommand.isCCSecure:
+        return { secure: endpoint.isCCSecure(message.commandClass) };
+      case EndpointCommand.getCCVersion:
+        return { version: endpoint.getCCVersion(message.commandClass) };
+      case EndpointCommand.getNodeUnsafe:
+        const node = endpoint.getNodeUnsafe();
+        return {
+          node:
+            node === undefined ? node : dumpNode(node, client.schemaVersion),
+        };
       default:
         throw new UnknownCommandError(command);
     }

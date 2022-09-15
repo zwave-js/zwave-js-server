@@ -806,6 +806,75 @@ interface {
 }
 ```
 
+#### [Check whether endpoint supports a given Command Class](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=supportscc)
+
+[compatible with schema version: 23+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.supports_cc";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
+#### [Check whether endpoint controls a given Command Class](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=controlscc)
+
+[compatible with schema version: 23+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.controls_cc";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
+#### [Check whether a given Command Class is secure](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=isccsecure)
+
+[compatible with schema version: 23+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.is_cc_secure";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
+#### [Check version of a given Command Class](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getccversion)
+
+[compatible with schema version: 23+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_cc_version";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
+#### [Get node from endpoint](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getnodeunsafe)
+
+[compatible with schema version: 23+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_node_unsafe";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
 ### Multicasting
 
 There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
