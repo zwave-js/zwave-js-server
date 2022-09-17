@@ -20,6 +20,7 @@ import {
   version,
   minSchemaVersion,
   maxSchemaVersion,
+  applicationName,
 } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
@@ -409,6 +410,7 @@ export class ZwavejsServer extends EventEmitter {
   ) {
     super();
     this.logger = options.logger ?? console;
+    this.driver.updateUserAgent({ [applicationName]: version });
   }
 
   async start() {
