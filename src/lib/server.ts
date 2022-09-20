@@ -387,13 +387,6 @@ export interface Logger {
   debug(message: string): void;
 }
 
-export interface ZwavejsServer {
-  start(): Promise<void>;
-  destroy(): Promise<void>;
-  on(event: "listening", listener: () => void): this;
-  on(event: "error", listener: (error: Error) => void): this;
-}
-
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
