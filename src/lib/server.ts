@@ -51,6 +51,7 @@ export class Client {
   private _outstandingPing = false;
   public schemaVersion = minSchemaVersion;
   public receiveLogs = false;
+  public additionalUserAgentComponents?: Record<string, string>;
 
   private instanceHandlers: Record<
     Instance,
@@ -115,6 +116,17 @@ export class Client {
     return this.socket.readyState === this.socket.OPEN;
   }
 
+  private setSchemaVersion(schemaVersion: number) {
+    // Handle schema version
+    this.schemaVersion = schemaVersion;
+    if (
+      this.schemaVersion < minSchemaVersion ||
+      this.schemaVersion > maxSchemaVersion
+    ) {
+      throw new SchemaIncompatibleError(this.schemaVersion);
+    }
+  }
+
   async receiveMessage(data: string) {
     let msg: IncomingMessage;
     try {
@@ -127,15 +139,15 @@ export class Client {
     }
 
     try {
+      if (msg.command === ServerCommand.initialize) {
+        this.setSchemaVersion(msg.schemaVersion);
+        this.additionalUserAgentComponents = msg.additionalUserAgentComponents;
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
       if (msg.command === ServerCommand.setApiSchema) {
-        // Handle schema version
-        this.schemaVersion = msg.schemaVersion;
-        if (
-          this.schemaVersion < minSchemaVersion ||
-          this.schemaVersion > maxSchemaVersion
-        ) {
-          throw new SchemaIncompatibleError(this.schemaVersion);
-        }
+        this.setSchemaVersion(msg.schemaVersion);
         this.sendResultSuccess(msg.messageId, {});
         return;
       }

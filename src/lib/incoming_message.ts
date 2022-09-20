@@ -27,6 +27,12 @@ interface IncomingCommandSetApiSchema extends IncomingCommandBase {
   schemaVersion: number;
 }
 
+interface IncomingCommandInitialize extends IncomingCommandBase {
+  command: ServerCommand.initialize;
+  schemaVersion: number;
+  additionalUserAgentComponents?: Record<string, string>;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
@@ -38,4 +44,5 @@ export type IncomingMessage =
   | IncomingMessageMulticastGroup
   | IncomingMessageBroadcastNode
   | IncomingMessageEndpoint
-  | IncomingMessageUtils;
+  | IncomingMessageUtils
+  | IncomingCommandInitialize;

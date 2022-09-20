@@ -73,6 +73,17 @@ interface {
 }
 ```
 
+To set the schema version that the client supports as well as an optional user agent that will be added to web requests, the client should send the `initialize` command.
+
+```ts
+interface {
+  messageId: string;
+  command: "initialize";
+  schemaVersion: number;
+  additionalUserAgentComponents?: Record<string, string>;
+}
+```
+
 To start receive the state and get events, the client needs to send the `start_listening` command.
 
 ```ts

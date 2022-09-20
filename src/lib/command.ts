@@ -3,4 +3,5 @@ export enum ServerCommand {
   updateLogConfig = "update_log_config",
   getLogConfig = "get_log_config",
   setApiSchema = "set_api_schema",
+  initialize = "initialize",
 }
