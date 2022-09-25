@@ -28,6 +28,10 @@ class MockDriver extends EventEmitter {
 
   public updateLogConfig(config: Partial<LogConfig>) {}
 
+  public updateUserAgent(
+    additionalUserAgentComponents?: Record<string, string> | null
+  ) {}
+
   async destroy() {}
 }
 
