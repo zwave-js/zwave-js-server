@@ -245,11 +245,20 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   apiKey?: string;
 }
 
+// Schema <= 23
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginOTAFirmwareUpdate;
   nodeId: number;
   update: FirmwareUpdateFileInfo;
+}
+
+// Schema > 23
+export interface IncomingCommandControllerFirmwareUpdateOTA
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.firmwareUpdateOTA;
+  nodeId: number;
+  updates: FirmwareUpdateFileInfo[];
 }
 
 export type IncomingMessageController =
@@ -289,4 +298,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetKnownLifelineRoutes
   | IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
   | IncomingCommandControllerGetAvailableFirmwareUpdates
-  | IncomingCommandControllerBeginOTAFirmwareUpdate;
+  | IncomingCommandControllerBeginOTAFirmwareUpdate
+  | IncomingCommandControllerFirmwareUpdateOTA;

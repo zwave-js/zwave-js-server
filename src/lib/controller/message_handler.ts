@@ -36,6 +36,7 @@ export class ControllerMessageHandler {
     client: Client
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
+    let success: boolean;
 
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
@@ -294,11 +295,17 @@ export class ControllerMessageHandler {
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
-        await driver.controller.beginOTAFirmwareUpdate(
+        success = await driver.controller.firmwareUpdateOTA(message.nodeId, [
+          message.update,
+        ]);
+        return { success };
+      }
+      case ControllerCommand.firmwareUpdateOTA: {
+        success = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
-          message.update
+          message.updates
         );
-        return {};
+        return { success };
       }
       default:
         throw new UnknownCommandError(command);

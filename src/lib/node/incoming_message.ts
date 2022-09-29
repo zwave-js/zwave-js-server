@@ -41,6 +41,7 @@ export interface IncomingCommandNodeGetValueMetadata
   valueId: ValueID;
 }
 
+// Schema <= 23
 export interface IncomingCommandNodeBeginFirmwareUpdate
   extends IncomingCommandNodeBase {
   command: NodeCommand.beginFirmwareUpdate;
@@ -48,6 +49,17 @@ export interface IncomingCommandNodeBeginFirmwareUpdate
   firmwareFile: string; // use base64 encoding for the file
   firmwareFileFormat?: FirmwareFileFormat;
   target?: number;
+}
+
+// Schema > 23
+export interface IncomingCommandNodeUpdateFirmware
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.updateFirmware;
+  updates: {
+    filename: string;
+    file: string; // use base64 encoding for the file
+    fileFormat?: FirmwareFileFormat;
+  }[];
 }
 
 export interface IncomingCommandNodeAbortFirmwareUpdate
@@ -181,6 +193,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeGetDefinedValueIDs
   | IncomingCommandNodeGetValueMetadata
   | IncomingCommandNodeBeginFirmwareUpdate
+  | IncomingCommandNodeUpdateFirmware
   | IncomingCommandNodeAbortFirmwareUpdate
   | IncomingCommandGetFirmwareUpdateCapabilities
   | IncomingCommandGetFirmwareUpdateCapabilitiesCached

@@ -1,6 +1,7 @@
 import {
   ControllerEvents,
-  FirmwareUpdateStatus,
+  FirmwareUpdateProgress,
+  FirmwareUpdateResult,
   NodeStatistics,
   NodeStatus,
   ZWaveNode,
@@ -287,32 +288,52 @@ export class EventForwarder {
 
     node.on(
       "firmware update progress",
-      (
-        changedNode: ZWaveNode,
-        sentFragments: number,
-        totalFragments: number
-      ) => {
+      (changedNode: ZWaveNode, _, __, progress: FirmwareUpdateProgress) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
-        notifyNode(changedNode, "firmware update progress", {
-          sentFragments,
-          totalFragments,
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion <= 23) {
+            this.sendEvent(client, {
+              source: "node",
+              event: "firmware update progress",
+              nodeId: changedNode.nodeId,
+              sentFragments: progress.sentFragments,
+              totalFragments: progress.totalFragments,
+            });
+          } else {
+            this.sendEvent(client, {
+              source: "node",
+              event: "firmware update progress",
+              nodeId: changedNode.nodeId,
+              progress,
+            });
+          }
         });
       }
     );
 
     node.on(
       "firmware update finished",
-      (
-        changedNode: ZWaveNode,
-        status: FirmwareUpdateStatus,
-        waitTime?: number
-      ) => {
+      (changedNode: ZWaveNode, _, __, result: FirmwareUpdateResult) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
-        notifyNode(changedNode, "firmware update finished", {
-          status,
-          waitTime,
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion <= 23) {
+            this.sendEvent(client, {
+              source: "node",
+              event: "firmware update finished",
+              nodeId: changedNode.nodeId,
+              status: result.status,
+              waitTime: result.waitTime,
+            });
+          } else {
+            this.sendEvent(client, {
+              source: "node",
+              event: "firmware update finished",
+              nodeId: changedNode.nodeId,
+              result,
+            });
+          }
         });
       }
     );
