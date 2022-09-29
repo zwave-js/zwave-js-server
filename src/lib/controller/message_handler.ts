@@ -290,6 +290,7 @@ export class ControllerMessageHandler {
               apiKey: message.apiKey,
               additionalUserAgentComponents:
                 client.additionalUserAgentComponents,
+              includePrereleases: message.includePrereleases,
             }
           ),
         };

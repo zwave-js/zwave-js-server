@@ -243,6 +243,7 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   command: ControllerCommand.getAvailableFirmwareUpdates;
   nodeId: number;
   apiKey?: string;
+  includePrereleases?: boolean;
 }
 
 // Schema <= 23
