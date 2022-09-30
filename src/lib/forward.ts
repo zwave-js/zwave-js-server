@@ -324,7 +324,7 @@ export class EventForwarder {
               event: "firmware update finished",
               nodeId: changedNode.nodeId,
               status: result.status,
-              waitTime: result.waitTime,
+              waitTime: result.waitTime as any,
             });
           } else {
             this.sendEvent(client, {
