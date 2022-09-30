@@ -458,9 +458,9 @@ interface {
 }
 ```
 
-#### [Begin Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=beginfirmwareupdate)
+#### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
 
-[compatible with schema version: 5+]
+[compatible with schema version: 24+]
 
 If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload.
 
@@ -469,10 +469,11 @@ interface {
   messageId: string;
   command: "node.begin_firmware_update";
   nodeId: number;
-  firmwareFilename: string;
-  firmwareFile: string; // use base64 encoding for the file
-  firmwareFileFormat?: FileFormat;
-  target?: number;
+  updates: {
+    filename: string;
+    file: string; // use base64 encoding for the file
+    fileFormat?: FileFormat;
+  }[];
 }
 ```
 

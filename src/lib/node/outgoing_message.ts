@@ -14,7 +14,8 @@ export interface NodeResultTypes {
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
-  [NodeCommand.beginFirmwareUpdate]: Record<string, never>;
+  [NodeCommand.beginFirmwareUpdate]: { success: boolean };
+  [NodeCommand.updateFirmware]: { success: boolean };
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;

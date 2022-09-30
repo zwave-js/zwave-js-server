@@ -3,13 +3,11 @@ import {
   FirmwareUpdateCapabilities,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
-  ZWaveNode,
 } from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
   extractFirmware,
-  Firmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error";
@@ -29,10 +27,9 @@ export class NodeMessageHandler {
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
     let value: any;
-    let firmwareFile: Buffer;
-    let actualFirmware: Firmware;
     let summary: LifelineHealthCheckSummary | RouteHealthCheckSummary;
     let capabilities: FirmwareUpdateCapabilities;
+    let success: boolean;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -41,7 +38,7 @@ export class NodeMessageHandler {
 
     switch (message.command) {
       case NodeCommand.setValue:
-        const success = await node.setValue(
+        success = await node.setValue(
           message.valueId,
           message.value,
           message.options
@@ -69,16 +66,31 @@ export class NodeMessageHandler {
         if (node.isFirmwareUpdateInProgress()) {
           throw new Error("Firmware update already in progress");
         }
-        firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        const format = message.firmwareFileFormat
-          ? message.firmwareFileFormat
-          : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile);
-        actualFirmware = extractFirmware(firmwareFile, format);
-        await node.beginFirmwareUpdate(
-          actualFirmware.data,
-          message.target ?? actualFirmware.firmwareTarget
-        );
-        return {};
+        const firmwareFile = Buffer.from(message.firmwareFile, "base64");
+        success = await node.updateFirmware([
+          extractFirmware(
+            firmwareFile,
+            message.firmwareFileFormat
+              ? message.firmwareFileFormat
+              : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+          ),
+        ]);
+        return { success };
+      case NodeCommand.updateFirmware:
+        if (node.isFirmwareUpdateInProgress()) {
+          throw new Error("Firmware update already in progress");
+        }
+        const updates = message.updates.map((update) => {
+          const file = Buffer.from(update.file, "base64");
+          return extractFirmware(
+            file,
+            update.fileFormat
+              ? update.fileFormat
+              : guessFirmwareFileFormat(update.filename, file)
+          );
+        });
+        success = await node.updateFirmware(updates);
+        return { success };
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};
