@@ -65,6 +65,15 @@ export class DriverMessageHandler {
       case DriverCommand.enableErrorReporting:
         driver.enableErrorReporting();
         return {};
+      case DriverCommand.softReset:
+        await driver.softReset();
+        return {};
+      case DriverCommand.trySoftReset:
+        await driver.trySoftReset();
+        return {};
+      case DriverCommand.hardReset:
+        await driver.hardReset();
+        return {};
       default:
         throw new UnknownCommandError(command);
     }

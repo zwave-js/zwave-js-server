@@ -11,4 +11,7 @@ export enum DriverCommand {
   installConfigUpdate = "driver.install_config_update",
   setPreferredScales = "driver.set_preferred_scales",
   enableErrorReporting = "driver.enable_error_reporting",
+  softReset = "driver.soft_reset",
+  trySoftReset = "driver.try_soft_reset",
+  hardReset = "driver.hard_reset",
 }
