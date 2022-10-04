@@ -136,7 +136,7 @@ interface Args {
 
   driver.on("driver ready", async () => {
     try {
-      // don't start server if it already exists
+      // only start server if it does not already exist. Avoids port already in use error on driver reset.
       if (server == null) {
         server = new ZwavejsServer(driver, {
           port: args.port,
