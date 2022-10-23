@@ -437,6 +437,7 @@ export class ZwavejsServer extends EventEmitter {
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
 
+    this.wsServer.on("error", this.onError.bind(this));
     this.server.on("error", this.onError.bind(this));
     this.server.listen(port, host);
     await once(this.server, "listening");
