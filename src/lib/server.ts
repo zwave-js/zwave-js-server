@@ -437,8 +437,8 @@ export class ZwavejsServer extends EventEmitter {
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
 
-    this.wsServer.on("error", this.onError.bind(this));
-    this.server.on("error", this.onError.bind(this));
+    this.wsServer.on("error", this.onError.bind(this, this.wsServer));
+    this.server.on("error", this.onError.bind(this, this.server));
     this.server.listen(port, host);
     await once(this.server, "listening");
     this.emit("listening");
@@ -460,8 +460,8 @@ export class ZwavejsServer extends EventEmitter {
     }
   }
 
-  private onError(error: Error) {
-    this.emit("error", error);
+  private onError(sourceClass: EventEmitter, error: Error) {
+    this.emit("error", error, sourceClass);
     this.logger.error(error);
   }
 
