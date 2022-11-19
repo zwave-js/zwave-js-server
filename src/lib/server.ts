@@ -420,8 +420,6 @@ export class ZwavejsServer extends EventEmitter {
     this.driver.updateUserAgent({ [applicationName]: version });
   }
 
-  createServers() {}
-
   async start() {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
