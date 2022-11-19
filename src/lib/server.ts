@@ -434,7 +434,7 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets.on("hard reset", () => {
       this.emit("hard reset");
       this.destroy();
-      this.driver.on("driver ready", () => this.start());
+      this.driver.once("driver ready", () => this.start());
     });
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
