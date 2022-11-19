@@ -476,21 +476,25 @@ export class ZwavejsServer extends EventEmitter {
     this.logger.debug(`Closing server...`);
     if (this.sockets) {
       this.sockets.disconnect();
+      this.sockets.removeAllListeners();
       delete this.sockets;
     }
     if (this.wsServer) {
       this.wsServer.close();
       await once(this.wsServer, "close");
+      this.wsServer.removeAllListeners();
       delete this.wsServer;
     }
     if (this.server) {
       this.server.close();
       await once(this.server, "close");
+      this.server.removeAllListeners();
       delete this.server;
     }
     if (this.service) {
       await this.service.end();
       await this.service.destroy();
+      this.service.removeAllListeners();
       delete this.service;
     }
     if (this.responder) {
