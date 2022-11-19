@@ -420,6 +420,8 @@ export class ZwavejsServer extends EventEmitter {
     this.driver.updateUserAgent({ [applicationName]: version });
   }
 
+  createServers() {}
+
   async start() {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
@@ -433,15 +435,10 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new ClientsController(this.driver, this.logger);
     this.sockets.on("hard reset", () => {
       this.emit("hard reset");
-      this.sockets?.disconnect();
+      this.destroy();
+      this.driver.on("driver ready", () => this.start());
     });
-    this.wsServer.on("connection", (socket) => {
-      if (!this.driver.ready) {
-        this.sockets!.addSocket(socket);
-      } else {
-        socket.terminate();
-      }
-    });
+    this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     const port = this.options.port || this.defaultPort;
     const host = this.options.host || this.defaultHost;
