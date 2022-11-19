@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { NodeNotFoundError, UnknownCommandError } from "../error";
+import { UnableToResetError, UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
@@ -66,13 +66,24 @@ export class DriverMessageHandler {
         driver.enableErrorReporting();
         return {};
       case DriverCommand.softReset:
+        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
+          throw new UnableToResetError("soft");
+        }
         await driver.softReset();
         return {};
       case DriverCommand.trySoftReset:
+        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
+          throw new UnableToResetError("soft");
+        }
         await driver.trySoftReset();
         return {};
       case DriverCommand.hardReset:
+        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
+          throw new UnableToResetError("hard");
+        }
         await driver.hardReset();
+        clientsController.emit("hard reset");
+        setTimeout(process.exit(), 100);
         return {};
       default:
         throw new UnknownCommandError(command);

@@ -282,7 +282,7 @@ export class Client {
     this.socket.close();
   }
 }
-export class ClientsController {
+export class ClientsController extends EventEmitter {
   public clients: Array<Client> = [];
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
@@ -292,7 +292,9 @@ export class ClientsController {
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
   public nodeMessageHandler = new NodeMessageHandler();
 
-  constructor(public driver: Driver, private logger: Logger) {}
+  constructor(public driver: Driver, private logger: Logger) {
+    super();
+  }
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
@@ -429,7 +431,17 @@ export class ZwavejsServer extends EventEmitter {
       perMessageDeflate: true,
     });
     this.sockets = new ClientsController(this.driver, this.logger);
-    this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
+    this.sockets.on("hard reset", () => {
+      this.emit("hard reset");
+      this.sockets?.disconnect();
+    });
+    this.wsServer.on("connection", (socket) => {
+      if (!this.driver.ready) {
+        this.sockets!.addSocket(socket);
+      } else {
+        socket.terminate();
+      }
+    });
 
     const port = this.options.port || this.defaultPort;
     const host = this.options.host || this.defaultHost;

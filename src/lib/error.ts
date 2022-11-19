@@ -9,6 +9,7 @@ export enum ErrorCode {
   inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
   inclusionAlreadyInProgress = "inclusion_already_in_progress",
   invalidParamsPassedToCommand = "invalid_params_passed_to_command",
+  unableToReset = "unable_to_reset",
 }
 
 export class BaseError extends Error {
@@ -82,4 +83,11 @@ export class InclusionAlreadyInProgressError extends BaseError {
 
 export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
+}
+
+export class UnableToResetError extends BaseError {
+  errorCode = ErrorCode.unableToReset;
+  constructor(public resetType: "hard" | "soft") {
+    super();
+  }
 }
