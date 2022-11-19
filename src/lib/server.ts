@@ -417,7 +417,6 @@ export class ZwavejsServer extends EventEmitter {
   ) {
     super();
     this.logger = options.logger ?? console;
-    this.driver.updateUserAgent({ [applicationName]: version });
   }
 
   async start() {
@@ -425,6 +424,7 @@ export class ZwavejsServer extends EventEmitter {
       throw new Error("Cannot start server when driver not ready");
     }
 
+    this.driver.updateUserAgent({ [applicationName]: version });
     this.server = createServer();
     this.wsServer = new ws.Server({
       server: this.server,
@@ -476,10 +476,17 @@ export class ZwavejsServer extends EventEmitter {
     this.logger.debug(`Closing server...`);
     if (this.sockets) {
       this.sockets.disconnect();
+      delete this.sockets;
+    }
+    if (this.wsServer) {
+      this.wsServer.close();
+      await once(this.wsServer, "close");
+      delete this.wsServer;
     }
     if (this.server) {
       this.server.close();
       await once(this.server, "close");
+      delete this.server;
     }
     if (this.service) {
       await this.service.end();
