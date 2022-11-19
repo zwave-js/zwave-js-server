@@ -81,9 +81,7 @@ export class DriverMessageHandler {
         if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
           throw new UnableToResetError("hard");
         }
-        await driver.hardReset();
-        clientsController.emit("hard reset");
-        setTimeout(process.exit(), 100);
+        setTimeout(() => clientsController.emit("hard reset"), 1);
         return {};
       default:
         throw new UnknownCommandError(command);
