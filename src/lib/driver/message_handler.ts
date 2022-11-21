@@ -1,5 +1,8 @@
 import { Driver } from "zwave-js";
-import { UnableToResetError, UnknownCommandError } from "../error";
+import {
+  UnableToResetError as FirmwareUpdateInProgressError,
+  UnknownCommandError,
+} from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
@@ -14,6 +17,17 @@ export class DriverMessageHandler {
     client: Client
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
+    if (
+      command in
+        [
+          DriverCommand.hardReset,
+          DriverCommand.softReset,
+          DriverCommand.trySoftReset,
+        ] &&
+      driver.controller.isAnyOTAFirmwareUpdateInProgress()
+    ) {
+      throw new FirmwareUpdateInProgressError();
+    }
     switch (message.command) {
       case DriverCommand.getConfig:
         return { config: dumpDriver(driver, client.schemaVersion) };
@@ -66,21 +80,12 @@ export class DriverMessageHandler {
         driver.enableErrorReporting();
         return {};
       case DriverCommand.softReset:
-        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
-          throw new UnableToResetError("soft");
-        }
         await driver.softReset();
         return {};
       case DriverCommand.trySoftReset:
-        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
-          throw new UnableToResetError("soft");
-        }
         await driver.trySoftReset();
         return {};
       case DriverCommand.hardReset:
-        if (driver.controller.isAnyOTAFirmwareUpdateInProgress()) {
-          throw new UnableToResetError("hard");
-        }
         setTimeout(() => clientsController.emit("hard reset"), 1);
         return {};
       default:

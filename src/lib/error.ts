@@ -9,7 +9,7 @@ export enum ErrorCode {
   inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
   inclusionAlreadyInProgress = "inclusion_already_in_progress",
   invalidParamsPassedToCommand = "invalid_params_passed_to_command",
-  unableToReset = "unable_to_reset",
+  firmwareUpdateInProgress = "firmware_update_in_progress",
 }
 
 export class BaseError extends Error {
@@ -86,8 +86,5 @@ export class InvalidParamsPassedToCommandError extends BaseError {
 }
 
 export class UnableToResetError extends BaseError {
-  errorCode = ErrorCode.unableToReset;
-  constructor(public resetType: "hard" | "soft") {
-    super();
-  }
+  errorCode = ErrorCode.firmwareUpdateInProgress;
 }
