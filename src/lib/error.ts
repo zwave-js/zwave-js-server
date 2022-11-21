@@ -85,6 +85,6 @@ export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
 }
 
-export class UnableToResetError extends BaseError {
+export class FirmwareUpdateInProgressError extends BaseError {
   errorCode = ErrorCode.firmwareUpdateInProgress;
 }

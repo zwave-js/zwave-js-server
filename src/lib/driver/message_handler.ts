@@ -1,8 +1,5 @@
 import { Driver } from "zwave-js";
-import {
-  UnableToResetError as FirmwareUpdateInProgressError,
-  UnknownCommandError,
-} from "../error";
+import { FirmwareUpdateInProgressError, UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
