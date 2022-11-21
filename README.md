@@ -341,7 +341,7 @@ interface {
 }
 ```
 
-#### [Instruct the controller to soft-reset (restart)](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
+#### [Peform a soft-reset (restart) on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
 
 [compatible with schema version: 25+]
 
@@ -352,7 +352,7 @@ interface {
 }
 ```
 
-#### [Instruct the controller to soft-reset (restart) only if soft-reset is enabled](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
+#### [Attempt to perform a soft-reset (restart) on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
 
 [compatible with schema version: 25+]
 
