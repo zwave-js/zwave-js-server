@@ -413,7 +413,8 @@ export class ZwavejsServer extends EventEmitter {
 
   constructor(
     private driver: Driver,
-    private options: ZwavejsServerOptions = {}
+    private options: ZwavejsServerOptions = {},
+    private destroyServerOnHardReset: boolean = false
   ) {
     super();
     this.logger = options.logger ?? console;
@@ -434,7 +435,9 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets.on("hard reset", async () => {
       this.driver.once("driver ready", () => this.start());
       await this.driver.hardReset();
-      await this.destroy();
+      if (this.destroyServerOnHardReset) {
+        await this.destroy();
+      }
       this.emit("hard reset");
     });
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));

@@ -138,11 +138,15 @@ interface Args {
     try {
       // only start server if it does not already exist. Avoids port already in use error on driver reset.
       if (server == null) {
-        server = new ZwavejsServer(driver, {
-          port: args.port,
-          host: args.host,
-          enableDNSServiceDiscovery: !args["disable-dns-sd"],
-        });
+        server = new ZwavejsServer(
+          driver,
+          {
+            port: args.port,
+            host: args.host,
+            enableDNSServiceDiscovery: !args["disable-dns-sd"],
+          },
+          true
+        );
         await server.start();
       }
     } catch (error) {
