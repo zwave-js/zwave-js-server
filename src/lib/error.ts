@@ -9,7 +9,6 @@ export enum ErrorCode {
   inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
   inclusionAlreadyInProgress = "inclusion_already_in_progress",
   invalidParamsPassedToCommand = "invalid_params_passed_to_command",
-  firmwareUpdateInProgress = "firmware_update_in_progress",
 }
 
 export class BaseError extends Error {
@@ -83,8 +82,4 @@ export class InclusionAlreadyInProgressError extends BaseError {
 
 export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
-}
-
-export class FirmwareUpdateInProgressError extends BaseError {
-  errorCode = ErrorCode.firmwareUpdateInProgress;
 }

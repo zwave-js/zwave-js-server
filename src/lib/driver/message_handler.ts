@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { FirmwareUpdateInProgressError, UnknownCommandError } from "../error";
+import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
@@ -14,17 +14,6 @@ export class DriverMessageHandler {
     client: Client
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
-    if (
-      command in
-        [
-          DriverCommand.hardReset,
-          DriverCommand.softReset,
-          DriverCommand.trySoftReset,
-        ] &&
-      driver.controller.isAnyOTAFirmwareUpdateInProgress()
-    ) {
-      throw new FirmwareUpdateInProgressError();
-    }
     switch (message.command) {
       case DriverCommand.getConfig:
         return { config: dumpDriver(driver, client.schemaVersion) };
