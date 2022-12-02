@@ -432,7 +432,7 @@ export class ZwavejsServer extends EventEmitter {
       perMessageDeflate: true,
     });
     this.sockets = new ClientsController(this.driver, this.logger);
-    this.sockets.on("hard reset", async () => {
+    this.sockets.on("perform hard reset", async () => {
       if (this.destroyServerOnHardReset) {
         this.driver.once("driver ready", () => {
           this.start();

@@ -72,7 +72,7 @@ export class DriverMessageHandler {
         await driver.trySoftReset();
         return {};
       case DriverCommand.hardReset:
-        setTimeout(() => clientsController.emit("hard reset"), 1);
+        setTimeout(() => clientsController.emit("perform hard reset"), 1);
         return {};
       default:
         throw new UnknownCommandError(command);
