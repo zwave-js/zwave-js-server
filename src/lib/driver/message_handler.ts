@@ -1,6 +1,6 @@
 import { Driver } from "zwave-js";
 import { UnknownCommandError } from "../error";
-import { Client, ClientsController } from "../server";
+import { Client, ClientsController, ZwavejsRemoteController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
@@ -9,6 +9,7 @@ import { dumpDriver, dumpLogConfig } from "../state";
 export class DriverMessageHandler {
   static async handle(
     message: IncomingMessageDriver,
+    remoteController: ZwavejsRemoteController,
     clientsController: ClientsController,
     driver: Driver,
     client: Client
@@ -72,7 +73,7 @@ export class DriverMessageHandler {
         await driver.trySoftReset();
         return {};
       case DriverCommand.hardReset:
-        setTimeout(() => clientsController.emit("perform hard reset"), 1);
+        setTimeout(() => remoteController.hardResetController(), 1);
         return {};
       default:
         throw new UnknownCommandError(command);
