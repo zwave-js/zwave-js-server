@@ -1,6 +1,6 @@
 import { Driver } from "zwave-js";
 import { UnknownCommandError } from "../error";
-import { Client, ClientsController, ZwavejsRemoteController } from "../server";
+import { Client, ClientsController, ZwavejsServerRemoteController } from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
@@ -9,7 +9,7 @@ import { dumpDriver, dumpLogConfig } from "../state";
 export class DriverMessageHandler {
   static async handle(
     message: IncomingMessageDriver,
-    remoteController: ZwavejsRemoteController,
+    remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
     driver: Driver,
     client: Client
