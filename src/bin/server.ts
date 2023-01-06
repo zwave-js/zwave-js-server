@@ -134,24 +134,17 @@ interface Args {
 
   let server: ZwavejsServer;
 
-  driver.on("driver ready", async () => {
-    try {
-      // only start server if it does not already exist. Avoids port already in use error on driver reset.
-      if (server == null) {
-        server = new ZwavejsServer(
-          driver,
-          {
-            port: args.port,
-            host: args.host,
-            enableDNSServiceDiscovery: !args["disable-dns-sd"],
-          },
-          true
-        );
-        await server.start();
-      }
-    } catch (error) {
-      console.error("Unable to start Server", error);
-    }
+  driver.once("driver ready", async () => {
+    server = new ZwavejsServer(
+      driver,
+      {
+        port: args.port,
+        host: args.host,
+        enableDNSServiceDiscovery: !args["disable-dns-sd"],
+      },
+      true
+    );
+    await server.start();
   });
 
   await driver.start();

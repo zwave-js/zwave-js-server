@@ -445,7 +445,7 @@ export class ZwavejsServer extends EventEmitter {
   private defaultHost: string = "0.0.0.0";
   private responder?: Responder;
   private service?: CiaoService;
-  private remoteController?: ZwavejsRemoteController;
+  private remoteController: ZwavejsRemoteController;
 
   constructor(
     private driver: Driver,
@@ -472,9 +472,7 @@ export class ZwavejsServer extends EventEmitter {
       server: this.server,
       perMessageDeflate: true,
     });
-    if (!this.remoteController) {
-      throw new Error("Remote controller not initialized");
-    }
+
     this.sockets = new ClientsController(
       this.driver,
       this.logger,
