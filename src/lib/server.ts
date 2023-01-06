@@ -106,7 +106,7 @@ export class Client {
     private clientsController: ClientsController,
     private driver: Driver,
     private logger: Logger,
-    private remoteController: ZwavejsRemoteController
+    private remoteController: ZwavejsServerRemoteController
   ) {
     socket.on("pong", () => {
       this._outstandingPing = false;
@@ -297,7 +297,7 @@ export class ClientsController extends EventEmitter {
   constructor(
     public driver: Driver,
     private logger: Logger,
-    private remoteController: ZwavejsRemoteController
+    private remoteController: ZwavejsServerRemoteController
   ) {
     super();
   }
@@ -413,14 +413,17 @@ export interface Logger {
   debug(message: string): void;
 }
 
-export class ZwavejsRemoteController extends EventEmitter {
+/**
+ * This class allows the hard reset driver command to be passed to the
+ * ClientsController instance without providing access to the base server and
+ * eventing system.
+ */
+export class ZwavejsServerRemoteController {
   constructor(
     private destroyServerOnHardReset: boolean = false,
     private driver: Driver,
     private zwaveJsServer: ZwavejsServer
-  ) {
-    super();
-  }
+  ) {}
 
   public async hardResetController() {
     if (this.destroyServerOnHardReset) {
@@ -432,7 +435,7 @@ export class ZwavejsRemoteController extends EventEmitter {
     if (this.destroyServerOnHardReset) {
       await this.zwaveJsServer.destroy();
     }
-    this.emit("hard reset");
+    this.zwaveJsServer.emit("hard reset");
   }
 }
 
@@ -445,7 +448,7 @@ export class ZwavejsServer extends EventEmitter {
   private defaultHost: string = "0.0.0.0";
   private responder?: Responder;
   private service?: CiaoService;
-  private remoteController: ZwavejsRemoteController;
+  private remoteController: ZwavejsServerRemoteController;
 
   constructor(
     private driver: Driver,
@@ -453,7 +456,7 @@ export class ZwavejsServer extends EventEmitter {
     destroyServerOnHardReset: boolean = false
   ) {
     super();
-    this.remoteController = new ZwavejsRemoteController(
+    this.remoteController = new ZwavejsServerRemoteController(
       destroyServerOnHardReset,
       driver,
       this
