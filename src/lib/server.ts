@@ -415,8 +415,8 @@ export interface Logger {
 
 /**
  * This class allows the hard reset driver command to be passed to the
- * ClientsController instance without providing access to the base server and
- * eventing system.
+ * ClientsController, Client, and Message Handler instances without
+ * providing access to the base server and eventing system.
  */
 export class ZwavejsServerRemoteController {
   constructor(
