@@ -57,6 +57,18 @@ interface IncomingCommandEnableErrorReporting extends IncomingCommandBase {
   command: DriverCommand.enableErrorReporting;
 }
 
+interface IncomingCommandSoftReset extends IncomingCommandBase {
+  command: DriverCommand.softReset;
+}
+
+interface IncomingCommandTrySoftReset extends IncomingCommandBase {
+  command: DriverCommand.trySoftReset;
+}
+
+interface IncomingCommandHardReset extends IncomingCommandBase {
+  command: DriverCommand.hardReset;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -69,4 +81,7 @@ export type IncomingMessageDriver =
   | IncomingCommandCheckForConfigUpdates
   | IncomingCommandInstallConfigUpdate
   | IncomingCommandSetPreferredScales
-  | IncomingCommandEnableErrorReporting;
+  | IncomingCommandEnableErrorReporting
+  | IncomingCommandSoftReset
+  | IncomingCommandTrySoftReset
+  | IncomingCommandHardReset;

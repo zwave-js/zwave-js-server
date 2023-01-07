@@ -1,6 +1,10 @@
 import { Driver } from "zwave-js";
-import { NodeNotFoundError, UnknownCommandError } from "../error";
-import { Client, ClientsController } from "../server";
+import { UnknownCommandError } from "../error";
+import {
+  Client,
+  ClientsController,
+  ZwavejsServerRemoteController,
+} from "../server";
 import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
@@ -9,6 +13,7 @@ import { dumpDriver, dumpLogConfig } from "../state";
 export class DriverMessageHandler {
   static async handle(
     message: IncomingMessageDriver,
+    remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
     driver: Driver,
     client: Client
@@ -64,6 +69,15 @@ export class DriverMessageHandler {
         return {};
       case DriverCommand.enableErrorReporting:
         driver.enableErrorReporting();
+        return {};
+      case DriverCommand.softReset:
+        await driver.softReset();
+        return {};
+      case DriverCommand.trySoftReset:
+        await driver.trySoftReset();
+        return {};
+      case DriverCommand.hardReset:
+        setTimeout(() => remoteController.hardResetController(), 1);
         return {};
       default:
         throw new UnknownCommandError(command);

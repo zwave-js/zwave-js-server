@@ -69,6 +69,7 @@ export class Client {
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
         message as IncomingMessageDriver,
+        this.remoteController,
         this.clientsController,
         this.driver,
         this
@@ -104,7 +105,8 @@ export class Client {
     private socket: WebSocket,
     private clientsController: ClientsController,
     private driver: Driver,
-    private logger: Logger
+    private logger: Logger,
+    private remoteController: ZwavejsServerRemoteController
   ) {
     socket.on("pong", () => {
       this._outstandingPing = false;
@@ -282,7 +284,7 @@ export class Client {
     this.socket.close();
   }
 }
-export class ClientsController {
+export class ClientsController extends EventEmitter {
   public clients: Array<Client> = [];
   private pingInterval?: NodeJS.Timeout;
   private eventForwarder?: EventForwarder;
@@ -292,11 +294,23 @@ export class ClientsController {
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
   public nodeMessageHandler = new NodeMessageHandler();
 
-  constructor(public driver: Driver, private logger: Logger) {}
+  constructor(
+    public driver: Driver,
+    private logger: Logger,
+    private remoteController: ZwavejsServerRemoteController
+  ) {
+    super();
+  }
 
   addSocket(socket: WebSocket) {
     this.logger.debug("New client");
-    const client = new Client(socket, this, this.driver, this.logger);
+    const client = new Client(
+      socket,
+      this,
+      this.driver,
+      this.logger,
+      this.remoteController
+    );
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
     });
@@ -399,6 +413,32 @@ export interface Logger {
   debug(message: string): void;
 }
 
+/**
+ * This class allows the hard reset driver command to be passed to the
+ * ClientsController, Client, and Message Handler instances without
+ * providing access to the base server and eventing system.
+ */
+export class ZwavejsServerRemoteController {
+  constructor(
+    private destroyServerOnHardReset: boolean = false,
+    private driver: Driver,
+    private zwaveJsServer: ZwavejsServer
+  ) {}
+
+  public async hardResetController() {
+    if (this.destroyServerOnHardReset) {
+      this.driver.once("driver ready", () => {
+        this.zwaveJsServer.start();
+      });
+    }
+    await this.driver.hardReset();
+    if (this.destroyServerOnHardReset) {
+      await this.zwaveJsServer.destroy();
+    }
+    this.zwaveJsServer.emit("hard reset");
+  }
+}
+
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
   private wsServer?: ws.Server;
@@ -408,14 +448,20 @@ export class ZwavejsServer extends EventEmitter {
   private defaultHost: string = "0.0.0.0";
   private responder?: Responder;
   private service?: CiaoService;
+  private remoteController: ZwavejsServerRemoteController;
 
   constructor(
     private driver: Driver,
-    private options: ZwavejsServerOptions = {}
+    private options: ZwavejsServerOptions = {},
+    destroyServerOnHardReset: boolean = false
   ) {
     super();
+    this.remoteController = new ZwavejsServerRemoteController(
+      destroyServerOnHardReset,
+      driver,
+      this
+    );
     this.logger = options.logger ?? console;
-    this.driver.updateUserAgent({ [applicationName]: version });
   }
 
   async start() {
@@ -423,12 +469,18 @@ export class ZwavejsServer extends EventEmitter {
       throw new Error("Cannot start server when driver not ready");
     }
 
+    this.driver.updateUserAgent({ [applicationName]: version });
     this.server = createServer();
     this.wsServer = new ws.Server({
       server: this.server,
       perMessageDeflate: true,
     });
-    this.sockets = new ClientsController(this.driver, this.logger);
+
+    this.sockets = new ClientsController(
+      this.driver,
+      this.logger,
+      this.remoteController
+    );
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     const port = this.options.port || this.defaultPort;
@@ -469,14 +521,25 @@ export class ZwavejsServer extends EventEmitter {
     this.logger.debug(`Closing server...`);
     if (this.sockets) {
       this.sockets.disconnect();
+      this.sockets.removeAllListeners();
+      delete this.sockets;
+    }
+    if (this.wsServer) {
+      this.wsServer.close();
+      await once(this.wsServer, "close");
+      this.wsServer.removeAllListeners();
+      delete this.wsServer;
     }
     if (this.server) {
       this.server.close();
       await once(this.server, "close");
+      this.server.removeAllListeners();
+      delete this.server;
     }
     if (this.service) {
       await this.service.end();
       await this.service.destroy();
+      this.service.removeAllListeners();
       delete this.service;
     }
     if (this.responder) {

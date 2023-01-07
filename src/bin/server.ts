@@ -134,17 +134,17 @@ interface Args {
 
   let server: ZwavejsServer;
 
-  driver.on("driver ready", async () => {
-    try {
-      server = new ZwavejsServer(driver, {
+  driver.once("driver ready", async () => {
+    server = new ZwavejsServer(
+      driver,
+      {
         port: args.port,
         host: args.host,
         enableDNSServiceDiscovery: !args["disable-dns-sd"],
-      });
-      await server.start();
-    } catch (error) {
-      console.error("Unable to start Server", error);
-    }
+      },
+      true
+    );
+    await server.start();
   });
 
   await driver.start();

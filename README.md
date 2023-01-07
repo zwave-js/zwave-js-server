@@ -341,6 +341,39 @@ interface {
 }
 ```
 
+#### [Peform a soft-reset (restart) on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
+
+[compatible with schema version: 25+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.soft_reset";
+}
+```
+
+#### [Attempt to perform a soft-reset (restart) on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softreset)
+
+[compatible with schema version: 25+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.try_soft_reset";
+}
+```
+
+#### [Perform a hard reset on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=hardreset)
+
+[compatible with schema version: 25+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.hard_reset";
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
