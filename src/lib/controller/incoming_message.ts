@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   ExclusionStrategy,
+  FirmwareFileFormat,
   FirmwareUpdateFileInfo,
   InclusionGrant,
   InclusionOptions,
@@ -265,7 +266,9 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
 export interface IncomingCommandControllerFirmwareUpdateOTW
   extends IncomingCommandControllerBase {
   command: ControllerCommand.firmwareUpdateOTW;
-  data: string; // use base64 encoding for the file
+  firmwareFilename: string;
+  firmwareFile: string; // use base64 encoding for the file
+  firmwareFileFormat?: FirmwareFileFormat;
 }
 
 export type IncomingMessageController =

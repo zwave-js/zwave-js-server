@@ -63,9 +63,6 @@ export class NodeMessageHandler {
           client.schemaVersion
         );
       case NodeCommand.beginFirmwareUpdate:
-        if (node.isFirmwareUpdateInProgress()) {
-          throw new Error("Firmware update already in progress");
-        }
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
         success = await node.updateFirmware([
           extractFirmware(
@@ -77,9 +74,6 @@ export class NodeMessageHandler {
         ]);
         return { success };
       case NodeCommand.updateFirmware:
-        if (node.isFirmwareUpdateInProgress()) {
-          throw new Error("Firmware update already in progress");
-        }
         const updates = message.updates.map((update) => {
           const file = Buffer.from(update.file, "base64");
           return extractFirmware(

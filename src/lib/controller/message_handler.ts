@@ -9,6 +9,8 @@ import {
   InclusionOptions,
   InclusionStrategy,
   ReplaceNodeOptions,
+  extractFirmware,
+  guessFirmwareFileFormat,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -309,8 +311,15 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.firmwareUpdateOTW: {
-        const data = Buffer.from(message.data, "base64");
-        success = await driver.controller.firmwareUpdateOTW(data);
+        const firmwareFile = Buffer.from(message.firmwareFile, "base64");
+        success = await driver.controller.firmwareUpdateOTW(
+          extractFirmware(
+            firmwareFile,
+            message.firmwareFileFormat
+              ? message.firmwareFileFormat
+              : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+          ).data
+        );
         return { success };
       }
       default:
