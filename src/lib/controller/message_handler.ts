@@ -308,6 +308,11 @@ export class ControllerMessageHandler {
         );
         return { success };
       }
+      case ControllerCommand.firmwareUpdateOTW: {
+        const data = Buffer.from(message.data, "base64");
+        success = await driver.controller.firmwareUpdateOTW(data);
+        return { success };
+      }
       default:
         throw new UnknownCommandError(command);
     }

@@ -17,6 +17,7 @@ import {
   dumpNode,
 } from "./state";
 import { Client, ClientsController } from "./server";
+import { DriverEvents } from "zwave-js/build/lib/driver/Driver";
 
 export class EventForwarder {
   /**
@@ -87,6 +88,26 @@ export class EventForwarder {
         event: "inclusion started",
         secure,
       })
+    );
+
+    this.clientsController.driver.controller.on(
+      "firmware update progress",
+      (progress) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "firmware update progress",
+          progress,
+        })
+    );
+
+    this.clientsController.driver.controller.on(
+      "firmware update finished",
+      (result) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "firmware update finished",
+          result,
+        })
     );
 
     this.clientsController.driver.controller.on(

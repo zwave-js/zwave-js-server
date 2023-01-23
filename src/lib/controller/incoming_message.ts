@@ -262,6 +262,12 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
   updates: FirmwareUpdateFileInfo[];
 }
 
+export interface IncomingCommandControllerFirmwareUpdateOTW
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.firmwareUpdateOTW;
+  data: string; // use base64 encoding for the file
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -300,4 +306,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
   | IncomingCommandControllerGetAvailableFirmwareUpdates
   | IncomingCommandControllerBeginOTAFirmwareUpdate
-  | IncomingCommandControllerFirmwareUpdateOTA;
+  | IncomingCommandControllerFirmwareUpdateOTA
+  | IncomingCommandControllerFirmwareUpdateOTW;

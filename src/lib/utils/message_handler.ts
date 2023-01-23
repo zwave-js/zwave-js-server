@@ -1,4 +1,4 @@
-import { parseQRCodeString } from "@zwave-js/core";
+import { parseQRCodeString, tryParseDSKFromQRCodeString } from "@zwave-js/core";
 import { UnknownCommandError } from "../error";
 import { UtilsCommand } from "./command";
 import { IncomingMessageUtils } from "./incoming_message";
@@ -14,6 +14,9 @@ export class UtilsMessageHandler {
       case UtilsCommand.parseQRCodeString:
         const qrProvisioningInformation = parseQRCodeString(message.qr);
         return { qrProvisioningInformation };
+      case UtilsCommand.tryParseDSKFromQRCodeString:
+        const dsk = tryParseDSKFromQRCodeString(message.qr);
+        return { dsk };
       default:
         throw new UnknownCommandError(command);
     }
