@@ -266,9 +266,9 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
 export interface IncomingCommandControllerFirmwareUpdateOTW
   extends IncomingCommandControllerBase {
   command: ControllerCommand.firmwareUpdateOTW;
-  firmwareFilename: string;
-  firmwareFile: string; // use base64 encoding for the file
-  firmwareFileFormat?: FirmwareFileFormat;
+  filename: string;
+  file: string; // use base64 encoding for the file
+  fileFormat?: FirmwareFileFormat;
 }
 
 export type IncomingMessageController =

@@ -67,9 +67,8 @@ export class NodeMessageHandler {
         success = await node.updateFirmware([
           extractFirmware(
             firmwareFile,
-            message.firmwareFileFormat
-              ? message.firmwareFileFormat
-              : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+            message.firmwareFileFormat ??
+              guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
           ),
         ]);
         return { success };
@@ -78,9 +77,7 @@ export class NodeMessageHandler {
           const file = Buffer.from(update.file, "base64");
           return extractFirmware(
             file,
-            update.fileFormat
-              ? update.fileFormat
-              : guessFirmwareFileFormat(update.filename, file)
+            update.fileFormat ?? guessFirmwareFileFormat(update.filename, file)
           );
         });
         success = await node.updateFirmware(updates);

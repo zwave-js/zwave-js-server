@@ -311,13 +311,12 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.firmwareUpdateOTW: {
-        const firmwareFile = Buffer.from(message.firmwareFile, "base64");
+        const file = Buffer.from(message.file, "base64");
         success = await driver.controller.firmwareUpdateOTW(
           extractFirmware(
-            firmwareFile,
-            message.firmwareFileFormat
-              ? message.firmwareFileFormat
-              : guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+            file,
+            message.fileFormat ??
+              guessFirmwareFileFormat(message.filename, file)
           ).data
         );
         return { success };
