@@ -775,6 +775,7 @@ export const dumpController = (
   if (schemaVersion < 25) {
     return controller22;
   }
+
   const controller25 = controller22 as ControllerStateSchema25;
   controller25.rfRegion = controller.rfRegion;
   return controller25;
