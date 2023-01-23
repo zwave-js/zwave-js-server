@@ -17,7 +17,6 @@ import {
   dumpNode,
 } from "./state";
 import { Client, ClientsController } from "./server";
-import { DriverEvents } from "zwave-js/build/lib/driver/Driver";
 
 export class EventForwarder {
   /**
