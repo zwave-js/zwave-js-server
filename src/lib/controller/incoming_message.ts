@@ -1,6 +1,7 @@
 import {
   AssociationAddress,
   ExclusionStrategy,
+  FirmwareFileFormat,
   FirmwareUpdateFileInfo,
   InclusionGrant,
   InclusionOptions,
@@ -262,6 +263,14 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
   updates: FirmwareUpdateFileInfo[];
 }
 
+export interface IncomingCommandControllerFirmwareUpdateOTW
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.firmwareUpdateOTW;
+  filename: string;
+  file: string; // use base64 encoding for the file
+  fileFormat?: FirmwareFileFormat;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -300,4 +309,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerIsAnyOTAFirmwareUpdateInProgress
   | IncomingCommandControllerGetAvailableFirmwareUpdates
   | IncomingCommandControllerBeginOTAFirmwareUpdate
-  | IncomingCommandControllerFirmwareUpdateOTA;
+  | IncomingCommandControllerFirmwareUpdateOTA
+  | IncomingCommandControllerFirmwareUpdateOTW;

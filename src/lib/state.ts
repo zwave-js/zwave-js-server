@@ -30,6 +30,7 @@ import {
   ConfigValueFormat,
   LogConfig,
   Maybe,
+  RFRegion,
   SecurityClass,
   ValueChangeOptions,
   ValueMetadataAny,
@@ -95,10 +96,15 @@ type ControllerStateSchema22 = Omit<
   "isSlave" | "isSecondary" | "isStaticUpdateController"
 >;
 
+interface ControllerStateSchema25 extends ControllerStateSchema0 {
+  rfRegion?: RFRegion;
+}
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
-  | ControllerStateSchema22;
+  | ControllerStateSchema22
+  | ControllerStateSchema25;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -762,11 +768,17 @@ export const dumpController = (
     return controller16;
   }
 
-  const controller22 = base as ControllerStateSchema22;
+  const controller22 = controller16 as ControllerStateSchema22;
   controller22.isPrimary = controller.isPrimary;
   controller22.isSUC = controller.isSUC;
   controller22.nodeType = controller.nodeType;
-  return controller22;
+  if (schemaVersion < 25) {
+    return controller22;
+  }
+
+  const controller25 = controller22 as ControllerStateSchema25;
+  controller25.rfRegion = controller.rfRegion;
+  return controller25;
 };
 
 export const dumpState = (

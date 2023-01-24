@@ -9,4 +9,12 @@ export interface IncomingCommandUtilsParseQRCodeString
   qr: string;
 }
 
-export type IncomingMessageUtils = IncomingCommandUtilsParseQRCodeString;
+export interface IncomingCommandUtilsTryParseDSKFromQRCodeString
+  extends IncomingCommandUtilsBase {
+  command: UtilsCommand.tryParseDSKFromQRCodeString;
+  qr: string;
+}
+
+export type IncomingMessageUtils =
+  | IncomingCommandUtilsParseQRCodeString
+  | IncomingCommandUtilsTryParseDSKFromQRCodeString;

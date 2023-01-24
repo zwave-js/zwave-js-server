@@ -9,6 +9,8 @@ import {
   InclusionOptions,
   InclusionStrategy,
   ReplaceNodeOptions,
+  extractFirmware,
+  guessFirmwareFileFormat,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -305,6 +307,17 @@ export class ControllerMessageHandler {
         success = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
           message.updates
+        );
+        return { success };
+      }
+      case ControllerCommand.firmwareUpdateOTW: {
+        const file = Buffer.from(message.file, "base64");
+        success = await driver.controller.firmwareUpdateOTW(
+          extractFirmware(
+            file,
+            message.fileFormat ??
+              guessFirmwareFileFormat(message.filename, file)
+          ).data
         );
         return { success };
       }

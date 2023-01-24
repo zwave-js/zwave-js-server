@@ -39,4 +39,5 @@ export enum ControllerCommand {
   getAvailableFirmwareUpdates = "controller.get_available_firmware_updates",
   beginOTAFirmwareUpdate = "controller.begin_ota_firmware_update",
   firmwareUpdateOTA = "controller.firmware_update_ota",
+  firmwareUpdateOTW = "controller.firmware_update_otw",
 }

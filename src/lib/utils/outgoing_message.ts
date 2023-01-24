@@ -5,4 +5,7 @@ export interface UtilsResultTypes {
   [UtilsCommand.parseQRCodeString]: {
     qrProvisioningInformation: QRProvisioningInformation;
   };
+  [UtilsCommand.tryParseDSKFromQRCodeString]: {
+    dsk?: string;
+  };
 }

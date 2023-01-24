@@ -90,6 +90,26 @@ export class EventForwarder {
     );
 
     this.clientsController.driver.controller.on(
+      "firmware update progress",
+      (progress) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "firmware update progress",
+          progress,
+        })
+    );
+
+    this.clientsController.driver.controller.on(
+      "firmware update finished",
+      (result) =>
+        this.forwardEvent({
+          source: "controller",
+          event: "firmware update finished",
+          result,
+        })
+    );
+
+    this.clientsController.driver.controller.on(
       "node removed",
       (node, replaced) =>
         // forward event to all connected clients, respecting schemaVersion it supports
