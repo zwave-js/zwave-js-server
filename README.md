@@ -384,6 +384,7 @@ interface {
 > - `controller.provision_smart_start_node`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
 > - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data.
 > - `controller.restore_nvm`: The NVM input should be a base64 encoded string.
+> - `controller.firmware_update_otw`: This command accepts two required parameters (`file`, a base64 representation of the file, and `filename`, the filename of the file) as well as an optional parameter (`fileFormat`, which provides the format of the file to the server so the driver does not have to guess the format)
 
 #### Get controller state
 
