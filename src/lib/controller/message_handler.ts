@@ -321,6 +321,10 @@ export class ControllerMessageHandler {
         );
         return { success };
       }
+      case ControllerCommand.isFirmwareUpdateInProgress: {
+        const progress = driver.controller.isFirmwareUpdateInProgress();
+        return { progress };
+      }
       default:
         throw new UnknownCommandError(command);
     }

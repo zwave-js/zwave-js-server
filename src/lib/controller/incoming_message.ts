@@ -271,6 +271,11 @@ export interface IncomingCommandControllerFirmwareUpdateOTW
   fileFormat?: FirmwareFileFormat;
 }
 
+export interface IncomingCommandIsFirmwareUpdateInProgress
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.isFirmwareUpdateInProgress;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -310,4 +315,5 @@ export type IncomingMessageController =
   | IncomingCommandControllerGetAvailableFirmwareUpdates
   | IncomingCommandControllerBeginOTAFirmwareUpdate
   | IncomingCommandControllerFirmwareUpdateOTA
-  | IncomingCommandControllerFirmwareUpdateOTW;
+  | IncomingCommandControllerFirmwareUpdateOTW
+  | IncomingCommandIsFirmwareUpdateInProgress;

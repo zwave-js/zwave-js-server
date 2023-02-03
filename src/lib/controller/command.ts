@@ -40,4 +40,5 @@ export enum ControllerCommand {
   beginOTAFirmwareUpdate = "controller.begin_ota_firmware_update",
   firmwareUpdateOTA = "controller.firmware_update_ota",
   firmwareUpdateOTW = "controller.firmware_update_otw",
+  isFirmwareUpdateInProgress = "controller.is_firmware_update_in_progress",
 }
