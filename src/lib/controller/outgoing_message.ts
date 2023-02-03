@@ -70,4 +70,5 @@ export interface ControllerResultTypes {
   [ControllerCommand.beginOTAFirmwareUpdate]: { success: boolean };
   [ControllerCommand.firmwareUpdateOTA]: { success: boolean };
   [ControllerCommand.firmwareUpdateOTW]: { success: boolean };
+  [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
 }
