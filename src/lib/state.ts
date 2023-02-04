@@ -136,10 +136,16 @@ type EndpointStateSchema2 = Modify<
   { commandClasses: CommandClassState[] }
 >;
 
+type EndpointStateSchema3 = Modify<
+  EndpointStateSchema2,
+  { endpointLabel?: string }
+>;
+
 type EndpointState =
   | EndpointStateSchema0
   | EndpointStateSchema1
-  | EndpointStateSchema2;
+  | EndpointStateSchema2
+  | EndpointStateSchema3;
 
 interface DeviceClassState {
   basic: {
@@ -655,6 +661,7 @@ export const dumpEndpoint = (
   if (schemaVersion < 3) {
     return base as EndpointStateSchema0;
   }
+
   const endpoint3 = base as EndpointStateSchema1;
   endpoint3.deviceClass = endpoint.deviceClass
     ? dumpDeviceClass(endpoint.deviceClass)
@@ -663,12 +670,19 @@ export const dumpEndpoint = (
   if (schemaVersion < 15) {
     return endpoint3;
   }
-  const endpoint15 = base as EndpointStateSchema2;
+
+  const endpoint15 = endpoint3 as EndpointStateSchema2;
   endpoint15.commandClasses = Array.from(
     endpoint.getSupportedCCInstances(),
     (cc) => dumpCommandClass(endpoint, cc)
   );
-  return endpoint15;
+  if (schemaVersion < 26) {
+    return endpoint15;
+  }
+
+  const endpoint26 = endpoint15 as EndpointStateSchema3;
+  endpoint26.endpointLabel = endpoint.endpointLabel;
+  return endpoint26;
 };
 
 export const dumpDeviceClass = (
