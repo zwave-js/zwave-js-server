@@ -59,6 +59,7 @@ export interface IncomingCommandNodeUpdateFirmware
     filename: string;
     file: string; // use base64 encoding for the file
     fileFormat?: FirmwareFileFormat;
+    firmwareTarget?: number;
   }[];
 }
 
