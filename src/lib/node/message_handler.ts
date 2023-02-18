@@ -69,7 +69,7 @@ export class NodeMessageHandler {
           message.firmwareFileFormat ??
             guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
         );
-        // Defer to the target provided in the message if provided
+        // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         success = await node.updateFirmware([firmware]);
         return { success };
@@ -80,7 +80,7 @@ export class NodeMessageHandler {
             file,
             update.fileFormat ?? guessFirmwareFileFormat(update.filename, file)
           );
-          // Defer to the target provided in the message if provided
+          // Defer to the target provided in the messaage when available
           firmware.firmwareTarget =
             update.firmwareTarget ?? firmware.firmwareTarget;
           return firmware;
