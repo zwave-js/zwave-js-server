@@ -64,21 +64,26 @@ export class NodeMessageHandler {
         );
       case NodeCommand.beginFirmwareUpdate:
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        success = await node.updateFirmware([
-          extractFirmware(
-            firmwareFile,
-            message.firmwareFileFormat ??
-              guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
-          ),
-        ]);
+        let firmware = extractFirmware(
+          firmwareFile,
+          message.firmwareFileFormat ??
+            guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+        );
+        // Defer to the target provided in the messaage when available
+        firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
+        success = await node.updateFirmware([firmware]);
         return { success };
       case NodeCommand.updateFirmware:
         const updates = message.updates.map((update) => {
           const file = Buffer.from(update.file, "base64");
-          return extractFirmware(
+          let firmware = extractFirmware(
             file,
             update.fileFormat ?? guessFirmwareFileFormat(update.filename, file)
           );
+          // Defer to the target provided in the messaage when available
+          firmware.firmwareTarget =
+            update.firmwareTarget ?? firmware.firmwareTarget;
+          return firmware;
         });
         success = await node.updateFirmware(updates);
         return { success };
