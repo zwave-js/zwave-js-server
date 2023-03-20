@@ -188,7 +188,7 @@ export interface IncomingCommandInterview extends IncomingCommandNodeBase {
   command: NodeCommand.interview;
 }
 
-export interface IncomingCommandGetValueTimestamp
+export interface IncomingCommandNodeGetValueTimestamp
   extends IncomingCommandNodeBase {
   command: NodeCommand.getValueTimestamp;
   valueId: ValueID;
