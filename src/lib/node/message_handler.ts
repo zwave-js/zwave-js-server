@@ -222,6 +222,9 @@ export class NodeMessageHandler {
       case NodeCommand.interview:
         await node.interview();
         return {};
+      case NodeCommand.getValueTimestamp:
+        const timestamp = node.getValueTimestamp(message.valueId);
+        return { timestamp };
       default:
         throw new UnknownCommandError(command);
     }

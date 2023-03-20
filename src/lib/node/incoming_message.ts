@@ -188,6 +188,12 @@ export interface IncomingCommandInterview extends IncomingCommandNodeBase {
   command: NodeCommand.interview;
 }
 
+export interface IncomingCommandGetValueTimestamp
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getValueTimestamp;
+  valueId: ValueID;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -217,4 +223,5 @@ export type IncomingMessageNode =
   | IncomingCommandSetKeepAwake
   | IncomingCommandIsFirmwareUpdateInProgress
   | IncomingCommandWaitForWakeup
-  | IncomingCommandInterview;
+  | IncomingCommandInterview
+  | IncomingCommandNodeGetValueTimestamp;

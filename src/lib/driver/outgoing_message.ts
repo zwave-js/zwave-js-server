@@ -22,4 +22,5 @@ export interface DriverResultTypes {
   [DriverCommand.softReset]: Record<string, never>;
   [DriverCommand.trySoftReset]: Record<string, never>;
   [DriverCommand.hardReset]: Record<string, never>;
+  [DriverCommand.shutdown]: { success: boolean };
 }

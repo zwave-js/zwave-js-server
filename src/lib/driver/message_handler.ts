@@ -19,6 +19,7 @@ export class DriverMessageHandler {
     client: Client
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
+    let success: boolean;
     switch (message.command) {
       case DriverCommand.getConfig:
         return { config: dumpDriver(driver, client.schemaVersion) };
@@ -62,7 +63,7 @@ export class DriverMessageHandler {
         const updateAvailable = newVersion !== undefined;
         return { installedVersion, updateAvailable, newVersion };
       case DriverCommand.installConfigUpdate:
-        const success = await driver.installConfigUpdate();
+        success = await driver.installConfigUpdate();
         return { success };
       case DriverCommand.setPreferredScales:
         driver.setPreferredScales(message.scales);
@@ -79,6 +80,9 @@ export class DriverMessageHandler {
       case DriverCommand.hardReset:
         setTimeout(() => remoteController.hardResetController(), 1);
         return {};
+      case DriverCommand.shutdown:
+        success = await driver.shutdown();
+        return { success };
       default:
         throw new UnknownCommandError(command);
     }

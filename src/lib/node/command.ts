@@ -29,4 +29,5 @@ export enum NodeCommand {
   isFirmwareUpdateInProgress = "node.is_firmware_update_in_progress",
   waitForWakeup = "node.wait_for_wakeup",
   interview = "node.interview",
+  getValueTimestamp = "node.get_value_timestamp",
 }

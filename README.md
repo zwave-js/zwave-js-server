@@ -363,6 +363,17 @@ interface {
 }
 ```
 
+#### [Shutdown](https://zwave-js.github.io/node-zwave-js/#/api/node?id=shutdown)
+
+[compatible with schema version: 27+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.shutdown";
+}
+```
+
 #### [Perform a hard reset on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=hardreset)
 
 [compatible with schema version: 25+]
@@ -783,6 +794,24 @@ interface {
   messageId: string;
   nodeId: number;
   command: "node.interview";
+}
+```
+
+#### [Get value timestamp](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getvaluetimestamp)
+
+[compatible with schema version: 27+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_value_timestamp";
+  nodeId: number;
+  valueId: {
+    commandClass: CommandClasses;
+    endpoint?: number;
+    property: string | number;
+    propertyKey?: string | number;
+  };
 }
 ```
 
