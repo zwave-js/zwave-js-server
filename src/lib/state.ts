@@ -170,7 +170,7 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface MetadataState {
+interface MetadataState0 {
   type: ValueType;
   default?: any;
   readable: boolean;
@@ -187,6 +187,13 @@ interface MetadataState {
   states?: Record<number, string>;
   unit?: string;
 }
+
+interface MetadataState1 extends MetadataState0 {
+  stateful?: boolean;
+  secret?: boolean;
+}
+
+type MetadataState = MetadataState0 | MetadataState1;
 
 interface ConfigurationMetadataState {
   type: ValueType;
@@ -441,7 +448,7 @@ export const dumpMetadata = (
     | ValueMetadataString,
   schemaVersion: number
 ): MetadataState => {
-  let newMetadata: MetadataState = {
+  let newMetadata0: MetadataState0 = {
     type: metadata.type,
     default: metadata.default,
     readable: metadata.readable,
@@ -453,38 +460,45 @@ export const dumpMetadata = (
   };
 
   if ("min" in metadata) {
-    newMetadata.min = metadata.min;
+    newMetadata0.min = metadata.min;
   }
 
   if ("max" in metadata) {
-    newMetadata.max = metadata.max;
+    newMetadata0.max = metadata.max;
   }
 
   if ("minLength" in metadata) {
-    newMetadata.minLength = metadata.minLength;
+    newMetadata0.minLength = metadata.minLength;
   }
 
   if ("maxLength" in metadata) {
-    newMetadata.maxLength = metadata.maxLength;
+    newMetadata0.maxLength = metadata.maxLength;
   }
 
   if ("steps" in metadata) {
-    newMetadata.steps = metadata.steps;
+    newMetadata0.steps = metadata.steps;
   }
 
   if ("states" in metadata) {
-    newMetadata.states = { ...metadata.states };
+    newMetadata0.states = { ...metadata.states };
   }
 
   if ("unit" in metadata) {
-    newMetadata.unit = metadata.unit;
+    newMetadata0.unit = metadata.unit;
   }
 
-  if (schemaVersion < 2 && newMetadata.type === "buffer") {
-    newMetadata.type = "string";
+  if (schemaVersion < 2 && newMetadata0.type === "buffer") {
+    newMetadata0.type = "string";
   }
 
-  return newMetadata;
+  if (schemaVersion < 27) {
+    return newMetadata0;
+  }
+
+  const newMetadata1 = newMetadata0 as MetadataState1;
+  newMetadata1.stateful = metadata.stateful;
+  newMetadata1.secret = metadata.secret;
+  return newMetadata1;
 };
 
 export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
