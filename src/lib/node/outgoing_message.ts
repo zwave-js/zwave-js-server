@@ -46,4 +46,5 @@ export interface NodeResultTypes {
   [NodeCommand.isFirmwareUpdateInProgress]: { progress: boolean };
   [NodeCommand.waitForWakeup]: Record<string, never>;
   [NodeCommand.interview]: Record<string, never>;
+  [NodeCommand.getValueTimestamp]: { timestamp?: number };
 }

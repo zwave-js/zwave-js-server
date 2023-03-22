@@ -69,6 +69,10 @@ interface IncomingCommandHardReset extends IncomingCommandBase {
   command: DriverCommand.hardReset;
 }
 
+interface IncomingCommandShutdown extends IncomingCommandBase {
+  command: DriverCommand.shutdown;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -84,4 +88,5 @@ export type IncomingMessageDriver =
   | IncomingCommandEnableErrorReporting
   | IncomingCommandSoftReset
   | IncomingCommandTrySoftReset
-  | IncomingCommandHardReset;
+  | IncomingCommandHardReset
+  | IncomingCommandShutdown;

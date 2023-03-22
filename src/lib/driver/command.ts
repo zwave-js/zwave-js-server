@@ -14,4 +14,5 @@ export enum DriverCommand {
   softReset = "driver.soft_reset",
   trySoftReset = "driver.try_soft_reset",
   hardReset = "driver.hard_reset",
+  shutdown = "driver.shutdown",
 }
