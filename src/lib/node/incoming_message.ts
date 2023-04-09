@@ -205,7 +205,7 @@ export interface IncomingCommandNodeManuallyIdleNotificationValue
 export interface IncomingCommandNodeSetDateAndTime
   extends IncomingCommandNodeBase {
   command: NodeCommand.setDateAndTime;
-  date?: string; // Expect ISO 8601 date string
+  date?: string; // use ISO 8601 date string format
 }
 
 export type IncomingMessageNode =
