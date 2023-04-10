@@ -30,4 +30,6 @@ export enum NodeCommand {
   waitForWakeup = "node.wait_for_wakeup",
   interview = "node.interview",
   getValueTimestamp = "node.get_value_timestamp",
+  manuallyIdleNotificationValue = "node.manually_idle_notification_value",
+  setDateAndTime = "node.set_date_and_time",
 }

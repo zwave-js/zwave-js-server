@@ -815,6 +815,34 @@ interface {
 }
 ```
 
+#### [Manually Idle Notification CC Value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=manuallyidlenotificationvalue)
+
+[compatible with schema version: 28+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.manually_idle_notification_value";
+  nodeId: number;
+  notificationType: number;
+  prevValue: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Set date and time](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setdateandtime)
+
+[compatible with schema version: 28+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_date_and_time";
+  nodeId: number;
+  date?: string; // use ISO 8601 date string format
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)

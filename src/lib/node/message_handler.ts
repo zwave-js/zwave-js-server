@@ -225,6 +225,18 @@ export class NodeMessageHandler {
       case NodeCommand.getValueTimestamp:
         const timestamp = node.getValueTimestamp(message.valueId);
         return { timestamp };
+      case NodeCommand.manuallyIdleNotificationValue:
+        node.manuallyIdleNotificationValue(
+          message.notificationType,
+          message.prevValue,
+          message.endpointIndex
+        );
+        return {};
+      case NodeCommand.setDateAndTime:
+        success = await node.setDateAndTime(
+          message.date === undefined ? undefined : new Date(message.date)
+        );
+        return { success };
       default:
         throw new UnknownCommandError(command);
     }

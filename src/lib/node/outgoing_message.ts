@@ -47,4 +47,6 @@ export interface NodeResultTypes {
   [NodeCommand.waitForWakeup]: Record<string, never>;
   [NodeCommand.interview]: Record<string, never>;
   [NodeCommand.getValueTimestamp]: { timestamp?: number };
+  [NodeCommand.manuallyIdleNotificationValue]: Record<string, never>;
+  [NodeCommand.setDateAndTime]: { success: boolean };
 }

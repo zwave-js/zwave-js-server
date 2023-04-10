@@ -194,6 +194,20 @@ export interface IncomingCommandNodeGetValueTimestamp
   valueId: ValueID;
 }
 
+export interface IncomingCommandNodeManuallyIdleNotificationValue
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.manuallyIdleNotificationValue;
+  notificationType: number;
+  prevValue: number;
+  endpointIndex?: number;
+}
+
+export interface IncomingCommandNodeSetDateAndTime
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.setDateAndTime;
+  date?: string; // use ISO 8601 date string format
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -224,4 +238,6 @@ export type IncomingMessageNode =
   | IncomingCommandIsFirmwareUpdateInProgress
   | IncomingCommandWaitForWakeup
   | IncomingCommandInterview
-  | IncomingCommandNodeGetValueTimestamp;
+  | IncomingCommandNodeGetValueTimestamp
+  | IncomingCommandNodeManuallyIdleNotificationValue
+  | IncomingCommandNodeSetDateAndTime;
