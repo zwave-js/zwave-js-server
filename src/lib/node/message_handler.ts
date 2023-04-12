@@ -226,11 +226,7 @@ export class NodeMessageHandler {
         const timestamp = node.getValueTimestamp(message.valueId);
         return { timestamp };
       case NodeCommand.manuallyIdleNotificationValue:
-        node.manuallyIdleNotificationValue(
-          message.notificationType,
-          message.prevValue,
-          message.endpointIndex
-        );
+        node.manuallyIdleNotificationValue(message.valueId);
         return {};
       case NodeCommand.setDateAndTime:
         success = await node.setDateAndTime(

@@ -197,9 +197,7 @@ export interface IncomingCommandNodeGetValueTimestamp
 export interface IncomingCommandNodeManuallyIdleNotificationValue
   extends IncomingCommandNodeBase {
   command: NodeCommand.manuallyIdleNotificationValue;
-  notificationType: number;
-  prevValue: number;
-  endpointIndex?: number;
+  valueId: ValueID;
 }
 
 export interface IncomingCommandNodeSetDateAndTime
