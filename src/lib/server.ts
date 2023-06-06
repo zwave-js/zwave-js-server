@@ -427,14 +427,13 @@ export class ZwavejsServerRemoteController {
 
   public async hardResetController() {
     if (this.destroyServerOnHardReset) {
+      await this.zwaveJsServer.destroy();
+
       this.driver.once("driver ready", () => {
         this.zwaveJsServer.start();
       });
     }
     await this.driver.hardReset();
-    if (this.destroyServerOnHardReset) {
-      await this.zwaveJsServer.destroy();
-    }
     this.zwaveJsServer.emit("hard reset");
   }
 }
