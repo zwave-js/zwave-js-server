@@ -38,7 +38,6 @@ export class ControllerMessageHandler {
     client: Client
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
-    let success: boolean;
 
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
@@ -103,14 +102,11 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success =
-          message.unprovision !== undefined
-            ? await driver.controller.beginExclusion(message.unprovision)
-            : await driver.controller.beginExclusion(
-                message.strategy !== undefined
-                  ? { strategy: message.strategy }
-                  : undefined
-              );
+        const success = await driver.controller.beginExclusion(
+          message.strategy !== undefined
+            ? { strategy: message.strategy }
+            : undefined
+        );
 
         return { success };
       }
@@ -298,35 +294,37 @@ export class ControllerMessageHandler {
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
-        success = await driver.controller.firmwareUpdateOTA(message.nodeId, [
-          message.update,
-        ]);
-        return { success };
+        const result = await driver.controller.firmwareUpdateOTA(
+          message.nodeId,
+          [message.update]
+        );
+        return { result };
       }
       case ControllerCommand.firmwareUpdateOTA: {
-        success = await driver.controller.firmwareUpdateOTA(
+        const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
           message.updates
         );
-        return { success };
+        return { result };
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        success = await driver.controller.firmwareUpdateOTW(
+        const result = await driver.controller.firmwareUpdateOTW(
           extractFirmware(
             file,
             message.fileFormat ??
               guessFirmwareFileFormat(message.filename, file)
           ).data
         );
-        return { success };
+        return { result };
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
         const progress = driver.controller.isFirmwareUpdateInProgress();
         return { progress };
       }
-      default:
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }

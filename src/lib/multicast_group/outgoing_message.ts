@@ -1,8 +1,8 @@
-import { VirtualValueID } from "zwave-js";
+import { SetValueResult, VirtualValueID } from "zwave-js";
 import { MulticastGroupCommand } from "./command";
 
 export interface MulticastGroupResultTypes {
-  [MulticastGroupCommand.setValue]: { success: boolean };
+  [MulticastGroupCommand.setValue]: { result: SetValueResult };
   [MulticastGroupCommand.getEndpointCount]: { count: number };
   [MulticastGroupCommand.supportsCC]: { supported: boolean };
   [MulticastGroupCommand.getCCVersion]: { version: number };

@@ -10,36 +10,39 @@ export class MulticastGroupMessageHandler {
     driver: Driver
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
-    let supported: boolean;
 
     const virtualNode = driver.controller.getMulticastGroup(message.nodeIDs);
 
     switch (message.command) {
-      case MulticastGroupCommand.setValue:
-        const success = await virtualNode.setValue(
+      case MulticastGroupCommand.setValue: {
+        const result = await virtualNode.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
-      case MulticastGroupCommand.getEndpointCount:
+        return { result };
+      }
+      case MulticastGroupCommand.getEndpointCount: {
         const count = virtualNode.getEndpointCount();
         return { count };
-      case MulticastGroupCommand.supportsCC:
-        supported = getVirtualEndpoint(
+      }
+      case MulticastGroupCommand.supportsCC: {
+        const supported = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
           message.index
         ).supportsCC(message.commandClass);
         return { supported };
-      case MulticastGroupCommand.getCCVersion:
+      }
+      case MulticastGroupCommand.getCCVersion: {
         const version = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
           message.index
         ).getCCVersion(message.commandClass);
         return { version };
-      case MulticastGroupCommand.invokeCCAPI:
+      }
+      case MulticastGroupCommand.invokeCCAPI: {
         const response = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
@@ -50,18 +53,22 @@ export class MulticastGroupMessageHandler {
           ...message.args
         );
         return { response };
-      case MulticastGroupCommand.supportsCCAPI:
-        supported = getVirtualEndpoint(
+      }
+      case MulticastGroupCommand.supportsCCAPI: {
+        const supported = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
           message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
-      case MulticastGroupCommand.getDefinedValueIDs:
+      }
+      case MulticastGroupCommand.getDefinedValueIDs: {
         const valueIDs = virtualNode.getDefinedValueIDs();
         return { valueIDs };
-      default:
+      }
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }

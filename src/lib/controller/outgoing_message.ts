@@ -1,7 +1,9 @@
 import {
   AssociationAddress,
   AssociationGroup,
+  ControllerFirmwareUpdateResult,
   FirmwareUpdateInfo,
+  FirmwareUpdateResult,
   LifelineRoutes,
   RFRegion,
   SmartStartProvisioningEntry,
@@ -67,8 +69,10 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]: { success: boolean };
-  [ControllerCommand.firmwareUpdateOTA]: { success: boolean };
-  [ControllerCommand.firmwareUpdateOTW]: { success: boolean };
+  [ControllerCommand.beginOTAFirmwareUpdate]: { result: FirmwareUpdateResult };
+  [ControllerCommand.firmwareUpdateOTA]: { result: FirmwareUpdateResult };
+  [ControllerCommand.firmwareUpdateOTW]: {
+    result: ControllerFirmwareUpdateResult;
+  };
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
 }

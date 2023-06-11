@@ -10,33 +10,37 @@ export class BroadcastNodeMessageHandler {
     driver: Driver
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
-    let supported: boolean;
 
     const virtualNode = driver.controller.getBroadcastNode();
 
     switch (message.command) {
-      case BroadcastNodeCommand.setValue:
-        const success = await virtualNode.setValue(
+      case BroadcastNodeCommand.setValue: {
+        const result = await virtualNode.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
-      case BroadcastNodeCommand.getEndpointCount:
+        return { result };
+      }
+      case BroadcastNodeCommand.getEndpointCount: {
         const count = virtualNode.getEndpointCount();
         return { count };
-      case BroadcastNodeCommand.supportsCC:
-        supported = getVirtualEndpoint(virtualNode, message.index).supportsCC(
-          message.commandClass
-        );
+      }
+      case BroadcastNodeCommand.supportsCC: {
+        const supported = getVirtualEndpoint(
+          virtualNode,
+          message.index
+        ).supportsCC(message.commandClass);
         return { supported };
-      case BroadcastNodeCommand.getCCVersion:
+      }
+      case BroadcastNodeCommand.getCCVersion: {
         const version = getVirtualEndpoint(
           virtualNode,
           message.index
         ).getCCVersion(message.commandClass);
         return { version };
-      case BroadcastNodeCommand.invokeCCAPI:
+      }
+      case BroadcastNodeCommand.invokeCCAPI: {
         const response = getVirtualEndpoint(
           virtualNode,
           message.index
@@ -46,17 +50,21 @@ export class BroadcastNodeMessageHandler {
           ...message.args
         );
         return { response };
-      case BroadcastNodeCommand.supportsCCAPI:
-        supported = getVirtualEndpoint(
+      }
+      case BroadcastNodeCommand.supportsCCAPI: {
+        const supported = getVirtualEndpoint(
           virtualNode,
           message.index
         ).supportsCCAPI(message.commandClass);
         return { supported };
-      case BroadcastNodeCommand.getDefinedValueIDs:
+      }
+      case BroadcastNodeCommand.getDefinedValueIDs: {
         const valueIDs = virtualNode.getDefinedValueIDs();
         return { valueIDs };
-      default:
+      }
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }
