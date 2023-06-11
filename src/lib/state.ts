@@ -401,7 +401,7 @@ export const dumpConfigurationMetadata = (
   metadata: ConfigurationMetadata,
   schemaVersion: number
 ): ConfigurationMetadataState => {
-  let newMetadata: ConfigurationMetadataState = {
+  const base: Partial<ConfigurationMetadataStateSchema0> = {
     type: metadata.type,
     readable: metadata.readable,
     writeable: metadata.writeable,
@@ -416,8 +416,6 @@ export const dumpConfigurationMetadata = (
     unit: metadata.unit,
     valueSize: metadata.valueSize,
     format: metadata.format,
-    name: metadata.label,
-    info: metadata.description,
     noBulkSupport: metadata.noBulkSupport,
     isAdvanced: metadata.isAdvanced,
     requiresReInclusion: metadata.requiresReInclusion,
@@ -425,11 +423,18 @@ export const dumpConfigurationMetadata = (
     isFromConfig: metadata.isFromConfig,
   };
 
-  if (schemaVersion < 2 && newMetadata.type === "buffer") {
-    newMetadata.type = "string";
+  if (schemaVersion < 2 && base.type === "buffer") {
+    base.type = "string";
   }
 
-  return newMetadata;
+  if (schemaVersion < 29) {
+    base.name = metadata.label;
+    base.label = metadata.description;
+  }
+
+  const metadata29 = base as ConfigurationMetadataStateSchema29;
+
+  return metadata29;
 };
 
 export const dumpMetadata = (
@@ -442,7 +447,7 @@ export const dumpMetadata = (
     | ValueMetadataString,
   schemaVersion: number
 ): MetadataState => {
-  let newMetadata0: MetadataStateSchema0 = {
+  const base: MetadataStateSchema0 = {
     type: metadata.type,
     default: metadata.default,
     readable: metadata.readable,
@@ -454,45 +459,45 @@ export const dumpMetadata = (
   };
 
   if ("min" in metadata) {
-    newMetadata0.min = metadata.min;
+    base.min = metadata.min;
   }
 
   if ("max" in metadata) {
-    newMetadata0.max = metadata.max;
+    base.max = metadata.max;
   }
 
   if ("minLength" in metadata) {
-    newMetadata0.minLength = metadata.minLength;
+    base.minLength = metadata.minLength;
   }
 
   if ("maxLength" in metadata) {
-    newMetadata0.maxLength = metadata.maxLength;
+    base.maxLength = metadata.maxLength;
   }
 
   if ("steps" in metadata) {
-    newMetadata0.steps = metadata.steps;
+    base.steps = metadata.steps;
   }
 
   if ("states" in metadata) {
-    newMetadata0.states = { ...metadata.states };
+    base.states = { ...metadata.states };
   }
 
   if ("unit" in metadata) {
-    newMetadata0.unit = metadata.unit;
+    base.unit = metadata.unit;
   }
 
-  if (schemaVersion < 2 && newMetadata0.type === "buffer") {
-    newMetadata0.type = "string";
+  if (schemaVersion < 2 && base.type === "buffer") {
+    base.type = "string";
   }
 
   if (schemaVersion < 27) {
-    return newMetadata0;
+    return base;
   }
 
-  const newMetadata28 = newMetadata0 as MetadataStateSchema28;
-  newMetadata28.stateful = metadata.stateful;
-  newMetadata28.secret = metadata.secret;
-  return newMetadata28;
+  const metadata28 = base as MetadataStateSchema28;
+  metadata28.stateful = metadata.stateful;
+  metadata28.secret = metadata.secret;
+  return metadata28;
 };
 
 export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
