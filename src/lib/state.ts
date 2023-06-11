@@ -170,7 +170,7 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface MetadataStateSchema0 {
+interface ValueMetadataStateSchema0 {
   type: ValueType;
   default?: any;
   readable: boolean;
@@ -188,12 +188,14 @@ interface MetadataStateSchema0 {
   unit?: string;
 }
 
-interface MetadataStateSchema28 extends MetadataStateSchema0 {
+interface ValueMetadataStateSchema28 extends ValueMetadataStateSchema0 {
   stateful?: boolean;
   secret?: boolean;
 }
 
-type MetadataState = MetadataStateSchema0 | MetadataStateSchema28;
+type ValueMetadataState =
+  | ValueMetadataStateSchema0
+  | ValueMetadataStateSchema28;
 
 interface ConfigurationMetadataStateSchema0 {
   type: ValueType;
@@ -446,8 +448,8 @@ export const dumpMetadata = (
     | ValueMetadataNumeric
     | ValueMetadataString,
   schemaVersion: number
-): MetadataState => {
-  const base: MetadataStateSchema0 = {
+): ValueMetadataState => {
+  const base: ValueMetadataStateSchema0 = {
     type: metadata.type,
     default: metadata.default,
     readable: metadata.readable,
@@ -494,7 +496,7 @@ export const dumpMetadata = (
     return base;
   }
 
-  const metadata28 = base as MetadataStateSchema28;
+  const metadata28 = base as ValueMetadataStateSchema28;
   metadata28.stateful = metadata.stateful;
   metadata28.secret = metadata.secret;
   return metadata28;
