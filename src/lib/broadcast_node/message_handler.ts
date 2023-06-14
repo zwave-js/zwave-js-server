@@ -16,12 +16,12 @@ export class BroadcastNodeMessageHandler {
 
     switch (message.command) {
       case BroadcastNodeCommand.setValue:
-        const success = await virtualNode.setValue(
+        const result = await virtualNode.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
+        return { result };
       case BroadcastNodeCommand.getEndpointCount:
         const count = virtualNode.getEndpointCount();
         return { count };

@@ -11,6 +11,8 @@ import {
   ReplaceNodeOptions,
   extractFirmware,
   guessFirmwareFileFormat,
+  ExclusionOptions,
+  ExclusionStrategy,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -22,6 +24,8 @@ import {
 import { Client, ClientsController } from "../server";
 import { ControllerCommand } from "./command";
 import {
+  IncomingCommandControllerBeginExclusion,
+  IncomingCommandControllerBeginExclusionLegacy,
   IncomingCommandControllerBeginInclusion,
   IncomingCommandControllerBeginInclusionLegacy,
   IncomingCommandControllerReplaceFailedNode,
@@ -103,15 +107,9 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success =
-          message.unprovision !== undefined
-            ? await driver.controller.beginExclusion(message.unprovision)
-            : await driver.controller.beginExclusion(
-                message.strategy !== undefined
-                  ? { strategy: message.strategy }
-                  : undefined
-              );
-
+        const success = await driver.controller.beginExclusion(
+          processExclusionOptions(message)
+        );
         return { success };
       }
       case ControllerCommand.stopExclusion: {
@@ -298,28 +296,29 @@ export class ControllerMessageHandler {
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
-        success = await driver.controller.firmwareUpdateOTA(message.nodeId, [
-          message.update,
-        ]);
-        return { success };
+        const result = await driver.controller.firmwareUpdateOTA(
+          message.nodeId,
+          [message.update]
+        );
+        return { result };
       }
       case ControllerCommand.firmwareUpdateOTA: {
-        success = await driver.controller.firmwareUpdateOTA(
+        const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
           message.updates
         );
-        return { success };
+        return { result };
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        success = await driver.controller.firmwareUpdateOTW(
+        const result = await driver.controller.firmwareUpdateOTW(
           extractFirmware(
             file,
             message.fileFormat ??
               guessFirmwareFileFormat(message.filename, file)
           ).data
         );
-        return { success };
+        return { result };
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
         const progress = driver.controller.isFirmwareUpdateInProgress();
@@ -431,4 +430,26 @@ function processInclusionOptions(
   return {
     strategy: InclusionStrategy.Security_S0,
   };
+}
+
+function processExclusionOptions(
+  message:
+    | IncomingCommandControllerBeginExclusion
+    | IncomingCommandControllerBeginExclusionLegacy
+): ExclusionOptions | undefined {
+  if ("options" in message) {
+    return message.options;
+  } else if ("unprovision" in message) {
+    if (typeof message.unprovision === "boolean") {
+      return {
+        strategy: message.unprovision
+          ? ExclusionStrategy.Unprovision
+          : ExclusionStrategy.ExcludeOnly,
+      };
+    } else if (message.unprovision === "inactive") {
+      return {
+        strategy: ExclusionStrategy.DisableProvisioningEntry,
+      };
+    }
+  }
 }

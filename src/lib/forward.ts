@@ -308,7 +308,7 @@ export class EventForwarder {
 
     node.on(
       "firmware update progress",
-      (changedNode: ZWaveNode, _, __, progress: FirmwareUpdateProgress) => {
+      (changedNode: ZWaveNode, progress: FirmwareUpdateProgress) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clientsController.clients.forEach((client) => {
@@ -334,7 +334,7 @@ export class EventForwarder {
 
     node.on(
       "firmware update finished",
-      (changedNode: ZWaveNode, _, __, result: FirmwareUpdateResult) => {
+      (changedNode: ZWaveNode, result: FirmwareUpdateResult) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
         this.clientsController.clients.forEach((client) => {

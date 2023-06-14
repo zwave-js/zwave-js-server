@@ -16,12 +16,12 @@ export class MulticastGroupMessageHandler {
 
     switch (message.command) {
       case MulticastGroupCommand.setValue:
-        const success = await virtualNode.setValue(
+        const result = await virtualNode.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
+        return { result };
       case MulticastGroupCommand.getEndpointCount:
         const count = virtualNode.getEndpointCount();
         return { count };

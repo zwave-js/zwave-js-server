@@ -1,5 +1,6 @@
 import {
   AssociationAddress,
+  ExclusionOptions,
   ExclusionStrategy,
   FirmwareFileFormat,
   FirmwareUpdateFileInfo,
@@ -35,11 +36,18 @@ export interface IncomingCommandControllerStopInclusion
   command: ControllerCommand.stopInclusion;
 }
 
+// Schema >= ???
 export interface IncomingCommandControllerBeginExclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginExclusion;
+  options?: ExclusionOptions;
+}
+
+// Schema <= ???
+export interface IncomingCommandControllerBeginExclusionLegacy
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginExclusion;
   unprovision?: boolean | "inactive";
-  strategy?: ExclusionStrategy;
 }
 
 export interface IncomingCommandControllerStopExclusion
@@ -281,6 +289,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusionLegacy
   | IncomingCommandControllerStopInclusion
   | IncomingCommandControllerBeginExclusion
+  | IncomingCommandControllerBeginExclusionLegacy
   | IncomingCommandControllerStopExclusion
   | IncomingCommandControllerRemoveFailedNode
   | IncomingCommandControllerReplaceFailedNode

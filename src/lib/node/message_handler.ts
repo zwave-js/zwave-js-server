@@ -37,19 +37,21 @@ export class NodeMessageHandler {
     }
 
     switch (message.command) {
-      case NodeCommand.setValue:
-        success = await node.setValue(
+      case NodeCommand.setValue: {
+        const result = await node.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
+        return { result };
+      }
       case NodeCommand.refreshInfo:
         await node.refreshInfo(message.options);
         return {};
-      case NodeCommand.getDefinedValueIDs:
+      case NodeCommand.getDefinedValueIDs: {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
+      }
       case NodeCommand.getValueMetadata:
         if (message.valueId.commandClass == CommandClasses.Configuration) {
           return dumpConfigurationMetadata(
@@ -62,7 +64,7 @@ export class NodeMessageHandler {
           node.getValueMetadata(message.valueId),
           client.schemaVersion
         );
-      case NodeCommand.beginFirmwareUpdate:
+      case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
         let firmware = extractFirmware(
           firmwareFile,
@@ -71,9 +73,10 @@ export class NodeMessageHandler {
         );
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
-        success = await node.updateFirmware([firmware]);
-        return { success };
-      case NodeCommand.updateFirmware:
+        const result = await node.updateFirmware([firmware]);
+        return { result };
+      }
+      case NodeCommand.updateFirmware: {
         const updates = message.updates.map((update) => {
           const file = Buffer.from(update.file, "base64");
           let firmware = extractFirmware(
@@ -85,8 +88,9 @@ export class NodeMessageHandler {
             update.firmwareTarget ?? firmware.firmwareTarget;
           return firmware;
         });
-        success = await node.updateFirmware(updates);
-        return { success };
+        const result = await node.updateFirmware(updates);
+        return { result };
+      }
       case NodeCommand.abortFirmwareUpdate:
         await node.abortFirmwareUpdate();
         return {};

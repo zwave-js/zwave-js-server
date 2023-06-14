@@ -29,7 +29,7 @@ import {
   ConfigValue,
   ConfigValueFormat,
   LogConfig,
-  Maybe,
+  MaybeNotKnown,
   RFRegion,
   SecurityClass,
   ValueChangeOptions,
@@ -209,8 +209,6 @@ interface ConfigurationMetadataState {
   unit?: string;
   valueSize?: number;
   format?: ConfigValueFormat;
-  name?: string;
-  info?: string;
   noBulkSupport?: boolean;
   isAdvanced?: boolean;
   requiresReInclusion?: boolean;
@@ -226,7 +224,7 @@ interface NodeStateSchema0 extends EndpointStateSchema0 {
   isFrequentListening: boolean | null;
   isRouting?: boolean;
   maxBaudRate?: DataRate;
-  isSecure?: Maybe<boolean>;
+  isSecure?: MaybeNotKnown<boolean>;
   version: number | null;
   isBeaming?: boolean;
   manufacturerId?: number;
@@ -295,7 +293,7 @@ type NodeStateSchema8 = NodeStateSchema7;
 type NodeStateSchema9 = NodeStateSchema8;
 
 interface NodeStateSchema10 extends NodeStateSchema9 {
-  highestSecurityClass: SecurityClass | undefined;
+  highestSecurityClass: MaybeNotKnown<SecurityClass>;
 }
 
 type NodeStateSchema11 = NodeStateSchema10;
@@ -422,8 +420,6 @@ export const dumpConfigurationMetadata = (
     unit: metadata.unit,
     valueSize: metadata.valueSize,
     format: metadata.format,
-    name: metadata.name,
-    info: metadata.info,
     noBulkSupport: metadata.noBulkSupport,
     isAdvanced: metadata.isAdvanced,
     requiresReInclusion: metadata.requiresReInclusion,
