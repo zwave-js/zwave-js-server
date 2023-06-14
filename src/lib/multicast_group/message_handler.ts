@@ -1,9 +1,10 @@
-import { Driver, SetValueStatus, VirtualEndpoint, VirtualNode } from "zwave-js";
+import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
 import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { MulticastGroupCommand } from "./command";
 import { IncomingMessageMulticastGroup } from "./incoming_message";
 import { MulticastGroupResultTypes } from "./outgoing_message";
 import { Client } from "../server";
+import { setValueOutgoingMessage } from "../common";
 
 export class MulticastGroupMessageHandler {
   static async handle(
@@ -22,16 +23,7 @@ export class MulticastGroupMessageHandler {
           message.value,
           message.options
         );
-        if (client.schemaVersion < 29) {
-          return {
-            success: [
-              SetValueStatus.Working,
-              SetValueStatus.Success,
-              SetValueStatus.SuccessUnsupervised,
-            ].includes(result.status),
-          };
-        }
-        return { result };
+        return setValueOutgoingMessage(result, client.schemaVersion);
       }
       case MulticastGroupCommand.getEndpointCount: {
         const count = virtualNode.getEndpointCount();

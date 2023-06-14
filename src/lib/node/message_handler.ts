@@ -1,4 +1,4 @@
-import { Driver, SetValueStatus } from "zwave-js";
+import { Driver } from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -12,6 +12,10 @@ import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
+import {
+  firmwareUpdateOutgoingMessage,
+  setValueOutgoingMessage,
+} from "../common";
 
 export class NodeMessageHandler {
   public async handle(
@@ -34,16 +38,7 @@ export class NodeMessageHandler {
           message.value,
           message.options
         );
-        if (client.schemaVersion < 29) {
-          return {
-            success: [
-              SetValueStatus.Working,
-              SetValueStatus.Success,
-              SetValueStatus.SuccessUnsupervised,
-            ].includes(result.status),
-          };
-        }
-        return { result };
+        return setValueOutgoingMessage(result, client.schemaVersion);
       }
       case NodeCommand.refreshInfo: {
         await node.refreshInfo(message.options);
@@ -76,10 +71,7 @@ export class NodeMessageHandler {
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
-        if (client.schemaVersion < 29) {
-          return { success: result.success };
-        }
-        return { result };
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case NodeCommand.updateFirmware: {
         const updates = message.updates.map((update) => {
@@ -94,10 +86,7 @@ export class NodeMessageHandler {
           return firmware;
         });
         const result = await node.updateFirmware(updates);
-        if (client.schemaVersion < 29) {
-          return { success: result.success };
-        }
-        return { result };
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case NodeCommand.abortFirmwareUpdate: {
         await node.abortFirmwareUpdate();

@@ -33,6 +33,7 @@ import {
   IncomingMessageController,
 } from "./incoming_message";
 import { ControllerResultTypes } from "./outgoing_message";
+import { firmwareUpdateOutgoingMessage } from "../common";
 
 export class ControllerMessageHandler {
   static async handle(
@@ -299,20 +300,14 @@ export class ControllerMessageHandler {
           message.nodeId,
           [message.update]
         );
-        if (client.schemaVersion < 29) {
-          return { success: result.success };
-        }
-        return { result };
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTA: {
         const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
           message.updates
         );
-        if (client.schemaVersion < 29) {
-          return { success: result.success };
-        }
-        return { result };
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
@@ -323,10 +318,7 @@ export class ControllerMessageHandler {
               guessFirmwareFileFormat(message.filename, file)
           ).data
         );
-        if (client.schemaVersion < 29) {
-          return { success: result.success };
-        }
-        return { result };
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
         const progress = driver.controller.isFirmwareUpdateInProgress();
