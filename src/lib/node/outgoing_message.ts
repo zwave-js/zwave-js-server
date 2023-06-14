@@ -8,15 +8,15 @@ import {
 import { MaybeNotKnown, SecurityClass } from "@zwave-js/core";
 import { NodeCommand } from "./command";
 import { NodeState } from "../state";
-import { NodeFirmwareUpdateResultType, SetValueResultType } from "../common";
+import { FirmwareUpdateResultType, SetValueResultType } from "../common";
 
 export interface NodeResultTypes {
   [NodeCommand.setValue]: SetValueResultType;
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
-  [NodeCommand.beginFirmwareUpdate]: NodeFirmwareUpdateResultType;
-  [NodeCommand.updateFirmware]: NodeFirmwareUpdateResultType;
+  [NodeCommand.beginFirmwareUpdate]: FirmwareUpdateResultType;
+  [NodeCommand.updateFirmware]: FirmwareUpdateResultType;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;

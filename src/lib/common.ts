@@ -25,17 +25,13 @@ export function setValueOutgoingMessage(
   return { result };
 }
 
-export type ControllerFirmwareUpdateResultType =
-  | { result: ControllerFirmwareUpdateResult } // schemaVersion >= 29
-  | { success: boolean }; // schemaVersion < 29
-
-export type NodeFirmwareUpdateResultType =
-  | { result: FirmwareUpdateResult } // schemaVersion >= 29
+export type FirmwareUpdateResultType =
+  | { result: ControllerFirmwareUpdateResult | FirmwareUpdateResult } // schemaVersion >= 29
   | { success: boolean }; // schemaVersion < 29
 
 export function firmwareUpdateOutgoingMessage<
   T extends FirmwareUpdateResult | ControllerFirmwareUpdateResult
->(result: T, schemaVersion: number): { result: T } | { success: boolean } {
+>(result: T, schemaVersion: number): FirmwareUpdateResultType {
   if (schemaVersion < 29) {
     return {
       success: result.success,
