@@ -5,10 +5,14 @@ import {
   SetValueStatus,
 } from "zwave-js";
 
+export type SetValueResultType =
+  | { result: SetValueResult } // schemaVersion >= 29
+  | { success: boolean }; // schemaVersion < 29
+
 export function setValueOutgoingMessage(
   result: SetValueResult,
   schemaVersion: number
-): { result: SetValueResult } | { success: boolean } {
+): SetValueResultType {
   if (schemaVersion < 29) {
     return {
       success: [
@@ -20,6 +24,14 @@ export function setValueOutgoingMessage(
   }
   return { result };
 }
+
+export type ControllerFirmwareUpdateResultType =
+  | { result: ControllerFirmwareUpdateResult } // schemaVersion >= 29
+  | { success: boolean }; // schemaVersion < 29
+
+export type NodeFirmwareUpdateResultType =
+  | { result: FirmwareUpdateResult } // schemaVersion >= 29
+  | { success: boolean }; // schemaVersion < 29
 
 export function firmwareUpdateOutgoingMessage<
   T extends FirmwareUpdateResult | ControllerFirmwareUpdateResult

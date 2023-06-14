@@ -1,29 +1,22 @@
 import {
   FirmwareUpdateCapabilities,
-  FirmwareUpdateResult,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
-  SetValueResult,
   TranslatedValueID,
   ValueMetadata,
 } from "zwave-js";
 import { MaybeNotKnown, SecurityClass } from "@zwave-js/core";
 import { NodeCommand } from "./command";
 import { NodeState } from "../state";
+import { NodeFirmwareUpdateResultType, SetValueResultType } from "../common";
 
 export interface NodeResultTypes {
-  [NodeCommand.setValue]:
-    | { result: SetValueResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
+  [NodeCommand.setValue]: SetValueResultType;
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
-  [NodeCommand.beginFirmwareUpdate]:
-    | { result: FirmwareUpdateResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
-  [NodeCommand.updateFirmware]:
-    | { result: FirmwareUpdateResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
+  [NodeCommand.beginFirmwareUpdate]: NodeFirmwareUpdateResultType;
+  [NodeCommand.updateFirmware]: NodeFirmwareUpdateResultType;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;

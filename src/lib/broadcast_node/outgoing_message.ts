@@ -1,10 +1,9 @@
-import { SetValueResult, VirtualValueID } from "zwave-js";
+import { VirtualValueID } from "zwave-js";
 import { BroadcastNodeCommand } from "./command";
+import { SetValueResultType } from "../common";
 
 export interface BroadcastNodeResultTypes {
-  [BroadcastNodeCommand.setValue]:
-    | { result: SetValueResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
+  [BroadcastNodeCommand.setValue]: SetValueResultType;
   [BroadcastNodeCommand.getEndpointCount]: { count: number };
   [BroadcastNodeCommand.supportsCC]: { supported: boolean };
   [BroadcastNodeCommand.getCCVersion]: { version: number };

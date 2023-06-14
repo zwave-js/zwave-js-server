@@ -1,15 +1,17 @@
 import {
   AssociationAddress,
   AssociationGroup,
-  ControllerFirmwareUpdateResult,
   FirmwareUpdateInfo,
-  FirmwareUpdateResult,
   LifelineRoutes,
   RFRegion,
   SmartStartProvisioningEntry,
 } from "zwave-js";
 import { ControllerState } from "..";
 import { ControllerCommand } from "./command";
+import {
+  ControllerFirmwareUpdateResultType,
+  NodeFirmwareUpdateResultType,
+} from "../common";
 
 export interface ControllerResultTypes {
   [ControllerCommand.beginInclusion]: { success: boolean };
@@ -69,16 +71,8 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]:
-    | { result: FirmwareUpdateResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
-  [ControllerCommand.firmwareUpdateOTA]:
-    | { result: FirmwareUpdateResult } // schemaVersion >= 29
-    | { success: boolean }; // schemaVersion < 29
-  [ControllerCommand.firmwareUpdateOTW]:
-    | {
-        result: ControllerFirmwareUpdateResult; // schemaVersion >= 29
-      }
-    | { success: boolean }; // schemaVersion < 29;
+  [ControllerCommand.beginOTAFirmwareUpdate]: NodeFirmwareUpdateResultType;
+  [ControllerCommand.firmwareUpdateOTA]: NodeFirmwareUpdateResultType;
+  [ControllerCommand.firmwareUpdateOTW]: ControllerFirmwareUpdateResultType;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
 }
