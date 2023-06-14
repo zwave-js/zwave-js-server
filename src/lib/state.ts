@@ -403,7 +403,7 @@ export const dumpConfigurationMetadata = (
   metadata: ConfigurationMetadata,
   schemaVersion: number
 ): ConfigurationMetadataState => {
-  const base: Partial<ConfigurationMetadataStateSchema0> = {
+  const base: ConfigurationMetadataStateSchema0 = {
     type: metadata.type,
     readable: metadata.readable,
     writeable: metadata.writeable,
@@ -432,6 +432,7 @@ export const dumpConfigurationMetadata = (
   if (schemaVersion < 29) {
     base.name = metadata.label;
     base.label = metadata.description;
+    return base;
   }
 
   const metadata29 = base as ConfigurationMetadataStateSchema29;

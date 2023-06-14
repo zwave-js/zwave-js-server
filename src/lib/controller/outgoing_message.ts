@@ -69,10 +69,16 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]: { result: FirmwareUpdateResult };
-  [ControllerCommand.firmwareUpdateOTA]: { result: FirmwareUpdateResult };
-  [ControllerCommand.firmwareUpdateOTW]: {
-    result: ControllerFirmwareUpdateResult;
-  };
+  [ControllerCommand.beginOTAFirmwareUpdate]:
+    | { result: FirmwareUpdateResult } // schemaVersion >= 29
+    | { success: boolean }; // schemaVersion < 29
+  [ControllerCommand.firmwareUpdateOTA]:
+    | { result: FirmwareUpdateResult } // schemaVersion >= 29
+    | { success: boolean }; // schemaVersion < 29
+  [ControllerCommand.firmwareUpdateOTW]:
+    | {
+        result: ControllerFirmwareUpdateResult; // schemaVersion >= 29
+      }
+    | { success: boolean }; // schemaVersion < 29;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
 }

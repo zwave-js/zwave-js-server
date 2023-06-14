@@ -298,6 +298,9 @@ export class ControllerMessageHandler {
           message.nodeId,
           [message.update]
         );
+        if (client.schemaVersion < 29) {
+          return { success: result.success };
+        }
         return { result };
       }
       case ControllerCommand.firmwareUpdateOTA: {
@@ -305,6 +308,9 @@ export class ControllerMessageHandler {
           message.nodeId,
           message.updates
         );
+        if (client.schemaVersion < 29) {
+          return { success: result.success };
+        }
         return { result };
       }
       case ControllerCommand.firmwareUpdateOTW: {
@@ -316,6 +322,9 @@ export class ControllerMessageHandler {
               guessFirmwareFileFormat(message.filename, file)
           ).data
         );
+        if (client.schemaVersion < 29) {
+          return { success: result.success };
+        }
         return { result };
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {

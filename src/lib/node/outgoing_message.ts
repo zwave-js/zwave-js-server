@@ -12,12 +12,18 @@ import { NodeCommand } from "./command";
 import { NodeState } from "../state";
 
 export interface NodeResultTypes {
-  [NodeCommand.setValue]: { result: SetValueResult };
+  [NodeCommand.setValue]:
+    | { result: SetValueResult } // schemaVersion >= 29
+    | { success: boolean }; // schemaVersion < 29
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
-  [NodeCommand.beginFirmwareUpdate]: { result: FirmwareUpdateResult };
-  [NodeCommand.updateFirmware]: { result: FirmwareUpdateResult };
+  [NodeCommand.beginFirmwareUpdate]:
+    | { result: FirmwareUpdateResult } // schemaVersion >= 29
+    | { success: boolean }; // schemaVersion < 29
+  [NodeCommand.updateFirmware]:
+    | { result: FirmwareUpdateResult } // schemaVersion >= 29
+    | { success: boolean }; // schemaVersion < 29
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;

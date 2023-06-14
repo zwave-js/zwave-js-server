@@ -1,13 +1,15 @@
-import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
+import { Driver, SetValueStatus, VirtualEndpoint, VirtualNode } from "zwave-js";
 import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
 import { BroadcastNodeCommand } from "./command";
 import { IncomingMessageBroadcastNode } from "./incoming_message";
 import { BroadcastNodeResultTypes } from "./outgoing_message";
+import { Client } from "../server";
 
 export class BroadcastNodeMessageHandler {
   static async handle(
     message: IncomingMessageBroadcastNode,
-    driver: Driver
+    driver: Driver,
+    client: Client
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
 
@@ -20,6 +22,15 @@ export class BroadcastNodeMessageHandler {
           message.value,
           message.options
         );
+        if (client.schemaVersion < 29) {
+          return {
+            success: [
+              SetValueStatus.Working,
+              SetValueStatus.Success,
+              SetValueStatus.SuccessUnsupervised,
+            ].includes(result.status),
+          };
+        }
         return { result };
       }
       case BroadcastNodeCommand.getEndpointCount: {

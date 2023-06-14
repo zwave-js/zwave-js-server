@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, SetValueStatus } from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -16,8 +16,8 @@ import { dumpNode } from "..";
 export class NodeMessageHandler {
   public async handle(
     message: IncomingMessageNode,
-    driver: Driver,
     clientsController: ClientsController,
+    driver: Driver,
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
@@ -34,6 +34,15 @@ export class NodeMessageHandler {
           message.value,
           message.options
         );
+        if (client.schemaVersion < 29) {
+          return {
+            success: [
+              SetValueStatus.Working,
+              SetValueStatus.Success,
+              SetValueStatus.SuccessUnsupervised,
+            ].includes(result.status),
+          };
+        }
         return { result };
       }
       case NodeCommand.refreshInfo: {
@@ -67,6 +76,9 @@ export class NodeMessageHandler {
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
+        if (client.schemaVersion < 29) {
+          return { success: result.success };
+        }
         return { result };
       }
       case NodeCommand.updateFirmware: {
@@ -82,6 +94,9 @@ export class NodeMessageHandler {
           return firmware;
         });
         const result = await node.updateFirmware(updates);
+        if (client.schemaVersion < 29) {
+          return { success: result.success };
+        }
         return { result };
       }
       case NodeCommand.abortFirmwareUpdate: {
