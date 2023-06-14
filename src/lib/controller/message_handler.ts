@@ -11,6 +11,7 @@ import {
   ReplaceNodeOptions,
   extractFirmware,
   guessFirmwareFileFormat,
+  ExclusionStrategy,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -102,11 +103,20 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success = await driver.controller.beginExclusion(
-          message.strategy !== undefined
-            ? { strategy: message.strategy }
-            : undefined
-        );
+        let strategy: { strategy: ExclusionStrategy } | undefined;
+        if (message.strategy === undefined) {
+          strategy =
+            message.strategy !== undefined
+              ? { strategy: message.strategy }
+              : undefined;
+        } else if (message.unprovision === "inactive") {
+          strategy = { strategy: ExclusionStrategy.DisableProvisioningEntry };
+        } else if (message.unprovision) {
+          strategy = { strategy: ExclusionStrategy.Unprovision };
+        } else {
+          strategy = { strategy: ExclusionStrategy.ExcludeOnly };
+        }
+        const success = await driver.controller.beginExclusion(strategy);
 
         return { success };
       }

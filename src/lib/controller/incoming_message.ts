@@ -38,6 +38,7 @@ export interface IncomingCommandControllerStopInclusion
 export interface IncomingCommandControllerBeginExclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginExclusion;
+  unprovision?: boolean | "inactive";
   strategy?: ExclusionStrategy;
 }
 
