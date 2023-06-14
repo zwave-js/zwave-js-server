@@ -358,7 +358,7 @@ function processExclusionOptions(
         strategy: ExclusionStrategy.DisableProvisioningEntry,
       };
     }
-  } else if (message["strategy"] !== undefined) {
+  } else if ("strategy" in message && message.strategy !== undefined) {
     return { strategy: message.strategy };
   }
 }
