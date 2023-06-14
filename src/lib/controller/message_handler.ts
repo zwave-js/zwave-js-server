@@ -12,6 +12,7 @@ import {
   extractFirmware,
   guessFirmwareFileFormat,
   ExclusionStrategy,
+  ExclusionOptions,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -23,6 +24,8 @@ import {
 import { Client, ClientsController } from "../server";
 import { ControllerCommand } from "./command";
 import {
+  IncomingCommandControllerBeginExclusion,
+  IncomingCommandControllerBeginExclusionLegacy,
   IncomingCommandControllerBeginInclusion,
   IncomingCommandControllerBeginInclusionLegacy,
   IncomingCommandControllerReplaceFailedNode,
@@ -103,21 +106,9 @@ export class ControllerMessageHandler {
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        let strategy: { strategy: ExclusionStrategy } | undefined;
-        if (message.strategy === undefined) {
-          strategy =
-            message.strategy !== undefined
-              ? { strategy: message.strategy }
-              : undefined;
-        } else if (message.unprovision === "inactive") {
-          strategy = { strategy: ExclusionStrategy.DisableProvisioningEntry };
-        } else if (message.unprovision) {
-          strategy = { strategy: ExclusionStrategy.Unprovision };
-        } else {
-          strategy = { strategy: ExclusionStrategy.ExcludeOnly };
-        }
-        const success = await driver.controller.beginExclusion(strategy);
-
+        const success = await driver.controller.beginExclusion(
+          processExclusionOptions(message)
+        );
         return { success };
       }
       case ControllerCommand.stopExclusion: {
@@ -345,6 +336,30 @@ export class ControllerMessageHandler {
         throw new UnknownCommandError(command);
       }
     }
+  }
+}
+
+function processExclusionOptions(
+  message:
+    | IncomingCommandControllerBeginExclusion
+    | IncomingCommandControllerBeginExclusionLegacy
+): ExclusionOptions | undefined {
+  if ("options" in message) {
+    return message.options;
+  } else if ("unprovision" in message) {
+    if (typeof message.unprovision === "boolean") {
+      return {
+        strategy: message.unprovision
+          ? ExclusionStrategy.Unprovision
+          : ExclusionStrategy.ExcludeOnly,
+      };
+    } else if (message.unprovision === "inactive") {
+      return {
+        strategy: ExclusionStrategy.DisableProvisioningEntry,
+      };
+    }
+  } else if (message["strategy"] !== undefined) {
+    return { strategy: message.strategy };
   }
 }
 

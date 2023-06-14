@@ -38,7 +38,7 @@ export interface NodeResultTypes {
   [NodeCommand.ping]: { responded: boolean };
   [NodeCommand.hasSecurityClass]: { hasSecurityClass: MaybeNotKnown<boolean> };
   [NodeCommand.getHighestSecurityClass]: {
-    highestSecurityClass: SecurityClass | undefined;
+    highestSecurityClass: MaybeNotKnown<SecurityClass>;
   };
   [NodeCommand.testPowerlevel]: { framesAcked: number };
   [NodeCommand.checkLifelineHealth]: { summary: LifelineHealthCheckSummary };
