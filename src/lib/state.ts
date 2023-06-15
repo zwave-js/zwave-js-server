@@ -431,7 +431,7 @@ export const dumpConfigurationMetadata = (
 
   if (schemaVersion < 29) {
     base.name = metadata.label;
-    base.label = metadata.description;
+    base.info = metadata.description;
     return base;
   }
 
