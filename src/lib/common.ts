@@ -30,8 +30,8 @@ export type FirmwareUpdateResultType =
   | { success: boolean }; // schemaVersion < 29
 
 export function firmwareUpdateOutgoingMessage<
-  T extends FirmwareUpdateResult | ControllerFirmwareUpdateResult
->(result: T, schemaVersion: number): FirmwareUpdateResultType {
+  T extends ControllerFirmwareUpdateResult | FirmwareUpdateResult
+>(result: T, schemaVersion: number): { result: T } | { success: boolean } {
   if (schemaVersion < 29) {
     return {
       success: result.success,
