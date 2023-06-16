@@ -4,6 +4,7 @@ import {
   FirmwareUpdateResult,
   NodeStatistics,
   NodeStatus,
+  RemoveNodeReason,
   ZWaveNode,
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
@@ -111,16 +112,28 @@ export class EventForwarder {
 
     this.clientsController.driver.controller.on(
       "node removed",
-      (node, replaced) =>
+      (node, reason) =>
         // forward event to all connected clients, respecting schemaVersion it supports
-        this.clientsController.clients.forEach((client) =>
-          this.sendEvent(client, {
-            source: "controller",
-            event: "node removed",
-            node: dumpNode(node, client.schemaVersion),
-            replaced,
-          })
-        )
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion < 29) {
+            this.sendEvent(client, {
+              source: "controller",
+              event: "node removed",
+              node: dumpNode(node, client.schemaVersion),
+              replaced: [
+                RemoveNodeReason.Replaced,
+                RemoveNodeReason.ProxyReplaced,
+              ].includes(reason),
+            });
+          } else {
+            this.sendEvent(client, {
+              source: "controller",
+              event: "node removed",
+              node: dumpNode(node, client.schemaVersion),
+              reason,
+            });
+          }
+        })
     );
 
     this.clientsController.driver.controller.on(
