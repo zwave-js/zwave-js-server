@@ -56,31 +56,44 @@ export class EndpointMessageHandler {
     }
 
     switch (message.command) {
-      case EndpointCommand.invokeCCAPI:
+      case EndpointCommand.invokeCCAPI: {
         const response = await endpoint.invokeCCAPI(
           message.commandClass,
           message.methodName,
           ...deserializeBufferInArray(message.args)
         );
         return { response };
-      case EndpointCommand.supportsCCAPI:
-        return { supported: endpoint.supportsCCAPI(message.commandClass) };
-      case EndpointCommand.supportsCC:
-        return { supported: endpoint.supportsCC(message.commandClass) };
-      case EndpointCommand.controlsCC:
-        return { controlled: endpoint.controlsCC(message.commandClass) };
-      case EndpointCommand.isCCSecure:
-        return { secure: endpoint.isCCSecure(message.commandClass) };
-      case EndpointCommand.getCCVersion:
-        return { version: endpoint.getCCVersion(message.commandClass) };
-      case EndpointCommand.getNodeUnsafe:
+      }
+      case EndpointCommand.supportsCCAPI: {
+        const supported = endpoint.supportsCCAPI(message.commandClass);
+        return { supported };
+      }
+      case EndpointCommand.supportsCC: {
+        const supported = endpoint.supportsCC(message.commandClass);
+        return { supported };
+      }
+      case EndpointCommand.controlsCC: {
+        const controlled = endpoint.controlsCC(message.commandClass);
+        return { controlled };
+      }
+      case EndpointCommand.isCCSecure: {
+        const secure = endpoint.isCCSecure(message.commandClass);
+        return { secure };
+      }
+      case EndpointCommand.getCCVersion: {
+        const version = endpoint.getCCVersion(message.commandClass);
+        return { version };
+      }
+      case EndpointCommand.getNodeUnsafe: {
         const node = endpoint.getNodeUnsafe();
         return {
           node:
             node === undefined ? node : dumpNode(node, client.schemaVersion),
         };
-      default:
+      }
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }

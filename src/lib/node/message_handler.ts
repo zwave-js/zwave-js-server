@@ -1,9 +1,4 @@
-import {
-  Driver,
-  FirmwareUpdateCapabilities,
-  LifelineHealthCheckSummary,
-  RouteHealthCheckSummary,
-} from "zwave-js";
+import { Driver } from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -17,19 +12,19 @@ import { NodeCommand } from "./command";
 import { IncomingMessageNode } from "./incoming_message";
 import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
+import {
+  firmwareUpdateOutgoingMessage,
+  setValueOutgoingMessage,
+} from "../common";
 
 export class NodeMessageHandler {
   public async handle(
     message: IncomingMessageNode,
-    driver: Driver,
     clientsController: ClientsController,
+    driver: Driver,
     client: Client
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
-    let value: any;
-    let summary: LifelineHealthCheckSummary | RouteHealthCheckSummary;
-    let capabilities: FirmwareUpdateCapabilities;
-    let success: boolean;
 
     const node = driver.controller.nodes.get(nodeId);
     if (!node) {
@@ -37,20 +32,23 @@ export class NodeMessageHandler {
     }
 
     switch (message.command) {
-      case NodeCommand.setValue:
-        success = await node.setValue(
+      case NodeCommand.setValue: {
+        const result = await node.setValue(
           message.valueId,
           message.value,
           message.options
         );
-        return { success };
-      case NodeCommand.refreshInfo:
+        return setValueOutgoingMessage(result, client.schemaVersion);
+      }
+      case NodeCommand.refreshInfo: {
         await node.refreshInfo(message.options);
         return {};
-      case NodeCommand.getDefinedValueIDs:
+      }
+      case NodeCommand.getDefinedValueIDs: {
         const valueIds = node.getDefinedValueIDs();
         return { valueIds };
-      case NodeCommand.getValueMetadata:
+      }
+      case NodeCommand.getValueMetadata: {
         if (message.valueId.commandClass == CommandClasses.Configuration) {
           return dumpConfigurationMetadata(
             node.getValueMetadata(message.valueId) as ConfigurationMetadata,
@@ -62,7 +60,8 @@ export class NodeMessageHandler {
           node.getValueMetadata(message.valueId),
           client.schemaVersion
         );
-      case NodeCommand.beginFirmwareUpdate:
+      }
+      case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
         let firmware = extractFirmware(
           firmwareFile,
@@ -71,9 +70,10 @@ export class NodeMessageHandler {
         );
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
-        success = await node.updateFirmware([firmware]);
-        return { success };
-      case NodeCommand.updateFirmware:
+        const result = await node.updateFirmware([firmware]);
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+      }
+      case NodeCommand.updateFirmware: {
         const updates = message.updates.map((update) => {
           const file = Buffer.from(update.file, "base64");
           let firmware = extractFirmware(
@@ -85,43 +85,54 @@ export class NodeMessageHandler {
             update.firmwareTarget ?? firmware.firmwareTarget;
           return firmware;
         });
-        success = await node.updateFirmware(updates);
-        return { success };
-      case NodeCommand.abortFirmwareUpdate:
+        const result = await node.updateFirmware(updates);
+        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+      }
+      case NodeCommand.abortFirmwareUpdate: {
         await node.abortFirmwareUpdate();
         return {};
-      case NodeCommand.getFirmwareUpdateCapabilities:
-        capabilities = await node.getFirmwareUpdateCapabilities();
+      }
+      case NodeCommand.getFirmwareUpdateCapabilities: {
+        const capabilities = await node.getFirmwareUpdateCapabilities();
         return { capabilities };
-      case NodeCommand.getFirmwareUpdateCapabilitiesCached:
-        capabilities = node.getFirmwareUpdateCapabilitiesCached();
+      }
+      case NodeCommand.getFirmwareUpdateCapabilitiesCached: {
+        const capabilities = node.getFirmwareUpdateCapabilitiesCached();
         return { capabilities };
-      case NodeCommand.pollValue:
-        value = await node.pollValue<any>(message.valueId);
+      }
+      case NodeCommand.pollValue: {
+        const value = await node.pollValue<any>(message.valueId);
         return { value };
-      case NodeCommand.setRawConfigParameterValue:
+      }
+      case NodeCommand.setRawConfigParameterValue: {
         await node.commandClasses.Configuration.set({
           parameter: message.parameter,
           value: message.value,
           valueSize: message.valueSize,
         });
         return {};
-      case NodeCommand.refreshValues:
+      }
+      case NodeCommand.refreshValues: {
         await node.refreshValues();
         return {};
-      case NodeCommand.refreshCCValues:
+      }
+      case NodeCommand.refreshCCValues: {
         await node.refreshCCValues(message.commandClass);
         return {};
-      case NodeCommand.ping:
+      }
+      case NodeCommand.ping: {
         const responded = await node.ping();
         return { responded };
-      case NodeCommand.hasSecurityClass:
+      }
+      case NodeCommand.hasSecurityClass: {
         const hasSecurityClass = node.hasSecurityClass(message.securityClass);
         return { hasSecurityClass };
-      case NodeCommand.getHighestSecurityClass:
+      }
+      case NodeCommand.getHighestSecurityClass: {
         const highestSecurityClass = node.getHighestSecurityClass();
         return { highestSecurityClass };
-      case NodeCommand.testPowerlevel:
+      }
+      case NodeCommand.testPowerlevel: {
         const framesAcked = await node.testPowerlevel(
           message.testNodeId,
           message.powerlevel,
@@ -139,8 +150,9 @@ export class NodeMessageHandler {
           }
         );
         return { framesAcked };
-      case NodeCommand.checkLifelineHealth:
-        summary = await node.checkLifelineHealth(
+      }
+      case NodeCommand.checkLifelineHealth: {
+        const summary = await node.checkLifelineHealth(
           message.rounds,
           (round: number, totalRounds: number, lastRating: number) => {
             clientsController.clients.forEach((client) =>
@@ -156,8 +168,9 @@ export class NodeMessageHandler {
           }
         );
         return { summary };
-      case NodeCommand.checkRouteHealth:
-        summary = await node.checkRouteHealth(
+      }
+      case NodeCommand.checkRouteHealth: {
+        const summary = await node.checkRouteHealth(
           message.targetNodeId,
           message.rounds,
           (round: number, totalRounds: number, lastRating: number) => {
@@ -174,22 +187,28 @@ export class NodeMessageHandler {
           }
         );
         return { summary };
-      case NodeCommand.getValue:
-        value = node.getValue<any>(message.valueId);
+      }
+      case NodeCommand.getValue: {
+        const value = node.getValue<any>(message.valueId);
         return { value };
-      case NodeCommand.getEndpointCount:
+      }
+      case NodeCommand.getEndpointCount: {
         const count = node.getEndpointCount();
         return { count };
-      case NodeCommand.interviewCC:
+      }
+      case NodeCommand.interviewCC: {
         await node.interviewCC(message.commandClass);
         return {};
-      case NodeCommand.getState:
+      }
+      case NodeCommand.getState: {
         const state = dumpNode(node, client.schemaVersion);
         return { state };
-      case NodeCommand.setKeepAwake:
+      }
+      case NodeCommand.setKeepAwake: {
         node.keepAwake = message.keepAwake;
         return {};
-      case NodeCommand.setLocation:
+      }
+      case NodeCommand.setLocation: {
         node.location = message.location;
         if (
           (message.updateCC ?? true) &&
@@ -200,7 +219,8 @@ export class NodeMessageHandler {
           );
         }
         return {};
-      case NodeCommand.setName:
+      }
+      case NodeCommand.setName: {
         node.name = message.name;
         if (
           (message.updateCC ?? true) &&
@@ -211,30 +231,37 @@ export class NodeMessageHandler {
           );
         }
         return {};
+      }
       case NodeCommand.getFirmwareUpdateProgress:
-      case NodeCommand.isFirmwareUpdateInProgress:
-        return {
-          progress: node.isFirmwareUpdateInProgress(),
-        };
-      case NodeCommand.waitForWakeup:
+      case NodeCommand.isFirmwareUpdateInProgress: {
+        const progress = node.isFirmwareUpdateInProgress();
+        return { progress };
+      }
+      case NodeCommand.waitForWakeup: {
         await node.waitForWakeup();
         return {};
-      case NodeCommand.interview:
+      }
+      case NodeCommand.interview: {
         await node.interview();
         return {};
-      case NodeCommand.getValueTimestamp:
+      }
+      case NodeCommand.getValueTimestamp: {
         const timestamp = node.getValueTimestamp(message.valueId);
         return { timestamp };
-      case NodeCommand.manuallyIdleNotificationValue:
+      }
+      case NodeCommand.manuallyIdleNotificationValue: {
         node.manuallyIdleNotificationValue(message.valueId);
         return {};
-      case NodeCommand.setDateAndTime:
-        success = await node.setDateAndTime(
+      }
+      case NodeCommand.setDateAndTime: {
+        const success = await node.setDateAndTime(
           message.date === undefined ? undefined : new Date(message.date)
         );
         return { success };
-      default:
+      }
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }

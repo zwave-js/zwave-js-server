@@ -8,6 +8,7 @@ import {
 } from "zwave-js";
 import { ControllerState } from "..";
 import { ControllerCommand } from "./command";
+import { FirmwareUpdateResultType } from "../common";
 
 export interface ControllerResultTypes {
   [ControllerCommand.beginInclusion]: { success: boolean };
@@ -67,8 +68,8 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]: { success: boolean };
-  [ControllerCommand.firmwareUpdateOTA]: { success: boolean };
-  [ControllerCommand.firmwareUpdateOTW]: { success: boolean };
+  [ControllerCommand.beginOTAFirmwareUpdate]: FirmwareUpdateResultType;
+  [ControllerCommand.firmwareUpdateOTA]: FirmwareUpdateResultType;
+  [ControllerCommand.firmwareUpdateOTW]: FirmwareUpdateResultType;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
 }

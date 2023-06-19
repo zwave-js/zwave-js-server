@@ -11,14 +11,17 @@ export class UtilsMessageHandler {
     const { command } = message;
 
     switch (message.command) {
-      case UtilsCommand.parseQRCodeString:
+      case UtilsCommand.parseQRCodeString: {
         const qrProvisioningInformation = parseQRCodeString(message.qr);
         return { qrProvisioningInformation };
-      case UtilsCommand.tryParseDSKFromQRCodeString:
+      }
+      case UtilsCommand.tryParseDSKFromQRCodeString: {
         const dsk = tryParseDSKFromQRCodeString(message.qr);
         return { dsk };
-      default:
+      }
+      default: {
         throw new UnknownCommandError(command);
+      }
     }
   }
 }

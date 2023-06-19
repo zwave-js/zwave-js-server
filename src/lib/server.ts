@@ -77,19 +77,21 @@ export class Client {
     [Instance.node]: (message) =>
       this.clientsController.nodeMessageHandler.handle(
         message as IncomingMessageNode,
-        this.driver,
         this.clientsController,
+        this.driver,
         this
       ),
     [Instance.multicast_group]: (message) =>
       MulticastGroupMessageHandler.handle(
         message as IncomingMessageMulticastGroup,
-        this.driver
+        this.driver,
+        this
       ),
     [Instance.broadcast_node]: (message) =>
       BroadcastNodeMessageHandler.handle(
         message as IncomingMessageBroadcastNode,
-        this.driver
+        this.driver,
+        this
       ),
     [Instance.endpoint]: (message) =>
       EndpointMessageHandler.handle(

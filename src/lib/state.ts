@@ -29,7 +29,7 @@ import {
   ConfigValue,
   ConfigValueFormat,
   LogConfig,
-  Maybe,
+  MaybeNotKnown,
   RFRegion,
   SecurityClass,
   ValueChangeOptions,
@@ -126,26 +126,26 @@ interface EndpointStateSchema0 {
   userIcon?: number;
 }
 
-type EndpointStateSchema1 = Modify<
+type EndpointStateSchema3 = Modify<
   EndpointStateSchema0,
   { deviceClass: DeviceClassState | null }
 >;
 
-type EndpointStateSchema2 = Modify<
-  EndpointStateSchema1,
+type EndpointStateSchema15 = Modify<
+  EndpointStateSchema3,
   { commandClasses: CommandClassState[] }
 >;
 
-type EndpointStateSchema3 = Modify<
-  EndpointStateSchema2,
+type EndpointStateSchema26 = Modify<
+  EndpointStateSchema15,
   { endpointLabel?: string }
 >;
 
 type EndpointState =
   | EndpointStateSchema0
-  | EndpointStateSchema1
-  | EndpointStateSchema2
-  | EndpointStateSchema3;
+  | EndpointStateSchema3
+  | EndpointStateSchema15
+  | EndpointStateSchema26;
 
 interface DeviceClassState {
   basic: {
@@ -170,7 +170,7 @@ interface ValueState extends TranslatedValueID {
   value?: any;
 }
 
-interface MetadataState0 {
+interface ValueMetadataStateSchema0 {
   type: ValueType;
   default?: any;
   readable: boolean;
@@ -188,14 +188,16 @@ interface MetadataState0 {
   unit?: string;
 }
 
-interface MetadataState1 extends MetadataState0 {
+interface ValueMetadataStateSchema28 extends ValueMetadataStateSchema0 {
   stateful?: boolean;
   secret?: boolean;
 }
 
-type MetadataState = MetadataState0 | MetadataState1;
+type ValueMetadataState =
+  | ValueMetadataStateSchema0
+  | ValueMetadataStateSchema28;
 
-interface ConfigurationMetadataState {
+interface ConfigurationMetadataStateSchema0 {
   type: ValueType;
   readable: boolean;
   writeable: boolean;
@@ -219,6 +221,15 @@ interface ConfigurationMetadataState {
   isFromConfig?: boolean;
 }
 
+type ConfigurationMetadataStateSchema29 = Omit<
+  ConfigurationMetadataStateSchema0,
+  "name" | "info"
+>;
+
+type ConfigurationMetadataState =
+  | ConfigurationMetadataStateSchema0
+  | ConfigurationMetadataStateSchema29;
+
 interface NodeStateSchema0 extends EndpointStateSchema0 {
   status: NodeStatus;
   ready: boolean;
@@ -226,7 +237,7 @@ interface NodeStateSchema0 extends EndpointStateSchema0 {
   isFrequentListening: boolean | null;
   isRouting?: boolean;
   maxBaudRate?: DataRate;
-  isSecure?: Maybe<boolean>;
+  isSecure?: MaybeNotKnown<boolean>;
   version: number | null;
   isBeaming?: boolean;
   manufacturerId?: number;
@@ -290,21 +301,11 @@ interface NodeStateSchema7 extends NodeStateSchema6 {
   statistics: NodeStatistics;
 }
 
-type NodeStateSchema8 = NodeStateSchema7;
-
-type NodeStateSchema9 = NodeStateSchema8;
-
-interface NodeStateSchema10 extends NodeStateSchema9 {
+interface NodeStateSchema10 extends NodeStateSchema7 {
   highestSecurityClass: SecurityClass | undefined;
 }
 
-type NodeStateSchema11 = NodeStateSchema10;
-
-type NodeStateSchema12 = NodeStateSchema11;
-
-type NodeStateSchema13 = NodeStateSchema12;
-
-interface NodeStateSchema14 extends NodeStateSchema13 {
+interface NodeStateSchema14 extends NodeStateSchema10 {
   isControllerNode: boolean;
   keepAwake: boolean;
 }
@@ -320,12 +321,7 @@ export type NodeState =
   | NodeStateSchema5
   | NodeStateSchema6
   | NodeStateSchema7
-  | NodeStateSchema8
-  | NodeStateSchema9
   | NodeStateSchema10
-  | NodeStateSchema11
-  | NodeStateSchema12
-  | NodeStateSchema13
   | NodeStateSchema14
   | NodeStateSchema15;
 
@@ -407,7 +403,7 @@ export const dumpConfigurationMetadata = (
   metadata: ConfigurationMetadata,
   schemaVersion: number
 ): ConfigurationMetadataState => {
-  let newMetadata: ConfigurationMetadataState = {
+  const base: ConfigurationMetadataStateSchema0 = {
     type: metadata.type,
     readable: metadata.readable,
     writeable: metadata.writeable,
@@ -422,8 +418,6 @@ export const dumpConfigurationMetadata = (
     unit: metadata.unit,
     valueSize: metadata.valueSize,
     format: metadata.format,
-    name: metadata.name,
-    info: metadata.info,
     noBulkSupport: metadata.noBulkSupport,
     isAdvanced: metadata.isAdvanced,
     requiresReInclusion: metadata.requiresReInclusion,
@@ -431,11 +425,19 @@ export const dumpConfigurationMetadata = (
     isFromConfig: metadata.isFromConfig,
   };
 
-  if (schemaVersion < 2 && newMetadata.type === "buffer") {
-    newMetadata.type = "string";
+  if (schemaVersion < 2 && base.type === "buffer") {
+    base.type = "string";
   }
 
-  return newMetadata;
+  if (schemaVersion < 29) {
+    base.name = metadata.label;
+    base.info = metadata.description;
+    return base;
+  }
+
+  const metadata29 = base as ConfigurationMetadataStateSchema29;
+
+  return metadata29;
 };
 
 export const dumpMetadata = (
@@ -447,8 +449,8 @@ export const dumpMetadata = (
     | ValueMetadataNumeric
     | ValueMetadataString,
   schemaVersion: number
-): MetadataState => {
-  let newMetadata0: MetadataState0 = {
+): ValueMetadataState => {
+  const base: ValueMetadataStateSchema0 = {
     type: metadata.type,
     default: metadata.default,
     readable: metadata.readable,
@@ -460,45 +462,45 @@ export const dumpMetadata = (
   };
 
   if ("min" in metadata) {
-    newMetadata0.min = metadata.min;
+    base.min = metadata.min;
   }
 
   if ("max" in metadata) {
-    newMetadata0.max = metadata.max;
+    base.max = metadata.max;
   }
 
   if ("minLength" in metadata) {
-    newMetadata0.minLength = metadata.minLength;
+    base.minLength = metadata.minLength;
   }
 
   if ("maxLength" in metadata) {
-    newMetadata0.maxLength = metadata.maxLength;
+    base.maxLength = metadata.maxLength;
   }
 
   if ("steps" in metadata) {
-    newMetadata0.steps = metadata.steps;
+    base.steps = metadata.steps;
   }
 
   if ("states" in metadata) {
-    newMetadata0.states = { ...metadata.states };
+    base.states = { ...metadata.states };
   }
 
   if ("unit" in metadata) {
-    newMetadata0.unit = metadata.unit;
+    base.unit = metadata.unit;
   }
 
-  if (schemaVersion < 2 && newMetadata0.type === "buffer") {
-    newMetadata0.type = "string";
+  if (schemaVersion < 2 && base.type === "buffer") {
+    base.type = "string";
   }
 
   if (schemaVersion < 27) {
-    return newMetadata0;
+    return base;
   }
 
-  const newMetadata1 = newMetadata0 as MetadataState1;
-  newMetadata1.stateful = metadata.stateful;
-  newMetadata1.secret = metadata.secret;
-  return newMetadata1;
+  const metadata28 = base as ValueMetadataStateSchema28;
+  metadata28.stateful = metadata.stateful;
+  metadata28.secret = metadata.secret;
+  return metadata28;
 };
 
 export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
@@ -676,7 +678,7 @@ export const dumpEndpoint = (
     return base as EndpointStateSchema0;
   }
 
-  const endpoint3 = base as EndpointStateSchema1;
+  const endpoint3 = base as EndpointStateSchema3;
   endpoint3.deviceClass = endpoint.deviceClass
     ? dumpDeviceClass(endpoint.deviceClass)
     : null;
@@ -685,7 +687,7 @@ export const dumpEndpoint = (
     return endpoint3;
   }
 
-  const endpoint15 = endpoint3 as EndpointStateSchema2;
+  const endpoint15 = endpoint3 as EndpointStateSchema15;
   endpoint15.commandClasses = Array.from(
     endpoint.getSupportedCCInstances(),
     (cc) => dumpCommandClass(endpoint, cc)
@@ -694,7 +696,7 @@ export const dumpEndpoint = (
     return endpoint15;
   }
 
-  const endpoint26 = endpoint15 as EndpointStateSchema3;
+  const endpoint26 = endpoint15 as EndpointStateSchema26;
   endpoint26.endpointLabel = endpoint.endpointLabel;
   return endpoint26;
 };

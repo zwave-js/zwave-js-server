@@ -5,17 +5,18 @@ import {
   TranslatedValueID,
   ValueMetadata,
 } from "zwave-js";
-import { SecurityClass } from "@zwave-js/core";
+import { MaybeNotKnown, SecurityClass } from "@zwave-js/core";
 import { NodeCommand } from "./command";
 import { NodeState } from "../state";
+import { FirmwareUpdateResultType, SetValueResultType } from "../common";
 
 export interface NodeResultTypes {
-  [NodeCommand.setValue]: { success: boolean };
+  [NodeCommand.setValue]: SetValueResultType;
   [NodeCommand.refreshInfo]: Record<string, never>;
   [NodeCommand.getDefinedValueIDs]: { valueIds: TranslatedValueID[] };
   [NodeCommand.getValueMetadata]: ValueMetadata;
-  [NodeCommand.beginFirmwareUpdate]: { success: boolean };
-  [NodeCommand.updateFirmware]: { success: boolean };
+  [NodeCommand.beginFirmwareUpdate]: FirmwareUpdateResultType;
+  [NodeCommand.updateFirmware]: FirmwareUpdateResultType;
   [NodeCommand.abortFirmwareUpdate]: Record<string, never>;
   [NodeCommand.getFirmwareUpdateCapabilities]: {
     capabilities: FirmwareUpdateCapabilities;
@@ -28,9 +29,9 @@ export interface NodeResultTypes {
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
   [NodeCommand.ping]: { responded: boolean };
-  [NodeCommand.hasSecurityClass]: { hasSecurityClass: boolean | "unknown" };
+  [NodeCommand.hasSecurityClass]: { hasSecurityClass: MaybeNotKnown<boolean> };
   [NodeCommand.getHighestSecurityClass]: {
-    highestSecurityClass: SecurityClass | undefined;
+    highestSecurityClass: MaybeNotKnown<SecurityClass>;
   };
   [NodeCommand.testPowerlevel]: { framesAcked: number };
   [NodeCommand.checkLifelineHealth]: { summary: LifelineHealthCheckSummary };
