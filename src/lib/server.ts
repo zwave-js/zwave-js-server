@@ -515,8 +515,13 @@ export class ZwavejsServer extends EventEmitter {
   }
 
   setInclusionUserCallbacks(): void {
+    if (this.sockets === undefined) {
+      throw new Error(
+        "Server must be started before setting the inclusion user callbacks"
+      );
+    }
     this.driver.updateOptions({
-      inclusionUserCallbacks: inclusionUserCallbacks(this.sockets!),
+      inclusionUserCallbacks: inclusionUserCallbacks(this.sockets),
     });
   }
 
