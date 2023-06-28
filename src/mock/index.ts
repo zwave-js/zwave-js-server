@@ -1,4 +1,4 @@
-import type { Driver } from "zwave-js";
+import type { Driver, ZWaveOptions } from "zwave-js";
 import { EventEmitter } from "events";
 import { LogConfig } from "@zwave-js/core";
 
@@ -31,6 +31,8 @@ class MockDriver extends EventEmitter {
   public updateUserAgent(
     additionalUserAgentComponents?: Record<string, string> | null
   ) {}
+
+  public updateOptions(options: Partial<ZWaveOptions>) {}
 
   async destroy() {}
 }

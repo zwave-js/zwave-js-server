@@ -433,7 +433,7 @@ export class ZwavejsServerRemoteController {
       await this.zwaveJsServer.destroy();
 
       this.driver.once("driver ready", () => {
-        this.zwaveJsServer.start();
+        this.zwaveJsServer.start(true);
       });
     }
     await this.driver.hardReset();
@@ -466,7 +466,7 @@ export class ZwavejsServer extends EventEmitter {
     this.logger = options.logger ?? console;
   }
 
-  async start() {
+  async start(shouldSetInclusionUserCallbacks: boolean = false) {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
     }
@@ -483,6 +483,9 @@ export class ZwavejsServer extends EventEmitter {
       this.logger,
       this.remoteController
     );
+    if (shouldSetInclusionUserCallbacks) {
+      this.setInclusionUserCallbacks();
+    }
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     const port = this.options.port || this.defaultPort;
