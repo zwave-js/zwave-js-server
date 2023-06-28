@@ -34,6 +34,7 @@ import {
 } from "./incoming_message";
 import { ControllerResultTypes } from "./outgoing_message";
 import { firmwareUpdateOutgoingMessage } from "../common";
+import { inclusionUserCallbacks } from "../inclusion_user_callbacks";
 
 export class ControllerMessageHandler {
   static async handle(
@@ -384,65 +385,11 @@ function processInclusionOptions(
           options.provisioning = parseQRCodeString(options.provisioning);
         }
       } else {
-        let grantSecurityClassesPromise:
-          | DeferredPromise<InclusionGrant | false>
-          | undefined;
-        let validateDSKAndEnterPinPromise:
-          | DeferredPromise<string | false>
-          | undefined;
         // @ts-expect-error
-        options.userCallbacks = {
-          grantSecurityClasses: (
-            requested: InclusionGrant
-          ): Promise<InclusionGrant | false> => {
-            clientsController.grantSecurityClassesPromise =
-              grantSecurityClassesPromise = createDeferredPromise();
-            grantSecurityClassesPromise.catch(() => {});
-            grantSecurityClassesPromise.finally(() => {
-              if (
-                clientsController.grantSecurityClassesPromise ===
-                grantSecurityClassesPromise
-              ) {
-                delete clientsController.grantSecurityClassesPromise;
-              }
-            });
-            client.sendEvent({
-              source: "controller",
-              event: "grant security classes",
-              requested: requested as any,
-            });
-
-            return clientsController.grantSecurityClassesPromise;
-          },
-          validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
-            clientsController.validateDSKAndEnterPinPromise =
-              validateDSKAndEnterPinPromise = createDeferredPromise();
-            validateDSKAndEnterPinPromise.catch(() => {});
-            validateDSKAndEnterPinPromise.finally(() => {
-              if (
-                clientsController.validateDSKAndEnterPinPromise ===
-                validateDSKAndEnterPinPromise
-              ) {
-                delete clientsController.validateDSKAndEnterPinPromise;
-              }
-            });
-            client.sendEvent({
-              source: "controller",
-              event: "validate dsk and enter pin",
-              dsk,
-            });
-            return clientsController.validateDSKAndEnterPinPromise;
-          },
-          abort: (): void => {
-            // settle the promises to ensure finally is triggered for the cleanup.
-            grantSecurityClassesPromise?.resolve(false);
-            validateDSKAndEnterPinPromise?.resolve(false);
-            client.sendEvent({
-              source: "controller",
-              event: "inclusion aborted",
-            });
-          },
-        };
+        options.userCallbacks = inclusionUserCallbacks(
+          clientsController,
+          client
+        );
       }
     }
     return options;

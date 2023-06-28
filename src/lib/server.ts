@@ -45,6 +45,12 @@ import { EndpointMessageHandler } from "./endpoint/message_handler";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { UtilsMessageHandler } from "./utils/message_handler";
 import { IncomingMessageUtils } from "./utils/incoming_message";
+import {
+  abort,
+  grantSecurityClasses,
+  inclusionUserCallbacks,
+  validateDSKAndEnterPIN,
+} from "./inclusion_user_callbacks";
 
 export class Client {
   public receiveEvents = false;
@@ -511,6 +517,12 @@ export class ZwavejsServer extends EventEmitter {
         this.logger.info(`DNS Service Discovery enabled`);
       });
     }
+  }
+
+  setInclusionUserCallbacks(): void {
+    this.driver.updateOptions({
+      inclusionUserCallbacks: inclusionUserCallbacks(this.sockets!),
+    });
   }
 
   private onError(sourceClass: EventEmitter, error: Error) {
