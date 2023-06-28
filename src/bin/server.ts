@@ -145,6 +145,7 @@ interface Args {
       true
     );
     await server.start();
+    server.setInclusionUserCallbacks();
   });
 
   await driver.start();

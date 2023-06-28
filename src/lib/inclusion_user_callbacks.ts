@@ -24,12 +24,14 @@ export const inclusionUserCallbacks = (
           requested: requested as any,
         });
       } else {
-        clientsController.clients.map((client) => {
-          client.sendEvent({
-            source: "controller",
-            event: "grant security classes",
-            requested: requested as any,
-          });
+        clientsController.clients.forEach((client) => {
+          if (client.isConnected && client.receiveEvents) {
+            client.sendEvent({
+              source: "controller",
+              event: "grant security classes",
+              requested: requested as any,
+            });
+          }
         });
       }
 
@@ -50,13 +52,15 @@ export const inclusionUserCallbacks = (
           dsk,
         });
       } else {
-        clientsController.clients.map((client) =>
-          client.sendEvent({
-            source: "controller",
-            event: "validate dsk and enter pin",
-            dsk,
-          })
-        );
+        clientsController.clients.forEach((client) => {
+          if (client.isConnected && client.receiveEvents) {
+            client.sendEvent({
+              source: "controller",
+              event: "validate dsk and enter pin",
+              dsk,
+            });
+          }
+        });
       }
       return clientsController.validateDSKAndEnterPinPromise;
     },
@@ -70,12 +74,14 @@ export const inclusionUserCallbacks = (
           event: "inclusion aborted",
         });
       } else {
-        clientsController.clients.map((client) =>
-          client.sendEvent({
-            source: "controller",
-            event: "inclusion aborted",
-          })
-        );
+        clientsController.clients.forEach((client) => {
+          if (client.isConnected && client.receiveEvents) {
+            client.sendEvent({
+              source: "controller",
+              event: "inclusion aborted",
+            });
+          }
+        });
       }
     },
   };
