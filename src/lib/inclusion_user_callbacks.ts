@@ -7,9 +7,7 @@ export const inclusionUserCallbacks = (
   client?: Client
 ): InclusionUserCallbacks => {
   return {
-    grantSecurityClasses: (
-      requested: InclusionGrant
-    ): Promise<InclusionGrant | false> => {
+    grantSecurityClasses: (requested: InclusionGrant) => {
       clientsController.grantSecurityClassesPromise = createDeferredPromise();
       clientsController.grantSecurityClassesPromise.catch(() => {});
       clientsController.grantSecurityClassesPromise.finally(() => {
@@ -37,7 +35,7 @@ export const inclusionUserCallbacks = (
 
       return clientsController.grantSecurityClassesPromise;
     },
-    validateDSKAndEnterPIN: (dsk: string): Promise<string | false> => {
+    validateDSKAndEnterPIN: (dsk: string) => {
       clientsController.validateDSKAndEnterPinPromise = createDeferredPromise();
       clientsController.validateDSKAndEnterPinPromise.catch(() => {});
       clientsController.validateDSKAndEnterPinPromise.finally(() => {
@@ -64,10 +62,7 @@ export const inclusionUserCallbacks = (
       }
       return clientsController.validateDSKAndEnterPinPromise;
     },
-    abort: (): void => {
-      // settle the promises to ensure finally is triggered for the cleanup.
-      clientsController.grantSecurityClassesPromise?.resolve(false);
-      clientsController.validateDSKAndEnterPinPromise?.resolve(false);
+    abort: () => {
       if (client !== undefined) {
         client.sendEvent({
           source: "controller",
