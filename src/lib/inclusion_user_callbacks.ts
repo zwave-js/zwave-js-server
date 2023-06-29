@@ -1,13 +1,13 @@
-import { InclusionGrant } from "zwave-js";
+import { InclusionUserCallbacks } from "zwave-js";
 import { createDeferredPromise } from "alcalzone-shared/deferred-promise";
 import { Client, ClientsController } from "./server";
 
 export const inclusionUserCallbacks = (
   clientsController: ClientsController,
   client?: Client
-) => {
+): InclusionUserCallbacks => {
   return {
-    grantSecurityClasses: (requested: InclusionGrant) => {
+    grantSecurityClasses: (requested) => {
       clientsController.grantSecurityClassesPromise = createDeferredPromise();
       clientsController.grantSecurityClassesPromise.catch(() => {});
       clientsController.grantSecurityClassesPromise.finally(() => {
@@ -19,7 +19,7 @@ export const inclusionUserCallbacks = (
         client.sendEvent({
           source: "controller",
           event: "grant security classes",
-          requested: requested as any,
+          requested: requested,
         });
       } else {
         clientsController.clients.forEach((client) => {
@@ -27,7 +27,7 @@ export const inclusionUserCallbacks = (
             client.sendEvent({
               source: "controller",
               event: "grant security classes",
-              requested: requested as any,
+              requested: requested,
             });
           }
         });
@@ -35,7 +35,7 @@ export const inclusionUserCallbacks = (
 
       return clientsController.grantSecurityClassesPromise;
     },
-    validateDSKAndEnterPIN: (dsk: string) => {
+    validateDSKAndEnterPIN: (dsk) => {
       clientsController.validateDSKAndEnterPinPromise = createDeferredPromise();
       clientsController.validateDSKAndEnterPinPromise.catch(() => {});
       clientsController.validateDSKAndEnterPinPromise.finally(() => {
