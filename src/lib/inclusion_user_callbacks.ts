@@ -1,11 +1,11 @@
-import { InclusionGrant, InclusionUserCallbacks } from "zwave-js";
+import { InclusionGrant } from "zwave-js";
 import { createDeferredPromise } from "alcalzone-shared/deferred-promise";
 import { Client, ClientsController } from "./server";
 
 export const inclusionUserCallbacks = (
   clientsController: ClientsController,
   client?: Client
-): InclusionUserCallbacks => {
+) => {
   return {
     grantSecurityClasses: (requested: InclusionGrant) => {
       clientsController.grantSecurityClassesPromise = createDeferredPromise();
