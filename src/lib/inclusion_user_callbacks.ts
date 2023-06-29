@@ -63,6 +63,8 @@ export const inclusionUserCallbacks = (
       return clientsController.validateDSKAndEnterPinPromise;
     },
     abort: () => {
+      delete clientsController.grantSecurityClassesPromise;
+      delete clientsController.validateDSKAndEnterPinPromise;
       if (client !== undefined) {
         client.sendEvent({
           source: "controller",
