@@ -45,6 +45,7 @@ import { EndpointMessageHandler } from "./endpoint/message_handler";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { UtilsMessageHandler } from "./utils/message_handler";
 import { IncomingMessageUtils } from "./utils/incoming_message";
+import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
 
 export class Client {
   public receiveEvents = false;
@@ -432,7 +433,7 @@ export class ZwavejsServerRemoteController {
       await this.zwaveJsServer.destroy();
 
       this.driver.once("driver ready", () => {
-        this.zwaveJsServer.start();
+        this.zwaveJsServer.start(true);
       });
     }
     await this.driver.hardReset();
@@ -465,7 +466,7 @@ export class ZwavejsServer extends EventEmitter {
     this.logger = options.logger ?? console;
   }
 
-  async start() {
+  async start(shouldSetInclusionUserCallbacks: boolean = false) {
     if (!this.driver.ready) {
       throw new Error("Cannot start server when driver not ready");
     }
@@ -482,6 +483,9 @@ export class ZwavejsServer extends EventEmitter {
       this.logger,
       this.remoteController
     );
+    if (shouldSetInclusionUserCallbacks) {
+      this.setInclusionUserCallbacks();
+    }
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     const port = this.options.port || this.defaultPort;
@@ -511,6 +515,17 @@ export class ZwavejsServer extends EventEmitter {
         this.logger.info(`DNS Service Discovery enabled`);
       });
     }
+  }
+
+  setInclusionUserCallbacks(): void {
+    if (this.sockets === undefined) {
+      throw new Error(
+        "Server must be started before setting the inclusion user callbacks"
+      );
+    }
+    this.driver.updateOptions({
+      inclusionUserCallbacks: inclusionUserCallbacks(this.sockets),
+    });
   }
 
   private onError(sourceClass: EventEmitter, error: Error) {

@@ -144,7 +144,7 @@ interface Args {
       },
       true
     );
-    await server.start();
+    await server.start(true);
   });
 
   await driver.start();

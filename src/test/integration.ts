@@ -34,7 +34,7 @@ const createNextMessage = (socket: ws) => {
 
 const runTest = async () => {
   const server = new ZwavejsServer(createMockDriver(), { port: PORT });
-  await server.start();
+  await server.start(true);
   let socket: ws | undefined = undefined;
 
   try {
