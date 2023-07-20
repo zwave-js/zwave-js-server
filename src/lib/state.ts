@@ -350,14 +350,14 @@ function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
     return [];
   }
   return Array.from(node.getDefinedValueIDs(), (valueId) =>
-    dumpValue(node, valueId, schemaVersion)
+    dumpValue(node, valueId, schemaVersion),
   );
 }
 
 export const dumpValue = (
   node: ZWaveNode,
   valueArgs: TranslatedValueID,
-  schemaVersion: number
+  schemaVersion: number,
 ): ValueState => {
   // get CC Version for this endpoint, fallback to CC version of the node itself
   let ccVersion: number | undefined;
@@ -377,7 +377,7 @@ export const dumpValue = (
   if (valueArgs.commandClass === CommandClasses.Configuration) {
     metadata = dumpConfigurationMetadata(
       node.getValueMetadata(valueArgs) as ConfigurationMetadata,
-      schemaVersion
+      schemaVersion,
     );
   } else {
     metadata = dumpMetadata(node.getValueMetadata(valueArgs), schemaVersion);
@@ -401,7 +401,7 @@ export const dumpValue = (
 
 export const dumpConfigurationMetadata = (
   metadata: ConfigurationMetadata,
-  schemaVersion: number
+  schemaVersion: number,
 ): ConfigurationMetadataState => {
   const base: ConfigurationMetadataStateSchema0 = {
     type: metadata.type,
@@ -448,7 +448,7 @@ export const dumpMetadata = (
     | ValueMetadataDuration
     | ValueMetadataNumeric
     | ValueMetadataString,
-  schemaVersion: number
+  schemaVersion: number,
 ): ValueMetadataState => {
   const base: ValueMetadataStateSchema0 = {
     type: metadata.type,
@@ -529,7 +529,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     aggregatedEndpointCount: node.aggregatedEndpointCount,
     interviewAttempts: node.interviewAttempts,
     endpoints: Array.from(node.getAllEndpoints(), (endpoint) =>
-      dumpEndpoint(endpoint, schemaVersion)
+      dumpEndpoint(endpoint, schemaVersion),
     ),
     values: getNodeValues(node, schemaVersion),
   };
@@ -562,7 +562,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
       ? dumpDeviceClass(node.deviceClass)
       : null;
     node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-      dumpCommandClass(node, cc)
+      dumpCommandClass(node, cc),
     );
     return node1;
   }
@@ -584,7 +584,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
       ? dumpDeviceClass(node.deviceClass)
       : null;
     node3.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-      dumpCommandClass(node, cc)
+      dumpCommandClass(node, cc),
     );
     return node3;
   }
@@ -604,7 +604,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     : null;
   if (schemaVersion <= 14) {
     node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
-      dumpCommandClass(node, cc)
+      dumpCommandClass(node, cc),
     );
   }
   node4.interviewStage = InterviewStage[node.interviewStage];
@@ -642,7 +642,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
 export const dumpFoundNode = (
   foundNode: FoundNode,
-  schemaVersion: number
+  schemaVersion: number,
 ): FoundNodeState => {
   const base: Partial<FoundNodeStateSchema19> = {
     nodeId: foundNode.id,
@@ -666,7 +666,7 @@ export const dumpFoundNode = (
 
 export const dumpEndpoint = (
   endpoint: Endpoint,
-  schemaVersion: number
+  schemaVersion: number,
 ): EndpointState => {
   let base: EndpointStateSchema0 = {
     nodeId: endpoint.nodeId,
@@ -690,7 +690,7 @@ export const dumpEndpoint = (
   const endpoint15 = endpoint3 as EndpointStateSchema15;
   endpoint15.commandClasses = Array.from(
     endpoint.getSupportedCCInstances(),
-    (cc) => dumpCommandClass(endpoint, cc)
+    (cc) => dumpCommandClass(endpoint, cc),
   );
   if (schemaVersion < 26) {
     return endpoint15;
@@ -702,7 +702,7 @@ export const dumpEndpoint = (
 };
 
 export const dumpDeviceClass = (
-  deviceClass: DeviceClass
+  deviceClass: DeviceClass,
 ): DeviceClassState => ({
   basic: {
     key: deviceClass.basic.key,
@@ -722,7 +722,7 @@ export const dumpDeviceClass = (
 
 export const dumpCommandClass = (
   endpoint: Endpoint,
-  commandClass: CommandClass
+  commandClass: CommandClass,
 ): CommandClassState => ({
   id: commandClass.ccId,
   name: CommandClasses[commandClass.ccId],
@@ -732,7 +732,7 @@ export const dumpCommandClass = (
 
 export const dumpLogConfig = (
   driver: Driver,
-  schemaVersion: number
+  schemaVersion: number,
 ): LogConfigState => {
   const { transports, ...partialLogConfig } = driver.getLogConfig();
   if (schemaVersion < 3 && typeof partialLogConfig.level === "string") {
@@ -746,7 +746,7 @@ export const dumpLogConfig = (
 
 export const dumpDriver = (
   driver: Driver,
-  schemaVersion: number
+  schemaVersion: number,
 ): DriverState => {
   return {
     logConfig: dumpLogConfig(driver, schemaVersion),
@@ -756,7 +756,7 @@ export const dumpDriver = (
 
 export const dumpController = (
   driver: Driver,
-  schemaVersion: number
+  schemaVersion: number,
 ): ControllerState => {
   const controller = driver.controller;
   const base: Partial<ControllerStateSchema0> = {
@@ -813,14 +813,14 @@ export const dumpController = (
 
 export const dumpState = (
   driver: Driver,
-  schemaVersion: number
+  schemaVersion: number,
 ): ZwaveState => {
   const controller = driver.controller;
   return {
     driver: dumpDriver(driver, schemaVersion),
     controller: dumpController(driver, schemaVersion),
     nodes: Array.from(controller.nodes.values(), (node) =>
-      dumpNode(node, schemaVersion)
+      dumpNode(node, schemaVersion),
     ),
   };
 };

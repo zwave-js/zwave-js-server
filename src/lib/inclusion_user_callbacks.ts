@@ -4,7 +4,7 @@ import { Client, ClientsController } from "./server";
 
 export const inclusionUserCallbacks = (
   clientsController: ClientsController,
-  client?: Client
+  client?: Client,
 ): InclusionUserCallbacks => {
   return {
     grantSecurityClasses: (requested) => {

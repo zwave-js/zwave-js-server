@@ -41,7 +41,7 @@ export class ControllerMessageHandler {
     message: IncomingMessageController,
     clientsController: ClientsController,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
 
@@ -53,24 +53,24 @@ export class ControllerMessageHandler {
         )
           throw new InclusionAlreadyInProgressError();
         const success = await driver.controller.beginInclusion(
-          processInclusionOptions(clientsController, client, message)
+          processInclusionOptions(clientsController, client, message),
         );
         return { success };
       }
       case ControllerCommand.grantSecurityClasses: {
         if (!clientsController.grantSecurityClassesPromise)
           throw new InclusionPhaseNotInProgressError(
-            "grantSecurityClassesPromise"
+            "grantSecurityClassesPromise",
           );
         clientsController.grantSecurityClassesPromise.resolve(
-          message.inclusionGrant
+          message.inclusionGrant,
         );
         return {};
       }
       case ControllerCommand.validateDSKAndEnterPIN: {
         if (!clientsController.validateDSKAndEnterPinPromise)
           throw new InclusionPhaseNotInProgressError(
-            "validateDSKAndEnterPinPromise"
+            "validateDSKAndEnterPinPromise",
           );
         clientsController.validateDSKAndEnterPinPromise.resolve(message.pin);
         return {};
@@ -78,7 +78,7 @@ export class ControllerMessageHandler {
       case ControllerCommand.provisionSmartStartNode: {
         if (typeof message.entry === "string") {
           driver.controller.provisionSmartStartNode(
-            parseQRCodeString(message.entry)
+            parseQRCodeString(message.entry),
           );
         } else {
           driver.controller.provisionSmartStartNode(message.entry);
@@ -93,7 +93,7 @@ export class ControllerMessageHandler {
         const dskOrNodeId = message.dskOrNodeId || message.dsk;
         if (!dskOrNodeId) {
           throw new InvalidParamsPassedToCommandError(
-            "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry"
+            "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry",
           );
         }
         const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
@@ -109,7 +109,7 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.beginExclusion: {
         const success = await driver.controller.beginExclusion(
-          processExclusionOptions(message)
+          processExclusionOptions(message),
         );
         return { success };
       }
@@ -127,8 +127,8 @@ export class ControllerMessageHandler {
           processInclusionOptions(
             clientsController,
             client,
-            message
-          ) as ReplaceNodeOptions
+            message,
+          ) as ReplaceNodeOptions,
         );
         return { success };
       }
@@ -174,7 +174,7 @@ export class ControllerMessageHandler {
         const allowed = driver.controller.isAssociationAllowed(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
-          message.association
+          message.association,
         );
         return { allowed };
       }
@@ -182,7 +182,7 @@ export class ControllerMessageHandler {
         await driver.controller.addAssociations(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
-          message.associations
+          message.associations,
         );
         return {};
       }
@@ -190,7 +190,7 @@ export class ControllerMessageHandler {
         await driver.controller.removeAssociations(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
-          message.associations
+          message.associations,
         );
         return {};
       }
@@ -201,7 +201,7 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.getNodeNeighbors: {
         const neighbors = await driver.controller.getNodeNeighbors(
-          message.nodeId
+          message.nodeId,
         );
         return { neighbors };
       }
@@ -218,9 +218,9 @@ export class ControllerMessageHandler {
                 event: "nvm backup progress",
                 bytesRead,
                 total,
-              })
+              }),
             );
-          }
+          },
         );
         return { nvmData: nvmDataRaw.toString("base64") };
       }
@@ -235,7 +235,7 @@ export class ControllerMessageHandler {
                 event: "nvm convert progress",
                 bytesRead,
                 total,
-              })
+              }),
             );
           },
           (bytesWritten: number, total: number) => {
@@ -245,9 +245,9 @@ export class ControllerMessageHandler {
                 event: "nvm restore progress",
                 bytesWritten,
                 total,
-              })
+              }),
             );
-          }
+          },
         );
         return {};
       }
@@ -262,7 +262,7 @@ export class ControllerMessageHandler {
       case ControllerCommand.setPowerlevel: {
         const success = await driver.controller.setPowerlevel(
           message.powerlevel,
-          message.measured0dBm
+          message.measured0dBm,
         );
         return { success };
       }
@@ -292,21 +292,21 @@ export class ControllerMessageHandler {
               additionalUserAgentComponents:
                 client.additionalUserAgentComponents,
               includePrereleases: message.includePrereleases,
-            }
+            },
           ),
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
         const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
-          [message.update]
+          [message.update],
         );
         return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTA: {
         const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
-          message.updates
+          message.updates,
         );
         return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
@@ -316,8 +316,8 @@ export class ControllerMessageHandler {
           extractFirmware(
             file,
             message.fileFormat ??
-              guessFirmwareFileFormat(message.filename, file)
-          ).data
+              guessFirmwareFileFormat(message.filename, file),
+          ).data,
         );
         return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
@@ -335,7 +335,7 @@ export class ControllerMessageHandler {
 function processExclusionOptions(
   message:
     | IncomingCommandControllerBeginExclusion
-    | IncomingCommandControllerBeginExclusionLegacy
+    | IncomingCommandControllerBeginExclusionLegacy,
 ): ExclusionOptions | undefined {
   if ("options" in message) {
     return message.options;
@@ -363,7 +363,7 @@ function processInclusionOptions(
     | IncomingCommandControllerBeginInclusion
     | IncomingCommandControllerBeginInclusionLegacy
     | IncomingCommandControllerReplaceFailedNode
-    | IncomingCommandControllerReplaceFailedNodeLegacy
+    | IncomingCommandControllerReplaceFailedNodeLegacy,
 ): InclusionOptions | ReplaceNodeOptions {
   // Schema 8+ inclusion handling
   if ("options" in message) {
@@ -388,7 +388,7 @@ function processInclusionOptions(
         // @ts-expect-error
         options.userCallbacks = inclusionUserCallbacks(
           clientsController,
-          client
+          client,
         );
       }
     }

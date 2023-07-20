@@ -36,7 +36,7 @@ export class EndpointMessageHandler {
   static async handle(
     message: IncomingMessageEndpoint,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<EndpointResultTypes[EndpointCommand]> {
     const { nodeId, command } = message;
     let endpoint;
@@ -60,7 +60,7 @@ export class EndpointMessageHandler {
         const response = await endpoint.invokeCCAPI(
           message.commandClass,
           message.methodName,
-          ...deserializeBufferInArray(message.args)
+          ...deserializeBufferInArray(message.args),
         );
         return { response };
       }

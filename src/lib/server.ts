@@ -57,7 +57,7 @@ export class Client {
   private instanceHandlers: Record<
     Instance,
     (
-      message: IncomingMessage
+      message: IncomingMessage,
     ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
   > = {
     [Instance.controller]: (message) =>
@@ -65,7 +65,7 @@ export class Client {
         message as IncomingMessageController,
         this.clientsController,
         this.driver,
-        this
+        this,
       ),
     [Instance.driver]: (message) =>
       DriverMessageHandler.handle(
@@ -73,32 +73,32 @@ export class Client {
         this.remoteController,
         this.clientsController,
         this.driver,
-        this
+        this,
       ),
     [Instance.node]: (message) =>
       this.clientsController.nodeMessageHandler.handle(
         message as IncomingMessageNode,
         this.clientsController,
         this.driver,
-        this
+        this,
       ),
     [Instance.multicast_group]: (message) =>
       MulticastGroupMessageHandler.handle(
         message as IncomingMessageMulticastGroup,
         this.driver,
-        this
+        this,
       ),
     [Instance.broadcast_node]: (message) =>
       BroadcastNodeMessageHandler.handle(
         message as IncomingMessageBroadcastNode,
         this.driver,
-        this
+        this,
       ),
     [Instance.endpoint]: (message) =>
       EndpointMessageHandler.handle(
         message as IncomingMessageEndpoint,
         this.driver,
-        this
+        this,
       ),
     [Instance.utils]: (message) =>
       UtilsMessageHandler.handle(message as IncomingMessageUtils),
@@ -109,7 +109,7 @@ export class Client {
     private clientsController: ClientsController,
     private driver: Driver,
     private logger: Logger,
-    private remoteController: ZwavejsServerRemoteController
+    private remoteController: ZwavejsServerRemoteController,
   ) {
     socket.on("pong", () => {
       this._outstandingPing = false;
@@ -163,7 +163,7 @@ export class Client {
           {
             state: dumpState(this.driver, this.schemaVersion),
           },
-          true
+          true,
         );
         this.receiveEvents = true;
         return;
@@ -186,7 +186,7 @@ export class Client {
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
           msg.messageId,
-          await this.instanceHandlers[instance](msg)
+          await this.instanceHandlers[instance](msg),
         );
       }
 
@@ -221,7 +221,7 @@ export class Client {
   sendResultSuccess(
     messageId: string,
     result: OutgoingMessages.OutgoingResultMessageSuccess["result"],
-    compress = false
+    compress = false,
   ) {
     this.sendData(
       {
@@ -230,14 +230,14 @@ export class Client {
         messageId,
         result,
       },
-      compress
+      compress,
     );
   }
 
   sendResultError(
     messageId: string,
     errorCode: Omit<ErrorCode, "zwaveError">,
-    args: OutgoingMessages.JSONValue
+    args: OutgoingMessages.JSONValue,
   ) {
     this.sendData({
       type: "result",
@@ -251,7 +251,7 @@ export class Client {
   sendResultZWaveError(
     messageId: string,
     zjsErrorCode: ZWaveErrorCodes,
-    message: string
+    message: string,
   ) {
     this.sendData({
       type: "result",
@@ -300,7 +300,7 @@ export class ClientsController extends EventEmitter {
   constructor(
     public driver: Driver,
     private logger: Logger,
-    private remoteController: ZwavejsServerRemoteController
+    private remoteController: ZwavejsServerRemoteController,
   ) {
     super();
   }
@@ -312,7 +312,7 @@ export class ClientsController extends EventEmitter {
       this,
       this.driver,
       this.logger,
-      this.remoteController
+      this.remoteController,
     );
     socket.on("error", (error) => {
       this.logger.error("Client socket error", error);
@@ -360,7 +360,7 @@ export class ClientsController extends EventEmitter {
       this.loggingEventForwarder = new LoggingEventForwarder(
         this,
         this.driver,
-        this.logger
+        this.logger,
       );
     }
     if (!this.loggingEventForwarderStarted) {
@@ -425,7 +425,7 @@ export class ZwavejsServerRemoteController {
   constructor(
     private destroyServerOnHardReset: boolean = false,
     private driver: Driver,
-    private zwaveJsServer: ZwavejsServer
+    private zwaveJsServer: ZwavejsServer,
   ) {}
 
   public async hardResetController() {
@@ -455,13 +455,13 @@ export class ZwavejsServer extends EventEmitter {
   constructor(
     private driver: Driver,
     private options: ZwavejsServerOptions = {},
-    destroyServerOnHardReset: boolean = false
+    destroyServerOnHardReset: boolean = false,
   ) {
     super();
     this.remoteController = new ZwavejsServerRemoteController(
       destroyServerOnHardReset,
       driver,
-      this
+      this,
     );
     this.logger = options.logger ?? console;
   }
@@ -481,7 +481,7 @@ export class ZwavejsServer extends EventEmitter {
     this.sockets = new ClientsController(
       this.driver,
       this.logger,
-      this.remoteController
+      this.remoteController,
     );
     if (shouldSetInclusionUserCallbacks) {
       this.setInclusionUserCallbacks();
@@ -520,7 +520,7 @@ export class ZwavejsServer extends EventEmitter {
   setInclusionUserCallbacks(): void {
     if (this.sockets === undefined) {
       throw new Error(
-        "Server must be started before setting the inclusion user callbacks"
+        "Server must be started before setting the inclusion user callbacks",
       );
     }
     this.driver.updateOptions({

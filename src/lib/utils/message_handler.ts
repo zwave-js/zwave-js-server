@@ -6,7 +6,7 @@ import { UtilsResultTypes } from "./outgoing_message";
 
 export class UtilsMessageHandler {
   static async handle(
-    message: IncomingMessageUtils
+    message: IncomingMessageUtils,
   ): Promise<UtilsResultTypes[UtilsCommand]> {
     const { command } = message;
 

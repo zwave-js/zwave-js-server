@@ -55,7 +55,7 @@ const runTest = async () => {
       JSON.stringify({
         messageId: "my-msg-id!",
         command: "start_listening",
-      })
+      }),
     );
 
     assert.deepEqual(await nextMessage(), {
