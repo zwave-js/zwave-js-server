@@ -40,13 +40,13 @@ socket.on("open", function open() {
       messageId: "api-schema-id",
       command: "set_api_schema",
       schemaVersion: schemaVersion,
-    })
+    }),
   );
   socket.send(
     JSON.stringify({
       messageId: "start-listening-result",
       command: "start_listening",
-    })
+    }),
   );
 });
 

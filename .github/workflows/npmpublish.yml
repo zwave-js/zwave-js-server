@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14
-          cache: 'npm'
+          cache: "npm"
       - run: npm ci
       - run: npm test
 
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-          cache: 'npm'
+          cache: "npm"
       - run: npm ci
 
       - name: Determine dist-tag

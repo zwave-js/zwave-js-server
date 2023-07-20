@@ -11,7 +11,7 @@ export type SetValueResultType =
 
 export function setValueOutgoingMessage(
   result: SetValueResult,
-  schemaVersion: number
+  schemaVersion: number,
 ): SetValueResultType {
   if (schemaVersion < 29) {
     return {
@@ -30,7 +30,7 @@ export type FirmwareUpdateResultType =
   | { success: boolean }; // schemaVersion < 29
 
 export function firmwareUpdateOutgoingMessage<
-  T extends ControllerFirmwareUpdateResult | FirmwareUpdateResult
+  T extends ControllerFirmwareUpdateResult | FirmwareUpdateResult,
 >(result: T, schemaVersion: number): { result: T } | { success: boolean } {
   if (schemaVersion < 29) {
     return {

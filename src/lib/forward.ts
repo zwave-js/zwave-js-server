@@ -29,7 +29,7 @@ export class EventForwarder {
 
   start() {
     this.clientsController.driver.controller.nodes.forEach((node) =>
-      this.setupNode(node)
+      this.setupNode(node),
     );
 
     // Bind to all controller events
@@ -45,10 +45,10 @@ export class EventForwarder {
             event: "node added",
             node: dumpNode(node, client.schemaVersion),
             result,
-          })
+          }),
         );
         this.setupNode(node);
-      }
+      },
     );
 
     this.clientsController.driver.controller.on("node found", (node) => {
@@ -60,7 +60,7 @@ export class EventForwarder {
             source: "controller",
             event: "node found",
             node: dumpFoundNode(node, client.schemaVersion),
-          })
+          }),
         );
     });
 
@@ -77,7 +77,7 @@ export class EventForwarder {
           this.forwardEvent({
             source: "controller",
             event,
-          })
+          }),
         );
       }
     }
@@ -87,7 +87,7 @@ export class EventForwarder {
         source: "controller",
         event: "inclusion started",
         secure,
-      })
+      }),
     );
 
     this.clientsController.driver.controller.on(
@@ -97,7 +97,7 @@ export class EventForwarder {
           source: "controller",
           event: "firmware update progress",
           progress,
-        })
+        }),
     );
 
     this.clientsController.driver.controller.on(
@@ -107,7 +107,7 @@ export class EventForwarder {
           source: "controller",
           event: "firmware update finished",
           result,
-        })
+        }),
     );
 
     this.clientsController.driver.controller.on(
@@ -133,7 +133,7 @@ export class EventForwarder {
               reason,
             });
           }
-        })
+        }),
     );
 
     this.clientsController.driver.controller.on(
@@ -143,7 +143,7 @@ export class EventForwarder {
           source: "controller",
           event: "heal network progress",
           progress: Object.fromEntries(progress),
-        })
+        }),
     );
 
     this.clientsController.driver.controller.on("heal network done", (result) =>
@@ -151,7 +151,7 @@ export class EventForwarder {
         source: "controller",
         event: "heal network done",
         result: Object.fromEntries(result),
-      })
+      }),
     );
 
     this.clientsController.driver.controller.on(
@@ -161,14 +161,14 @@ export class EventForwarder {
           source: "controller",
           event: "statistics updated",
           statistics,
-        })
+        }),
     );
   }
 
   forwardEvent(data: OutgoingEvent) {
     // Forward event to all connected clients
     this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data)
+      this.sendEvent(client, data),
     );
   }
 
@@ -198,7 +198,7 @@ export class EventForwarder {
           event: "ready",
           nodeId: changedNode.nodeId,
           nodeState: dumpNode(changedNode, client.schemaVersion),
-        })
+        }),
       );
     });
 
@@ -206,7 +206,7 @@ export class EventForwarder {
       const events: ZWaveNodeEvents[] = ["wake up", "sleep", "dead", "alive"];
       for (const event of events) {
         node.on(event, (changedNode: ZWaveNode, oldStatus: NodeStatus) =>
-          notifyNode(changedNode, event, { oldStatus })
+          notifyNode(changedNode, event, { oldStatus }),
         );
       }
     }
@@ -228,7 +228,7 @@ export class EventForwarder {
       "interview stage completed",
       (changedNode: ZWaveNode, stageName: string) => {
         notifyNode(changedNode, "interview stage completed", { stageName });
-      }
+      },
     );
 
     {
@@ -259,7 +259,7 @@ export class EventForwarder {
             if (args.commandClass === CommandClasses.Configuration) {
               args.metadata = dumpConfigurationMetadata(
                 args.metadata as ConfigurationMetadata,
-                client.schemaVersion
+                client.schemaVersion,
               );
             } else {
               args.metadata = dumpMetadata(args.metadata, client.schemaVersion);
@@ -272,7 +272,7 @@ export class EventForwarder {
             args,
           });
         });
-      }
+      },
     );
 
     node.on(
@@ -316,7 +316,7 @@ export class EventForwarder {
             });
           }
         });
-      }
+      },
     );
 
     node.on(
@@ -342,7 +342,7 @@ export class EventForwarder {
             });
           }
         });
-      }
+      },
     );
 
     node.on(
@@ -368,14 +368,14 @@ export class EventForwarder {
             });
           }
         });
-      }
+      },
     );
 
     node.on(
       "statistics updated",
       (changedNode: ZWaveNode, statistics: NodeStatistics) => {
         notifyNode(changedNode, "statistics updated", { statistics });
-      }
+      },
     );
   }
 }

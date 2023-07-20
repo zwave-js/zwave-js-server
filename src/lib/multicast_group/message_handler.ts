@@ -10,7 +10,7 @@ export class MulticastGroupMessageHandler {
   static async handle(
     message: IncomingMessageMulticastGroup,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
 
@@ -21,7 +21,7 @@ export class MulticastGroupMessageHandler {
         const result = await virtualNode.setValue(
           message.valueId,
           message.value,
-          message.options
+          message.options,
         );
         return setValueOutgoingMessage(result, client.schemaVersion);
       }
@@ -33,7 +33,7 @@ export class MulticastGroupMessageHandler {
         const supported = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.index
+          message.index,
         ).supportsCC(message.commandClass);
         return { supported };
       }
@@ -41,7 +41,7 @@ export class MulticastGroupMessageHandler {
         const version = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.index
+          message.index,
         ).getCCVersion(message.commandClass);
         return { version };
       }
@@ -49,11 +49,11 @@ export class MulticastGroupMessageHandler {
         const response = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.index
+          message.index,
         ).invokeCCAPI(
           message.commandClass,
           message.methodName,
-          ...message.args
+          ...message.args,
         );
         return { response };
       }
@@ -61,7 +61,7 @@ export class MulticastGroupMessageHandler {
         const supported = getVirtualEndpoint(
           virtualNode,
           message.nodeIDs,
-          message.index
+          message.index,
         ).supportsCCAPI(message.commandClass);
         return { supported };
       }
@@ -79,7 +79,7 @@ export class MulticastGroupMessageHandler {
 function getVirtualEndpoint(
   virtualNode: VirtualNode,
   nodeIDs: number[],
-  index?: number
+  index?: number,
 ): VirtualEndpoint {
   if (!index) return virtualNode;
   const virtualEndpoint = virtualNode.getEndpoint(index);

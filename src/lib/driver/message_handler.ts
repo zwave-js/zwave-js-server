@@ -16,7 +16,7 @@ export class DriverMessageHandler {
     remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
     switch (message.command) {

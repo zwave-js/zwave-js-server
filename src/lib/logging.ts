@@ -25,7 +25,7 @@ export class LoggingEventForwarder {
   constructor(
     private clients: ClientsController,
     private driver: Driver,
-    private logger: Logger
+    private logger: Logger,
   ) {}
 
   public get started(): boolean {
@@ -39,7 +39,7 @@ export class LoggingEventForwarder {
     this.serverTransport = new WebSocketLogTransport(
       level as string,
       this.clients,
-      filter
+      filter,
     );
     transports = transports || [];
     transports.push(this.serverTransport);
@@ -70,7 +70,7 @@ class WebSocketLogTransport extends Transport {
   public constructor(
     level: string,
     private clients: ClientsController,
-    private filter?: Partial<LogContexts>
+    private filter?: Partial<LogContexts>,
   ) {
     super({
       format: createDefaultTransportFormat(false, false),
@@ -85,7 +85,7 @@ class WebSocketLogTransport extends Transport {
     if (
       !this.filter ||
       Object.entries(this.filter).every(
-        ([key, value]) => key in context && context[key] === value
+        ([key, value]) => key in context && context[key] === value,
       )
     ) {
       // Forward logs on to clients that are currently
@@ -98,7 +98,7 @@ class WebSocketLogTransport extends Transport {
             event: "logging",
             formattedMessage: info[this.messageSymbol as any],
             ...info,
-          })
+          }),
         );
     }
     next();

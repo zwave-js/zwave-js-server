@@ -54,7 +54,7 @@ export class VirtualEndpointNotFoundError extends BaseError {
   constructor(
     public index: number,
     public nodeIDs?: number[],
-    public broadcast?: boolean
+    public broadcast?: boolean,
   ) {
     super();
   }
@@ -63,7 +63,10 @@ export class VirtualEndpointNotFoundError extends BaseError {
 export class EndpointNotFoundError extends BaseError {
   errorCode = ErrorCode.endpointNotFound;
 
-  constructor(public nodeId: number, public index: number) {
+  constructor(
+    public nodeId: number,
+    public index: number,
+  ) {
     super();
   }
 }

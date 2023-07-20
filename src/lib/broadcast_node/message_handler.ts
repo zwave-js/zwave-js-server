@@ -10,7 +10,7 @@ export class BroadcastNodeMessageHandler {
   static async handle(
     message: IncomingMessageBroadcastNode,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
 
@@ -21,7 +21,7 @@ export class BroadcastNodeMessageHandler {
         const result = await virtualNode.setValue(
           message.valueId,
           message.value,
-          message.options
+          message.options,
         );
         return setValueOutgoingMessage(result, client.schemaVersion);
       }
@@ -32,32 +32,32 @@ export class BroadcastNodeMessageHandler {
       case BroadcastNodeCommand.supportsCC: {
         const supported = getVirtualEndpoint(
           virtualNode,
-          message.index
+          message.index,
         ).supportsCC(message.commandClass);
         return { supported };
       }
       case BroadcastNodeCommand.getCCVersion: {
         const version = getVirtualEndpoint(
           virtualNode,
-          message.index
+          message.index,
         ).getCCVersion(message.commandClass);
         return { version };
       }
       case BroadcastNodeCommand.invokeCCAPI: {
         const response = getVirtualEndpoint(
           virtualNode,
-          message.index
+          message.index,
         ).invokeCCAPI(
           message.commandClass,
           message.methodName,
-          ...message.args
+          ...message.args,
         );
         return { response };
       }
       case BroadcastNodeCommand.supportsCCAPI: {
         const supported = getVirtualEndpoint(
           virtualNode,
-          message.index
+          message.index,
         ).supportsCCAPI(message.commandClass);
         return { supported };
       }
@@ -74,7 +74,7 @@ export class BroadcastNodeMessageHandler {
 
 function getVirtualEndpoint(
   virtualNode: VirtualNode,
-  index?: number
+  index?: number,
 ): VirtualEndpoint {
   if (!index) return virtualNode;
   const virtualEndpoint = virtualNode.getEndpoint(index);

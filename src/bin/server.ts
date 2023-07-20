@@ -65,7 +65,7 @@ interface Args {
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
           "Both `networkKey` and `securityKeys.S0_Legacy` options are present in the " +
-            "config. Remove `networkKey`."
+            "config. Remove `networkKey`.",
         );
       }
       const securityKeyNames = [
@@ -80,7 +80,7 @@ interface Args {
           if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
-              `securityKeys.${key}`
+              `securityKeys.${key}`,
             );
           }
         }
@@ -91,12 +91,12 @@ interface Args {
         if (!options.securityKeys) options.securityKeys = {};
         options.securityKeys.S0_Legacy = normalizeKey(
           options.networkKey,
-          "networkKey"
+          "networkKey",
         );
         console.warn(
           "The `networkKey` option is deprecated in favor of `securityKeys` option. To eliminate " +
             "this warning, move your networkKey into the securityKeys.S0_Legacy option. Refer to " +
-            "the Z-Wave JS docs for more information"
+            "the Z-Wave JS docs for more information",
         );
         delete options.networkKey;
       } else if (!options.securityKeys?.S0_Legacy)
@@ -116,7 +116,7 @@ interface Args {
     console.warn(
       "Because `emitValueUpdateAfterSetValue` is set to false, multi-client setups will not work " +
         "as expected. In particular, clients will not see value updates that are initiated by " +
-        "another client."
+        "another client.",
     );
   }
 
@@ -142,7 +142,7 @@ interface Args {
         host: args.host,
         enableDNSServiceDiscovery: !args["disable-dns-sd"],
       },
-      true
+      true,
     );
     await server.start(true);
   });

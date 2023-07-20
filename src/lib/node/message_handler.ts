@@ -22,7 +22,7 @@ export class NodeMessageHandler {
     message: IncomingMessageNode,
     clientsController: ClientsController,
     driver: Driver,
-    client: Client
+    client: Client,
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
 
@@ -36,7 +36,7 @@ export class NodeMessageHandler {
         const result = await node.setValue(
           message.valueId,
           message.value,
-          message.options
+          message.options,
         );
         return setValueOutgoingMessage(result, client.schemaVersion);
       }
@@ -52,13 +52,13 @@ export class NodeMessageHandler {
         if (message.valueId.commandClass == CommandClasses.Configuration) {
           return dumpConfigurationMetadata(
             node.getValueMetadata(message.valueId) as ConfigurationMetadata,
-            client.schemaVersion
+            client.schemaVersion,
           );
         }
 
         return dumpMetadata(
           node.getValueMetadata(message.valueId),
-          client.schemaVersion
+          client.schemaVersion,
         );
       }
       case NodeCommand.beginFirmwareUpdate: {
@@ -66,7 +66,7 @@ export class NodeMessageHandler {
         let firmware = extractFirmware(
           firmwareFile,
           message.firmwareFileFormat ??
-            guessFirmwareFileFormat(message.firmwareFilename, firmwareFile)
+            guessFirmwareFileFormat(message.firmwareFilename, firmwareFile),
         );
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
@@ -78,7 +78,7 @@ export class NodeMessageHandler {
           const file = Buffer.from(update.file, "base64");
           let firmware = extractFirmware(
             file,
-            update.fileFormat ?? guessFirmwareFileFormat(update.filename, file)
+            update.fileFormat ?? guessFirmwareFileFormat(update.filename, file),
           );
           // Defer to the target provided in the messaage when available
           firmware.firmwareTarget =
@@ -145,9 +145,9 @@ export class NodeMessageHandler {
                 nodeId: message.nodeId,
                 acknowledged,
                 total,
-              })
+              }),
             );
-          }
+          },
         );
         return { framesAcked };
       }
@@ -163,9 +163,9 @@ export class NodeMessageHandler {
                 round,
                 totalRounds,
                 lastRating,
-              })
+              }),
             );
-          }
+          },
         );
         return { summary };
       }
@@ -182,9 +182,9 @@ export class NodeMessageHandler {
                 round,
                 totalRounds,
                 lastRating,
-              })
+              }),
             );
-          }
+          },
         );
         return { summary };
       }
@@ -215,7 +215,7 @@ export class NodeMessageHandler {
           node.supportsCC(CommandClasses["Node Naming and Location"])
         ) {
           await node.commandClasses["Node Naming and Location"].setLocation(
-            message.location
+            message.location,
           );
         }
         return {};
@@ -227,7 +227,7 @@ export class NodeMessageHandler {
           node.supportsCC(CommandClasses["Node Naming and Location"])
         ) {
           await node.commandClasses["Node Naming and Location"].setName(
-            message.name
+            message.name,
           );
         }
         return {};
@@ -255,7 +255,7 @@ export class NodeMessageHandler {
       }
       case NodeCommand.setDateAndTime: {
         const success = await node.setDateAndTime(
-          message.date === undefined ? undefined : new Date(message.date)
+          message.date === undefined ? undefined : new Date(message.date),
         );
         return { success };
       }
