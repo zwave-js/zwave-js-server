@@ -53,6 +53,21 @@ const runTest = async () => {
 
     socket.send(
       JSON.stringify({
+        command: "initialize",
+        messageId: "initialize",
+        schemaVersion: maxSchemaVersion,
+      }),
+    );
+
+    assert.deepEqual(await nextMessage(), {
+      type: "result",
+      success: true,
+      messageId: "initialize",
+      result: {},
+    });
+
+    socket.send(
+      JSON.stringify({
         messageId: "my-msg-id!",
         command: "start_listening",
       }),
@@ -65,7 +80,7 @@ const runTest = async () => {
       result: {
         state: {
           driver: {
-            logConfig: { enabled: true, level: 5 },
+            logConfig: { enabled: true, level: "debug" },
             statisticsEnabled: true,
           },
           controller: { homeId: 1 },
