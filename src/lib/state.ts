@@ -269,11 +269,9 @@ type NodeStateSchema1 = Modify<
   { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
 >;
 
-type NodeStateSchema2 = NodeStateSchema1;
-
 type NodeStateSchema3 = Omit<
   Modify<
-    NodeStateSchema2,
+    NodeStateSchema1,
     {
       isFrequentListening?: FLiRS;
       maxDataRate?: DataRate;
@@ -295,9 +293,7 @@ interface NodeStateSchema5 extends NodeStateSchema4 {
   deviceDatabaseUrl?: string;
 }
 
-type NodeStateSchema6 = NodeStateSchema5;
-
-interface NodeStateSchema7 extends NodeStateSchema6 {
+interface NodeStateSchema7 extends NodeStateSchema5 {
   statistics: NodeStatistics;
 }
 
@@ -312,18 +308,21 @@ interface NodeStateSchema14 extends NodeStateSchema10 {
 
 type NodeStateSchema15 = Omit<NodeStateSchema14, "commandClasses">;
 
+interface NodeStateSchema30 extends NodeStateSchema15 {
+  lastSeen: MaybeNotKnown<Date>;
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
-  | NodeStateSchema2
   | NodeStateSchema3
   | NodeStateSchema4
   | NodeStateSchema5
-  | NodeStateSchema6
   | NodeStateSchema7
   | NodeStateSchema10
   | NodeStateSchema14
-  | NodeStateSchema15;
+  | NodeStateSchema15
+  | NodeStateSchema30;
 
 interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -637,7 +636,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     return node14;
   }
 
-  return node14 as NodeStateSchema15;
+  if (schemaVersion <= 29) {
+    return node14 as NodeStateSchema15;
+  }
+
+  const node30 = node14 as Partial<NodeStateSchema30>;
+  node30.lastSeen = node.lastSeen;
+  return node30 as NodeStateSchema30;
 };
 
 export const dumpFoundNode = (
