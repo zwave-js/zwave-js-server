@@ -176,7 +176,7 @@ export class EventForwarder {
   }
 
   forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
-    // Forward event to all connected clients
+    // Forward event to all clients
     this.clientsController.clients.forEach((client) =>
       this.sendEvent(client, data, minSchemaVersion),
     );
