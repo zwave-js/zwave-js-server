@@ -1,4 +1,5 @@
 import {
+  DateAndTime,
   FirmwareUpdateCapabilities,
   LifelineHealthCheckSummary,
   RouteHealthCheckSummary,
@@ -50,4 +51,7 @@ export interface NodeResultTypes {
   [NodeCommand.getValueTimestamp]: { timestamp?: number };
   [NodeCommand.manuallyIdleNotificationValue]: Record<string, never>;
   [NodeCommand.setDateAndTime]: { success: boolean };
+  [NodeCommand.getDateAndTime]: { dateAndTime: DateAndTime };
+  [NodeCommand.isHealthCheckInProgress]: { inProgress: boolean };
+  [NodeCommand.abortHealthCheck]: Record<string, never>;
 }
