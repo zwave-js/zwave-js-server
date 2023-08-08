@@ -34,7 +34,7 @@
     "ws": "^8.13.0"
   },
   "peerDependencies": {
-    "zwave-js": "^11.9.1"
+    "zwave-js": "^11.9.2"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.2",
