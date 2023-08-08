@@ -1,4 +1,8 @@
-import { Driver, LifelineHealthCheckResult } from "zwave-js";
+import {
+  Driver,
+  LifelineHealthCheckResult,
+  RouteHealthCheckResult,
+} from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -187,17 +191,30 @@ export class NodeMessageHandler {
         const summary = await node.checkRouteHealth(
           message.targetNodeId,
           message.rounds,
-          (round: number, totalRounds: number, lastRating: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
-                source: "node",
-                event: "check route health progress",
-                nodeId: message.nodeId,
-                round,
-                totalRounds,
-                lastRating,
-              }),
-            );
+          (
+            round: number,
+            totalRounds: number,
+            lastRating: number,
+            lastResult: RouteHealthCheckResult,
+          ) => {
+            const returnEvent: OutgoingEvent = {
+              source: "node",
+              event: "check route health progress",
+              nodeId: message.nodeId,
+              round,
+              totalRounds,
+              lastRating,
+            };
+            clientsController.clients.forEach((client) => {
+              client.sendEvent(
+                client.schemaVersion >= 31
+                  ? {
+                      ...returnEvent,
+                      lastResult,
+                    }
+                  : returnEvent,
+              );
+            });
           },
         );
         return { summary };
