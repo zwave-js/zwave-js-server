@@ -53,7 +53,7 @@
     "semver": "^7.5.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6",
-    "zwave-js": "^11.9.1"
+    "zwave-js": "^11.9.2"
   },
   "husky": {
     "hooks": {
