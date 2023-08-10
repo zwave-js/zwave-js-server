@@ -165,7 +165,7 @@ export class NodeMessageHandler {
             lastRating: number,
             lastResult: LifelineHealthCheckResult,
           ) => {
-            const returnEvent: OutgoingEvent = {
+            const returnEvent0: OutgoingEvent = {
               source: "node",
               event: "check lifeline health progress",
               nodeId: message.nodeId,
@@ -173,14 +173,11 @@ export class NodeMessageHandler {
               totalRounds,
               lastRating,
             };
+            const returnEvent31 = returnEvent0;
+            returnEvent31.lastResult = lastResult;
             clientsController.clients.forEach((client) => {
               client.sendEvent(
-                client.schemaVersion >= 31
-                  ? {
-                      ...returnEvent,
-                      lastResult,
-                    }
-                  : returnEvent,
+                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );
             });
           },
@@ -197,7 +194,7 @@ export class NodeMessageHandler {
             lastRating: number,
             lastResult: RouteHealthCheckResult,
           ) => {
-            const returnEvent: OutgoingEvent = {
+            const returnEvent0: OutgoingEvent = {
               source: "node",
               event: "check route health progress",
               nodeId: message.nodeId,
@@ -205,14 +202,11 @@ export class NodeMessageHandler {
               totalRounds,
               lastRating,
             };
+            const returnEvent31 = returnEvent0;
+            returnEvent31.lastResult = lastResult;
             clientsController.clients.forEach((client) => {
               client.sendEvent(
-                client.schemaVersion >= 31
-                  ? {
-                      ...returnEvent,
-                      lastResult,
-                    }
-                  : returnEvent,
+                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );
             });
           },
