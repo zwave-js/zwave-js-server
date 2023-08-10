@@ -164,11 +164,12 @@ export class EventForwarder {
         }),
     );
 
-    this.clientsController.driver.controller.on("identify", () =>
+    this.clientsController.driver.controller.on("identify", (triggeringNode) =>
       this.forwardEvent(
         {
           source: "controller",
           event: "identify",
+          nodeId: triggeringNode.nodeId,
         },
         31,
       ),
