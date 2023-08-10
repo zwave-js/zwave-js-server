@@ -173,8 +173,7 @@ export class NodeMessageHandler {
               totalRounds,
               lastRating,
             };
-            const returnEvent31 = returnEvent0;
-            returnEvent31.lastResult = lastResult;
+            const returnEvent31 = { ...returnEvent0, lastResult };
             clientsController.clients.forEach((client) => {
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
@@ -202,8 +201,7 @@ export class NodeMessageHandler {
               totalRounds,
               lastRating,
             };
-            const returnEvent31 = returnEvent0;
-            returnEvent31.lastResult = lastResult;
+            const returnEvent31 = { ...returnEvent0, lastResult };
             clientsController.clients.forEach((client) => {
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
