@@ -52,6 +52,6 @@ export interface NodeResultTypes {
   [NodeCommand.manuallyIdleNotificationValue]: Record<string, never>;
   [NodeCommand.setDateAndTime]: { success: boolean };
   [NodeCommand.getDateAndTime]: { dateAndTime: DateAndTime };
-  [NodeCommand.isHealthCheckInProgress]: { inProgress: boolean };
+  [NodeCommand.isHealthCheckInProgress]: { progress: boolean };
   [NodeCommand.abortHealthCheck]: Record<string, never>;
 }

@@ -287,8 +287,8 @@ export class NodeMessageHandler {
         return { dateAndTime };
       }
       case NodeCommand.isHealthCheckInProgress: {
-        const inProgress = node.isHealthCheckInProgress();
-        return { inProgress };
+        const progress = node.isHealthCheckInProgress();
+        return { progress };
       }
       case NodeCommand.abortHealthCheck: {
         await node.abortHealthCheck();
