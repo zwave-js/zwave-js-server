@@ -163,18 +163,33 @@ export class EventForwarder {
           statistics,
         }),
     );
-  }
 
-  forwardEvent(data: OutgoingEvent) {
-    // Forward event to all connected clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data),
+    this.clientsController.driver.controller.on("identify", (triggeringNode) =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "identify",
+          nodeId: triggeringNode.nodeId,
+        },
+        31,
+      ),
     );
   }
 
-  sendEvent(client: Client, data: OutgoingEvent) {
+  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
+    // Forward event to all clients
+    this.clientsController.clients.forEach((client) =>
+      this.sendEvent(client, data, minSchemaVersion),
+    );
+  }
+
+  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
     // Send event to connected client only
-    if (client.receiveEvents && client.isConnected) {
+    if (
+      client.receiveEvents &&
+      client.isConnected &&
+      client.schemaVersion >= (minSchemaVersion ?? 0)
+    ) {
       client.sendEvent(data);
     }
   }
