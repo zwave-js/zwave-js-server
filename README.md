@@ -832,7 +832,7 @@ interface {
 
 #### [Set date and time](https://zwave-js.github.io/node-zwave-js/#/api/node?id=setdateandtime)
 
-[compatible with schema version: 28+]
+[compatible with schema version: 30+]
 
 ```ts
 interface {
@@ -840,6 +840,42 @@ interface {
   command: "node.set_date_and_time";
   nodeId: number;
   date?: string; // use ISO 8601 date string format
+}
+```
+
+#### [Get date and time](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getdateandtime)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_date_and_time";
+  nodeId: number;
+}
+```
+
+#### [Is Health Check In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=ishealthcheckinprogress)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.is_health_check_in_progress";
+  nodeId: number;
+}
+```
+
+#### [Abort Health Check](https://zwave-js.github.io/node-zwave-js/#/api/node?id=aborthealthcheck)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.abort_health_check";
+  nodeId: number;
 }
 ```
 

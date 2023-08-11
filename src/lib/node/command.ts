@@ -32,4 +32,7 @@ export enum NodeCommand {
   getValueTimestamp = "node.get_value_timestamp",
   manuallyIdleNotificationValue = "node.manually_idle_notification_value",
   setDateAndTime = "node.set_date_and_time",
+  getDateAndTime = "node.get_date_and_time",
+  isHealthCheckInProgress = "node.is_health_check_in_progress",
+  abortHealthCheck = "node.abort_health_check",
 }

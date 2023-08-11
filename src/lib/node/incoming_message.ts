@@ -206,6 +206,21 @@ export interface IncomingCommandNodeSetDateAndTime
   date?: string; // use ISO 8601 date string format
 }
 
+export interface IncomingCommandNodeGetDateAndTime
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getDateAndTime;
+}
+
+export interface IncomingCommandNodeIsHealthCheckInProgress
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.isHealthCheckInProgress;
+}
+
+export interface IncomingCommandNodeAbortHealthCheck
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.abortHealthCheck;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -238,4 +253,7 @@ export type IncomingMessageNode =
   | IncomingCommandInterview
   | IncomingCommandNodeGetValueTimestamp
   | IncomingCommandNodeManuallyIdleNotificationValue
-  | IncomingCommandNodeSetDateAndTime;
+  | IncomingCommandNodeSetDateAndTime
+  | IncomingCommandNodeGetDateAndTime
+  | IncomingCommandNodeIsHealthCheckInProgress
+  | IncomingCommandNodeAbortHealthCheck;

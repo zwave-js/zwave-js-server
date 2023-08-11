@@ -1,4 +1,8 @@
-import { Driver } from "zwave-js";
+import {
+  Driver,
+  LifelineHealthCheckResult,
+  RouteHealthCheckResult,
+} from "zwave-js";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -16,6 +20,7 @@ import {
   firmwareUpdateOutgoingMessage,
   setValueOutgoingMessage,
 } from "../common";
+import { OutgoingEvent } from "../outgoing_message";
 
 export class NodeMessageHandler {
   public async handle(
@@ -154,17 +159,26 @@ export class NodeMessageHandler {
       case NodeCommand.checkLifelineHealth: {
         const summary = await node.checkLifelineHealth(
           message.rounds,
-          (round: number, totalRounds: number, lastRating: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
-                source: "node",
-                event: "check lifeline health progress",
-                nodeId: message.nodeId,
-                round,
-                totalRounds,
-                lastRating,
-              }),
-            );
+          (
+            round: number,
+            totalRounds: number,
+            lastRating: number,
+            lastResult: LifelineHealthCheckResult,
+          ) => {
+            const returnEvent0: OutgoingEvent = {
+              source: "node",
+              event: "check lifeline health progress",
+              nodeId: message.nodeId,
+              round,
+              totalRounds,
+              lastRating,
+            };
+            const returnEvent31 = { ...returnEvent0, lastResult };
+            clientsController.clients.forEach((client) => {
+              client.sendEvent(
+                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
+              );
+            });
           },
         );
         return { summary };
@@ -173,17 +187,26 @@ export class NodeMessageHandler {
         const summary = await node.checkRouteHealth(
           message.targetNodeId,
           message.rounds,
-          (round: number, totalRounds: number, lastRating: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
-                source: "node",
-                event: "check route health progress",
-                nodeId: message.nodeId,
-                round,
-                totalRounds,
-                lastRating,
-              }),
-            );
+          (
+            round: number,
+            totalRounds: number,
+            lastRating: number,
+            lastResult: RouteHealthCheckResult,
+          ) => {
+            const returnEvent0: OutgoingEvent = {
+              source: "node",
+              event: "check route health progress",
+              nodeId: message.nodeId,
+              round,
+              totalRounds,
+              lastRating,
+            };
+            const returnEvent31 = { ...returnEvent0, lastResult };
+            clientsController.clients.forEach((client) => {
+              client.sendEvent(
+                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
+              );
+            });
           },
         );
         return { summary };
@@ -258,6 +281,18 @@ export class NodeMessageHandler {
           message.date === undefined ? undefined : new Date(message.date),
         );
         return { success };
+      }
+      case NodeCommand.getDateAndTime: {
+        const dateAndTime = await node.getDateAndTime();
+        return { dateAndTime };
+      }
+      case NodeCommand.isHealthCheckInProgress: {
+        const progress = node.isHealthCheckInProgress();
+        return { progress };
+      }
+      case NodeCommand.abortHealthCheck: {
+        await node.abortHealthCheck();
+        return {};
       }
       default: {
         throw new UnknownCommandError(command);
