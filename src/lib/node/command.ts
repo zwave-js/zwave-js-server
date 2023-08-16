@@ -35,4 +35,6 @@ export enum NodeCommand {
   getDateAndTime = "node.get_date_and_time",
   isHealthCheckInProgress = "node.is_health_check_in_progress",
   abortHealthCheck = "node.abort_health_check",
+  setDefaultVolume = "node.set_default_volume",
+  setDefaultTransitionDuration = "node.set_default_transition_duration",
 }

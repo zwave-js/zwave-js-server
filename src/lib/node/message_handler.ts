@@ -294,6 +294,14 @@ export class NodeMessageHandler {
         await node.abortHealthCheck();
         return {};
       }
+      case NodeCommand.setDefaultVolume: {
+        node.defaultVolume = message.defaultVolume;
+        return {};
+      }
+      case NodeCommand.setDefaultTransitionDuration: {
+        node.defaultTransitionDuration = message.defaultTransitionDuration;
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }
