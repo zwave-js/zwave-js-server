@@ -149,6 +149,33 @@ interface {
 }
 ```
 
+#### Start listening to logging events
+
+[compatible with schema version: 31+]
+
+Start receiving logs as events. Look at the [`logging` event documentation](#logging) for more information about the events. If `filter` is included, only logs that match the `filter` will be sent as events, the rest will be skipped.
+
+```ts
+interface {
+  messageId: string;
+  command: "start_listening_logs";
+  filter?: Partial<NodeLogContext| DriverLogContext | ControllerLogContext | SerialLogContext | ConfigLogContext>;
+}
+```
+
+#### Stop listening to logging events
+
+[compatible with schema version: 31+]
+
+Stop receiving logs as events.
+
+```ts
+interface {
+  messageId: string;
+  command: "stop_listening_logs";
+}
+```
+
 ### Driver level commands
 
 #### Get the config of the driver
@@ -1315,7 +1342,7 @@ interface {
 }
 ```
 
-#### `nvm convert progress`
+#### `nvm backup progress`
 
 This event is sent on progress updates to the NVM conversion process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM file that was passed in is being converted to the right format.
 

@@ -182,6 +182,20 @@ export class Client {
         return;
       }
 
+      if (msg.command === ServerCommand.startListeningLogs) {
+        this.receiveLogs = true;
+        this.clientsController.configureLoggingEventForwarder(msg.filter);
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
+      if (msg.command === ServerCommand.stopListeningLogs) {
+        this.receiveLogs = false;
+        this.clientsController.cleanupLoggingEventForwarder();
+        this.sendResultSuccess(msg.messageId, {});
+        return;
+      }
+
       const instance = msg.command.split(".")[0] as Instance;
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
