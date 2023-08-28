@@ -233,6 +233,11 @@ export interface IncomingCommandNodeSetDefaultTransitionDuration
   defaultTransitionDuration?: string; // Will be converted to a Duration object
 }
 
+export interface IncomingCommandNodeHasDeviceConfigChanged
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.hasDeviceConfigChanged;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -270,4 +275,5 @@ export type IncomingMessageNode =
   | IncomingCommandNodeIsHealthCheckInProgress
   | IncomingCommandNodeAbortHealthCheck
   | IncomingCommandNodeSetDefaultVolume
-  | IncomingCommandNodeSetDefaultTransitionDuration;
+  | IncomingCommandNodeSetDefaultTransitionDuration
+  | IncomingCommandNodeHasDeviceConfigChanged;

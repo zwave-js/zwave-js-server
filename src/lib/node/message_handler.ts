@@ -302,6 +302,10 @@ export class NodeMessageHandler {
         node.defaultTransitionDuration = message.defaultTransitionDuration;
         return {};
       }
+      case NodeCommand.hasDeviceConfigChanged: {
+        const changed = node.hasDeviceConfigChanged();
+        return { changed };
+      }
       default: {
         throw new UnknownCommandError(command);
       }

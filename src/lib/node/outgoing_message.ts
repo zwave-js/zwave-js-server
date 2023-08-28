@@ -56,4 +56,5 @@ export interface NodeResultTypes {
   [NodeCommand.abortHealthCheck]: Record<string, never>;
   [NodeCommand.setDefaultVolume]: Record<string, never>;
   [NodeCommand.setDefaultTransitionDuration]: Record<string, never>;
+  [NodeCommand.hasDeviceConfigChanged]: { changed: MaybeNotKnown<boolean> };
 }

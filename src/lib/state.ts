@@ -1,4 +1,5 @@
 import {
+  ControllerStatus,
   Driver,
   ZWaveNode,
   Endpoint,
@@ -96,15 +97,20 @@ type ControllerStateSchema22 = Omit<
   "isSlave" | "isSecondary" | "isStaticUpdateController"
 >;
 
-interface ControllerStateSchema25 extends ControllerStateSchema0 {
+interface ControllerStateSchema25 extends ControllerStateSchema22 {
   rfRegion?: RFRegion;
+}
+
+interface ControllerStateSchema31 extends ControllerStateSchema25 {
+  status: ControllerStatus;
 }
 
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
   | ControllerStateSchema22
-  | ControllerStateSchema25;
+  | ControllerStateSchema25
+  | ControllerStateSchema31;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -813,7 +819,13 @@ export const dumpController = (
 
   const controller25 = controller22 as ControllerStateSchema25;
   controller25.rfRegion = controller.rfRegion;
-  return controller25;
+  if (schemaVersion < 31) {
+    return controller25;
+  }
+
+  const controller31 = controller25 as ControllerStateSchema31;
+  controller31.status = controller.status;
+  return controller31;
 };
 
 export const dumpState = (
