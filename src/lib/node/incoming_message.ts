@@ -221,6 +221,23 @@ export interface IncomingCommandNodeAbortHealthCheck
   command: NodeCommand.abortHealthCheck;
 }
 
+export interface IncomingCommandNodeSetDefaultVolume
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.setDefaultVolume;
+  defaultVolume?: number;
+}
+
+export interface IncomingCommandNodeSetDefaultTransitionDuration
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.setDefaultTransitionDuration;
+  defaultTransitionDuration?: string; // Will be converted to a Duration object
+}
+
+export interface IncomingCommandNodeHasDeviceConfigChanged
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.hasDeviceConfigChanged;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -256,4 +273,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeSetDateAndTime
   | IncomingCommandNodeGetDateAndTime
   | IncomingCommandNodeIsHealthCheckInProgress
-  | IncomingCommandNodeAbortHealthCheck;
+  | IncomingCommandNodeAbortHealthCheck
+  | IncomingCommandNodeSetDefaultVolume
+  | IncomingCommandNodeSetDefaultTransitionDuration
+  | IncomingCommandNodeHasDeviceConfigChanged;

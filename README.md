@@ -879,6 +879,41 @@ interface {
 }
 ```
 
+#### [Set Default Volume](https://zwave-js.github.io/node-zwave-js/#/api/node?id=defaultvolume)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_default_volume";
+  defaultVolume?: number;
+}
+```
+
+#### [Set Default Transition Duration](https://zwave-js.github.io/node-zwave-js/#/api/node?id=defaulttransitionduration)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_default_transition_duration";
+  defaultTransitionDuration?: string; // Will be converted to a Duration object
+}
+```
+
+#### [Has Device Config Changed](https://zwave-js.github.io/node-zwave-js/#/api/node?id=hasdeviceconfigchanged)
+
+[compatible with schema version: 31+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.has_device_config_changed";
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)

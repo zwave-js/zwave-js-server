@@ -54,4 +54,7 @@ export interface NodeResultTypes {
   [NodeCommand.getDateAndTime]: { dateAndTime: DateAndTime };
   [NodeCommand.isHealthCheckInProgress]: { progress: boolean };
   [NodeCommand.abortHealthCheck]: Record<string, never>;
+  [NodeCommand.setDefaultVolume]: Record<string, never>;
+  [NodeCommand.setDefaultTransitionDuration]: Record<string, never>;
+  [NodeCommand.hasDeviceConfigChanged]: { changed: MaybeNotKnown<boolean> };
 }
