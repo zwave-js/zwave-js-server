@@ -8,6 +8,7 @@ import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message"
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { IncomingMessageUtils } from "./utils/incoming_message";
+import { LogContexts } from "./logging";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: ServerCommand.startListening;
@@ -33,6 +34,15 @@ interface IncomingCommandInitialize extends IncomingCommandBase {
   additionalUserAgentComponents?: Record<string, string>;
 }
 
+interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
+  command: ServerCommand.startListeningLogs;
+  filter?: Partial<LogContexts>;
+}
+
+interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
+  command: ServerCommand.stopListeningLogs;
+}
+
 export type IncomingMessage =
   | IncomingCommandStartListening
   | IncomingCommandUpdateLogConfig
@@ -45,4 +55,6 @@ export type IncomingMessage =
   | IncomingMessageBroadcastNode
   | IncomingMessageEndpoint
   | IncomingMessageUtils
-  | IncomingCommandInitialize;
+  | IncomingCommandInitialize
+  | IncomingCommandStartListeningLogs
+  | IncomingCommandStopListeningLogs;

@@ -4,4 +4,6 @@ export enum ServerCommand {
   getLogConfig = "get_log_config",
   setApiSchema = "set_api_schema",
   initialize = "initialize",
+  startListeningLogs = "start_listening_logs",
+  stopListeningLogs = "stop_listening_logs",
 }
