@@ -6,6 +6,7 @@ import {
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
+  Duration,
   CommandClass,
   InterviewStage,
   ZWaveLibraryTypes,
@@ -312,10 +313,15 @@ interface NodeStateSchema14 extends NodeStateSchema10 {
   keepAwake: boolean;
 }
 
-type NodeStateSchema15 = Omit<NodeStateSchema14, "commandClasses">;
+type NodeStateSchema29 = Omit<NodeStateSchema14, "commandClasses">;
 
-interface NodeStateSchema30 extends NodeStateSchema15 {
+interface NodeStateSchema30 extends NodeStateSchema29 {
   lastSeen: MaybeNotKnown<Date>;
+}
+
+interface NodeStateSchema31 extends NodeStateSchema30 {
+  defaultVolume?: number;
+  defaultTransitionDuration?: string;
 }
 
 export type NodeState =
@@ -327,8 +333,9 @@ export type NodeState =
   | NodeStateSchema7
   | NodeStateSchema10
   | NodeStateSchema14
-  | NodeStateSchema15
-  | NodeStateSchema30;
+  | NodeStateSchema29
+  | NodeStateSchema30
+  | NodeStateSchema31;
 
 interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -643,12 +650,19 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   }
 
   if (schemaVersion <= 29) {
-    return node14 as NodeStateSchema15;
+    return node14 as NodeStateSchema29;
   }
 
   const node30 = node14 as Partial<NodeStateSchema30>;
   node30.lastSeen = node.lastSeen;
-  return node30 as NodeStateSchema30;
+  if (schemaVersion <= 30) {
+    return node30 as NodeStateSchema30;
+  }
+
+  const node31 = node30 as NodeStateSchema31;
+  node31.defaultVolume = node.defaultVolume;
+  node31.defaultTransitionDuration = node.defaultTransitionDuration;
+  return node31;
 };
 
 export const dumpFoundNode = (
