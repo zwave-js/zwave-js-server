@@ -147,11 +147,14 @@ export class EventForwarder {
     );
 
     this.clientsController.driver.controller.on("status changed", (status) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "status changed",
-        status,
-      }),
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "status changed",
+          status,
+        },
+        31,
+      ),
     );
 
     this.clientsController.driver.controller.on("heal network done", (result) =>
