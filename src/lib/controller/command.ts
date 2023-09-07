@@ -5,9 +5,18 @@ export enum ControllerCommand {
   stopExclusion = "controller.stop_exclusion",
   removeFailedNode = "controller.remove_failed_node",
   replaceFailedNode = "controller.replace_failed_node",
+  // Schema version < 32
   healNode = "controller.heal_node",
+  // Schema version > 31
+  rebuildNodeRoutes = "controller.rebuild_node_routes",
+  // Schema version < 32
   beginHealingNetwork = "controller.begin_healing_network",
+  // Schema version > 31
+  beginRebuildingRoutes = "controller.begin_rebuilding_routes",
+  // Schema version < 32
   stopHealingNetwork = "controller.stop_healing_network",
+  // Schema version > 31
+  stopRebuildingRoutes = "controller.stop_rebuilding_routes",
   isFailedNode = "controller.is_failed_node",
   getAssociationGroups = "controller.get_association_groups",
   getAssociations = "controller.get_associations",

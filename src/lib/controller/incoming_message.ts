@@ -76,20 +76,42 @@ export interface IncomingCommandControllerReplaceFailedNodeLegacy
   includeNonSecure?: boolean;
 }
 
+// Schema < 32
 export interface IncomingCommandControllerHealNode
   extends IncomingCommandControllerBase {
   command: ControllerCommand.healNode;
   nodeId: number;
 }
 
+// Schema >= 32
+export interface IncomingCommandControllerRebuildNodeRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.rebuildNodeRoutes;
+  nodeId: number;
+}
+
+// Schema < 32
 export interface IncomingCommandControllerBeginHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginHealingNetwork;
 }
 
+// Schema >= 32
+export interface IncomingCommandControllerBeginRebuildingRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginRebuildingRoutes;
+}
+
+// Schema < 32
 export interface IncomingCommandControllerStopHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.stopHealingNetwork;
+}
+
+// Schema >= 32
+export interface IncomingCommandControllerStopRebuildingRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.stopRebuildingRoutes;
 }
 
 export interface IncomingCommandControllerIsFailedNode
@@ -294,8 +316,11 @@ export type IncomingMessageController =
   | IncomingCommandControllerReplaceFailedNode
   | IncomingCommandControllerReplaceFailedNodeLegacy
   | IncomingCommandControllerHealNode
+  | IncomingCommandControllerRebuildNodeRoutes
   | IncomingCommandControllerBeginHealingNetwork
+  | IncomingCommandControllerBeginRebuildingRoutes
   | IncomingCommandControllerStopHealingNetwork
+  | IncomingCommandControllerStopRebuildingRoutes
   | IncomingCommandControllerIsFailedNode
   | IncomingCommandControllerGetAssociationGroups
   | IncomingCommandControllerGetAssociations

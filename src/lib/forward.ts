@@ -1,5 +1,6 @@
 import {
   ControllerEvents,
+  Endpoint,
   FirmwareUpdateProgress,
   FirmwareUpdateResult,
   NodeStatistics,
@@ -18,6 +19,7 @@ import {
   dumpNode,
 } from "./state";
 import { Client, ClientsController } from "./server";
+import { NodeNotFoundError } from "./error";
 
 export class EventForwarder {
   /**
@@ -137,13 +139,24 @@ export class EventForwarder {
     );
 
     this.clientsController.driver.controller.on(
-      "heal network progress",
-      (progress) =>
-        this.forwardEvent({
-          source: "controller",
-          event: "heal network progress",
-          progress: Object.fromEntries(progress),
-        }),
+      "rebuild routes progress",
+      (progress) => {
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion < 32) {
+            client.sendEvent({
+              source: "controller",
+              event: "heal network progress",
+              progress: Object.fromEntries(progress),
+            });
+          } else {
+            client.sendEvent({
+              source: "controller",
+              event: "rebuild routes progress",
+              progress: Object.fromEntries(progress),
+            });
+          }
+        });
+      },
     );
 
     this.clientsController.driver.controller.on("status changed", (status) =>
@@ -157,12 +170,25 @@ export class EventForwarder {
       ),
     );
 
-    this.clientsController.driver.controller.on("heal network done", (result) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "heal network done",
-        result: Object.fromEntries(result),
-      }),
+    this.clientsController.driver.controller.on(
+      "rebuild routes done",
+      (result) => {
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion < 32) {
+            client.sendEvent({
+              source: "controller",
+              event: "heal network done",
+              result: Object.fromEntries(result),
+            });
+          } else {
+            client.sendEvent({
+              source: "controller",
+              event: "rebuild routes done",
+              result: Object.fromEntries(result),
+            });
+          }
+        });
+      },
     );
 
     this.clientsController.driver.controller.on(
@@ -303,8 +329,12 @@ export class EventForwarder {
 
     node.on(
       "notification",
-      (changedNode: ZWaveNode, ccId: CommandClasses, args: any) => {
+      (endpoint: Endpoint, ccId: CommandClasses, args: any) => {
         // only forward value events for ready nodes
+        const changedNode = endpoint.getNodeUnsafe();
+        if (!changedNode) {
+          throw new NodeNotFoundError(endpoint.nodeId);
+        }
         if (!changedNode.ready) return;
         this.clientsController.clients.forEach((client) => {
           // Only send notification events from the Notification CC for schema version < 3
@@ -333,13 +363,24 @@ export class EventForwarder {
                 delete args.dataTypeLabel;
               }
             }
-            this.sendEvent(client, {
-              source: "node",
-              event: "notification",
-              nodeId: changedNode.nodeId,
-              ccId,
-              args,
-            });
+            if (client.schemaVersion < 32) {
+              this.sendEvent(client, {
+                source: "node",
+                event: "notification",
+                nodeId: changedNode.nodeId,
+                ccId,
+                args,
+              });
+            } else {
+              this.sendEvent(client, {
+                source: "node",
+                event: "notification",
+                nodeId: endpoint.nodeId,
+                endpoint: endpoint.index,
+                ccId,
+                args,
+              });
+            }
           }
         });
       },

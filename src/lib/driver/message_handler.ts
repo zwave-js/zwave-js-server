@@ -83,7 +83,8 @@ export class DriverMessageHandler {
         return {};
       }
       case DriverCommand.enableErrorReporting: {
-        driver.enableErrorReporting();
+        // This capability no longer exists but we keep the command here for backwards
+        // compatibility.
         return {};
       }
       case DriverCommand.softReset: {

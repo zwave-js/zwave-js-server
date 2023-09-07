@@ -106,12 +106,18 @@ interface ControllerStateSchema31 extends ControllerStateSchema25 {
   status: ControllerStatus;
 }
 
+type ControllerStateSchema32 = Omit<
+  Modify<ControllerStateSchema31, { isRebuildingRoutes: boolean }>,
+  "isHealNetworkActive"
+>;
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
   | ControllerStateSchema22
   | ControllerStateSchema25
-  | ControllerStateSchema31;
+  | ControllerStateSchema31
+  | ControllerStateSchema32;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -797,7 +803,6 @@ export const dumpController = (
     supportedFunctionTypes: controller.supportedFunctionTypes,
     sucNodeId: controller.sucNodeId,
     supportsTimers: controller.supportsTimers,
-    isHealNetworkActive: controller.isHealNetworkActive,
     statistics: controller.statistics,
     inclusionState: controller.inclusionState,
   };
@@ -808,6 +813,10 @@ export const dumpController = (
     }
     base.isStaticUpdateController = controller.isSUC;
     base.isSlave = controller.nodeType === NodeType["End Node"];
+  }
+
+  if (schemaVersion < 32) {
+    base.isHealNetworkActive = controller.isRebuildingRoutes;
   }
 
   if (schemaVersion < 16) {
@@ -839,7 +848,13 @@ export const dumpController = (
 
   const controller31 = controller25 as ControllerStateSchema31;
   controller31.status = controller.status;
-  return controller31;
+  if (schemaVersion < 32) {
+    return controller31;
+  }
+
+  const controller32 = controller31 as Partial<ControllerStateSchema32>;
+  controller32.isRebuildingRoutes = controller.isRebuildingRoutes;
+  return controller32 as ControllerStateSchema32;
 };
 
 export const dumpState = (
