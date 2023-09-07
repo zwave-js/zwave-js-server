@@ -1,15 +1,9 @@
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "commonjs",
-    "lib": ["es6", "es2019", "dom"],
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
-    "types": ["node"],
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "skipLibCheck": true
+    "resolveJsonModule": true
   }
 }
