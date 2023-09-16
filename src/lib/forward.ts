@@ -376,7 +376,7 @@ export class EventForwarder {
                 source: "node",
                 event: "notification",
                 nodeId: endpoint.nodeId,
-                endpoint: endpoint.index,
+                endpointIndex: endpoint.index,
                 ccId,
                 args,
               });
