@@ -4,6 +4,7 @@ import {
   ExclusionStrategy,
   FirmwareFileFormat,
   FirmwareUpdateFileInfo,
+  FirmwareUpdateInfo,
   InclusionGrant,
   InclusionOptions,
   PlannedProvisioningEntry,
@@ -276,7 +277,7 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   includePrereleases?: boolean;
 }
 
-// Schema <= 23
+// Schema <= 23 - no longer supported due to a breaking change upstream
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginOTAFirmwareUpdate;
@@ -289,7 +290,8 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
   extends IncomingCommandControllerBase {
   command: ControllerCommand.firmwareUpdateOTA;
   nodeId: number;
-  updates: FirmwareUpdateFileInfo[];
+  updates?: FirmwareUpdateFileInfo[];
+  updateInfo?: FirmwareUpdateInfo;
 }
 
 export interface IncomingCommandControllerFirmwareUpdateOTW

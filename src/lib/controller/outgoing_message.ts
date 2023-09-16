@@ -71,7 +71,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]: FirmwareUpdateResultType;
+  [ControllerCommand.beginOTAFirmwareUpdate]: Record<string, never>;
   [ControllerCommand.firmwareUpdateOTA]: FirmwareUpdateResultType;
   [ControllerCommand.firmwareUpdateOTW]: FirmwareUpdateResultType;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };

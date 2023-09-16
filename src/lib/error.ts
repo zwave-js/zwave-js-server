@@ -9,6 +9,7 @@ export enum ErrorCode {
   inclusionPhaseNotInProgress = "inclusion_phase_not_in_progress",
   inclusionAlreadyInProgress = "inclusion_already_in_progress",
   invalidParamsPassedToCommand = "invalid_params_passed_to_command",
+  noLongerSupported = "no_longer_supported",
 }
 
 export class BaseError extends Error {
@@ -85,4 +86,15 @@ export class InclusionAlreadyInProgressError extends BaseError {
 
 export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
+}
+
+export class NoLongerSupportedError extends BaseError {
+  errorCode = ErrorCode.noLongerSupported;
+
+  constructor(public customMessage: string) {
+    super(
+      customMessage +
+        " If you are using an application that integrates with Z-Wave JS and you receive this error, you may need to update the application.",
+    );
+  }
 }

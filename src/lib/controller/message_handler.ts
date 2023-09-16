@@ -19,6 +19,7 @@ import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
   InvalidParamsPassedToCommandError,
+  NoLongerSupportedError,
   UnknownCommandError,
 } from "../error";
 import { Client, ClientsController } from "../server";
@@ -319,16 +320,26 @@ export class ControllerMessageHandler {
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
-        const result = await driver.controller.firmwareUpdateOTA(
-          message.nodeId,
-          [message.update],
+        throw new NoLongerSupportedError(
+          ControllerCommand.beginOTAFirmwareUpdate +
+            " is a legacy command that is no longer supported.",
         );
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTA: {
+        if (message.updates !== undefined) {
+          throw new NoLongerSupportedError(
+            ControllerCommand.firmwareUpdateOTA +
+              " no longer accepts the `updates` parameter and expects `updateInfo` instead.",
+          );
+        }
+        if (message.updateInfo === undefined) {
+          throw new InvalidParamsPassedToCommandError(
+            "Missing required parameter `updateInfo`",
+          );
+        }
         const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
-          message.updates,
+          message.updateInfo,
         );
         return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
