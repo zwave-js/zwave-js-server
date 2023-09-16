@@ -40,7 +40,6 @@ export class DriverMessageHandler {
         return { config };
       }
       case DriverCommand.updateLogConfig: {
-        // @ts-expect-error The DeepPartial in zwave-js is wrong
         driver.updateLogConfig(message.config);
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
