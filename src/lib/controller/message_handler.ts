@@ -154,7 +154,9 @@ export class ControllerMessageHandler {
       }
       // Schema >= 32
       case ControllerCommand.beginRebuildingRoutes: {
-        const success = driver.controller.beginRebuildingRoutes();
+        const success = driver.controller.beginRebuildingRoutes(
+          message.options,
+        );
         return { success };
       }
       // Schema < 32

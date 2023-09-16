@@ -8,6 +8,7 @@ import {
   InclusionGrant,
   InclusionOptions,
   PlannedProvisioningEntry,
+  RebuildRoutesOptions,
   ReplaceNodeOptions,
   RFRegion,
   ZWaveFeature,
@@ -101,6 +102,7 @@ export interface IncomingCommandControllerBeginHealingNetwork
 export interface IncomingCommandControllerBeginRebuildingRoutes
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginRebuildingRoutes;
+  options?: RebuildRoutesOptions;
 }
 
 // Schema < 32
