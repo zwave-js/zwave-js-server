@@ -6,7 +6,13 @@ import {
   Protocol,
   Responder,
 } from "@homebridge/ciao";
-import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import {
+  Driver,
+  InclusionGrant,
+  ZWaveError,
+  ZWaveErrorCodes,
+  getEnumMemberName,
+} from "zwave-js";
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 import { EventForwarder } from "./forward";
@@ -284,14 +290,26 @@ export class Client {
     zjsErrorCode: ZWaveErrorCodes,
     message: string,
   ) {
-    this.sendData({
-      type: "result",
-      success: false,
-      messageId,
-      errorCode: ErrorCode.zwaveError,
-      zwaveErrorCode: zjsErrorCode,
-      zwaveErrorMessage: message,
-    });
+    if (this.schemaVersion < 32) {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode: ErrorCode.zwaveError,
+        zwaveErrorCode: zjsErrorCode,
+        zwaveErrorMessage: message,
+      });
+    } else {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode: ErrorCode.zwaveError,
+        zwaveErrorCode: zjsErrorCode,
+        zwaveErrorCodeName: getEnumMemberName(ZWaveErrorCodes, zjsErrorCode),
+        zwaveErrorMessage: message,
+      });
+    }
   }
 
   sendEvent(event: OutgoingMessages.OutgoingEvent) {

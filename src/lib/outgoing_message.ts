@@ -55,6 +55,7 @@ interface OutgoingResultMessageZWaveError {
   success: false;
   errorCode: ErrorCode.zwaveError;
   zwaveErrorCode: ZWaveErrorCodes;
+  zwaveErrorCodeName?: string;
   zwaveErrorMessage: string;
 }
 
