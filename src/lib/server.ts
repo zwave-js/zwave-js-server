@@ -336,6 +336,7 @@ export class Client {
     this.socket.close();
   }
 }
+
 export class ClientsController extends EventEmitter {
   public clients: Array<Client> = [];
   private pingInterval?: NodeJS.Timeout;
