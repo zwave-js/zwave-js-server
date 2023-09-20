@@ -209,7 +209,7 @@ export class Client {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         const { errorCode, name, message, stack, ...args } = err;
-        return this.sendResultError(msg.messageId, errorCode, args);
+        return this.sendResultError(msg.messageId, errorCode, message, args);
       }
       if (err instanceof ZWaveError) {
         this.logger.error("Z-Wave error", err);
@@ -217,7 +217,12 @@ export class Client {
       }
 
       this.logger.error("Unexpected error", err as Error);
-      this.sendResultError(msg.messageId, ErrorCode.unknownError, {});
+      this.sendResultError(
+        msg.messageId,
+        ErrorCode.unknownError,
+        (err as Error).toString(),
+        {},
+      );
     }
   }
 
@@ -251,15 +256,27 @@ export class Client {
   sendResultError(
     messageId: string,
     errorCode: Omit<ErrorCode, "zwaveError">,
+    message: string,
     args: OutgoingMessages.JSONValue,
   ) {
-    this.sendData({
-      type: "result",
-      success: false,
-      messageId,
-      errorCode,
-      args,
-    });
+    if (this.schemaVersion < 32) {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode,
+        args,
+      });
+    } else {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode,
+        message,
+        args,
+      });
+    }
   }
 
   sendResultZWaveError(

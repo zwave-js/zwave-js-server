@@ -45,6 +45,7 @@ interface OutgoingResultMessageError {
   messageId: string;
   success: false;
   errorCode: Omit<ErrorCode, "zwaveError">;
+  message?: string;
   args: JSONValue;
 }
 
