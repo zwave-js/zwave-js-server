@@ -215,6 +215,13 @@ export class Client {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         const { errorCode, name, message, stack, ...args } = err;
+        if (this.schemaVersion < 32) {
+          this.sendResultZWaveError(
+            msg.messageId,
+            -1 as any,
+            `${errorCode}: ${message}`,
+          );
+        }
         return this.sendResultError(msg.messageId, errorCode, message, args);
       }
       if (err instanceof ZWaveError) {
