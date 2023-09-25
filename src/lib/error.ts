@@ -20,7 +20,7 @@ export class BaseError extends Error {
     super(message);
     // We need to set the prototype explicitly
     Object.setPrototypeOf(this, BaseError.prototype);
-    Object.getPrototypeOf(this).name = "ZWaveError";
+    Object.getPrototypeOf(this).name = "BaseError";
   }
 }
 
@@ -29,6 +29,9 @@ export class UnknownError extends BaseError {
 
   constructor(public error: Error) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, UnknownError.prototype);
+    Object.getPrototypeOf(this).name = "UnknownError";
   }
 }
 
@@ -37,6 +40,9 @@ export class UnknownCommandError extends BaseError {
 
   constructor(public command: string) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, UnknownCommandError.prototype);
+    Object.getPrototypeOf(this).name = "UnknownCommandError";
   }
 }
 
@@ -45,6 +51,9 @@ export class NodeNotFoundError extends BaseError {
 
   constructor(public nodeId: number) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, NodeNotFoundError.prototype);
+    Object.getPrototypeOf(this).name = "NodeNotFoundError";
   }
 }
 
@@ -53,6 +62,9 @@ export class SchemaIncompatibleError extends BaseError {
 
   constructor(public schemaId: number) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, SchemaIncompatibleError.prototype);
+    Object.getPrototypeOf(this).name = "SchemaIncompatibleError";
   }
 }
 
@@ -65,6 +77,9 @@ export class VirtualEndpointNotFoundError extends BaseError {
     public broadcast?: boolean,
   ) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, VirtualEndpointNotFoundError.prototype);
+    Object.getPrototypeOf(this).name = "VirtualEndpointNotFoundError";
   }
 }
 
@@ -76,6 +91,9 @@ export class EndpointNotFoundError extends BaseError {
     public index: number,
   ) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, EndpointNotFoundError.prototype);
+    Object.getPrototypeOf(this).name = "EndpointNotFoundError";
   }
 }
 
@@ -84,15 +102,32 @@ export class InclusionPhaseNotInProgressError extends BaseError {
 
   constructor(public phase: string) {
     super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, InclusionPhaseNotInProgressError.prototype);
+    Object.getPrototypeOf(this).name = "InclusionPhaseNotInProgressError";
   }
 }
 
 export class InclusionAlreadyInProgressError extends BaseError {
   errorCode = ErrorCode.inclusionAlreadyInProgress;
+
+  constructor() {
+    super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, InclusionAlreadyInProgressError.prototype);
+    Object.getPrototypeOf(this).name = "InclusionAlreadyInProgressError";
+  }
 }
 
 export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
+
+  constructor() {
+    super();
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, InvalidParamsPassedToCommandError.prototype);
+    Object.getPrototypeOf(this).name = "InvalidParamsPassedToCommandError";
+  }
 }
 
 export class NoLongerSupportedError extends BaseError {
@@ -103,5 +138,8 @@ export class NoLongerSupportedError extends BaseError {
       message +
         " If you are using an application that integrates with Z-Wave JS and you receive this error, you may need to update the application.",
     );
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, NoLongerSupportedError.prototype);
+    Object.getPrototypeOf(this).name = "NoLongerSupportedError";
   }
 }
