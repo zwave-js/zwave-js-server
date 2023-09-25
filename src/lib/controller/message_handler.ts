@@ -133,21 +133,15 @@ export class ControllerMessageHandler {
         );
         return { success };
       }
-      // Schema < 32
-      case ControllerCommand.healNode: {
-        const success = await driver.controller.rebuildNodeRoutes(
-          message.nodeId,
-        );
-        return { success };
-      }
-      // Schema >= 32
+      // Schema <= 31
+      case ControllerCommand.healNode:
       case ControllerCommand.rebuildNodeRoutes: {
         const success = await driver.controller.rebuildNodeRoutes(
           message.nodeId,
         );
         return { success };
       }
-      // Schema < 32
+      // Schema <= 31
       case ControllerCommand.beginHealingNetwork: {
         const success = driver.controller.beginRebuildingRoutes();
         return { success };
@@ -155,15 +149,12 @@ export class ControllerMessageHandler {
       // Schema >= 32
       case ControllerCommand.beginRebuildingRoutes: {
         const success = driver.controller.beginRebuildingRoutes(
-          message.options,
+          message.options!,
         );
         return { success };
       }
-      // Schema < 32
-      case ControllerCommand.stopHealingNetwork: {
-        const success = driver.controller.stopRebuildingRoutes();
-        return { success };
-      }
+      // Schema <= 31
+      case ControllerCommand.stopHealingNetwork:
       // Schema >= 32
       case ControllerCommand.stopRebuildingRoutes: {
         const success = driver.controller.stopRebuildingRoutes();

@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { UnknownCommandError } from "../error";
+import { NoLongerSupportedError, UnknownCommandError } from "../error";
 import {
   Client,
   ClientsController,
@@ -84,7 +84,9 @@ export class DriverMessageHandler {
       case DriverCommand.enableErrorReporting: {
         // This capability no longer exists but we keep the command here for backwards
         // compatibility.
-        return {};
+        throw new NoLongerSupportedError(
+          "Z-Wave JS no longer supports enabling error reporting.",
+        );
       }
       case DriverCommand.softReset: {
         await driver.softReset();

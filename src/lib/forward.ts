@@ -142,7 +142,7 @@ export class EventForwarder {
       "rebuild routes progress",
       (progress) => {
         this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion < 32) {
+          if (client.schemaVersion <= 31) {
             client.sendEvent({
               source: "controller",
               event: "heal network progress",
@@ -174,7 +174,7 @@ export class EventForwarder {
       "rebuild routes done",
       (result) => {
         this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion < 32) {
+          if (client.schemaVersion <= 31) {
             client.sendEvent({
               source: "controller",
               event: "heal network done",
@@ -363,7 +363,7 @@ export class EventForwarder {
                 delete args.dataTypeLabel;
               }
             }
-            if (client.schemaVersion < 32) {
+            if (client.schemaVersion <= 31) {
               this.sendEvent(client, {
                 source: "node",
                 event: "notification",

@@ -815,7 +815,7 @@ export const dumpController = (
     base.isSlave = controller.nodeType === NodeType["End Node"];
   }
 
-  if (schemaVersion < 32) {
+  if (schemaVersion <= 31) {
     base.isHealNetworkActive = controller.isRebuildingRoutes;
   }
 
@@ -848,7 +848,7 @@ export const dumpController = (
 
   const controller31 = controller25 as ControllerStateSchema31;
   controller31.status = controller.status;
-  if (schemaVersion < 32) {
+  if (schemaVersion <= 31) {
     return controller31;
   }
 

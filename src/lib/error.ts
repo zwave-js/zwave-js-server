@@ -15,6 +15,13 @@ export enum ErrorCode {
 export class BaseError extends Error {
   // @ts-ignore
   errorCode: ErrorCode;
+
+  constructor(message?: string) {
+    super(message);
+    // We need to set the prototype explicitly
+    Object.setPrototypeOf(this, BaseError.prototype);
+    Object.getPrototypeOf(this).name = "ZWaveError";
+  }
 }
 
 export class UnknownError extends BaseError {
@@ -91,9 +98,9 @@ export class InvalidParamsPassedToCommandError extends BaseError {
 export class NoLongerSupportedError extends BaseError {
   errorCode = ErrorCode.noLongerSupported;
 
-  constructor(public customMessage: string) {
+  constructor(message: string) {
     super(
-      customMessage +
+      message +
         " If you are using an application that integrates with Z-Wave JS and you receive this error, you may need to update the application.",
     );
   }

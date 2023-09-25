@@ -215,7 +215,10 @@ export class Client {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         const { errorCode, name, message, stack, ...args } = err;
-        if (this.schemaVersion < 32) {
+        // `sendResultError` didn't support passing the error message before schema 32.
+        // We `sendResultZWaveError` instead so that we can pass the error message in
+        // for the client to consume and display.
+        if (this.schemaVersion <= 31) {
           this.sendResultZWaveError(
             msg.messageId,
             -1 as any,
@@ -229,11 +232,18 @@ export class Client {
         return this.sendResultZWaveError(msg.messageId, err.code, err.message);
       }
 
-      this.logger.error("Unexpected error", err as Error);
+      let error: Error;
+
+      if (err instanceof Error) {
+        error = err;
+      } else {
+        error = new Error(`${err}`);
+      }
+      this.logger.error("Unexpected error", error);
       this.sendResultError(
         msg.messageId,
         ErrorCode.unknownError,
-        (err as Error).toString(),
+        error.stack,
         {},
       );
     }
@@ -272,7 +282,7 @@ export class Client {
     message: string,
     args: OutgoingMessages.JSONValue,
   ) {
-    if (this.schemaVersion < 32) {
+    if (this.schemaVersion <= 31) {
       this.sendData({
         type: "result",
         success: false,
@@ -297,7 +307,7 @@ export class Client {
     zjsErrorCode: ZWaveErrorCodes,
     message: string,
   ) {
-    if (this.schemaVersion < 32) {
+    if (this.schemaVersion <= 31) {
       this.sendData({
         type: "result",
         success: false,

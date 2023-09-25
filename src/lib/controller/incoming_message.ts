@@ -78,7 +78,7 @@ export interface IncomingCommandControllerReplaceFailedNodeLegacy
   includeNonSecure?: boolean;
 }
 
-// Schema < 32
+// Schema <= 31
 export interface IncomingCommandControllerHealNode
   extends IncomingCommandControllerBase {
   command: ControllerCommand.healNode;
@@ -92,7 +92,7 @@ export interface IncomingCommandControllerRebuildNodeRoutes
   nodeId: number;
 }
 
-// Schema < 32
+// Schema <= 31
 export interface IncomingCommandControllerBeginHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginHealingNetwork;
@@ -105,7 +105,7 @@ export interface IncomingCommandControllerBeginRebuildingRoutes
   options?: RebuildRoutesOptions;
 }
 
-// Schema < 32
+// Schema <= 31
 export interface IncomingCommandControllerStopHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.stopHealingNetwork;
