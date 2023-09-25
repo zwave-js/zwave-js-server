@@ -243,7 +243,7 @@ export class Client {
       this.sendResultError(
         msg.messageId,
         ErrorCode.unknownError,
-        error.stack,
+        error.stack!,
         {},
       );
     }
