@@ -216,16 +216,6 @@ export class Client {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         const { errorCode, name, message, stack, ...args } = err;
-        // `sendResultError` didn't support passing the error message before schema 32.
-        // We `sendResultZWaveError` instead so that we can pass the error message in
-        // for the client to consume and display.
-        if (this.schemaVersion <= 31) {
-          this.sendResultZWaveError(
-            msg.messageId,
-            -1 as any,
-            `${errorCode}: ${message}`,
-          );
-        }
         return this.sendResultError(msg.messageId, errorCode, message, args);
       }
       if (err instanceof ZWaveError) {
@@ -284,13 +274,14 @@ export class Client {
     args: OutgoingMessages.JSONValue,
   ) {
     if (this.schemaVersion <= 31) {
-      this.sendData({
-        type: "result",
-        success: false,
+      // `sendResultError` didn't support passing the error message before schema 32.
+      // We `sendResultZWaveError` instead so that we can pass the error message in
+      // for the client to consume and display.
+      this.sendResultZWaveError(
         messageId,
-        errorCode,
-        args,
-      });
+        -1 as any,
+        `${errorCode}: ${message}`,
+      );
     } else {
       this.sendData({
         type: "result",
