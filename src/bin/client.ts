@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-
+import dns from "node:dns";
 import ws from "ws";
 import { maxSchemaVersion } from "../lib/const";
 import { OutgoingMessage, ResultTypes } from "../lib/outgoing_message";
 import { parseArgs } from "../util/parse-args";
+
+dns.setDefaultResultOrder("ipv4first");
 
 interface Args {
   _: Array<string>;
