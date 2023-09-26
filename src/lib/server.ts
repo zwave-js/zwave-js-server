@@ -78,6 +78,7 @@ export class Client {
         message as IncomingMessageDriver,
         this.remoteController,
         this.clientsController,
+        this.logger,
         this.driver,
         this,
       ),

@@ -3,6 +3,7 @@ import { NoLongerSupportedError, UnknownCommandError } from "../error";
 import {
   Client,
   ClientsController,
+  Logger,
   ZwavejsServerRemoteController,
 } from "../server";
 import { DriverCommand } from "./command";
@@ -15,6 +16,7 @@ export class DriverMessageHandler {
     message: IncomingMessageDriver,
     remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
+    logger: Logger,
     driver: Driver,
     client: Client,
   ): Promise<DriverResultTypes[DriverCommand]> {
@@ -84,8 +86,10 @@ export class DriverMessageHandler {
       case DriverCommand.enableErrorReporting: {
         // This capability no longer exists but we keep the command here for backwards
         // compatibility.
-        throw new NoLongerSupportedError(
-          "Z-Wave JS no longer supports enabling error reporting.",
+        logger.warn(
+          "Z-Wave JS no longer supports enabling error reporting. If you are using " +
+            "an application that integrates with Z-Wave JS and you receive this " +
+            "error, you may need to update the application.",
         );
       }
       case DriverCommand.softReset: {

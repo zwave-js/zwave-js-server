@@ -122,8 +122,8 @@ export class InclusionAlreadyInProgressError extends BaseError {
 export class InvalidParamsPassedToCommandError extends BaseError {
   errorCode = ErrorCode.invalidParamsPassedToCommand;
 
-  constructor() {
-    super();
+  constructor(message: string) {
+    super(message);
     // We need to set the prototype explicitly
     Object.setPrototypeOf(this, InvalidParamsPassedToCommandError.prototype);
     Object.getPrototypeOf(this).name = "InvalidParamsPassedToCommandError";
