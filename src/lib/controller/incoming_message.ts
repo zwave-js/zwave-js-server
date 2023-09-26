@@ -4,9 +4,11 @@ import {
   ExclusionStrategy,
   FirmwareFileFormat,
   FirmwareUpdateFileInfo,
+  FirmwareUpdateInfo,
   InclusionGrant,
   InclusionOptions,
   PlannedProvisioningEntry,
+  RebuildRoutesOptions,
   ReplaceNodeOptions,
   RFRegion,
   ZWaveFeature,
@@ -76,20 +78,43 @@ export interface IncomingCommandControllerReplaceFailedNodeLegacy
   includeNonSecure?: boolean;
 }
 
+// Schema <= 31
 export interface IncomingCommandControllerHealNode
   extends IncomingCommandControllerBase {
   command: ControllerCommand.healNode;
   nodeId: number;
 }
 
+// Schema >= 32
+export interface IncomingCommandControllerRebuildNodeRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.rebuildNodeRoutes;
+  nodeId: number;
+}
+
+// Schema <= 31
 export interface IncomingCommandControllerBeginHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginHealingNetwork;
 }
 
+// Schema >= 32
+export interface IncomingCommandControllerBeginRebuildingRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.beginRebuildingRoutes;
+  options?: RebuildRoutesOptions;
+}
+
+// Schema <= 31
 export interface IncomingCommandControllerStopHealingNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.stopHealingNetwork;
+}
+
+// Schema >= 32
+export interface IncomingCommandControllerStopRebuildingRoutes
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.stopRebuildingRoutes;
 }
 
 export interface IncomingCommandControllerIsFailedNode
@@ -254,7 +279,7 @@ export interface IncomingCommandControllerGetAvailableFirmwareUpdates
   includePrereleases?: boolean;
 }
 
-// Schema <= 23
+// Schema <= 23 - no longer supported due to a breaking change upstream
 export interface IncomingCommandControllerBeginOTAFirmwareUpdate
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginOTAFirmwareUpdate;
@@ -267,7 +292,8 @@ export interface IncomingCommandControllerFirmwareUpdateOTA
   extends IncomingCommandControllerBase {
   command: ControllerCommand.firmwareUpdateOTA;
   nodeId: number;
-  updates: FirmwareUpdateFileInfo[];
+  updates?: FirmwareUpdateFileInfo[];
+  updateInfo?: FirmwareUpdateInfo;
 }
 
 export interface IncomingCommandControllerFirmwareUpdateOTW
@@ -294,8 +320,11 @@ export type IncomingMessageController =
   | IncomingCommandControllerReplaceFailedNode
   | IncomingCommandControllerReplaceFailedNodeLegacy
   | IncomingCommandControllerHealNode
+  | IncomingCommandControllerRebuildNodeRoutes
   | IncomingCommandControllerBeginHealingNetwork
+  | IncomingCommandControllerBeginRebuildingRoutes
   | IncomingCommandControllerStopHealingNetwork
+  | IncomingCommandControllerStopRebuildingRoutes
   | IncomingCommandControllerIsFailedNode
   | IncomingCommandControllerGetAssociationGroups
   | IncomingCommandControllerGetAssociations

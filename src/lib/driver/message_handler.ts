@@ -1,8 +1,9 @@
 import { Driver } from "zwave-js";
-import { UnknownCommandError } from "../error";
+import { NoLongerSupportedError, UnknownCommandError } from "../error";
 import {
   Client,
   ClientsController,
+  Logger,
   ZwavejsServerRemoteController,
 } from "../server";
 import { DriverCommand } from "./command";
@@ -15,6 +16,7 @@ export class DriverMessageHandler {
     message: IncomingMessageDriver,
     remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
+    logger: Logger,
     driver: Driver,
     client: Client,
   ): Promise<DriverResultTypes[DriverCommand]> {
@@ -40,7 +42,6 @@ export class DriverMessageHandler {
         return { config };
       }
       case DriverCommand.updateLogConfig: {
-        // @ts-expect-error The DeepPartial in zwave-js is wrong
         driver.updateLogConfig(message.config);
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
@@ -83,8 +84,13 @@ export class DriverMessageHandler {
         return {};
       }
       case DriverCommand.enableErrorReporting: {
-        driver.enableErrorReporting();
-        return {};
+        // This capability no longer exists but we keep the command here for backwards
+        // compatibility.
+        logger.warn(
+          "Z-Wave JS no longer supports enabling error reporting. If you are using " +
+            "an application that integrates with Z-Wave JS and you receive this " +
+            "error, you may need to update the application.",
+        );
       }
       case DriverCommand.softReset: {
         await driver.softReset();

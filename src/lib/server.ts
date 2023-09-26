@@ -6,7 +6,13 @@ import {
   Protocol,
   Responder,
 } from "@homebridge/ciao";
-import { Driver, InclusionGrant, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import {
+  Driver,
+  InclusionGrant,
+  ZWaveError,
+  ZWaveErrorCodes,
+  getEnumMemberName,
+} from "zwave-js";
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 import { EventForwarder } from "./forward";
@@ -72,6 +78,7 @@ export class Client {
         message as IncomingMessageDriver,
         this.remoteController,
         this.clientsController,
+        this.logger,
         this.driver,
         this,
       ),
@@ -170,7 +177,6 @@ export class Client {
       }
 
       if (msg.command === ServerCommand.updateLogConfig) {
-        // @ts-expect-error The DeepPartial in zwave-js is wrong
         this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
@@ -210,15 +216,27 @@ export class Client {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
         const { errorCode, name, message, stack, ...args } = err;
-        return this.sendResultError(msg.messageId, errorCode, args);
+        return this.sendResultError(msg.messageId, errorCode, message, args);
       }
       if (err instanceof ZWaveError) {
         this.logger.error("Z-Wave error", err);
         return this.sendResultZWaveError(msg.messageId, err.code, err.message);
       }
 
-      this.logger.error("Unexpected error", err as Error);
-      this.sendResultError(msg.messageId, ErrorCode.unknownError, {});
+      let error: Error;
+
+      if (err instanceof Error) {
+        error = err;
+      } else {
+        error = new Error(`${err}`);
+      }
+      this.logger.error("Unexpected error", error);
+      this.sendResultError(
+        msg.messageId,
+        ErrorCode.unknownError,
+        error.stack ?? error.message,
+        {},
+      );
     }
   }
 
@@ -252,15 +270,28 @@ export class Client {
   sendResultError(
     messageId: string,
     errorCode: Omit<ErrorCode, "zwaveError">,
+    message: string,
     args: OutgoingMessages.JSONValue,
   ) {
-    this.sendData({
-      type: "result",
-      success: false,
-      messageId,
-      errorCode,
-      args,
-    });
+    if (this.schemaVersion <= 31) {
+      // `sendResultError` didn't support passing the error message before schema 32.
+      // We `sendResultZWaveError` instead so that we can pass the error message in
+      // for the client to consume and display.
+      this.sendResultZWaveError(
+        messageId,
+        -1 as any,
+        `${errorCode}: ${message}`,
+      );
+    } else {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode,
+        message,
+        args,
+      });
+    }
   }
 
   sendResultZWaveError(
@@ -268,14 +299,26 @@ export class Client {
     zjsErrorCode: ZWaveErrorCodes,
     message: string,
   ) {
-    this.sendData({
-      type: "result",
-      success: false,
-      messageId,
-      errorCode: ErrorCode.zwaveError,
-      zwaveErrorCode: zjsErrorCode,
-      zwaveErrorMessage: message,
-    });
+    if (this.schemaVersion <= 31) {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode: ErrorCode.zwaveError,
+        zwaveErrorCode: zjsErrorCode,
+        zwaveErrorMessage: message,
+      });
+    } else {
+      this.sendData({
+        type: "result",
+        success: false,
+        messageId,
+        errorCode: ErrorCode.zwaveError,
+        zwaveErrorCode: zjsErrorCode,
+        zwaveErrorCodeName: getEnumMemberName(ZWaveErrorCodes, zjsErrorCode),
+        zwaveErrorMessage: message,
+      });
+    }
   }
 
   sendEvent(event: OutgoingMessages.OutgoingEvent) {
@@ -302,6 +345,7 @@ export class Client {
     this.socket.close();
   }
 }
+
 export class ClientsController extends EventEmitter {
   public clients: Array<Client> = [];
   private pingInterval?: NodeJS.Timeout;

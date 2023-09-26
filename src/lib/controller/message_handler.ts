@@ -19,6 +19,7 @@ import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
   InvalidParamsPassedToCommandError,
+  NoLongerSupportedError,
   UnknownCommandError,
 } from "../error";
 import { Client, ClientsController } from "../server";
@@ -132,16 +133,31 @@ export class ControllerMessageHandler {
         );
         return { success };
       }
-      case ControllerCommand.healNode: {
-        const success = await driver.controller.healNode(message.nodeId);
+      // Schema <= 31
+      case ControllerCommand.healNode:
+      case ControllerCommand.rebuildNodeRoutes: {
+        const success = await driver.controller.rebuildNodeRoutes(
+          message.nodeId,
+        );
         return { success };
       }
+      // Schema <= 31
       case ControllerCommand.beginHealingNetwork: {
-        const success = driver.controller.beginHealingNetwork();
+        const success = driver.controller.beginRebuildingRoutes();
         return { success };
       }
-      case ControllerCommand.stopHealingNetwork: {
-        const success = driver.controller.stopHealingNetwork();
+      // Schema >= 32
+      case ControllerCommand.beginRebuildingRoutes: {
+        const success = driver.controller.beginRebuildingRoutes(
+          message.options!,
+        );
+        return { success };
+      }
+      // Schema <= 31
+      case ControllerCommand.stopHealingNetwork:
+      // Schema >= 32
+      case ControllerCommand.stopRebuildingRoutes: {
+        const success = driver.controller.stopRebuildingRoutes();
         return { success };
       }
       case ControllerCommand.isFailedNode: {
@@ -297,16 +313,26 @@ export class ControllerMessageHandler {
         };
       }
       case ControllerCommand.beginOTAFirmwareUpdate: {
-        const result = await driver.controller.firmwareUpdateOTA(
-          message.nodeId,
-          [message.update],
+        throw new NoLongerSupportedError(
+          ControllerCommand.beginOTAFirmwareUpdate +
+            " is a legacy command that is no longer supported.",
         );
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTA: {
+        if (message.updates !== undefined) {
+          throw new NoLongerSupportedError(
+            ControllerCommand.firmwareUpdateOTA +
+              " no longer accepts the `updates` parameter and expects `updateInfo` instead.",
+          );
+        }
+        if (message.updateInfo === undefined) {
+          throw new InvalidParamsPassedToCommandError(
+            "Missing required parameter `updateInfo`",
+          );
+        }
         const result = await driver.controller.firmwareUpdateOTA(
           message.nodeId,
-          message.updates,
+          message.updateInfo,
         );
         return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
       }
