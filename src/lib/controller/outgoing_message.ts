@@ -18,8 +18,11 @@ export interface ControllerResultTypes {
   [ControllerCommand.removeFailedNode]: Record<string, never>;
   [ControllerCommand.replaceFailedNode]: { success: boolean };
   [ControllerCommand.healNode]: { success: boolean };
+  [ControllerCommand.rebuildNodeRoutes]: { success: boolean };
   [ControllerCommand.beginHealingNetwork]: { success: boolean };
+  [ControllerCommand.beginRebuildingRoutes]: { success: boolean };
   [ControllerCommand.stopHealingNetwork]: { success: boolean };
+  [ControllerCommand.stopRebuildingRoutes]: { success: boolean };
   [ControllerCommand.isFailedNode]: { failed: boolean };
   [ControllerCommand.getAssociationGroups]: {
     groups: Record<number, AssociationGroup>;
@@ -68,7 +71,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAvailableFirmwareUpdates]: {
     updates: FirmwareUpdateInfo[];
   };
-  [ControllerCommand.beginOTAFirmwareUpdate]: FirmwareUpdateResultType;
+  [ControllerCommand.beginOTAFirmwareUpdate]: Record<string, never>;
   [ControllerCommand.firmwareUpdateOTA]: FirmwareUpdateResultType;
   [ControllerCommand.firmwareUpdateOTW]: FirmwareUpdateResultType;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };

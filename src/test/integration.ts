@@ -1,9 +1,12 @@
 import * as assert from "assert";
+import dns from "node:dns";
 import ws from "ws";
 import { libVersion } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { minSchemaVersion, maxSchemaVersion } from "../lib/const";
+
+dns.setDefaultResultOrder("ipv4first");
 
 const PORT = 45001;
 

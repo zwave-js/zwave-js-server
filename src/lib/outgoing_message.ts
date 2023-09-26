@@ -45,6 +45,7 @@ interface OutgoingResultMessageError {
   messageId: string;
   success: false;
   errorCode: Omit<ErrorCode, "zwaveError">;
+  message?: string;
   args: JSONValue;
 }
 
@@ -54,6 +55,7 @@ interface OutgoingResultMessageZWaveError {
   success: false;
   errorCode: ErrorCode.zwaveError;
   zwaveErrorCode: ZWaveErrorCodes;
+  zwaveErrorCodeName?: string;
   zwaveErrorMessage: string;
 }
 
