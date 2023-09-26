@@ -177,7 +177,6 @@ export class Client {
       }
 
       if (msg.command === ServerCommand.updateLogConfig) {
-        // @ts-expect-error The DeepPartial in zwave-js is wrong
         this.driver.updateLogConfig(msg.config);
         this.sendResultSuccess(msg.messageId, {});
         return;
