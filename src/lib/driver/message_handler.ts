@@ -108,6 +108,10 @@ export class DriverMessageHandler {
         const success = await driver.shutdown();
         return { success };
       }
+      case DriverCommand.updateOptions: {
+        driver.updateOptions(message.options);
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }
