@@ -411,7 +411,6 @@ function processInclusionOptions(
           options.provisioning = parseQRCodeString(options.provisioning);
         }
       } else {
-        // @ts-expect-error
         options.userCallbacks = inclusionUserCallbacks(
           clientsController,
           client,
