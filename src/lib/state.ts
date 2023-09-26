@@ -6,7 +6,6 @@ import {
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
-  Duration,
   CommandClass,
   InterviewStage,
   ZWaveLibraryTypes,
