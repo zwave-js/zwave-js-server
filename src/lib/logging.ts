@@ -43,6 +43,7 @@ export class LoggingEventForwarder {
     );
     transports = transports || [];
     transports.push(this.serverTransport);
+    // @ts-expect-error The DeepPartial in zwave-js is wrong
     this.driver.updateLogConfig({ transports });
   }
 
@@ -51,6 +52,7 @@ export class LoggingEventForwarder {
     const transports = this.driver
       .getLogConfig()
       .transports.filter((transport) => transport !== this.serverTransport);
+    // @ts-expect-error The DeepPartial in zwave-js is wrong
     this.driver.updateLogConfig({ transports });
     delete this.serverTransport;
   }
