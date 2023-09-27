@@ -91,6 +91,7 @@ export class DriverMessageHandler {
             "an application that integrates with Z-Wave JS and you receive this " +
             "error, you may need to update the application.",
         );
+        return {};
       }
       case DriverCommand.softReset: {
         await driver.softReset();
