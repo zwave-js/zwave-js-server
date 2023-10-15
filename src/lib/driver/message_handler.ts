@@ -1,5 +1,5 @@
 import { Driver } from "zwave-js";
-import { NoLongerSupportedError, UnknownCommandError } from "../error";
+import { UnknownCommandError } from "../error";
 import {
   Client,
   ClientsController,

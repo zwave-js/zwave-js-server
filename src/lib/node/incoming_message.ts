@@ -7,6 +7,7 @@ import {
 import {
   CommandClasses,
   ConfigValue,
+  ConfigValueFormat,
   FirmwareFileFormat,
   SecurityClass,
 } from "@zwave-js/core";
@@ -89,6 +90,8 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   parameter: number;
   value: ConfigValue;
   valueSize: 1 | 2 | 4;
+  valueFormat?: ConfigValueFormat;
+  bitMask?: number;
 }
 
 export interface IncomingCommandNodeRefreshValues

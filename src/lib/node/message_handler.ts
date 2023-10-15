@@ -3,13 +3,18 @@ import {
   LifelineHealthCheckResult,
   RouteHealthCheckResult,
 } from "zwave-js";
+import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
 import {
   CommandClasses,
   ConfigurationMetadata,
   extractFirmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
-import { NodeNotFoundError, UnknownCommandError } from "../error";
+import {
+  InvalidParamsPassedToCommandError,
+  NodeNotFoundError,
+  UnknownCommandError,
+} from "../error";
 import { Client, ClientsController } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
@@ -110,11 +115,42 @@ export class NodeMessageHandler {
         return { value };
       }
       case NodeCommand.setRawConfigParameterValue: {
-        await node.commandClasses.Configuration.set({
+        if (
+          message.valueSize === undefined &&
+          message.valueFormat !== undefined
+        ) {
+          throw new InvalidParamsPassedToCommandError(
+            "valueFormat can only be used when valueSize is defined",
+          );
+        }
+        if (
+          message.valueSize !== undefined &&
+          message.valueFormat === undefined
+        ) {
+          throw new InvalidParamsPassedToCommandError(
+            "valueFormat must be defined when valueSize is defined",
+          );
+        }
+        if (
+          message.valueSize !== undefined
+            ? message.bitMask === undefined
+            : message.bitMask !== undefined
+        ) {
+          throw new InvalidParamsPassedToCommandError(
+            "Either valueSize or bitMask must be defined, but not both",
+          );
+        }
+        let options: ConfigurationCCAPISetOptions = {
           parameter: message.parameter,
           value: message.value,
-          valueSize: message.valueSize,
-        });
+        };
+        if (message.bitMask !== undefined) {
+          options.bitMask = message.bitMask;
+        } else if (message.valueSize !== undefined) {
+          options.valueSize = message.valueSize;
+          options.valueFormat = message.valueFormat;
+        }
+        await node.commandClasses.Configuration.set(options);
         return {};
       }
       case NodeCommand.refreshValues: {
