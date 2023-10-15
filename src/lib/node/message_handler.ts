@@ -116,28 +116,12 @@ export class NodeMessageHandler {
       }
       case NodeCommand.setRawConfigParameterValue: {
         if (
-          message.valueSize === undefined &&
-          message.valueFormat !== undefined
-        ) {
-          throw new InvalidParamsPassedToCommandError(
-            "valueFormat can only be used when valueSize is defined",
-          );
-        }
-        if (
-          message.valueSize !== undefined &&
-          message.valueFormat === undefined
-        ) {
-          throw new InvalidParamsPassedToCommandError(
-            "valueFormat must be defined when valueSize is defined",
-          );
-        }
-        if (
           message.valueSize !== undefined
-            ? message.bitMask === undefined
-            : message.bitMask !== undefined
+            ? message.valueFormat === undefined
+            : message.valueFormat !== undefined
         ) {
           throw new InvalidParamsPassedToCommandError(
-            "Either valueSize or bitMask must be defined, but not both",
+            "valueFormat and valueSize must be used in combination",
           );
         }
         let options: ConfigurationCCAPISetOptions = {
