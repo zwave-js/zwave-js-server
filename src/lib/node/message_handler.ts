@@ -134,8 +134,8 @@ export class NodeMessageHandler {
           options.valueSize = message.valueSize;
           options.valueFormat = message.valueFormat;
         }
-        await node.commandClasses.Configuration.set(options);
-        return {};
+        const result = await node.commandClasses.Configuration.set(options);
+        return { result };
       }
       case NodeCommand.refreshValues: {
         await node.refreshValues();

@@ -6,7 +6,11 @@ import {
   TranslatedValueID,
   ValueMetadata,
 } from "zwave-js";
-import { MaybeNotKnown, SecurityClass } from "@zwave-js/core";
+import {
+  MaybeNotKnown,
+  SecurityClass,
+  SupervisionResult,
+} from "@zwave-js/core";
 import { NodeCommand } from "./command";
 import { NodeState } from "../state";
 import { FirmwareUpdateResultType, SetValueResultType } from "../common";
@@ -25,8 +29,8 @@ export interface NodeResultTypes {
   [NodeCommand.getFirmwareUpdateCapabilitiesCached]: {
     capabilities: FirmwareUpdateCapabilities;
   };
-  [NodeCommand.pollValue]: { value: any | undefined };
-  [NodeCommand.setRawConfigParameterValue]: Record<string, never>;
+  [NodeCommand.pollValue]: { value?: any };
+  [NodeCommand.setRawConfigParameterValue]: { result?: SupervisionResult };
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
   [NodeCommand.ping]: { responded: boolean };
