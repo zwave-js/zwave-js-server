@@ -89,7 +89,7 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   command: NodeCommand.setRawConfigParameterValue;
   parameter: number;
   value: ConfigValue;
-  valueSize: 1 | 2 | 4;
+  valueSize?: 1 | 2 | 4;
   valueFormat?: ConfigValueFormat;
   bitMask?: number;
 }
