@@ -88,10 +88,10 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   extends IncomingCommandNodeBase {
   command: NodeCommand.setRawConfigParameterValue;
   parameter: number;
+  bitMask?: number; // bitMask can only be used if valueSize and valueFormat are not included.
   value: ConfigValue;
-  valueSize?: 1 | 2 | 4;
+  valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
   valueFormat?: ConfigValueFormat;
-  bitMask?: number;
 }
 
 export interface IncomingCommandNodeRefreshValues

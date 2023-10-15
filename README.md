@@ -887,6 +887,7 @@ interface {
 interface {
   messageId: string;
   command: "node.set_default_volume";
+  nodeId: number;
   defaultVolume?: number;
 }
 ```
@@ -899,6 +900,7 @@ interface {
 interface {
   messageId: string;
   command: "node.set_default_transition_duration";
+  nodeId: number;
   defaultTransitionDuration?: string; // Will be converted to a Duration object
 }
 ```
@@ -911,6 +913,24 @@ interface {
 interface {
   messageId: string;
   command: "node.has_device_config_changed";
+  nodeId: number;
+}
+```
+
+#### [Set Raw Config Parameter Value](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
+
+[compatible with schema version: 33+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.set_raw_config_parameter_value";
+  nodeId: number;
+  parameter: number;
+  bitMask?: number; // bitMask can only be used if valueSize and valueFormat are not included.
+  value: ConfigValue;
+  valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
+  valueFormat?: ConfigValueFormat;
 }
 ```
 
