@@ -1,6 +1,8 @@
 import { Driver } from "zwave-js";
+import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
 import {
   EndpointNotFoundError,
+  InvalidParamsPassedToCommandError,
   NodeNotFoundError,
   UnknownCommandError,
 } from "../error";
@@ -90,6 +92,29 @@ export class EndpointMessageHandler {
           node:
             node === undefined ? node : dumpNode(node, client.schemaVersion),
         };
+      }
+      case EndpointCommand.setRawConfigParameterValue: {
+        if (
+          message.valueSize !== undefined
+            ? message.valueFormat === undefined
+            : message.valueFormat !== undefined
+        ) {
+          throw new InvalidParamsPassedToCommandError(
+            "valueFormat and valueSize must be used in combination",
+          );
+        }
+        let options: ConfigurationCCAPISetOptions = {
+          parameter: message.parameter,
+          value: message.value,
+        };
+        if (message.bitMask !== undefined) {
+          options.bitMask = message.bitMask;
+        } else if (message.valueSize !== undefined) {
+          options.valueSize = message.valueSize;
+          options.valueFormat = message.valueFormat;
+        }
+        const result = await node.commandClasses.Configuration.set(options);
+        return { result };
       }
       default: {
         throw new UnknownCommandError(command);

@@ -1,3 +1,4 @@
+import { SupervisionResult } from "@zwave-js/core";
 import { EndpointCommand } from "./command";
 import { NodeState } from "../state";
 
@@ -9,4 +10,5 @@ export interface EndpointResultTypes {
   [EndpointCommand.isCCSecure]: { secure: boolean };
   [EndpointCommand.getCCVersion]: { version: number };
   [EndpointCommand.getNodeUnsafe]: { node: NodeState | undefined };
+  [EndpointCommand.setRawConfigParameterValue]: { result?: SupervisionResult };
 }

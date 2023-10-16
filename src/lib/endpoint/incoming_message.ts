@@ -1,4 +1,4 @@
-import { CommandClasses } from "@zwave-js/core";
+import { CommandClasses, ConfigValue, ConfigValueFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { EndpointCommand } from "./command";
 
@@ -50,6 +50,16 @@ export interface IncomingCommandEndpointGetNodeUnsafe
   command: EndpointCommand.getNodeUnsafe;
 }
 
+export interface IncomingCommandEndpointSetRawConfigParameterValue
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.setRawConfigParameterValue;
+  parameter: number;
+  bitMask?: number;
+  value: ConfigValue;
+  valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
+  valueFormat?: ConfigValueFormat;
+}
+
 export type IncomingMessageEndpoint =
   | IncomingCommandEndpointInvokeCCAPI
   | IncomingCommandEndpointSupportsCCAPI
@@ -57,4 +67,5 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointControlsCC
   | IncomingCommandEndpointIsCCSecure
   | IncomingCommandEndpointGetCCVersion
-  | IncomingCommandEndpointGetNodeUnsafe;
+  | IncomingCommandEndpointGetNodeUnsafe
+  | IncomingCommandEndpointSetRawConfigParameterValue;

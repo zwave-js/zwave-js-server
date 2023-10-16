@@ -927,7 +927,7 @@ interface {
   command: "node.set_raw_config_parameter_value";
   nodeId: number;
   parameter: number;
-  bitMask?: number; // bitMask can only be used if valueSize and valueFormat are not included.
+  bitMask?: number;
   value: ConfigValue;
   valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
   valueFormat?: ConfigValueFormat;
@@ -1066,6 +1066,23 @@ interface {
   command: "endpoint.get_node_unsafe";
   nodeId: number;
   endpoint?: number;
+}
+```
+
+#### [Set Raw Config Parameter Value](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
+
+[compatible with schema version: 33+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.set_raw_config_parameter_value";
+  nodeId: number;
+  parameter: number;
+  bitMask?: number;
+  value: ConfigValue;
+  valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
+  valueFormat?: ConfigValueFormat;
 }
 ```
 
