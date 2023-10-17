@@ -3,18 +3,13 @@ import {
   LifelineHealthCheckResult,
   RouteHealthCheckResult,
 } from "zwave-js";
-import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
 import {
   CommandClasses,
   ConfigurationMetadata,
   extractFirmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
-import {
-  InvalidParamsPassedToCommandError,
-  NodeNotFoundError,
-  UnknownCommandError,
-} from "../error";
+import { NodeNotFoundError, UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { dumpConfigurationMetadata, dumpMetadata } from "../state";
 import { NodeCommand } from "./command";
@@ -23,6 +18,7 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 import {
   firmwareUpdateOutgoingMessage,
+  setRawConfigParameterValue,
   setValueOutgoingMessage,
 } from "../common";
 import { OutgoingEvent } from "../outgoing_message";
@@ -115,27 +111,7 @@ export class NodeMessageHandler {
         return { value };
       }
       case NodeCommand.setRawConfigParameterValue: {
-        if (
-          message.valueSize !== undefined
-            ? message.valueFormat === undefined
-            : message.valueFormat !== undefined
-        ) {
-          throw new InvalidParamsPassedToCommandError(
-            "valueFormat and valueSize must be used in combination",
-          );
-        }
-        let options: ConfigurationCCAPISetOptions = {
-          parameter: message.parameter,
-          value: message.value,
-        };
-        if (message.bitMask !== undefined) {
-          options.bitMask = message.bitMask;
-        } else if (message.valueSize !== undefined) {
-          options.valueSize = message.valueSize;
-          options.valueFormat = message.valueFormat;
-        }
-        const result = await node.commandClasses.Configuration.set(options);
-        return { result };
+        return setRawConfigParameterValue(message, node);
       }
       case NodeCommand.refreshValues: {
         await node.refreshValues();
