@@ -57,15 +57,17 @@ interface Args {
   }
 
   let options;
+  let presets;
 
   if (configPath) {
     try {
-      options = require(configPath);
+      // Pull presets out of options so we can pass them to the driver
+      ({ presets, ...options } = require(configPath));
       // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
           "Both `networkKey` and `securityKeys.S0_Legacy` options are present in the " +
-            "config. Remove `networkKey`.",
+            "config. Remove `networkKey`."
         );
       }
       const securityKeyNames = [
@@ -80,7 +82,7 @@ interface Args {
           if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
-              `securityKeys.${key}`,
+              `securityKeys.${key}`
             );
           }
         }
@@ -91,12 +93,12 @@ interface Args {
         if (!options.securityKeys) options.securityKeys = {};
         options.securityKeys.S0_Legacy = normalizeKey(
           options.networkKey,
-          "networkKey",
+          "networkKey"
         );
         console.warn(
           "The `networkKey` option is deprecated in favor of `securityKeys` option. To eliminate " +
             "this warning, move your networkKey into the securityKeys.S0_Legacy option. Refer to " +
-            "the Z-Wave JS docs for more information",
+            "the Z-Wave JS docs for more information"
         );
         delete options.networkKey;
       } else if (!options.securityKeys?.S0_Legacy)
@@ -116,34 +118,27 @@ interface Args {
     console.warn(
       "Because `emitValueUpdateAfterSetValue` is set to false, multi-client setups will not work " +
         "as expected. In particular, clients will not see value updates that are initiated by " +
-        "another client.",
+        "another client."
     );
   }
 
-  // Pull driverPresets out of options so we can pass them to the driver
-  let { driverPresets, ...newOptions } = options;
-  if (driverPresets !== undefined) {
-    if (!Array.isArray(driverPresets)) {
-      if (typeof driverPresets === "string") {
-        driverPresets = [driverPresets];
-      } else {
-        throw new Error(
-          "driverPresets must be an array of strings or a string if provided",
-        );
-      }
-    } else {
-      driverPresets = driverPresets.map((preset) => {
-        if (typeof preset !== "string") {
-          throw new Error(
-            "driverPresets must be an array of strings or a string if provided",
-          );
-        }
-      });
+  // Normalize the presets
+  if (presets !== undefined) {
+    if (typeof presets === "string") {
+      presets = [presets];
+    } else if (
+      !Array.isArray(presets) ||
+      !presets.every((p) => typeof p === "string")
+    ) {
+      throw new Error(
+        "driverPresets must be an array of strings or a string if provided"
+      );
     }
+    presets = presets.filter((preset) => preset !== undefined);
   }
   const driver = args["mock-driver"]
     ? createMockDriver()
-    : new Driver(serialPort, ...(driverPresets ?? []), ...newOptions);
+    : new Driver(serialPort, options, ...(presets ?? []));
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
@@ -163,7 +158,7 @@ interface Args {
         host: args.host,
         enableDNSServiceDiscovery: !args["disable-dns-sd"],
       },
-      true,
+      true
     );
     await server.start(true);
   });
