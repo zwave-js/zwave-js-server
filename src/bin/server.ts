@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import {
+  Driver,
+  PartialZWaveOptions,
+  ZWaveError,
+  ZWaveErrorCodes,
+  driverPresets,
+} from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -57,17 +63,17 @@ interface Args {
   }
 
   let options;
-  let presets;
+  let presetNames: string[] | string | undefined;
 
   if (configPath) {
     try {
       // Pull presets out of options so we can pass them to the driver
-      ({ presets, ...options } = require(configPath));
+      ({ presets: presetNames, ...options } = require(configPath));
       // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
           "Both `networkKey` and `securityKeys.S0_Legacy` options are present in the " +
-            "config. Remove `networkKey`."
+            "config. Remove `networkKey`.",
         );
       }
       const securityKeyNames = [
@@ -82,7 +88,7 @@ interface Args {
           if (key in options.securityKeys) {
             options.securityKeys[key] = normalizeKey(
               options.securityKeys[key],
-              `securityKeys.${key}`
+              `securityKeys.${key}`,
             );
           }
         }
@@ -93,12 +99,12 @@ interface Args {
         if (!options.securityKeys) options.securityKeys = {};
         options.securityKeys.S0_Legacy = normalizeKey(
           options.networkKey,
-          "networkKey"
+          "networkKey",
         );
         console.warn(
           "The `networkKey` option is deprecated in favor of `securityKeys` option. To eliminate " +
             "this warning, move your networkKey into the securityKeys.S0_Legacy option. Refer to " +
-            "the Z-Wave JS docs for more information"
+            "the Z-Wave JS docs for more information",
         );
         delete options.networkKey;
       } else if (!options.securityKeys?.S0_Legacy)
@@ -118,23 +124,28 @@ interface Args {
     console.warn(
       "Because `emitValueUpdateAfterSetValue` is set to false, multi-client setups will not work " +
         "as expected. In particular, clients will not see value updates that are initiated by " +
-        "another client."
+        "another client.",
     );
   }
 
   // Normalize the presets
-  if (presets !== undefined) {
-    if (typeof presets === "string") {
-      presets = [presets];
+  let presets: PartialZWaveOptions[] | undefined;
+  if (presetNames !== undefined) {
+    if (typeof presetNames === "string") {
+      presetNames = [presetNames];
     } else if (
-      !Array.isArray(presets) ||
-      !presets.every((p) => typeof p === "string")
+      !Array.isArray(presetNames) ||
+      !presetNames.every((p) => typeof p === "string")
     ) {
       throw new Error(
-        "driverPresets must be an array of strings or a string if provided"
+        "presets must be an array of strings or a string if provided",
       );
     }
-    presets = presets.filter((preset) => preset !== undefined);
+    presets = presetNames
+      .map<PartialZWaveOptions | undefined>(
+        (name) => (driverPresets as any)[name],
+      )
+      .filter((preset): preset is PartialZWaveOptions => preset !== undefined);
   }
   const driver = args["mock-driver"]
     ? createMockDriver()
@@ -158,7 +169,7 @@ interface Args {
         host: args.host,
         enableDNSServiceDiscovery: !args["disable-dns-sd"],
       },
-      true
+      true,
     );
     await server.start(true);
   });
