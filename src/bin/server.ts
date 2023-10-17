@@ -138,7 +138,6 @@ interface Args {
             "presets must be an array of strings or a string if provided",
           );
         }
-        return preset;
       });
     }
   }
