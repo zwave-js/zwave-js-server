@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import {
+  Driver,
+  PartialZWaveOptions,
+  ZWaveError,
+  ZWaveErrorCodes,
+  driverPresets,
+} from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -57,10 +63,12 @@ interface Args {
   }
 
   let options;
+  let presetNames: string[] | string | undefined;
 
   if (configPath) {
     try {
-      options = require(configPath);
+      // Pull presets out of options so we can pass them to the driver
+      ({ presets: presetNames, ...options } = require(configPath));
       // If both securityKeys.S0_Legacy and networkKey are defined, throw an error.
       if (options.securityKeys?.S0_Legacy && options.networkKey) {
         throw new Error(
@@ -120,9 +128,28 @@ interface Args {
     );
   }
 
+  // Normalize the presets
+  let presets: PartialZWaveOptions[] | undefined;
+  if (presetNames !== undefined) {
+    if (typeof presetNames === "string") {
+      presetNames = [presetNames];
+    } else if (
+      !Array.isArray(presetNames) ||
+      !presetNames.every((p) => typeof p === "string")
+    ) {
+      throw new Error(
+        "presets must be an array of strings or a string if provided",
+      );
+    }
+    presets = presetNames
+      .map<PartialZWaveOptions | undefined>(
+        (name) => (driverPresets as any)[name],
+      )
+      .filter((preset): preset is PartialZWaveOptions => preset !== undefined);
+  }
   const driver = args["mock-driver"]
     ? createMockDriver()
-    : new Driver(serialPort, options);
+    : new Driver(serialPort, options, ...(presets ?? []));
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
