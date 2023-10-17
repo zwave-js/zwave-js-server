@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import {
-  Driver,
-  PartialZWaveOptions,
-  ZWaveError,
-  ZWaveErrorCodes,
-} from "zwave-js";
+import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -126,7 +121,27 @@ interface Args {
   }
 
   // Pull presets out of options so we can pass them to the driver
-  const { presets, ...newOptions } = options;
+  let { presets, ...newOptions } = options;
+  if (presets !== undefined) {
+    if (!Array.isArray(presets)) {
+      if (typeof presets === "string") {
+        presets = [presets];
+      } else {
+        throw new Error(
+          "presets must be an array of strings or a string if provided",
+        );
+      }
+    } else {
+      presets = presets.map((preset) => {
+        if (typeof preset !== "string") {
+          throw new Error(
+            "presets must be an array of strings or a string if provided",
+          );
+        }
+        return preset;
+      });
+    }
+  }
   const driver = args["mock-driver"]
     ? createMockDriver()
     : new Driver(serialPort, ...(presets ?? []), ...newOptions);
