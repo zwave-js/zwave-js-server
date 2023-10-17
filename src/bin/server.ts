@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 import { resolve } from "path";
-import { Driver, ZWaveError, ZWaveErrorCodes } from "zwave-js";
+import {
+  Driver,
+  PartialZWaveOptions,
+  ZWaveError,
+  ZWaveErrorCodes,
+} from "zwave-js";
 import { ZwavejsServer } from "../lib/server";
 import { createMockDriver } from "../mock";
 import { parseArgs } from "../util/parse-args";
@@ -120,9 +125,11 @@ interface Args {
     );
   }
 
+  // Pull presets out of options so we can pass them to the driver
+  const { presets, ...newOptions } = options;
   const driver = args["mock-driver"]
     ? createMockDriver()
-    : new Driver(serialPort, options);
+    : new Driver(serialPort, ...(presets ?? []), ...newOptions);
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
