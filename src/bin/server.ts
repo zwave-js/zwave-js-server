@@ -120,22 +120,22 @@ interface Args {
     );
   }
 
-  // Pull presets out of options so we can pass them to the driver
-  let { presets, ...newOptions } = options;
-  if (presets !== undefined) {
-    if (!Array.isArray(presets)) {
-      if (typeof presets === "string") {
-        presets = [presets];
+  // Pull driverPresets out of options so we can pass them to the driver
+  let { driverPresets, ...newOptions } = options;
+  if (driverPresets !== undefined) {
+    if (!Array.isArray(driverPresets)) {
+      if (typeof driverPresets === "string") {
+        driverPresets = [driverPresets];
       } else {
         throw new Error(
-          "presets must be an array of strings or a string if provided",
+          "driverPresets must be an array of strings or a string if provided",
         );
       }
     } else {
-      presets = presets.map((preset) => {
+      driverPresets = driverPresets.map((preset) => {
         if (typeof preset !== "string") {
           throw new Error(
-            "presets must be an array of strings or a string if provided",
+            "driverPresets must be an array of strings or a string if provided",
           );
         }
       });
@@ -143,7 +143,7 @@ interface Args {
   }
   const driver = args["mock-driver"]
     ? createMockDriver()
-    : new Driver(serialPort, ...(presets ?? []), ...newOptions);
+    : new Driver(serialPort, ...(driverPresets ?? []), ...newOptions);
 
   driver.on("error", (e) => {
     console.error("Error in driver", e);
