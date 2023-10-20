@@ -374,6 +374,18 @@ interface {
 }
 ```
 
+#### [Update Options](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updateoptions)
+
+[compatible with schema version: 33+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_options";
+  options: EditableZWaveOptions;
+}
+```
+
 #### [Perform a hard reset on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=hardreset)
 
 [compatible with schema version: 25+]

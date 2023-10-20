@@ -1,7 +1,7 @@
 import { LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "../incoming_message_base";
-import { ZWaveOptions } from "zwave-js";
+import { EditableZWaveOptions, ZWaveOptions } from "zwave-js";
 import { LogContexts } from "../logging";
 
 interface IncomingCommandGetConfig extends IncomingCommandBase {
@@ -73,6 +73,11 @@ interface IncomingCommandShutdown extends IncomingCommandBase {
   command: DriverCommand.shutdown;
 }
 
+interface IncomingCommandUpdateOptions extends IncomingCommandBase {
+  command: DriverCommand.updateOptions;
+  options: EditableZWaveOptions;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -89,4 +94,5 @@ export type IncomingMessageDriver =
   | IncomingCommandSoftReset
   | IncomingCommandTrySoftReset
   | IncomingCommandHardReset
-  | IncomingCommandShutdown;
+  | IncomingCommandShutdown
+  | IncomingCommandUpdateOptions;
