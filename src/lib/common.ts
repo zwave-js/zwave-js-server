@@ -54,9 +54,8 @@ export async function setRawConfigParameterValue(
   nodeOrEndpoint: ZWaveNode | Endpoint,
 ): Promise<{ result?: SupervisionResult }> {
   if (
-    message.valueSize !== undefined
-      ? message.valueFormat === undefined
-      : message.valueFormat !== undefined
+    (message.valueSize !== undefined && message.valueFormat === undefined) ||
+    (message.valueSize === undefined && message.valueFormat !== undefined)
   ) {
     throw new InvalidParamsPassedToCommandError(
       "valueFormat and valueSize must be used in combination or not at all",
