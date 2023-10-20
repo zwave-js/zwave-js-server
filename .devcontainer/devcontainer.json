@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/typescript-node
 {
   "name": "Z-Wave JS Server",
-  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:dev-14",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:dev-16",
   "context": "..",
   "postCreateCommand": "npm install",
   "forwardPorts": [3000],
