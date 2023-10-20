@@ -9,6 +9,7 @@ import { dumpNode } from "../state";
 import { EndpointCommand } from "./command";
 import { IncomingMessageEndpoint } from "./incoming_message";
 import { EndpointResultTypes } from "./outgoing_message";
+import { setRawConfigParameterValue } from "../common";
 
 const isBufferObject = (obj: any): boolean => {
   return (
@@ -90,6 +91,9 @@ export class EndpointMessageHandler {
           node:
             node === undefined ? node : dumpNode(node, client.schemaVersion),
         };
+      }
+      case EndpointCommand.setRawConfigParameterValue: {
+        return setRawConfigParameterValue(message, endpoint);
       }
       default: {
         throw new UnknownCommandError(command);

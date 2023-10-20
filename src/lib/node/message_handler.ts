@@ -18,6 +18,7 @@ import { NodeResultTypes } from "./outgoing_message";
 import { dumpNode } from "..";
 import {
   firmwareUpdateOutgoingMessage,
+  setRawConfigParameterValue,
   setValueOutgoingMessage,
 } from "../common";
 import { OutgoingEvent } from "../outgoing_message";
@@ -110,12 +111,7 @@ export class NodeMessageHandler {
         return { value };
       }
       case NodeCommand.setRawConfigParameterValue: {
-        await node.commandClasses.Configuration.set({
-          parameter: message.parameter,
-          value: message.value,
-          valueSize: message.valueSize,
-        });
-        return {};
+        return setRawConfigParameterValue(message, node);
       }
       case NodeCommand.refreshValues: {
         await node.refreshValues();
