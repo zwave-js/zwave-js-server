@@ -506,7 +506,7 @@ export class ZwavejsServer extends EventEmitter {
   private sockets?: ClientsController;
   private logger: Logger;
   private defaultPort: number = 3000;
-  private defaultHost: string = "0.0.0.0";
+  private defaultHost: string = "::";
   private responder?: Responder;
   private service?: CiaoService;
   private remoteController: ZwavejsServerRemoteController;
