@@ -548,7 +548,7 @@ export class ZwavejsServer extends EventEmitter {
 
     const port = this.options.port || this.defaultPort;
     const host = this.options.host;
-    const localEndpointString = `${host}:${port}`;
+    const localEndpointString = `${host ?? "<all interfaces>"}:${port}`;
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
 
