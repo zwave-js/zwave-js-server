@@ -196,8 +196,8 @@ interface Args {
     process.exit(exitCode);
   };
 
-  process.on("SIGINT", handleShutdown);
-  process.on("SIGTERM", handleShutdown);
+  process.on("SIGINT", () => handleShutdown(0));
+  process.on("SIGTERM", () => handleShutdown(0));
 })().catch((err) => {
   console.error("Unable to start driver", err);
   process.exit(1);
