@@ -506,7 +506,6 @@ export class ZwavejsServer extends EventEmitter {
   private sockets?: ClientsController;
   private logger: Logger;
   private defaultPort: number = 3000;
-  private defaultHost: string = "0.0.0.0";
   private responder?: Responder;
   private service?: CiaoService;
   private remoteController: ZwavejsServerRemoteController;
@@ -548,8 +547,8 @@ export class ZwavejsServer extends EventEmitter {
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
     const port = this.options.port || this.defaultPort;
-    const host = this.options.host || this.defaultHost;
-    const localEndpointString = `${host}:${port}`;
+    const host = this.options.host;
+    const localEndpointString = `${host ?? "<all interfaces>"}:${port}`;
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
 
