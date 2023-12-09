@@ -22,6 +22,7 @@ import {
   ControllerStatistics,
   InclusionState,
   FoundNode,
+  RebuildRoutesStatus,
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
@@ -110,13 +111,18 @@ type ControllerStateSchema32 = Omit<
   "isHealNetworkActive"
 >;
 
+type ControllerStateSchema34 = ControllerStateSchema32 & {
+  rebuildRoutesProgress?: ReadonlyMap<number, RebuildRoutesStatus>;
+};
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
   | ControllerStateSchema22
   | ControllerStateSchema25
   | ControllerStateSchema31
-  | ControllerStateSchema32;
+  | ControllerStateSchema32
+  | ControllerStateSchema34;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -853,7 +859,13 @@ export const dumpController = (
 
   const controller32 = controller31 as Partial<ControllerStateSchema32>;
   controller32.isRebuildingRoutes = controller.isRebuildingRoutes;
-  return controller32 as ControllerStateSchema32;
+  if (schemaVersion < 34) {
+    return controller32 as ControllerStateSchema32;
+  }
+
+  const controller34 = controller32 as ControllerStateSchema34;
+  controller34.rebuildRoutesProgress = controller.rebuildRoutesProgress;
+  return controller34;
 };
 
 export const dumpState = (
