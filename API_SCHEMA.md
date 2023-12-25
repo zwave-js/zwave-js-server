@@ -38,7 +38,11 @@ Base schema.
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
 
+---
+
 > Missing schemas (6 - 32) will be added later
+
+---
 
 # Schema 33
 - Fixed `node.set_raw_config_parameter_value` command to match Z-Wave JS types
