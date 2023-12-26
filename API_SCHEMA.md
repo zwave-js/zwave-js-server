@@ -37,3 +37,18 @@ Base schema.
 
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
+
+---
+
+> Missing schemas (6 - 32) will be added later
+
+---
+
+# Schema 33
+- Fixed `node.set_raw_config_parameter_value` command to match Z-Wave JS types
+- Added `endpoint.set_raw_config_parameter_value` command
+- Added `driver.update_options` command
+
+# Schema 34
+- Added `rebuildRoutesProgress` to controller state dump
+- Listen for clients using IPv6 in addition to IPv4 which was already supported
