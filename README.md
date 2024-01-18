@@ -970,8 +970,8 @@ Send the following JSON to the server to invoke [`UserCodeCC.set(1, UserIDStatus
   "args": [
     1, // userId = 1
     1, // userIdStatus = UserIDStatus.Enabled
-    "1234" // userCode = "1234"
-  ]
+    "1234", // userCode = "1234"
+  ],
 }
 ```
 
@@ -994,7 +994,7 @@ For `Buffer` type arguments, use the following JSON format to represent the argu
 ```jsonc
 {
   "type": "Buffer",
-  "data": [] // array of numbers
+  "data": [], // array of numbers
 }
 ```
 

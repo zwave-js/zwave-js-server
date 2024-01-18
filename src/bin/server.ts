@@ -142,9 +142,9 @@ interface Args {
       );
     }
     presets = presetNames
-      .map<PartialZWaveOptions | undefined>(
-        (name) => (driverPresets as any)[name],
-      )
+      .map<
+        PartialZWaveOptions | undefined
+      >((name) => (driverPresets as any)[name])
       .filter((preset): preset is PartialZWaveOptions => preset !== undefined);
   }
   const driver = args["mock-driver"]
