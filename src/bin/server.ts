@@ -109,6 +109,22 @@ interface Args {
         delete options.networkKey;
       } else if (!options.securityKeys?.S0_Legacy)
         throw new Error("Error: `securityKeys.S0_Legacy` key is missing.");
+
+      // Support long range keys
+      const securityKeysLongRangeNames = [
+        "S2_AccessControl",
+        "S2_Authenticated",
+      ];
+      if (options.securityKeysLongRange) {
+        for (const key of securityKeysLongRangeNames) {
+          if (key in options.securityKeysLongRange) {
+            options.securityKeysLongRange[key] = normalizeKey(
+              options.securityKeysLongRange[key],
+              `securityKeysLongRange.${key}`,
+            );
+          }
+        }
+      }
     } catch (err) {
       console.error(`Error: failed loading config file ${configPath}`);
       console.error(err);
