@@ -17,6 +17,7 @@ import {
   ZWavePlusRoleType,
   FLiRS,
   ProtocolVersion,
+  Protocols,
   NodeType,
   NodeStatistics,
   ControllerStatistics,
@@ -115,6 +116,10 @@ type ControllerStateSchema34 = ControllerStateSchema32 & {
   rebuildRoutesProgress?: ReadonlyMap<number, RebuildRoutesStatus>;
 };
 
+type ControllerStateSchema35 = ControllerStateSchema34 & {
+  supportsLongRange: MaybeNotKnown<boolean>;
+};
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
@@ -122,7 +127,8 @@ export type ControllerState =
   | ControllerStateSchema25
   | ControllerStateSchema31
   | ControllerStateSchema32
-  | ControllerStateSchema34;
+  | ControllerStateSchema34
+  | ControllerStateSchema35;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -335,6 +341,10 @@ interface NodeStateSchema31 extends NodeStateSchema30 {
   defaultTransitionDuration?: string;
 }
 
+interface NodeStateSchema35 extends NodeStateSchema31 {
+  protocol: Protocols;
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -346,7 +356,8 @@ export type NodeState =
   | NodeStateSchema14
   | NodeStateSchema29
   | NodeStateSchema30
-  | NodeStateSchema31;
+  | NodeStateSchema31
+  | NodeStateSchema35;
 
 interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -673,7 +684,13 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   const node31 = node30 as NodeStateSchema31;
   node31.defaultVolume = node.defaultVolume;
   node31.defaultTransitionDuration = node.defaultTransitionDuration;
-  return node31;
+  if (schemaVersion <= 34) {
+    return node31;
+  }
+
+  const node35 = node31 as NodeStateSchema35;
+  node35.protocol = node.protocol;
+  return node35;
 };
 
 export const dumpFoundNode = (
@@ -865,7 +882,13 @@ export const dumpController = (
 
   const controller34 = controller32 as ControllerStateSchema34;
   controller34.rebuildRoutesProgress = controller.rebuildRoutesProgress;
-  return controller34;
+  if (schemaVersion < 35) {
+    return controller34;
+  }
+
+  const controller35 = controller34 as ControllerStateSchema35;
+  controller35.supportsLongRange = controller.supportsLongRange;
+  return controller35;
 };
 
 export const dumpState = (
