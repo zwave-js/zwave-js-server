@@ -171,7 +171,7 @@ type EndpointState =
   | EndpointStateSchema15
   | EndpointStateSchema26;
 
-interface DeviceClassState {
+interface DeviceClassState0 {
   basic: {
     key: number;
     label: string;
@@ -187,6 +187,13 @@ interface DeviceClassState {
   mandatorySupportedCCs: readonly CommandClasses[];
   mandatoryControlledCCs: readonly CommandClasses[];
 }
+
+type DeviceClassState36 = Omit<
+  DeviceClassState0,
+  "mandatorySupportedCCs" | "mandatoryControlledCCs"
+>;
+
+type DeviceClassState = DeviceClassState0 | DeviceClassState36;
 
 interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
@@ -593,7 +600,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   if (schemaVersion <= 2) {
     const node1 = base as NodeStateSchema1;
     node1.deviceClass = node.deviceClass
-      ? dumpDeviceClass(node.deviceClass)
+      ? dumpDeviceClass(node.deviceClass, schemaVersion)
       : null;
     node1.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
       dumpCommandClass(node, cc),
@@ -615,7 +622,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     node3.zwavePlusNodeType = node.zwavePlusNodeType;
     node3.zwavePlusRoleType = node.zwavePlusRoleType;
     node3.deviceClass = node.deviceClass
-      ? dumpDeviceClass(node.deviceClass)
+      ? dumpDeviceClass(node.deviceClass, schemaVersion)
       : null;
     node3.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
       dumpCommandClass(node, cc),
@@ -634,7 +641,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   node4.zwavePlusNodeType = node.zwavePlusNodeType;
   node4.zwavePlusRoleType = node.zwavePlusRoleType;
   node4.deviceClass = node.deviceClass
-    ? dumpDeviceClass(node.deviceClass)
+    ? dumpDeviceClass(node.deviceClass, schemaVersion)
     : null;
   if (schemaVersion <= 14) {
     node4.commandClasses = Array.from(node.getSupportedCCInstances(), (cc) =>
@@ -700,7 +707,7 @@ export const dumpFoundNode = (
   const base: Partial<FoundNodeStateSchema19> = {
     nodeId: foundNode.id,
     deviceClass: foundNode.deviceClass
-      ? dumpDeviceClass(foundNode.deviceClass)
+      ? dumpDeviceClass(foundNode.deviceClass, schemaVersion)
       : null,
   };
   if (schemaVersion < 22) {
@@ -721,7 +728,7 @@ export const dumpEndpoint = (
   endpoint: Endpoint,
   schemaVersion: number,
 ): EndpointState => {
-  let base: EndpointStateSchema0 = {
+  const base: EndpointStateSchema0 = {
     nodeId: endpoint.nodeId,
     index: endpoint.index,
     installerIcon: endpoint.installerIcon,
@@ -733,7 +740,7 @@ export const dumpEndpoint = (
 
   const endpoint3 = base as EndpointStateSchema3;
   endpoint3.deviceClass = endpoint.deviceClass
-    ? dumpDeviceClass(endpoint.deviceClass)
+    ? dumpDeviceClass(endpoint.deviceClass, schemaVersion)
     : null;
 
   if (schemaVersion < 15) {
@@ -756,22 +763,30 @@ export const dumpEndpoint = (
 
 export const dumpDeviceClass = (
   deviceClass: DeviceClass,
-): DeviceClassState => ({
-  basic: {
-    key: deviceClass.basic.key,
-    label: deviceClass.basic.label,
-  },
-  generic: {
-    key: deviceClass.generic.key,
-    label: deviceClass.generic.label,
-  },
-  specific: {
-    key: deviceClass.specific.key,
-    label: deviceClass.specific.label,
-  },
-  mandatorySupportedCCs: deviceClass.mandatorySupportedCCs,
-  mandatoryControlledCCs: deviceClass.mandatoryControlledCCs,
-});
+  schemaVersion: number,
+): DeviceClassState => {
+  const base: Partial<DeviceClassState0> = {
+    basic: {
+      key: deviceClass.basic.key,
+      label: deviceClass.basic.label,
+    },
+    generic: {
+      key: deviceClass.generic.key,
+      label: deviceClass.generic.label,
+    },
+    specific: {
+      key: deviceClass.specific.key,
+      label: deviceClass.specific.label,
+    },
+  };
+  if (schemaVersion < 36) {
+    base.mandatoryControlledCCs = deviceClass.mandatoryControlledCCs;
+    base.mandatorySupportedCCs = deviceClass.mandatorySupportedCCs;
+    return base as DeviceClassState0;
+  }
+  const deviceClass36 = base as DeviceClassState36;
+  return deviceClass36;
+};
 
 export const dumpCommandClass = (
   endpoint: Endpoint,
@@ -789,7 +804,7 @@ export const dumpLogConfig = (
 ): LogConfigState => {
   const { transports, ...partialLogConfig } = driver.getLogConfig();
   if (schemaVersion < 3 && typeof partialLogConfig.level === "string") {
-    let levelNum = numberFromLogLevel(partialLogConfig.level);
+    const levelNum = numberFromLogLevel(partialLogConfig.level);
     if (levelNum != undefined) {
       partialLogConfig.level = levelNum;
     }
