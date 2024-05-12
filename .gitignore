@@ -3,3 +3,4 @@ config.json
 /dist/
 .vscode/*
 .DS_Store
+src/lib/version.ts
