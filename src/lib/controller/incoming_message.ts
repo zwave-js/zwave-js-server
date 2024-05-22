@@ -309,6 +309,28 @@ export interface IncomingCommandIsFirmwareUpdateInProgress
   command: ControllerCommand.isFirmwareUpdateInProgress;
 }
 
+export interface IncomingCommandControllerSetMaxLongRangePowerlevel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.setMaxLongRangePowerlevel;
+  limit: number;
+}
+
+export interface IncomingCommandControllerGetMaxLongRangePowerlevel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getMaxLongRangePowerlevel;
+}
+
+export interface IncomingCommandControllerSetLongRangeChannel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.setLongRangeChannel;
+  channel: number;
+}
+
+export interface IncomingCommandControllerGetLongRangeChannel
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.getLongRangeChannel;
+}
+
 export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
@@ -353,4 +375,8 @@ export type IncomingMessageController =
   | IncomingCommandControllerBeginOTAFirmwareUpdate
   | IncomingCommandControllerFirmwareUpdateOTA
   | IncomingCommandControllerFirmwareUpdateOTW
-  | IncomingCommandIsFirmwareUpdateInProgress;
+  | IncomingCommandIsFirmwareUpdateInProgress
+  | IncomingCommandControllerSetMaxLongRangePowerlevel
+  | IncomingCommandControllerGetMaxLongRangePowerlevel
+  | IncomingCommandControllerSetLongRangeChannel
+  | IncomingCommandControllerGetLongRangeChannel;

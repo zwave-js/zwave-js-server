@@ -351,6 +351,28 @@ export class ControllerMessageHandler {
         const progress = driver.controller.isFirmwareUpdateInProgress();
         return { progress };
       }
+      case ControllerCommand.setMaxLongRangePowerlevel: {
+        const success = await driver.controller.setMaxLongRangePowerlevel(
+          message.limit,
+        );
+        return { success };
+      }
+      case ControllerCommand.getMaxLongRangePowerlevel: {
+        const limit = await driver.controller.getMaxLongRangePowerlevel();
+        return {
+          limit,
+        };
+      }
+      case ControllerCommand.setLongRangeChannel: {
+        const success = await driver.controller.setLongRangeChannel(
+          message.channel,
+        );
+        return { success };
+      }
+      case ControllerCommand.getLongRangeChannel: {
+        const response = await driver.controller.getLongRangeChannel();
+        return response;
+      }
       default: {
         throw new UnknownCommandError(command);
       }

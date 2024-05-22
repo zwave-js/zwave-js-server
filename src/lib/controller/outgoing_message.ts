@@ -6,6 +6,7 @@ import {
   RFRegion,
   SmartStartProvisioningEntry,
 } from "zwave-js";
+import { LongRangeChannel } from "@zwave-js/core";
 import { ControllerState } from "..";
 import { ControllerCommand } from "./command";
 import { FirmwareUpdateResultType } from "../common";
@@ -75,4 +76,11 @@ export interface ControllerResultTypes {
   [ControllerCommand.firmwareUpdateOTA]: FirmwareUpdateResultType;
   [ControllerCommand.firmwareUpdateOTW]: FirmwareUpdateResultType;
   [ControllerCommand.isFirmwareUpdateInProgress]: { progress: boolean };
+  [ControllerCommand.setMaxLongRangePowerlevel]: { success: boolean };
+  [ControllerCommand.getMaxLongRangePowerlevel]: { limit: number };
+  [ControllerCommand.setLongRangeChannel]: { success: boolean };
+  [ControllerCommand.getLongRangeChannel]: {
+    channel: LongRangeChannel;
+    supportsAutoChannelSelection: boolean;
+  };
 }

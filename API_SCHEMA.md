@@ -54,3 +54,13 @@ Base schema.
 
 - Added `rebuildRoutesProgress` to controller state dump
 - Listen for clients using IPv6 in addition to IPv4 which was already supported
+
+# Schema 35
+
+- Adds Z-Wave Long Range support
+- Added `supportsLongRange` to controller state dump
+
+# Schema 36
+
+- Added `maxLongRangePowerlevel`, `longRangeChannel`, and `supportsLongRangeAutoChannelSelection` to controller state dump
+- Added commands for controller methods `getMaxLongRangePowerlevel`, `setMaxLongRangePowerlevel`, `getLongRangeChannel`, and `setLongRangeChannel`
