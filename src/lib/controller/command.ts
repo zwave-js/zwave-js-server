@@ -50,4 +50,8 @@ export enum ControllerCommand {
   firmwareUpdateOTA = "controller.firmware_update_ota",
   firmwareUpdateOTW = "controller.firmware_update_otw",
   isFirmwareUpdateInProgress = "controller.is_firmware_update_in_progress",
+  setMaxLongRangePowerlevel = "controller.set_max_long_range_powerlevel",
+  getMaxLongRangePowerlevel = "controller.get_max_long_range_powerlevel",
+  setLongRangeChannel = "controller.set_long_range_channel",
+  getLongRangeChannel = "controller.get_long_range_channel",
 }

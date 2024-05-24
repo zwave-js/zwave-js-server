@@ -32,6 +32,7 @@ import {
   ConfigValue,
   ConfigValueFormat,
   LogConfig,
+  LongRangeChannel,
   MaybeNotKnown,
   RFRegion,
   SecurityClass,
@@ -120,6 +121,12 @@ type ControllerStateSchema35 = ControllerStateSchema34 & {
   supportsLongRange: MaybeNotKnown<boolean>;
 };
 
+type ControllerStateSchema36 = ControllerStateSchema35 & {
+  maxLongRangePowerlevel: MaybeNotKnown<number>;
+  longRangeChannel: MaybeNotKnown<LongRangeChannel>;
+  supportsLongRangeAutoChannelSelection: MaybeNotKnown<boolean>;
+};
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
@@ -128,7 +135,8 @@ export type ControllerState =
   | ControllerStateSchema31
   | ControllerStateSchema32
   | ControllerStateSchema34
-  | ControllerStateSchema35;
+  | ControllerStateSchema35
+  | ControllerStateSchema36;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -888,7 +896,16 @@ export const dumpController = (
 
   const controller35 = controller34 as ControllerStateSchema35;
   controller35.supportsLongRange = controller.supportsLongRange;
-  return controller35;
+  if (schemaVersion < 36) {
+    return controller35;
+  }
+
+  const controller36 = controller35 as ControllerStateSchema36;
+  controller36.maxLongRangePowerlevel = controller.maxLongRangePowerlevel;
+  controller36.longRangeChannel = controller.longRangeChannel;
+  controller36.supportsLongRangeAutoChannelSelection =
+    controller.supportsLongRangeAutoChannelSelection;
+  return controller36;
 };
 
 export const dumpState = (
