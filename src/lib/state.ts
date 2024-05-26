@@ -788,8 +788,8 @@ export const dumpDeviceClass = (
     },
   };
   if (schemaVersion < 36) {
-    base.mandatoryControlledCCs = deviceClass.mandatoryControlledCCs;
-    base.mandatorySupportedCCs = deviceClass.mandatorySupportedCCs;
+    base.mandatoryControlledCCs = [];
+    base.mandatorySupportedCCs = [];
     return base as DeviceClassState0;
   }
   const deviceClass36 = base as DeviceClassState36;
