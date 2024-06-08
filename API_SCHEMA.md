@@ -64,3 +64,4 @@ Base schema.
 
 - Added `maxLongRangePowerlevel`, `longRangeChannel`, and `supportsLongRangeAutoChannelSelection` to controller state dump
 - Added commands for controller methods `getMaxLongRangePowerlevel`, `setMaxLongRangePowerlevel`, `getLongRangeChannel`, and `setLongRangeChannel`
+- Removed deprecated `mandatoryControlledCCs` and `mandatorySupportedCCs` properties from device class dump
