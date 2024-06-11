@@ -38,4 +38,5 @@ export enum NodeCommand {
   setDefaultVolume = "node.set_default_volume",
   setDefaultTransitionDuration = "node.set_default_transition_duration",
   hasDeviceConfigChanged = "node.has_device_config_changed",
+  createDump = "node.create_dump",
 }

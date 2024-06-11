@@ -397,6 +397,41 @@ interface {
 }
 ```
 
+#### [Shutdown the Z-Wave API on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=shutdown)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.shutdown";
+}
+```
+
+#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updatedriver)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_options";
+  options: EditableZWaveOptions;
+}
+```
+
+#### [Send test frame to node](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=sendtestframe)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_options";
+  options: EditableZWaveOptions;
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
@@ -943,6 +978,17 @@ interface {
   value: ConfigValue;
   valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
   valueFormat?: ConfigValueFormat;
+}
+```
+
+#### [Dump node debug data](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=createdump)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.create_dump";
 }
 ```
 

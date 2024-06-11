@@ -16,4 +16,5 @@ export enum DriverCommand {
   hardReset = "driver.hard_reset",
   shutdown = "driver.shutdown",
   updateOptions = "driver.update_options",
+  sendTestFrame = "driver.send_test_frame",
 }
