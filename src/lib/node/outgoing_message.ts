@@ -61,4 +61,5 @@ export interface NodeResultTypes {
   [NodeCommand.setDefaultVolume]: Record<string, never>;
   [NodeCommand.setDefaultTransitionDuration]: Record<string, never>;
   [NodeCommand.hasDeviceConfigChanged]: { changed: MaybeNotKnown<boolean> };
+  [NodeCommand.createDump]: { dump: object }; // TODO: Fix type
 }

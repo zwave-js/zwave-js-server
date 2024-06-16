@@ -113,6 +113,13 @@ export class DriverMessageHandler {
         driver.updateOptions(message.options);
         return {};
       }
+      case DriverCommand.sendTestFrame: {
+        const status = await driver.sendTestFrame(
+          message.nodeId,
+          message.powerlevel,
+        );
+        return { status };
+      }
       default: {
         throw new UnknownCommandError(command);
       }

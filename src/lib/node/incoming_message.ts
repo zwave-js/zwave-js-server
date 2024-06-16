@@ -241,6 +241,10 @@ export interface IncomingCommandNodeHasDeviceConfigChanged
   command: NodeCommand.hasDeviceConfigChanged;
 }
 
+export interface IncomingCommandNodeCreateDump extends IncomingCommandNodeBase {
+  command: NodeCommand.createDump;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -279,4 +283,5 @@ export type IncomingMessageNode =
   | IncomingCommandNodeAbortHealthCheck
   | IncomingCommandNodeSetDefaultVolume
   | IncomingCommandNodeSetDefaultTransitionDuration
-  | IncomingCommandNodeHasDeviceConfigChanged;
+  | IncomingCommandNodeHasDeviceConfigChanged
+  | IncomingCommandNodeCreateDump;

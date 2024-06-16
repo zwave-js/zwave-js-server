@@ -1,4 +1,4 @@
-import { LogConfig } from "@zwave-js/core";
+import { LogConfig, TransmitStatus } from "@zwave-js/core";
 import { DriverState } from "../state";
 import { DriverCommand } from "./command";
 
@@ -24,4 +24,5 @@ export interface DriverResultTypes {
   [DriverCommand.hardReset]: Record<string, never>;
   [DriverCommand.shutdown]: { success: boolean };
   [DriverCommand.updateOptions]: Record<string, never>;
+  [DriverCommand.sendTestFrame]: { status?: TransmitStatus };
 }

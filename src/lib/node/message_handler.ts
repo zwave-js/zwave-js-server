@@ -302,6 +302,10 @@ export class NodeMessageHandler {
         const changed = node.hasDeviceConfigChanged();
         return { changed };
       }
+      case NodeCommand.createDump: {
+        const dump = node.createDump();
+        return { dump };
+      }
       default: {
         throw new UnknownCommandError(command);
       }
