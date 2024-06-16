@@ -428,7 +428,8 @@ interface {
 interface {
   messageId: string;
   command: "driver.send_test_frame";
-  options: EditableZWaveOptions;
+  nodeId: number;
+  powerlevel: Powerlevel;
 }
 ```
 
