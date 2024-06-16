@@ -408,7 +408,7 @@ interface {
 }
 ```
 
-#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updatedriver)
+#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateoptions)
 
 [compatible with schema version: 36+]
 
