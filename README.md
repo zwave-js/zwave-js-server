@@ -427,7 +427,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "driver.update_options";
+  command: "driver.send_test_frame";
   options: EditableZWaveOptions;
 }
 ```
