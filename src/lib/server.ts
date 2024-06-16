@@ -53,6 +53,22 @@ import { UtilsMessageHandler } from "./utils/message_handler";
 import { IncomingMessageUtils } from "./utils/incoming_message";
 import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
 
+function getVersionData(driver: Driver): {
+  homeId: number | undefined;
+  driverVersion: string;
+  serverVersion: string;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
+} {
+  return {
+    homeId: driver.controller.homeId!,
+    driverVersion: libVersion,
+    serverVersion: version,
+    minSchemaVersion: minSchemaVersion,
+    maxSchemaVersion: maxSchemaVersion,
+  };
+}
+
 export class Client {
   public receiveEvents = false;
   private _outstandingPing = false;
@@ -243,11 +259,7 @@ export class Client {
   sendVersion() {
     this.sendData({
       type: "version",
-      driverVersion: libVersion,
-      serverVersion: version,
-      homeId: this.driver.controller.homeId,
-      minSchemaVersion: minSchemaVersion,
-      maxSchemaVersion: maxSchemaVersion,
+      ...getVersionData(this.driver),
     });
   }
 
@@ -565,9 +577,7 @@ export class ZwavejsServer extends EventEmitter {
         port,
         type: dnssdServiceType,
         protocol: Protocol.TCP,
-        txt: {
-          homeId: this.driver.controller.homeId!,
-        },
+        txt: getVersionData(this.driver),
       });
       this.service.advertise().then(() => {
         this.logger.info(`DNS Service Discovery enabled`);
