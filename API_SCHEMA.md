@@ -66,3 +66,7 @@ Base schema.
 - Added commands for controller methods `getMaxLongRangePowerlevel`, `setMaxLongRangePowerlevel`, `getLongRangeChannel`, and `setLongRangeChannel`
 - Removed deprecated `mandatoryControlledCCs` and `mandatorySupportedCCs` properties from device class dump
 - Added commands for `node.createDump` and `driver.sendTestFrame`
+
+# Schema 37
+
+- Added command for `utils.lookup_device`

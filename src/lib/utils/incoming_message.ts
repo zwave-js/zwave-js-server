@@ -15,6 +15,15 @@ export interface IncomingCommandUtilsTryParseDSKFromQRCodeString
   qr: string;
 }
 
+export interface IncomingCommandUtilsLookupDevice
+  extends IncomingCommandUtilsBase {
+  command: UtilsCommand.lookupDevice;
+  manufacturerId: number;
+  productType: number;
+  productId: number;
+}
+
 export type IncomingMessageUtils =
   | IncomingCommandUtilsParseQRCodeString
-  | IncomingCommandUtilsTryParseDSKFromQRCodeString;
+  | IncomingCommandUtilsTryParseDSKFromQRCodeString
+  | IncomingCommandUtilsLookupDevice;
