@@ -9,7 +9,7 @@ let _ConfigManager: ConfigManager | undefined;
 
 export class UtilsMessageHandler {
   static async handle(
-    message: IncomingMessageUtils
+    message: IncomingMessageUtils,
   ): Promise<UtilsResultTypes[UtilsCommand]> {
     const { command } = message;
 
@@ -30,7 +30,7 @@ export class UtilsMessageHandler {
         const config = await _ConfigManager.lookupDevice(
           message.manufacturerId,
           message.productType,
-          message.productId
+          message.productId,
         );
         return { config };
       }
