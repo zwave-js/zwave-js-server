@@ -9,7 +9,7 @@ let _ConfigManager: ConfigManager | undefined;
 
 export class UtilsMessageHandler {
   static async handle(
-    message: IncomingMessageUtils,
+    message: IncomingMessageUtils
   ): Promise<UtilsResultTypes[UtilsCommand]> {
     const { command } = message;
 
@@ -31,7 +31,7 @@ export class UtilsMessageHandler {
           message.manufacturerId,
           message.productType,
           message.productId
-        )
+        );
         return { config };
       }
       default: {
