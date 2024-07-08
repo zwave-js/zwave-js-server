@@ -13,6 +13,7 @@ import {
   guessFirmwareFileFormat,
   ExclusionStrategy,
   ExclusionOptions,
+  AssociationCheckResult,
 } from "zwave-js";
 import { dumpController } from "..";
 import {
@@ -186,13 +187,21 @@ export class ControllerMessageHandler {
           .forEach((value, key) => (associations[key] = value));
         return { associations };
       }
-      case ControllerCommand.isAssociationAllowed: {
-        const allowed = driver.controller.isAssociationAllowed(
+      case ControllerCommand.checkAssociation: {
+        const result = driver.controller.checkAssociation(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association,
         );
-        return { allowed };
+        return { result };
+      }
+      case ControllerCommand.isAssociationAllowed: {
+        const result = driver.controller.checkAssociation(
+          { nodeId: message.nodeId, endpoint: message.endpoint },
+          message.group,
+          message.association,
+        );
+        return { allowed: result === AssociationCheckResult.OK };
       }
       case ControllerCommand.addAssociations: {
         await driver.controller.addAssociations(
