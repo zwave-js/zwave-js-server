@@ -20,6 +20,7 @@ export enum ControllerCommand {
   isFailedNode = "controller.is_failed_node",
   getAssociationGroups = "controller.get_association_groups",
   getAssociations = "controller.get_associations",
+  checkAssociation = "controller.check_association",
   isAssociationAllowed = "controller.is_association_allowed",
   addAssociations = "controller.add_associations",
   removeAssociations = "controller.remove_associations",
