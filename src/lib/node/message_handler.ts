@@ -24,15 +24,26 @@ import {
 import { OutgoingEvent } from "../outgoing_message";
 
 export class NodeMessageHandler {
-  public async handle(
-    message: IncomingMessageNode,
+  private clientsController: ClientsController;
+  private driver: Driver;
+  private client: Client;
+
+  constructor(
     clientsController: ClientsController,
     driver: Driver,
     client: Client,
+  ) {
+    this.clientsController = clientsController;
+    this.driver = driver;
+    this.client = client;
+  }
+
+  public async handle(
+    message: IncomingMessageNode,
   ): Promise<NodeResultTypes[NodeCommand]> {
     const { nodeId, command } = message;
 
-    const node = driver.controller.nodes.get(nodeId);
+    const node = this.driver.controller.nodes.get(nodeId);
     if (!node) {
       throw new NodeNotFoundError(nodeId);
     }
@@ -44,7 +55,7 @@ export class NodeMessageHandler {
           message.value,
           message.options,
         );
-        return setValueOutgoingMessage(result, client.schemaVersion);
+        return setValueOutgoingMessage(result, this.client.schemaVersion);
       }
       case NodeCommand.refreshInfo: {
         await node.refreshInfo(message.options);
@@ -58,13 +69,13 @@ export class NodeMessageHandler {
         if (message.valueId.commandClass == CommandClasses.Configuration) {
           return dumpConfigurationMetadata(
             node.getValueMetadata(message.valueId) as ConfigurationMetadata,
-            client.schemaVersion,
+            this.client.schemaVersion,
           );
         }
 
         return dumpMetadata(
           node.getValueMetadata(message.valueId),
-          client.schemaVersion,
+          this.client.schemaVersion,
         );
       }
       case NodeCommand.beginFirmwareUpdate: {
@@ -77,7 +88,7 @@ export class NodeMessageHandler {
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+        return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case NodeCommand.updateFirmware: {
         const updates = message.updates.map((update) => {
@@ -92,7 +103,7 @@ export class NodeMessageHandler {
           return firmware;
         });
         const result = await node.updateFirmware(updates);
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+        return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case NodeCommand.abortFirmwareUpdate: {
         await node.abortFirmwareUpdate();
@@ -139,7 +150,7 @@ export class NodeMessageHandler {
           message.powerlevel,
           message.testFrameCount,
           (acknowledged: number, total: number) => {
-            clientsController.clients.forEach((client) =>
+            this.clientsController.clients.forEach((client) =>
               client.sendEvent({
                 source: "node",
                 event: "test powerlevel progress",
@@ -170,7 +181,7 @@ export class NodeMessageHandler {
               lastRating,
             };
             const returnEvent31 = { ...returnEvent0, lastResult };
-            clientsController.clients.forEach((client) => {
+            this.clientsController.clients.forEach((client) => {
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );
@@ -198,7 +209,7 @@ export class NodeMessageHandler {
               lastRating,
             };
             const returnEvent31 = { ...returnEvent0, lastResult };
-            clientsController.clients.forEach((client) => {
+            this.clientsController.clients.forEach((client) => {
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );
@@ -220,7 +231,7 @@ export class NodeMessageHandler {
         return {};
       }
       case NodeCommand.getState: {
-        const state = dumpNode(node, client.schemaVersion);
+        const state = dumpNode(node, this.client.schemaVersion);
         return { state };
       }
       case NodeCommand.setKeepAwake: {

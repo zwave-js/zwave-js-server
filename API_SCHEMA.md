@@ -75,3 +75,4 @@ Base schema.
 # Schema 38
 
 - Added controller `inclusion state changed` event
+- Added `config_manager` commands

@@ -9,6 +9,7 @@ import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
 import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 import { EndpointResultTypes } from "./endpoint/outgoing_message";
 import { UtilsResultTypes } from "./utils/outgoing_message";
+import { ConfigManagerResultTypes } from "./config_manager/outgoing_message";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -74,7 +75,8 @@ export type ResultTypes = ServerResultTypes &
   MulticastGroupResultTypes &
   BroadcastNodeResultTypes &
   EndpointResultTypes &
-  UtilsResultTypes;
+  UtilsResultTypes &
+  ConfigManagerResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";

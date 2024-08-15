@@ -1,11 +1,6 @@
 import {
-  createDeferredPromise,
-  DeferredPromise,
-} from "alcalzone-shared/deferred-promise";
-import {
   parseQRCodeString,
   Driver,
-  InclusionGrant,
   InclusionOptions,
   InclusionStrategy,
   ReplaceNodeOptions,
@@ -39,56 +34,69 @@ import { firmwareUpdateOutgoingMessage } from "../common";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks";
 
 export class ControllerMessageHandler {
-  static async handle(
-    message: IncomingMessageController,
+  private clientsController: ClientsController;
+  private driver: Driver;
+  private client: Client;
+
+  constructor(
     clientsController: ClientsController,
     driver: Driver,
     client: Client,
+  ) {
+    this.clientsController = clientsController;
+    this.driver = driver;
+    this.client = client;
+  }
+
+  async handle(
+    message: IncomingMessageController,
   ): Promise<ControllerResultTypes[ControllerCommand]> {
     const { command } = message;
 
     switch (message.command) {
       case ControllerCommand.beginInclusion: {
         if (
-          clientsController.grantSecurityClassesPromise ||
-          clientsController.validateDSKAndEnterPinPromise
+          this.clientsController.grantSecurityClassesPromise ||
+          this.clientsController.validateDSKAndEnterPinPromise
         )
           throw new InclusionAlreadyInProgressError();
-        const success = await driver.controller.beginInclusion(
-          processInclusionOptions(clientsController, client, message),
+        const success = await this.driver.controller.beginInclusion(
+          processInclusionOptions(this.clientsController, this.client, message),
         );
         return { success };
       }
       case ControllerCommand.grantSecurityClasses: {
-        if (!clientsController.grantSecurityClassesPromise)
+        if (!this.clientsController.grantSecurityClassesPromise)
           throw new InclusionPhaseNotInProgressError(
             "grantSecurityClassesPromise",
           );
-        clientsController.grantSecurityClassesPromise.resolve(
+        this.clientsController.grantSecurityClassesPromise.resolve(
           message.inclusionGrant,
         );
         return {};
       }
       case ControllerCommand.validateDSKAndEnterPIN: {
-        if (!clientsController.validateDSKAndEnterPinPromise)
+        if (!this.clientsController.validateDSKAndEnterPinPromise)
           throw new InclusionPhaseNotInProgressError(
             "validateDSKAndEnterPinPromise",
           );
-        clientsController.validateDSKAndEnterPinPromise.resolve(message.pin);
+        this.clientsController.validateDSKAndEnterPinPromise.resolve(
+          message.pin,
+        );
         return {};
       }
       case ControllerCommand.provisionSmartStartNode: {
         if (typeof message.entry === "string") {
-          driver.controller.provisionSmartStartNode(
+          this.driver.controller.provisionSmartStartNode(
             parseQRCodeString(message.entry),
           );
         } else {
-          driver.controller.provisionSmartStartNode(message.entry);
+          this.driver.controller.provisionSmartStartNode(message.entry);
         }
         return {};
       }
       case ControllerCommand.unprovisionSmartStartNode: {
-        driver.controller.unprovisionSmartStartNode(message.dskOrNodeId);
+        this.driver.controller.unprovisionSmartStartNode(message.dskOrNodeId);
         return {};
       }
       case ControllerCommand.getProvisioningEntry: {
@@ -98,37 +106,37 @@ export class ControllerMessageHandler {
             "Must include one of dsk or dskOrNodeId in call to getProvisioningEntry",
           );
         }
-        const entry = driver.controller.getProvisioningEntry(dskOrNodeId);
+        const entry = this.driver.controller.getProvisioningEntry(dskOrNodeId);
         return { entry };
       }
       case ControllerCommand.getProvisioningEntries: {
-        const entries = driver.controller.getProvisioningEntries();
+        const entries = this.driver.controller.getProvisioningEntries();
         return { entries };
       }
       case ControllerCommand.stopInclusion: {
-        const success = await driver.controller.stopInclusion();
+        const success = await this.driver.controller.stopInclusion();
         return { success };
       }
       case ControllerCommand.beginExclusion: {
-        const success = await driver.controller.beginExclusion(
+        const success = await this.driver.controller.beginExclusion(
           processExclusionOptions(message),
         );
         return { success };
       }
       case ControllerCommand.stopExclusion: {
-        const success = await driver.controller.stopExclusion();
+        const success = await this.driver.controller.stopExclusion();
         return { success };
       }
       case ControllerCommand.removeFailedNode: {
-        await driver.controller.removeFailedNode(message.nodeId);
+        await this.driver.controller.removeFailedNode(message.nodeId);
         return {};
       }
       case ControllerCommand.replaceFailedNode: {
-        const success = await driver.controller.replaceFailedNode(
+        const success = await this.driver.controller.replaceFailedNode(
           message.nodeId,
           processInclusionOptions(
-            clientsController,
-            client,
+            this.clientsController,
+            this.client,
             message,
           ) as ReplaceNodeOptions,
         );
@@ -137,19 +145,19 @@ export class ControllerMessageHandler {
       // Schema <= 31
       case ControllerCommand.healNode:
       case ControllerCommand.rebuildNodeRoutes: {
-        const success = await driver.controller.rebuildNodeRoutes(
+        const success = await this.driver.controller.rebuildNodeRoutes(
           message.nodeId,
         );
         return { success };
       }
       // Schema <= 31
       case ControllerCommand.beginHealingNetwork: {
-        const success = driver.controller.beginRebuildingRoutes();
+        const success = this.driver.controller.beginRebuildingRoutes();
         return { success };
       }
       // Schema >= 32
       case ControllerCommand.beginRebuildingRoutes: {
-        const success = driver.controller.beginRebuildingRoutes(
+        const success = this.driver.controller.beginRebuildingRoutes(
           message.options!,
         );
         return { success };
@@ -158,17 +166,19 @@ export class ControllerMessageHandler {
       case ControllerCommand.stopHealingNetwork:
       // Schema >= 32
       case ControllerCommand.stopRebuildingRoutes: {
-        const success = driver.controller.stopRebuildingRoutes();
+        const success = this.driver.controller.stopRebuildingRoutes();
         return { success };
       }
       case ControllerCommand.isFailedNode: {
-        const failed = await driver.controller.isFailedNode(message.nodeId);
+        const failed = await this.driver.controller.isFailedNode(
+          message.nodeId,
+        );
         return { failed };
       }
       case ControllerCommand.getAssociationGroups: {
         const groups: ControllerResultTypes[ControllerCommand.getAssociationGroups]["groups"] =
           {};
-        driver.controller
+        this.driver.controller
           .getAssociationGroups({
             nodeId: message.nodeId,
             endpoint: message.endpoint,
@@ -179,7 +189,7 @@ export class ControllerMessageHandler {
       case ControllerCommand.getAssociations: {
         const associations: ControllerResultTypes[ControllerCommand.getAssociations]["associations"] =
           {};
-        driver.controller
+        this.driver.controller
           .getAssociations({
             nodeId: message.nodeId,
             endpoint: message.endpoint,
@@ -188,7 +198,7 @@ export class ControllerMessageHandler {
         return { associations };
       }
       case ControllerCommand.checkAssociation: {
-        const result = driver.controller.checkAssociation(
+        const result = this.driver.controller.checkAssociation(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association,
@@ -196,7 +206,7 @@ export class ControllerMessageHandler {
         return { result };
       }
       case ControllerCommand.isAssociationAllowed: {
-        const result = driver.controller.checkAssociation(
+        const result = this.driver.controller.checkAssociation(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association,
@@ -204,7 +214,7 @@ export class ControllerMessageHandler {
         return { allowed: result === AssociationCheckResult.OK };
       }
       case ControllerCommand.addAssociations: {
-        await driver.controller.addAssociations(
+        await this.driver.controller.addAssociations(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.associations,
@@ -212,7 +222,7 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.removeAssociations: {
-        await driver.controller.removeAssociations(
+        await this.driver.controller.removeAssociations(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.associations,
@@ -221,24 +231,28 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.removeNodeFromAllAssocations:
       case ControllerCommand.removeNodeFromAllAssociations: {
-        await driver.controller.removeNodeFromAllAssociations(message.nodeId);
+        await this.driver.controller.removeNodeFromAllAssociations(
+          message.nodeId,
+        );
         return {};
       }
       case ControllerCommand.getNodeNeighbors: {
-        const neighbors = await driver.controller.getNodeNeighbors(
+        const neighbors = await this.driver.controller.getNodeNeighbors(
           message.nodeId,
         );
         return { neighbors };
       }
       case ControllerCommand.supportsFeature: {
-        const supported = driver.controller.supportsFeature(message.feature);
+        const supported = this.driver.controller.supportsFeature(
+          message.feature,
+        );
         return { supported };
       }
       case ControllerCommand.backupNVMRaw: {
-        const nvmDataRaw = await driver.controller.backupNVMRaw(
+        const nvmDataRaw = await this.driver.controller.backupNVMRaw(
           (bytesRead: number, total: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
+            this.clientsController.clients.forEach((client) =>
+              this.client.sendEvent({
                 source: "controller",
                 event: "nvm backup progress",
                 bytesRead,
@@ -251,11 +265,11 @@ export class ControllerMessageHandler {
       }
       case ControllerCommand.restoreNVM: {
         const nvmData = Buffer.from(message.nvmData, "base64");
-        await driver.controller.restoreNVM(
+        await this.driver.controller.restoreNVM(
           nvmData,
           (bytesRead: number, total: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
+            this.clientsController.clients.forEach((client) =>
+              this.client.sendEvent({
                 source: "controller",
                 event: "nvm convert progress",
                 bytesRead,
@@ -264,8 +278,8 @@ export class ControllerMessageHandler {
             );
           },
           (bytesWritten: number, total: number) => {
-            clientsController.clients.forEach((client) =>
-              client.sendEvent({
+            this.clientsController.clients.forEach((client) =>
+              this.client.sendEvent({
                 source: "controller",
                 event: "nvm restore progress",
                 bytesWritten,
@@ -277,45 +291,47 @@ export class ControllerMessageHandler {
         return {};
       }
       case ControllerCommand.setRFRegion: {
-        const success = await driver.controller.setRFRegion(message.region);
+        const success = await this.driver.controller.setRFRegion(
+          message.region,
+        );
         return { success };
       }
       case ControllerCommand.getRFRegion: {
-        const region = await driver.controller.getRFRegion();
+        const region = await this.driver.controller.getRFRegion();
         return { region };
       }
       case ControllerCommand.setPowerlevel: {
-        const success = await driver.controller.setPowerlevel(
+        const success = await this.driver.controller.setPowerlevel(
           message.powerlevel,
           message.measured0dBm,
         );
         return { success };
       }
       case ControllerCommand.getPowerlevel: {
-        return await driver.controller.getPowerlevel();
+        return await this.driver.controller.getPowerlevel();
       }
       case ControllerCommand.getState: {
-        const state = dumpController(driver, client.schemaVersion);
+        const state = dumpController(this.driver, this.client.schemaVersion);
         return { state };
       }
       case ControllerCommand.getKnownLifelineRoutes: {
-        const routes = driver.controller.getKnownLifelineRoutes();
+        const routes = this.driver.controller.getKnownLifelineRoutes();
         return { routes };
       }
       case ControllerCommand.getAnyFirmwareUpdateProgress:
       case ControllerCommand.isAnyOTAFirmwareUpdateInProgress: {
         return {
-          progress: driver.controller.isAnyOTAFirmwareUpdateInProgress(),
+          progress: this.driver.controller.isAnyOTAFirmwareUpdateInProgress(),
         };
       }
       case ControllerCommand.getAvailableFirmwareUpdates: {
         return {
-          updates: await driver.controller.getAvailableFirmwareUpdates(
+          updates: await this.driver.controller.getAvailableFirmwareUpdates(
             message.nodeId,
             {
               apiKey: message.apiKey,
               additionalUserAgentComponents:
-                client.additionalUserAgentComponents,
+                this.client.additionalUserAgentComponents,
               includePrereleases: message.includePrereleases,
             },
           ),
@@ -339,47 +355,47 @@ export class ControllerMessageHandler {
             "Missing required parameter `updateInfo`",
           );
         }
-        const result = await driver.controller.firmwareUpdateOTA(
+        const result = await this.driver.controller.firmwareUpdateOTA(
           message.nodeId,
           message.updateInfo,
         );
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+        return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        const result = await driver.controller.firmwareUpdateOTW(
+        const result = await this.driver.controller.firmwareUpdateOTW(
           extractFirmware(
             file,
             message.fileFormat ??
               guessFirmwareFileFormat(message.filename, file),
           ).data,
         );
-        return firmwareUpdateOutgoingMessage(result, client.schemaVersion);
+        return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
-        const progress = driver.controller.isFirmwareUpdateInProgress();
+        const progress = this.driver.controller.isFirmwareUpdateInProgress();
         return { progress };
       }
       case ControllerCommand.setMaxLongRangePowerlevel: {
-        const success = await driver.controller.setMaxLongRangePowerlevel(
+        const success = await this.driver.controller.setMaxLongRangePowerlevel(
           message.limit,
         );
         return { success };
       }
       case ControllerCommand.getMaxLongRangePowerlevel: {
-        const limit = await driver.controller.getMaxLongRangePowerlevel();
+        const limit = await this.driver.controller.getMaxLongRangePowerlevel();
         return {
           limit,
         };
       }
       case ControllerCommand.setLongRangeChannel: {
-        const success = await driver.controller.setLongRangeChannel(
+        const success = await this.driver.controller.setLongRangeChannel(
           message.channel,
         );
         return { success };
       }
       case ControllerCommand.getLongRangeChannel: {
-        const response = await driver.controller.getLongRangeChannel();
+        const response = await this.driver.controller.getLongRangeChannel();
         return response;
       }
       default: {
@@ -430,7 +446,7 @@ function processInclusionOptions(
       options.strategy === InclusionStrategy.Security_S2
     ) {
       // When using Security_S2 inclusion, the user can either provide the provisioning details ahead
-      // of time or go through a standard inclusion process and let the driver/client prompt them
+      // of time or go through a standard inclusion process and let the this.driver/client prompt them
       // for provisioning details based on information received from the device. We have to handle
       // each scenario separately.
       if ("provisioning" in options) {

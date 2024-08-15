@@ -34,15 +34,21 @@ const deserializeBufferInArray = (array: Array<any>): Array<any> => {
 };
 
 export class EndpointMessageHandler {
-  static async handle(
+  private driver: Driver;
+  private client: Client;
+
+  constructor(driver: Driver, client: Client) {
+    this.driver = driver;
+    this.client = client;
+  }
+
+  async handle(
     message: IncomingMessageEndpoint,
-    driver: Driver,
-    client: Client,
   ): Promise<EndpointResultTypes[EndpointCommand]> {
     const { nodeId, command } = message;
     let endpoint;
 
-    const node = driver.controller.nodes.get(nodeId);
+    const node = this.driver.controller.nodes.get(nodeId);
     if (!node) {
       throw new NodeNotFoundError(nodeId);
     }
@@ -89,7 +95,9 @@ export class EndpointMessageHandler {
         const node = endpoint.getNodeUnsafe();
         return {
           node:
-            node === undefined ? node : dumpNode(node, client.schemaVersion),
+            node === undefined
+              ? node
+              : dumpNode(node, this.client.schemaVersion),
         };
       }
       case EndpointCommand.setRawConfigParameterValue: {

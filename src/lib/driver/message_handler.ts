@@ -12,81 +12,96 @@ import { DriverResultTypes } from "./outgoing_message";
 import { dumpDriver, dumpLogConfig } from "../state";
 
 export class DriverMessageHandler {
-  static async handle(
-    message: IncomingMessageDriver,
+  private remoteController: ZwavejsServerRemoteController;
+  private clientsController: ClientsController;
+  private logger: Logger;
+  private driver: Driver;
+  private client: Client;
+
+  constructor(
     remoteController: ZwavejsServerRemoteController,
     clientsController: ClientsController,
     logger: Logger,
     driver: Driver,
     client: Client,
+  ) {
+    this.remoteController = remoteController;
+    this.clientsController = clientsController;
+    this.logger = logger;
+    this.driver = driver;
+    this.client = client;
+  }
+
+  async handle(
+    message: IncomingMessageDriver,
   ): Promise<DriverResultTypes[DriverCommand]> {
     const { command } = message;
     switch (message.command) {
       case DriverCommand.getConfig: {
-        const config = dumpDriver(driver, client.schemaVersion);
+        const config = dumpDriver(this.driver, this.client.schemaVersion);
         return { config };
       }
       case DriverCommand.disableStatistics: {
-        driver.disableStatistics();
+        this.driver.disableStatistics();
         return {};
       }
       case DriverCommand.enableStatistics: {
-        driver.enableStatistics({
+        this.driver.enableStatistics({
           applicationName: message.applicationName,
           applicationVersion: message.applicationVersion,
         });
         return {};
       }
       case DriverCommand.getLogConfig: {
-        const config = dumpLogConfig(driver, client.schemaVersion);
+        const config = dumpLogConfig(this.driver, this.client.schemaVersion);
         return { config };
       }
       case DriverCommand.updateLogConfig: {
-        driver.updateLogConfig(message.config);
+        this.driver.updateLogConfig(message.config);
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
-        clientsController.restartLoggingEventForwarderIfNeeded();
-        clientsController.clients.forEach((cl) => {
+        this.clientsController.restartLoggingEventForwarderIfNeeded();
+        this.clientsController.clients.forEach((cl) => {
           cl.sendEvent({
             source: "driver",
             event: "log config updated",
-            config: dumpLogConfig(driver, cl.schemaVersion),
+            config: dumpLogConfig(this.driver, cl.schemaVersion),
           });
         });
         return {};
       }
       case DriverCommand.isStatisticsEnabled: {
-        const statisticsEnabled = driver.statisticsEnabled;
+        const statisticsEnabled = this.driver.statisticsEnabled;
         return { statisticsEnabled };
       }
       case DriverCommand.startListeningLogs: {
-        client.receiveLogs = true;
-        clientsController.configureLoggingEventForwarder(message.filter);
+        this.client.receiveLogs = true;
+        this.clientsController.configureLoggingEventForwarder(message.filter);
         return {};
       }
       case DriverCommand.stopListeningLogs: {
-        client.receiveLogs = false;
-        clientsController.cleanupLoggingEventForwarder();
+        this.client.receiveLogs = false;
+        this.clientsController.cleanupLoggingEventForwarder();
         return {};
       }
       case DriverCommand.checkForConfigUpdates: {
-        const installedVersion = driver.configVersion;
-        const newVersion = await driver.checkForConfigUpdates();
+        const installedVersion = this.driver.configVersion;
+        const newVersion = await this.driver.checkForConfigUpdates();
         const updateAvailable = newVersion !== undefined;
         return { installedVersion, updateAvailable, newVersion };
       }
       case DriverCommand.installConfigUpdate: {
-        const success = await driver.installConfigUpdate();
+        const success = await this.driver.installConfigUpdate();
         return { success };
       }
       case DriverCommand.setPreferredScales: {
-        driver.setPreferredScales(message.scales);
+        this.driver.setPreferredScales(message.scales);
         return {};
       }
       case DriverCommand.enableErrorReporting: {
         // This capability no longer exists but we keep the command here for backwards
         // compatibility.
-        logger.warn(
+        this.logger.warn(
           "Z-Wave JS no longer supports enabling error reporting. If you are using " +
             "an application that integrates with Z-Wave JS and you receive this " +
             "error, you may need to update the application.",
@@ -94,27 +109,27 @@ export class DriverMessageHandler {
         return {};
       }
       case DriverCommand.softReset: {
-        await driver.softReset();
+        await this.driver.softReset();
         return {};
       }
       case DriverCommand.trySoftReset: {
-        await driver.trySoftReset();
+        await this.driver.trySoftReset();
         return {};
       }
       case DriverCommand.hardReset: {
-        setTimeout(() => remoteController.hardResetController(), 1);
+        setTimeout(() => this.remoteController.hardResetController(), 1);
         return {};
       }
       case DriverCommand.shutdown: {
-        const success = await driver.shutdown();
+        const success = await this.driver.shutdown();
         return { success };
       }
       case DriverCommand.updateOptions: {
-        driver.updateOptions(message.options);
+        this.driver.updateOptions(message.options);
         return {};
       }
       case DriverCommand.sendTestFrame: {
-        const status = await driver.sendTestFrame(
+        const status = await this.driver.sendTestFrame(
           message.nodeId,
           message.powerlevel,
         );

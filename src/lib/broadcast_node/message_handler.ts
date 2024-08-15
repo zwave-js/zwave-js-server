@@ -7,14 +7,20 @@ import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
 
 export class BroadcastNodeMessageHandler {
-  static async handle(
+  private driver: Driver;
+  private client: Client;
+
+  constructor(driver: Driver, client: Client) {
+    this.driver = driver;
+    this.client = client;
+  }
+
+  async handle(
     message: IncomingMessageBroadcastNode,
-    driver: Driver,
-    client: Client,
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
 
-    const virtualNode = driver.controller.getBroadcastNode();
+    const virtualNode = this.driver.controller.getBroadcastNode();
 
     switch (message.command) {
       case BroadcastNodeCommand.setValue: {
@@ -23,7 +29,7 @@ export class BroadcastNodeMessageHandler {
           message.value,
           message.options,
         );
-        return setValueOutgoingMessage(result, client.schemaVersion);
+        return setValueOutgoingMessage(result, this.client.schemaVersion);
       }
       case BroadcastNodeCommand.getEndpointCount: {
         const count = virtualNode.getEndpointCount();
