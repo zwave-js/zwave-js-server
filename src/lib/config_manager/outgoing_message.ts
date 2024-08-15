@@ -23,4 +23,6 @@ export interface ConfigManagerResultTypes {
     config?: ConditionalDeviceConfig;
   };
   [ConfigManagerCommand.manufacturers]: { manufacturers: ManufacturersMap };
+  [ConfigManagerCommand.loadAll]: Record<string, never>;
+  [ConfigManagerCommand.configVersion]: { configVersion: string };
 }

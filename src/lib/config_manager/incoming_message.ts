@@ -50,7 +50,14 @@ export interface IncomingCommandConfigManagerManufacturers
   extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.manufacturers;
 }
-
+export interface IncomingCommandConfigManagerLoadAll
+  extends IncomingCommandConfigManagerBase {
+  command: ConfigManagerCommand.loadAll;
+}
+export interface IncomingCommandConfigManagerConfigVersion
+  extends IncomingCommandConfigManagerBase {
+  command: ConfigManagerCommand.configVersion;
+}
 export type IncomingMessageConfigManager =
   | IncomingCommandConfigManagerLookupDevice
   | IncomingCommandConfigManagerLoadManufacturers
@@ -60,4 +67,6 @@ export type IncomingMessageConfigManager =
   | IncomingCommandConfigManagerLoadFulltextDeviceIndex
   | IncomingCommandConfigManagerGetFulltextIndex
   | IncomingCommandConfigManagerLookupDevicePreserveConditions
-  | IncomingCommandConfigManagerManufacturers;
+  | IncomingCommandConfigManagerManufacturers
+  | IncomingCommandConfigManagerLoadAll
+  | IncomingCommandConfigManagerConfigVersion;

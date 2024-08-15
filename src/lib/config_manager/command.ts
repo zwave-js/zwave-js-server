@@ -8,4 +8,6 @@ export enum ConfigManagerCommand {
   lookupDevice = "config_manager.lookup_device",
   lookupDevicePreserveConditions = "config_manager.lookup_device_preserve_conditions",
   manufacturers = "config_manager.manufacturers",
+  loadAll = "config_manager.load_all",
+  configVersion = "config_manager.config_version",
 }

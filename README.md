@@ -1272,6 +1272,8 @@ interface {
 
 `zwave-js-server` supports all of the utility methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/utils). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `utils.`, so `parseQRCodeString` is called using the `utils.parse_qr_code_string` command.
 
+> NOTE: While some string utility commands are made available in the server due to their availability within the driver, this functionality works best when implemented locally and should not be used over WebSocket for any practical purpose.
+
 ### Config manager commands
 
 `zwave-js-server` supports all of the config manager methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/config-manager). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `config_manager.`, so `lookupDevice` is called using the `config_manager.lookup_device` command.
