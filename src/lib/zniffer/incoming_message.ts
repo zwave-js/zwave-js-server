@@ -8,10 +8,7 @@ export interface IncomingCommandZnifferStart
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.start;
   devicePath: string;
-  options: Omit<
-    ZnifferOptions,
-    "logConfig" | "securityKeys" | "securityKeysLongRange"
-  >;
+  options: ZnifferOptions;
 }
 
 export interface IncomingCommandZnifferClearCapturedFrames
@@ -37,10 +34,12 @@ export interface IncomingCommandZnifferSupportedFrequencies
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.supportedFrequencies;
 }
+
 export interface IncomingCommandZnifferCurrentFrequency
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.currentFrequency;
 }
+
 export interface IncomingCommandZnifferSetFrequency
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.setFrequency;

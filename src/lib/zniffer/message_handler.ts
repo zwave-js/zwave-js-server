@@ -1,4 +1,4 @@
-import { Driver, Zniffer } from "zwave-js";
+import { Driver, Zniffer, ZnifferOptions, ZWaveOptions } from "zwave-js";
 import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { ZnifferCommand } from "./command";
@@ -7,14 +7,13 @@ import { ZnifferResultTypes } from "./outgoing_message";
 import { OutgoingEvent } from "../outgoing_message";
 
 export class ZnifferMessageHandler {
-  private driver: Driver;
-  private clientsController: ClientsController;
   private zniffer?: Zniffer;
 
-  constructor(driver: Driver, clientsController: ClientsController) {
-    this.driver = driver;
-    this.clientsController = clientsController;
-  }
+  constructor(
+    private driver: Driver,
+    private clientsController: ClientsController,
+  ) {}
+
   forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
     // Forward event to all clients
     this.clientsController.clients.forEach((client) =>
@@ -50,14 +49,34 @@ export class ZnifferMessageHandler {
         if (this.zniffer) {
           throw new Error("Zniffer is already running");
         }
-        const { logConfig, securityKeys, securityKeysLongRange } =
-          this.driver.options;
-        this.zniffer = new Zniffer(message.devicePath, {
-          logConfig,
-          securityKeys,
-          securityKeysLongRange,
-          ...message.options,
-        });
+        if (message.options.logConfig === undefined) {
+          message.options.logConfig = this.driver.options.logConfig;
+        }
+        if (message.options.securityKeys === undefined) {
+          message.options.securityKeys = this.driver.options.securityKeys;
+        }
+        if (message.options.securityKeysLongRange === undefined) {
+          message.options.securityKeysLongRange =
+            this.driver.options.securityKeysLongRange;
+        }
+        if (!Object.keys(message.options).includes(key)) {
+          message.options[key] = this.driver.options[key as keyof ZWaveOptions];
+        }
+        if (!Object.keys(message.options).includes(key)) {
+          message.options[key] = this.driver.options[key as keyof ZWaveOptions];
+        }
+        const keys: (keyof ZnifferOptions)[] = [
+          "logConfig",
+          "securityKeys",
+          "securityKeysLongRange",
+        ];
+        for (const key of keys) {
+          if (!Object.keys(message.options).includes(key)) {
+            message.options[key] =
+              this.driver.options[key as keyof ZWaveOptions];
+          }
+        }
+        this.zniffer = new Zniffer(message.devicePath, message.options);
         this.zniffer
           .on("ready", () =>
             this.forwardEvent({

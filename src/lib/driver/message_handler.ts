@@ -12,25 +12,13 @@ import { DriverResultTypes } from "./outgoing_message";
 import { dumpDriver, dumpLogConfig } from "../state";
 
 export class DriverMessageHandler {
-  private remoteController: ZwavejsServerRemoteController;
-  private clientsController: ClientsController;
-  private logger: Logger;
-  private driver: Driver;
-  private client: Client;
-
   constructor(
-    remoteController: ZwavejsServerRemoteController,
-    clientsController: ClientsController,
-    logger: Logger,
-    driver: Driver,
-    client: Client,
-  ) {
-    this.remoteController = remoteController;
-    this.clientsController = clientsController;
-    this.logger = logger;
-    this.driver = driver;
-    this.client = client;
-  }
+    private remoteController: ZwavejsServerRemoteController,
+    private clientsController: ClientsController,
+    private logger: Logger,
+    private driver: Driver,
+    private client: Client,
+  ) {}
 
   async handle(
     message: IncomingMessageDriver,
