@@ -1272,7 +1272,7 @@ interface {
 
 `zwave-js-server` supports all of the utility methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/utils). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `utils.`, so `parseQRCodeString` is called using the `utils.parse_qr_code_string` command.
 
-> NOTE: While some string utility commands are made available in the server due to their availability within the driver, this functionality works best when implemented locally and should not be used over WebSocket for any practical purpose.
+> NOTE: While some string utility commands like `num2hex`, `buffer2hex`, etc. are made available in the server due to their availability within the driver, this functionality works best when implemented locally and should not be used over WebSocket for any practical purpose.
 
 ### Config manager commands
 
