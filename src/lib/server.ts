@@ -30,7 +30,6 @@ import {
 } from "./const";
 import { NodeMessageHandler } from "./node/message_handler";
 import { ControllerMessageHandler } from "./controller/message_handler";
-import { IncomingMessageController } from "./controller/incoming_message";
 import {
   BaseError,
   ErrorCode,
@@ -38,20 +37,16 @@ import {
   UnknownCommandError,
 } from "./error";
 import { Instance } from "./instance";
-import { IncomingMessageNode } from "./node/incoming_message";
 import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
-import { IncomingMessageDriver } from "./driver/incoming_message";
 import { LogContexts, LoggingEventForwarder } from "./logging";
 import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
-import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
 import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
-import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { EndpointMessageHandler } from "./endpoint/message_handler";
-import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { UtilsMessageHandler } from "./utils/message_handler";
-import { IncomingMessageUtils } from "./utils/incoming_message";
 import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
+import { MessageHandler } from "./message_handler";
+import { ConfigManagerMessageHandler } from "./config_manager/message_handler";
 
 function getVersionData(driver: Driver): {
   homeId: number | undefined;
@@ -76,56 +71,7 @@ export class Client {
   public receiveLogs = false;
   public additionalUserAgentComponents?: Record<string, string>;
 
-  private instanceHandlers: Record<
-    Instance,
-    (
-      message: IncomingMessage,
-    ) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>
-  > = {
-    [Instance.controller]: (message) =>
-      ControllerMessageHandler.handle(
-        message as IncomingMessageController,
-        this.clientsController,
-        this.driver,
-        this,
-      ),
-    [Instance.driver]: (message) =>
-      DriverMessageHandler.handle(
-        message as IncomingMessageDriver,
-        this.remoteController,
-        this.clientsController,
-        this.logger,
-        this.driver,
-        this,
-      ),
-    [Instance.node]: (message) =>
-      this.clientsController.nodeMessageHandler.handle(
-        message as IncomingMessageNode,
-        this.clientsController,
-        this.driver,
-        this,
-      ),
-    [Instance.multicast_group]: (message) =>
-      MulticastGroupMessageHandler.handle(
-        message as IncomingMessageMulticastGroup,
-        this.driver,
-        this,
-      ),
-    [Instance.broadcast_node]: (message) =>
-      BroadcastNodeMessageHandler.handle(
-        message as IncomingMessageBroadcastNode,
-        this.driver,
-        this,
-      ),
-    [Instance.endpoint]: (message) =>
-      EndpointMessageHandler.handle(
-        message as IncomingMessageEndpoint,
-        this.driver,
-        this,
-      ),
-    [Instance.utils]: (message) =>
-      UtilsMessageHandler.handle(message as IncomingMessageUtils),
-  };
+  private instanceHandlers: Record<Instance, MessageHandler>;
 
   constructor(
     private socket: WebSocket,
@@ -138,6 +84,36 @@ export class Client {
       this._outstandingPing = false;
     });
     socket.on("message", (data: string) => this.receiveMessage(data));
+    this.instanceHandlers = {
+      [Instance.config_manager]: new ConfigManagerMessageHandler(),
+      [Instance.controller]: new ControllerMessageHandler(
+        this.clientsController,
+        this.driver,
+        this,
+      ),
+      [Instance.driver]: new DriverMessageHandler(
+        this.remoteController,
+        this.clientsController,
+        this.logger,
+        this.driver,
+        this,
+      ),
+      [Instance.node]: new NodeMessageHandler(
+        this.clientsController,
+        this.driver,
+        this,
+      ),
+      [Instance.multicast_group]: new MulticastGroupMessageHandler(
+        this.driver,
+        this,
+      ),
+      [Instance.broadcast_node]: new BroadcastNodeMessageHandler(
+        this.driver,
+        this,
+      ),
+      [Instance.endpoint]: new EndpointMessageHandler(this.driver, this),
+      [Instance.utils]: new UtilsMessageHandler(),
+    };
   }
 
   get isConnected(): boolean {
@@ -223,7 +199,7 @@ export class Client {
       if (this.instanceHandlers[instance]) {
         return this.sendResultSuccess(
           msg.messageId,
-          await this.instanceHandlers[instance](msg),
+          await this.instanceHandlers[instance].handle(msg),
         );
       }
 
@@ -366,7 +342,6 @@ export class ClientsController extends EventEmitter {
   private loggingEventForwarder?: LoggingEventForwarder;
   public grantSecurityClassesPromise?: DeferredPromise<InclusionGrant | false>;
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
-  public nodeMessageHandler = new NodeMessageHandler();
 
   constructor(
     public driver: Driver,

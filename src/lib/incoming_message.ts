@@ -8,6 +8,7 @@ import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message"
 import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
 import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { IncomingMessageUtils } from "./utils/incoming_message";
+import { IncomingMessageConfigManager } from "./config_manager/incoming_message";
 import { LogContexts } from "./logging";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
@@ -55,6 +56,7 @@ export type IncomingMessage =
   | IncomingMessageBroadcastNode
   | IncomingMessageEndpoint
   | IncomingMessageUtils
+  | IncomingMessageConfigManager
   | IncomingCommandInitialize
   | IncomingCommandStartListeningLogs
   | IncomingCommandStopListeningLogs;

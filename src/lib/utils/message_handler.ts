@@ -1,14 +1,18 @@
+import {
+  buffer2hex,
+  formatId,
+  getEnumMemberName,
+  num2hex,
+  rssiToString,
+} from "zwave-js";
 import { parseQRCodeString, tryParseDSKFromQRCodeString } from "@zwave-js/core";
-import { ConfigManager } from "@zwave-js/config";
 import { UnknownCommandError } from "../error";
 import { UtilsCommand } from "./command";
 import { IncomingMessageUtils } from "./incoming_message";
 import { UtilsResultTypes } from "./outgoing_message";
 
-let _ConfigManager: ConfigManager | undefined;
-
 export class UtilsMessageHandler {
-  static async handle(
+  async handle(
     message: IncomingMessageUtils,
   ): Promise<UtilsResultTypes[UtilsCommand]> {
     const { command } = message;
@@ -22,17 +26,25 @@ export class UtilsMessageHandler {
         const dsk = tryParseDSKFromQRCodeString(message.qr);
         return { dsk };
       }
-      case UtilsCommand.lookupDevice: {
-        if (!_ConfigManager) {
-          _ConfigManager = new ConfigManager();
-          await _ConfigManager.loadDeviceIndex();
-        }
-        const config = await _ConfigManager.lookupDevice(
-          message.manufacturerId,
-          message.productType,
-          message.productId,
-        );
-        return { config };
+      case UtilsCommand.num2hex: {
+        const hex = num2hex(message.val, message.uppercase);
+        return { hex };
+      }
+      case UtilsCommand.formatId: {
+        const id = formatId(message.id);
+        return { id };
+      }
+      case UtilsCommand.buffer2hex: {
+        const hex = buffer2hex(message.buffer, message.uppercase);
+        return { hex };
+      }
+      case UtilsCommand.getEnumMemberName: {
+        const name = getEnumMemberName(message.enumeration, message.value);
+        return { name };
+      }
+      case UtilsCommand.rssiToString: {
+        const rssi = rssiToString(message.rssi);
+        return { rssi };
       }
       default: {
         throw new UnknownCommandError(command);

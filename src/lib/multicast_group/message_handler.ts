@@ -7,14 +7,22 @@ import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
 
 export class MulticastGroupMessageHandler {
-  static async handle(
+  private driver: Driver;
+  private client: Client;
+
+  constructor(driver: Driver, client: Client) {
+    this.driver = driver;
+    this.client = client;
+  }
+
+  async handle(
     message: IncomingMessageMulticastGroup,
-    driver: Driver,
-    client: Client,
   ): Promise<MulticastGroupResultTypes[MulticastGroupCommand]> {
     const { command } = message;
 
-    const virtualNode = driver.controller.getMulticastGroup(message.nodeIDs);
+    const virtualNode = this.driver.controller.getMulticastGroup(
+      message.nodeIDs,
+    );
 
     switch (message.command) {
       case MulticastGroupCommand.setValue: {
@@ -23,7 +31,7 @@ export class MulticastGroupMessageHandler {
           message.value,
           message.options,
         );
-        return setValueOutgoingMessage(result, client.schemaVersion);
+        return setValueOutgoingMessage(result, this.client.schemaVersion);
       }
       case MulticastGroupCommand.getEndpointCount: {
         const count = virtualNode.getEndpointCount();

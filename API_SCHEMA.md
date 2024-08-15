@@ -69,4 +69,5 @@ Base schema.
 
 # Schema 37
 
-- Added command for `utils.lookup_device`
+- Added `config_manager` commands
+- Refactored message handlers to be stateful

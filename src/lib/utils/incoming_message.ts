@@ -1,3 +1,4 @@
+import { RSSI } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { UtilsCommand } from "./command";
 
@@ -15,15 +16,38 @@ export interface IncomingCommandUtilsTryParseDSKFromQRCodeString
   qr: string;
 }
 
-export interface IncomingCommandUtilsLookupDevice
+export interface IncomingCommandUtilsNum2hex extends IncomingCommandUtilsBase {
+  command: UtilsCommand.num2hex;
+  val?: number | null;
+  uppercase: boolean;
+}
+export interface IncomingCommandUtilsFormatId extends IncomingCommandUtilsBase {
+  command: UtilsCommand.formatId;
+  id: number | string;
+}
+export interface IncomingCommandUtilsBuffer2hex
   extends IncomingCommandUtilsBase {
-  command: UtilsCommand.lookupDevice;
-  manufacturerId: number;
-  productType: number;
-  productId: number;
+  command: UtilsCommand.buffer2hex;
+  buffer: Buffer;
+  uppercase: boolean;
+}
+export interface IncomingCommandUtilsGetEnumMemberName
+  extends IncomingCommandUtilsBase {
+  command: UtilsCommand.getEnumMemberName;
+  enumeration: unknown;
+  value: number;
+}
+export interface IncomingCommandUtilsRssiToString
+  extends IncomingCommandUtilsBase {
+  command: UtilsCommand.rssiToString;
+  rssi: RSSI;
 }
 
 export type IncomingMessageUtils =
   | IncomingCommandUtilsParseQRCodeString
   | IncomingCommandUtilsTryParseDSKFromQRCodeString
-  | IncomingCommandUtilsLookupDevice;
+  | IncomingCommandUtilsNum2hex
+  | IncomingCommandUtilsFormatId
+  | IncomingCommandUtilsBuffer2hex
+  | IncomingCommandUtilsGetEnumMemberName
+  | IncomingCommandUtilsRssiToString;

@@ -9,7 +9,9 @@ export interface UtilsResultTypes {
   [UtilsCommand.tryParseDSKFromQRCodeString]: {
     dsk?: string;
   };
-  [UtilsCommand.lookupDevice]: {
-    config?: DeviceConfig;
-  };
+  [UtilsCommand.num2hex]: { hex: string };
+  [UtilsCommand.formatId]: { id: string };
+  [UtilsCommand.buffer2hex]: { hex: string };
+  [UtilsCommand.getEnumMemberName]: { name: string };
+  [UtilsCommand.rssiToString]: { rssi: string };
 }
