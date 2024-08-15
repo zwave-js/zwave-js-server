@@ -137,6 +137,15 @@ export interface IncomingCommandControllerGetAssociations
   endpoint?: number;
 }
 
+export interface IncomingCommandControllerCheckAssociation
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.checkAssociation;
+  nodeId: number;
+  group: number;
+  association: AssociationAddress;
+  endpoint?: number;
+}
+
 export interface IncomingCommandControllerIsAssociationAllowed
   extends IncomingCommandControllerBase {
   command: ControllerCommand.isAssociationAllowed;
@@ -350,6 +359,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerIsFailedNode
   | IncomingCommandControllerGetAssociationGroups
   | IncomingCommandControllerGetAssociations
+  | IncomingCommandControllerCheckAssociation
   | IncomingCommandControllerIsAssociationAllowed
   | IncomingCommandControllerAddAssociations
   | IncomingCommandControllerRemoveAssociations

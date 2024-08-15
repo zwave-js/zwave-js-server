@@ -69,5 +69,11 @@ Base schema.
 
 # Schema 37
 
+- Added command for `checkAssocation` controller method
+- Updated payload for `inclusion started` controller event
+
+# Schema 38
+
+- Added controller `inclusion state changed` event
 - Added `config_manager` commands
 - Refactored message handlers to be stateful

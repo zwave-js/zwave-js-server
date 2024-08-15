@@ -24,9 +24,11 @@ import {
   InclusionState,
   FoundNode,
   RebuildRoutesStatus,
+  getEnumMemberName,
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
+  BasicDeviceClass,
   CommandClasses,
   ConfigurationMetadata,
   ConfigValue,
@@ -467,7 +469,6 @@ export const dumpConfigurationMetadata = (
     unit: metadata.unit,
     valueSize: metadata.valueSize,
     format: metadata.format,
-    noBulkSupport: metadata.noBulkSupport,
     isAdvanced: metadata.isAdvanced,
     requiresReInclusion: metadata.requiresReInclusion,
     allowManualEntry: metadata.allowManualEntry,
@@ -775,8 +776,8 @@ export const dumpDeviceClass = (
 ): DeviceClassState => {
   const base: Partial<DeviceClassState0> = {
     basic: {
-      key: deviceClass.basic.key,
-      label: deviceClass.basic.label,
+      key: deviceClass.basic,
+      label: getEnumMemberName(BasicDeviceClass, deviceClass.basic),
     },
     generic: {
       key: deviceClass.generic.key,

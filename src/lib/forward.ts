@@ -3,6 +3,7 @@ import {
   Endpoint,
   FirmwareUpdateProgress,
   FirmwareUpdateResult,
+  InclusionStrategy,
   NodeStatistics,
   NodeStatus,
   RemoveNodeReason,
@@ -66,6 +67,22 @@ export class EventForwarder {
         );
     });
 
+    this.clientsController.driver.controller.on(
+      "inclusion state changed",
+      (state) => {
+        // forward event to all connected clients, respecting schemaVersion it supports
+        this.clientsController.clients
+          .filter((client) => client.schemaVersion > 37)
+          .forEach((client) =>
+            this.sendEvent(client, {
+              source: "controller",
+              event: "inclusion state changed",
+              state,
+            }),
+          );
+      },
+    );
+
     {
       const events: ControllerEvents[] = [
         "inclusion failed",
@@ -84,12 +101,26 @@ export class EventForwarder {
       }
     }
 
-    this.clientsController.driver.controller.on("inclusion started", (secure) =>
-      this.forwardEvent({
-        source: "controller",
-        event: "inclusion started",
-        secure,
-      }),
+    this.clientsController.driver.controller.on(
+      "inclusion started",
+      (strategy) => {
+        // forward event to all connected clients, respecting schemaVersion it supports
+        this.clientsController.clients.forEach((client) => {
+          if (client.schemaVersion >= 37) {
+            this.sendEvent(client, {
+              source: "controller",
+              event: "inclusion started",
+              strategy,
+            });
+          } else {
+            this.sendEvent(client, {
+              source: "controller",
+              event: "inclusion started",
+              secure: strategy !== InclusionStrategy.Insecure,
+            });
+          }
+        });
+      },
     );
 
     this.clientsController.driver.controller.on(

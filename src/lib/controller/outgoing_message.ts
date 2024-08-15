@@ -1,5 +1,6 @@
 import {
   AssociationAddress,
+  AssociationCheckResult,
   AssociationGroup,
   FirmwareUpdateInfo,
   LifelineRoutes,
@@ -31,6 +32,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.getAssociations]: {
     associations: Record<number, readonly AssociationAddress[]>;
   };
+  [ControllerCommand.checkAssociation]: { result: AssociationCheckResult };
   [ControllerCommand.isAssociationAllowed]: { allowed: boolean };
   [ControllerCommand.addAssociations]: Record<string, never>;
   [ControllerCommand.removeAssociations]: Record<string, never>;
