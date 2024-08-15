@@ -66,3 +66,12 @@ Base schema.
 - Added commands for controller methods `getMaxLongRangePowerlevel`, `setMaxLongRangePowerlevel`, `getLongRangeChannel`, and `setLongRangeChannel`
 - Removed deprecated `mandatoryControlledCCs` and `mandatorySupportedCCs` properties from device class dump
 - Added commands for `node.createDump` and `driver.sendTestFrame`
+
+# Schema 37
+
+- Added command for `checkAssocation` controller method
+- Updated payload for `inclusion started` controller event
+
+# Schema 38
+
+- Added controller `inclusion state changed` event

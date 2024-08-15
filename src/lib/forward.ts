@@ -67,6 +67,22 @@ export class EventForwarder {
         );
     });
 
+    this.clientsController.driver.controller.on(
+      "inclusion state changed",
+      (state) => {
+        // forward event to all connected clients, respecting schemaVersion it supports
+        this.clientsController.clients
+          .filter((client) => client.schemaVersion > 37)
+          .forEach((client) =>
+            this.sendEvent(client, {
+              source: "controller",
+              event: "inclusion state changed",
+              state,
+            }),
+          );
+      },
+    );
+
     {
       const events: ControllerEvents[] = [
         "inclusion failed",

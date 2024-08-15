@@ -34,7 +34,7 @@
     "ws": "^8.13.0"
   },
   "peerDependencies": {
-    "zwave-js": "^13.0.0"
+    "zwave-js": "^13.2.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.1",
@@ -54,7 +54,7 @@
     "semver": "^7.5.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "zwave-js": "^13.0.0"
+    "zwave-js": "^13.2.0"
   },
   "husky": {
     "hooks": {
