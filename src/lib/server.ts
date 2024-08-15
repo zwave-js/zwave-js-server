@@ -501,8 +501,7 @@ export class ZwavejsServer extends EventEmitter {
 
   constructor(
     private driver: Driver,
-    private serverOptions: ZwavejsServerOptions = {},
-    private driverOptions: Record<string, any> = {},
+    private options: ZwavejsServerOptions = {},
     destroyServerOnHardReset: boolean = false,
   ) {
     super();
@@ -511,7 +510,7 @@ export class ZwavejsServer extends EventEmitter {
       driver,
       this,
     );
-    this.logger = serverOptions.logger ?? console;
+    this.logger = options.logger ?? console;
   }
 
   async start(shouldSetInclusionUserCallbacks: boolean = false) {
@@ -536,8 +535,8 @@ export class ZwavejsServer extends EventEmitter {
     }
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    const port = this.serverOptions.port || this.defaultPort;
-    const host = this.serverOptions.host;
+    const port = this.options.port || this.defaultPort;
+    const host = this.options.host;
     const localEndpointString = `${host ?? "<all interfaces>"}:${port}`;
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
@@ -548,7 +547,7 @@ export class ZwavejsServer extends EventEmitter {
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
-    if (this.serverOptions.enableDNSServiceDiscovery) {
+    if (this.options.enableDNSServiceDiscovery) {
       this.responder = getResponder();
       this.service = this.responder.createService({
         name: this.driver.controller.homeId!.toString(),
