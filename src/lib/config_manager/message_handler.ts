@@ -65,6 +65,13 @@ export class ConfigManagerMessageHandler {
         const manufacturers = this.configManager.manufacturers;
         return { manufacturers };
       }
+      case ConfigManagerCommand.loadAll: {
+        await this.configManager.loadAll();
+        return {};
+      }
+      case ConfigManagerCommand.configVersion: {
+        return { configVersion: this.configManager.configVersion };
+      }
       default: {
         throw new UnknownCommandError(command);
       }
