@@ -469,19 +469,11 @@ export interface Logger {
  */
 export class ZwavejsServerRemoteController {
   constructor(
-    private destroyServerOnHardReset: boolean = false,
     private driver: Driver,
     private zwaveJsServer: ZwavejsServer,
   ) {}
 
   public async hardResetController() {
-    if (this.destroyServerOnHardReset) {
-      await this.zwaveJsServer.destroy();
-
-      this.driver.once("driver ready", () => {
-        this.zwaveJsServer.start(true);
-      });
-    }
     await this.driver.hardReset();
     this.zwaveJsServer.emit("hard reset");
   }
@@ -500,14 +492,9 @@ export class ZwavejsServer extends EventEmitter {
   constructor(
     private driver: Driver,
     private options: ZwavejsServerOptions = {},
-    destroyServerOnHardReset: boolean = false,
   ) {
     super();
-    this.remoteController = new ZwavejsServerRemoteController(
-      destroyServerOnHardReset,
-      driver,
-      this,
-    );
+    this.remoteController = new ZwavejsServerRemoteController(driver, this);
     this.logger = options.logger ?? console;
   }
 
