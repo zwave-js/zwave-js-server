@@ -47,6 +47,7 @@ import { UtilsMessageHandler } from "./utils/message_handler";
 import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
 import { MessageHandler } from "./message_handler";
 import { ConfigManagerMessageHandler } from "./config_manager/message_handler";
+import { ZnifferMessageHandler } from "./zniffer/message_handler";
 
 function getVersionData(driver: Driver): {
   homeId: number | undefined;
@@ -113,6 +114,7 @@ export class Client {
       ),
       [Instance.endpoint]: new EndpointMessageHandler(this.driver, this),
       [Instance.utils]: new UtilsMessageHandler(),
+      [Instance.zniffer]: new ZnifferMessageHandler(driver, clientsController),
     };
   }
 
@@ -499,7 +501,8 @@ export class ZwavejsServer extends EventEmitter {
 
   constructor(
     private driver: Driver,
-    private options: ZwavejsServerOptions = {},
+    private serverOptions: ZwavejsServerOptions = {},
+    private driverOptions: Record<string, any> = {},
     destroyServerOnHardReset: boolean = false,
   ) {
     super();
@@ -508,7 +511,7 @@ export class ZwavejsServer extends EventEmitter {
       driver,
       this,
     );
-    this.logger = options.logger ?? console;
+    this.logger = serverOptions.logger ?? console;
   }
 
   async start(shouldSetInclusionUserCallbacks: boolean = false) {
@@ -533,8 +536,8 @@ export class ZwavejsServer extends EventEmitter {
     }
     this.wsServer.on("connection", (socket) => this.sockets!.addSocket(socket));
 
-    const port = this.options.port || this.defaultPort;
-    const host = this.options.host;
+    const port = this.serverOptions.port || this.defaultPort;
+    const host = this.serverOptions.host;
     const localEndpointString = `${host ?? "<all interfaces>"}:${port}`;
 
     this.logger.debug(`Starting server on ${localEndpointString}`);
@@ -545,7 +548,7 @@ export class ZwavejsServer extends EventEmitter {
     await once(this.server, "listening");
     this.emit("listening");
     this.logger.info(`ZwaveJS server listening on ${localEndpointString}`);
-    if (this.options.enableDNSServiceDiscovery) {
+    if (this.serverOptions.enableDNSServiceDiscovery) {
       this.responder = getResponder();
       this.service = this.responder.createService({
         name: this.driver.controller.homeId!.toString(),

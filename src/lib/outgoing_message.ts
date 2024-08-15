@@ -10,6 +10,7 @@ import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
 import { EndpointResultTypes } from "./endpoint/outgoing_message";
 import { UtilsResultTypes } from "./utils/outgoing_message";
 import { ConfigManagerResultTypes } from "./config_manager/outgoing_message";
+import { ZnifferResultTypes } from "./zniffer/outgoing_message";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -22,7 +23,7 @@ export type JSONValue =
   | {};
 
 export interface OutgoingEvent {
-  source: "controller" | "node" | "driver";
+  source: "controller" | "node" | "driver" | "zniffer";
   event: string;
   [key: string]: JSONValue;
 }
@@ -76,6 +77,7 @@ export type ResultTypes = ServerResultTypes &
   BroadcastNodeResultTypes &
   EndpointResultTypes &
   UtilsResultTypes &
+  ZnifferResultTypes &
   ConfigManagerResultTypes;
 
 export interface OutgoingResultMessageSuccess {

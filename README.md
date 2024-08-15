@@ -1278,6 +1278,77 @@ interface {
 
 `zwave-js-server` supports all of the config manager methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/config-manager). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `config_manager.`, so `lookupDevice` is called using the `config_manager.lookup_device` command.
 
+### Zniffer commands
+
+`zwave-js-server` deviates from the Z-Wave JS API slightly for the Zniffer. See a description of the commands below
+
+#### Start Zniffer
+
+Initialize and start the Zniffer. Security keys and log config will match what's configured for the driver, but all other zniffer options are configurable.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.start";
+  devicePath: "/path/to/device";
+  options: Omit<ZnifferOptions, "logConfig" | "securityKeys" | "securityKeysLongRange">;
+}
+```
+
+#### Stop Zniffer
+
+Stop and destroy the Zniffer instance.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.stop";
+}
+```
+
+#### Get captured frames
+
+Return list of captured frames.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.captured_frames";
+}
+```
+
+#### Clear captured frames
+
+Clear all captured frames.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.clear_captured_frames";
+}
+```
+
+#### Get captured frames as ZLF Buffer
+
+Returns captured frames in the ZLF file format as a JSON stringified Buffer.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_capture_as_zlf_buffer";
+}
+```
+
 ## Events
 
 ### `zwave-js` Events
