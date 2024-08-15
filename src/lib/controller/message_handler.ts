@@ -198,7 +198,7 @@ export class ControllerMessageHandler {
         return { associations };
       }
       case ControllerCommand.checkAssociation: {
-        const result = driver.controller.checkAssociation(
+        const result = this.driver.controller.checkAssociation(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association,
@@ -206,7 +206,7 @@ export class ControllerMessageHandler {
         return { result };
       }
       case ControllerCommand.isAssociationAllowed: {
-        const result = driver.controller.checkAssociation(
+        const result = this.driver.controller.checkAssociation(
           { nodeId: message.nodeId, endpoint: message.endpoint },
           message.group,
           message.association,
