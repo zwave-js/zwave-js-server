@@ -76,4 +76,3 @@ Base schema.
 
 - Added controller `inclusion state changed` event
 - Added `config_manager` commands
-- Refactored message handlers to be stateful
