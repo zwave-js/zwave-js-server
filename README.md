@@ -1272,7 +1272,7 @@ interface {
 
 `zwave-js-server` supports all of the utility methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/utils). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `utils.`, so `parseQRCodeString` is called using the `utils.parse_qr_code_string` command.
 
-> NOTE: While some string utility commands like `num2hex`, `buffer2hex`, etc. are made available in the server due to their availability within the driver, this functionality works best when implemented locally and should not be used over WebSocket for any practical purpose.
+> NOTE: While some string utility commands are made available in the server due to their availability within the driver, this functionality works best when implemented locally and should not be used over WebSocket for any practical purpose.
 
 ### Config manager commands
 
@@ -1280,7 +1280,7 @@ interface {
 
 ### Zniffer commands
 
-`zwave-js-server` deviates from the Z-Wave JS API slightly for the Zniffer. See a description of the commands below
+`zwave-js-server` enables applications to interact with a Zniffer, and once started all events will be forwarded to clients. Note that the server deviates from the Z-Wave JS API slightly. See a description of the commands below.
 
 #### Start Zniffer
 
@@ -1346,6 +1346,46 @@ Returns captured frames in the ZLF file format as a JSON stringified Buffer.
 interface {
   messageId: string;
   command: "zniffer.get_capture_as_zlf_buffer";
+}
+```
+
+#### Get supported frequencies
+
+Gets list of supported frequencies and their names.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.supported_frequencies";
+}
+```
+
+#### Get current frequency
+
+Gets list of current frequency.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.current_frequency";
+}
+```
+
+#### Set frequency
+
+Set Zniffer frequency.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_frequency";
+  frequency: number;
 }
 ```
 

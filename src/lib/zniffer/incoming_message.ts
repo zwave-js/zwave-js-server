@@ -33,9 +33,26 @@ export interface IncomingCommandZnifferCapturedFrames
   command: ZnifferCommand.capturedFrames;
 }
 
+export interface IncomingCommandZnifferSupportedFrequencies
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.supportedFrequencies;
+}
+export interface IncomingCommandZnifferCurrentFrequency
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.currentFrequency;
+}
+export interface IncomingCommandZnifferSetFrequency
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.setFrequency;
+  frequency: number;
+}
+
 export type IncomingMessageZniffer =
   | IncomingCommandZnifferClearCapturedFrames
   | IncomingCommandZnifferGetCaptureAsZLFBuffer
   | IncomingCommandZnifferStart
   | IncomingCommandZnifferStop
-  | IncomingCommandZnifferCapturedFrames;
+  | IncomingCommandZnifferCapturedFrames
+  | IncomingCommandZnifferSupportedFrequencies
+  | IncomingCommandZnifferCurrentFrequency
+  | IncomingCommandZnifferSetFrequency;

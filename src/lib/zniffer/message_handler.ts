@@ -109,6 +109,16 @@ export class ZnifferMessageHandler {
       case ZnifferCommand.capturedFrames: {
         return { capturedFrames: this.zniffer!.capturedFrames };
       }
+      case ZnifferCommand.supportedFrequencies: {
+        return { frequencies: this.zniffer!.supportedFrequencies };
+      }
+      case ZnifferCommand.currentFrequency: {
+        return { frequency: this.zniffer!.currentFrequency };
+      }
+      case ZnifferCommand.setFrequency: {
+        await this.zniffer?.setFrequency(message.frequency);
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }
