@@ -1,4 +1,4 @@
-import { Driver, Zniffer, ZnifferOptions, ZWaveOptions } from "zwave-js";
+import { Driver, Zniffer, ZnifferOptions } from "zwave-js";
 import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { ZnifferCommand } from "./command";
@@ -14,23 +14,19 @@ export class ZnifferMessageHandler {
     private clientsController: ClientsController,
   ) {}
 
-  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
+  forwardEvent(data: OutgoingEvent, minSchemaVersion: number = 38) {
     // Forward event to all clients
     this.clientsController.clients.forEach((client) =>
       this.sendEvent(client, data, minSchemaVersion),
     );
   }
 
-  sendEvent(
-    client: Client,
-    data: OutgoingEvent,
-    minSchemaVersion: number = 38, // Introduced in schema version 38
-  ) {
+  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
     // Send event to connected client only
     if (
       client.receiveEvents &&
       client.isConnected &&
-      client.schemaVersion >= minSchemaVersion
+      client.schemaVersion >= (minSchemaVersion ?? 0)
     ) {
       client.sendEvent(data);
     }
@@ -58,23 +54,6 @@ export class ZnifferMessageHandler {
         if (message.options.securityKeysLongRange === undefined) {
           message.options.securityKeysLongRange =
             this.driver.options.securityKeysLongRange;
-        }
-        if (!Object.keys(message.options).includes(key)) {
-          message.options[key] = this.driver.options[key as keyof ZWaveOptions];
-        }
-        if (!Object.keys(message.options).includes(key)) {
-          message.options[key] = this.driver.options[key as keyof ZWaveOptions];
-        }
-        const keys: (keyof ZnifferOptions)[] = [
-          "logConfig",
-          "securityKeys",
-          "securityKeysLongRange",
-        ];
-        for (const key of keys) {
-          if (!Object.keys(message.options).includes(key)) {
-            message.options[key] =
-              this.driver.options[key as keyof ZWaveOptions];
-          }
         }
         this.zniffer = new Zniffer(message.devicePath, message.options);
         this.zniffer
