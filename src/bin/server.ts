@@ -178,15 +178,11 @@ interface Args {
   let server: ZwavejsServer;
 
   driver.once("driver ready", async () => {
-    server = new ZwavejsServer(
-      driver,
-      {
-        port: args.port,
-        host: args.host,
-        enableDNSServiceDiscovery: !args["disable-dns-sd"],
-      },
-      true,
-    );
+    server = new ZwavejsServer(driver, {
+      port: args.port,
+      host: args.host,
+      enableDNSServiceDiscovery: !args["disable-dns-sd"],
+    });
     await server.start(true);
   });
 
