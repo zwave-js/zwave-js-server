@@ -19,8 +19,8 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "eslint --ext .ts .",
-    "lint:fix": "eslint --fix --ext .ts . && prettier -w .",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix && prettier -w .",
     "test": "prettier --check src && tsc --noEmit && npm run lint && ts-node src/test/integration.ts",
     "build": "tsc -p .",
     "prepare": "npm run build",
@@ -37,6 +37,8 @@
     "zwave-js": "^13.2.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.9.0",
     "@tsconfig/node18": "^18.2.1",
     "@types/minimist": "^1.2.2",
     "@types/node": "^18.17.14",
@@ -48,6 +50,7 @@
     "alcalzone-shared": "^4.0.8",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.0.0",
+    "globals": "^15.9.0",
     "husky": "^4.3.8",
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.0",
