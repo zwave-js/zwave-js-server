@@ -4,11 +4,15 @@ import { ZnifferCommand } from "./command";
 
 export interface IncomingCommandZnifferBase extends IncomingCommandBase {}
 
+export interface IncomingCommandZnifferInit extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.init;
+  devicePath: string;
+  options: ZnifferOptions;
+}
+
 export interface IncomingCommandZnifferStart
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.start;
-  devicePath: string;
-  options: ZnifferOptions;
 }
 
 export interface IncomingCommandZnifferClearCapturedFrames
@@ -49,6 +53,7 @@ export interface IncomingCommandZnifferSetFrequency
 export type IncomingMessageZniffer =
   | IncomingCommandZnifferClearCapturedFrames
   | IncomingCommandZnifferGetCaptureAsZLFBuffer
+  | IncomingCommandZnifferInit
   | IncomingCommandZnifferStart
   | IncomingCommandZnifferStop
   | IncomingCommandZnifferCapturedFrames

@@ -37,11 +37,11 @@ export class ZnifferMessageHandler {
   ): Promise<ZnifferResultTypes[ZnifferCommand]> {
     const { command } = message;
 
-    if (message.command != ZnifferCommand.start && !this.zniffer) {
+    if (message.command != ZnifferCommand.init && !this.zniffer) {
       throw new Error("Zniffer is not running");
     }
     switch (message.command) {
-      case ZnifferCommand.start: {
+      case ZnifferCommand.init: {
         if (this.zniffer) {
           throw new Error("Zniffer is already running");
         }
@@ -87,7 +87,10 @@ export class ZnifferMessageHandler {
             }),
           );
         await this.zniffer.init();
-        await this.zniffer.start();
+        return {};
+      }
+      case ZnifferCommand.start: {
+        await this.zniffer?.start();
         return {};
       }
       case ZnifferCommand.clearCapturedFrames: {
