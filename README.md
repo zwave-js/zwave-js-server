@@ -1282,9 +1282,24 @@ interface {
 
 `zwave-js-server` enables applications to interact with a Zniffer, and once started all events will be forwarded to clients. Note that the server deviates from the Z-Wave JS API slightly. See a description of the commands below.
 
+#### Initialize Zniffer
+
+Initialize the Zniffer. Security keys and log config will match what's configured for the driver, but all other zniffer options are configurable.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.init";
+  devicePath: "/path/to/device";
+  options: Omit<ZnifferOptions, "logConfig" | "securityKeys" | "securityKeysLongRange">;
+}
+```
+
 #### Start Zniffer
 
-Initialize and start the Zniffer. Security keys and log config will match what's configured for the driver, but all other zniffer options are configurable.
+Start the Zniffer. Must have initialized the Zniffer first.
 
 [compatible with schema version: 38+]
 
@@ -1292,8 +1307,6 @@ Initialize and start the Zniffer. Security keys and log config will match what's
 interface {
   messageId: string;
   command: "zniffer.start";
-  devicePath: "/path/to/device";
-  options: Omit<ZnifferOptions, "logConfig" | "securityKeys" | "securityKeysLongRange">;
 }
 ```
 
