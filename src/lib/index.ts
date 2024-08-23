@@ -1,6 +1,3 @@
-export {} from "./broadcast_node/command";
-export {} from "./config_manager/command";
-
 export {
   BroadcastNodeCommand,
   ConfigManagerCommand,
