@@ -1,14 +1,4 @@
-export {
-  BroadcastNodeCommand,
-  ConfigManagerCommand,
-  ControllerCommand,
-  DriverCommand,
-  EndpointCommand,
-  MulticastGroupCommand,
-  NodeCommand,
-  ServerCommand,
-  UtilsCommand,
-} from "./command";
+export * from "./command";
 
 export { ZwavejsServer } from "./server";
 export * from "./state";
