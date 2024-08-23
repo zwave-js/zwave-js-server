@@ -79,7 +79,7 @@ export interface ControllerStateSchema0 {
   inclusionState: InclusionState;
 }
 
-type ControllerStateSchema16 = Omit<
+export type ControllerStateSchema16 = Omit<
   Modify<
     ControllerStateSchema0,
     {
@@ -90,7 +90,7 @@ type ControllerStateSchema16 = Omit<
   "libraryVersion" | "serialApiVersion"
 >;
 
-type ControllerStateSchema22 = Omit<
+export type ControllerStateSchema22 = Omit<
   Modify<
     ControllerStateSchema16,
     {
@@ -102,28 +102,28 @@ type ControllerStateSchema22 = Omit<
   "isSlave" | "isSecondary" | "isStaticUpdateController"
 >;
 
-interface ControllerStateSchema25 extends ControllerStateSchema22 {
+export interface ControllerStateSchema25 extends ControllerStateSchema22 {
   rfRegion?: RFRegion;
 }
 
-interface ControllerStateSchema31 extends ControllerStateSchema25 {
+export interface ControllerStateSchema31 extends ControllerStateSchema25 {
   status: ControllerStatus;
 }
 
-type ControllerStateSchema32 = Omit<
+export type ControllerStateSchema32 = Omit<
   Modify<ControllerStateSchema31, { isRebuildingRoutes: boolean }>,
   "isHealNetworkActive"
 >;
 
-type ControllerStateSchema34 = ControllerStateSchema32 & {
+export type ControllerStateSchema34 = ControllerStateSchema32 & {
   rebuildRoutesProgress?: ReadonlyMap<number, RebuildRoutesStatus>;
 };
 
-type ControllerStateSchema35 = ControllerStateSchema34 & {
+export type ControllerStateSchema35 = ControllerStateSchema34 & {
   supportsLongRange: MaybeNotKnown<boolean>;
 };
 
-type ControllerStateSchema36 = ControllerStateSchema35 & {
+export type ControllerStateSchema36 = ControllerStateSchema35 & {
   maxLongRangePowerlevel: MaybeNotKnown<number>;
   longRangeChannel: MaybeNotKnown<LongRangeChannel>;
   supportsLongRangeAutoChannelSelection: MaybeNotKnown<boolean>;
@@ -146,42 +146,42 @@ export interface ZwaveState {
   nodes: NodeState[];
 }
 
-interface CommandClassState {
+export interface CommandClassState {
   id: number;
   name: string;
   version: number;
   isSecure: boolean;
 }
 
-interface EndpointStateSchema0 {
+export interface EndpointStateSchema0 {
   nodeId: number;
   index: number;
   installerIcon?: number;
   userIcon?: number;
 }
 
-type EndpointStateSchema3 = Modify<
+export type EndpointStateSchema3 = Modify<
   EndpointStateSchema0,
   { deviceClass: DeviceClassState | null }
 >;
 
-type EndpointStateSchema15 = Modify<
+export type EndpointStateSchema15 = Modify<
   EndpointStateSchema3,
   { commandClasses: CommandClassState[] }
 >;
 
-type EndpointStateSchema26 = Modify<
+export type EndpointStateSchema26 = Modify<
   EndpointStateSchema15,
   { endpointLabel?: string }
 >;
 
-type EndpointState =
+export type EndpointState =
   | EndpointStateSchema0
   | EndpointStateSchema3
   | EndpointStateSchema15
   | EndpointStateSchema26;
 
-interface DeviceClassState0 {
+export interface DeviceClassState0 {
   basic: {
     key: number;
     label: string;
@@ -198,20 +198,20 @@ interface DeviceClassState0 {
   mandatoryControlledCCs: readonly CommandClasses[];
 }
 
-type DeviceClassState36 = Omit<
+export type DeviceClassState36 = Omit<
   DeviceClassState0,
   "mandatorySupportedCCs" | "mandatoryControlledCCs"
 >;
 
-type DeviceClassState = DeviceClassState0 | DeviceClassState36;
+export type DeviceClassState = DeviceClassState0 | DeviceClassState36;
 
-interface ValueState extends TranslatedValueID {
+export interface ValueState extends TranslatedValueID {
   metadata: ValueMetadata;
   ccVersion: number;
   value?: any;
 }
 
-interface ValueMetadataStateSchema0 {
+export interface ValueMetadataStateSchema0 {
   type: ValueType;
   default?: any;
   readable: boolean;
@@ -229,16 +229,16 @@ interface ValueMetadataStateSchema0 {
   unit?: string;
 }
 
-interface ValueMetadataStateSchema28 extends ValueMetadataStateSchema0 {
+export interface ValueMetadataStateSchema28 extends ValueMetadataStateSchema0 {
   stateful?: boolean;
   secret?: boolean;
 }
 
-type ValueMetadataState =
+export type ValueMetadataState =
   | ValueMetadataStateSchema0
   | ValueMetadataStateSchema28;
 
-interface ConfigurationMetadataStateSchema0 {
+export interface ConfigurationMetadataStateSchema0 {
   type: ValueType;
   readable: boolean;
   writeable: boolean;
@@ -262,16 +262,16 @@ interface ConfigurationMetadataStateSchema0 {
   isFromConfig?: boolean;
 }
 
-type ConfigurationMetadataStateSchema29 = Omit<
+export type ConfigurationMetadataStateSchema29 = Omit<
   ConfigurationMetadataStateSchema0,
   "name" | "info"
 >;
 
-type ConfigurationMetadataState =
+export type ConfigurationMetadataState =
   | ConfigurationMetadataStateSchema0
   | ConfigurationMetadataStateSchema29;
 
-interface NodeStateSchema0 extends EndpointStateSchema0 {
+export interface NodeStateSchema0 extends EndpointStateSchema0 {
   status: NodeStatus;
   ready: boolean;
   isListening?: boolean;
@@ -305,12 +305,12 @@ interface NodeStateSchema0 extends EndpointStateSchema0 {
   values: ValueState[];
 }
 
-type NodeStateSchema1 = Modify<
+export type NodeStateSchema1 = Modify<
   NodeStateSchema0,
   { deviceClass: DeviceClassState | null; commandClasses: CommandClassState[] }
 >;
 
-type NodeStateSchema3 = Omit<
+export type NodeStateSchema3 = Omit<
   Modify<
     NodeStateSchema1,
     {
@@ -328,37 +328,40 @@ type NodeStateSchema3 = Omit<
   "maxBaudRate" | "version" | "isBeaming" | "roleType"
 >;
 
-type NodeStateSchema4 = Modify<NodeStateSchema3, { interviewStage?: string }>;
+export type NodeStateSchema4 = Modify<
+  NodeStateSchema3,
+  { interviewStage?: string }
+>;
 
-interface NodeStateSchema5 extends NodeStateSchema4 {
+export interface NodeStateSchema5 extends NodeStateSchema4 {
   deviceDatabaseUrl?: string;
 }
 
-interface NodeStateSchema7 extends NodeStateSchema5 {
+export interface NodeStateSchema7 extends NodeStateSchema5 {
   statistics: NodeStatistics;
 }
 
-interface NodeStateSchema10 extends NodeStateSchema7 {
+export interface NodeStateSchema10 extends NodeStateSchema7 {
   highestSecurityClass: SecurityClass | undefined;
 }
 
-interface NodeStateSchema14 extends NodeStateSchema10 {
+export interface NodeStateSchema14 extends NodeStateSchema10 {
   isControllerNode: boolean;
   keepAwake: boolean;
 }
 
-type NodeStateSchema29 = Omit<NodeStateSchema14, "commandClasses">;
+export type NodeStateSchema29 = Omit<NodeStateSchema14, "commandClasses">;
 
-interface NodeStateSchema30 extends NodeStateSchema29 {
+export interface NodeStateSchema30 extends NodeStateSchema29 {
   lastSeen: MaybeNotKnown<Date>;
 }
 
-interface NodeStateSchema31 extends NodeStateSchema30 {
+export interface NodeStateSchema31 extends NodeStateSchema30 {
   defaultVolume?: number;
   defaultTransitionDuration?: string;
 }
 
-interface NodeStateSchema35 extends NodeStateSchema31 {
+export interface NodeStateSchema35 extends NodeStateSchema31 {
   protocol: Protocols;
 }
 
@@ -376,15 +379,15 @@ export type NodeState =
   | NodeStateSchema31
   | NodeStateSchema35;
 
-interface FoundNodeStateSchema19 {
+export interface FoundNodeStateSchema19 {
   nodeId: number;
   deviceClass: DeviceClassState | null;
   status: NodeStatus;
 }
 
-type FoundNodeStateSchema22 = Omit<FoundNodeStateSchema19, "status">;
+export type FoundNodeStateSchema22 = Omit<FoundNodeStateSchema19, "status">;
 
-type FoundNodeStateSchema23 = Modify<
+export type FoundNodeStateSchema23 = Modify<
   FoundNodeStateSchema22,
   { supportedCCs?: CommandClasses[]; controlledCCs?: CommandClasses[] }
 >;
@@ -394,7 +397,10 @@ export type FoundNodeState =
   | FoundNodeStateSchema22
   | FoundNodeStateSchema23;
 
-function getNodeValues(node: ZWaveNode, schemaVersion: number): ValueState[] {
+export function getNodeValues(
+  node: ZWaveNode,
+  schemaVersion: number,
+): ValueState[] {
   if (!node.ready) {
     // guard: do not request all values (and their metadata) while the node is still being interviewed.
     // once the node hits ready state, all values will be sent in the 'node ready' event.
