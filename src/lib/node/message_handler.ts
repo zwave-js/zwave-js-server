@@ -24,19 +24,11 @@ import {
 import { OutgoingEvent } from "../outgoing_message";
 
 export class NodeMessageHandler {
-  private clientsController: ClientsController;
-  private driver: Driver;
-  private client: Client;
-
   constructor(
-    clientsController: ClientsController,
-    driver: Driver,
-    client: Client,
-  ) {
-    this.clientsController = clientsController;
-    this.driver = driver;
-    this.client = client;
-  }
+    private clientsController: ClientsController,
+    private driver: Driver,
+    private client: Client,
+  ) {}
 
   public async handle(
     message: IncomingMessageNode,

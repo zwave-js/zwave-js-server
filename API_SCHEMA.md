@@ -76,3 +76,4 @@ Base schema.
 
 - Added controller `inclusion state changed` event
 - Added `config_manager` commands
+- Added `zniffer` commands

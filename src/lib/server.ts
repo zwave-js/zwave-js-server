@@ -47,6 +47,7 @@ import { UtilsMessageHandler } from "./utils/message_handler";
 import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
 import { MessageHandler } from "./message_handler";
 import { ConfigManagerMessageHandler } from "./config_manager/message_handler";
+import { ZnifferMessageHandler } from "./zniffer/message_handler";
 
 function getVersionData(driver: Driver): {
   homeId: number | undefined;
@@ -113,6 +114,7 @@ export class Client {
       ),
       [Instance.endpoint]: new EndpointMessageHandler(this.driver, this),
       [Instance.utils]: new UtilsMessageHandler(),
+      [Instance.zniffer]: new ZnifferMessageHandler(driver, clientsController),
     };
   }
 

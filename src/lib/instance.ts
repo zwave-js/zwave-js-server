@@ -7,4 +7,5 @@ export enum Instance {
   node = "node",
   endpoint = "endpoint",
   utils = "utils",
+  zniffer = "zniffer",
 }

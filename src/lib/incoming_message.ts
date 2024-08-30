@@ -10,6 +10,7 @@ import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
 import { IncomingMessageUtils } from "./utils/incoming_message";
 import { IncomingMessageConfigManager } from "./config_manager/incoming_message";
 import { LogContexts } from "./logging";
+import { IncomingMessageZniffer } from "./zniffer/incoming_message";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: ServerCommand.startListening;
@@ -56,6 +57,7 @@ export type IncomingMessage =
   | IncomingMessageBroadcastNode
   | IncomingMessageEndpoint
   | IncomingMessageUtils
+  | IncomingMessageZniffer
   | IncomingMessageConfigManager
   | IncomingCommandInitialize
   | IncomingCommandStartListeningLogs

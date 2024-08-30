@@ -1278,6 +1278,143 @@ interface {
 
 `zwave-js-server` supports all of the config manager methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/config-manager). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `config_manager.`, so `lookupDevice` is called using the `config_manager.lookup_device` command.
 
+### Zniffer commands
+
+`zwave-js-server` enables applications to interact with a Zniffer, and once started all events will be forwarded to clients. Note that the server deviates from the Z-Wave JS API slightly. See a description of the commands below.
+
+#### Initialize Zniffer
+
+Initialize the Zniffer. Security keys and log config will match what's configured for the driver, but all other zniffer options are configurable.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.init";
+  devicePath: "/path/to/device";
+  options: Omit<ZnifferOptions, "logConfig" | "securityKeys" | "securityKeysLongRange">;
+}
+```
+
+#### Start Zniffer
+
+Start the Zniffer. Must have initialized the Zniffer first.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.start";
+}
+```
+
+#### Stop Zniffer
+
+Stop the Zniffer instance.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.stop";
+}
+```
+
+#### Destroy Zniffer
+
+Destroy the Zniffer instance.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.destroy";
+}
+```
+
+#### Get captured frames
+
+Return list of captured frames.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.captured_frames";
+}
+```
+
+#### Clear captured frames
+
+Clear all captured frames.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.clear_captured_frames";
+}
+```
+
+#### Get captured frames as ZLF Buffer
+
+Returns captured frames in the ZLF file format as a JSON stringified Buffer.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_capture_as_zlf_buffer";
+}
+```
+
+#### Get supported frequencies
+
+Gets list of supported frequencies and their names.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.supported_frequencies";
+}
+```
+
+#### Get current frequency
+
+Gets list of current frequency.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.current_frequency";
+}
+```
+
+#### Set frequency
+
+Set Zniffer frequency.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_frequency";
+  frequency: number;
+}
+```
+
 ## Events
 
 ### `zwave-js` Events

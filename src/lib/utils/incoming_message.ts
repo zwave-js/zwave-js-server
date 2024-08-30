@@ -21,22 +21,26 @@ export interface IncomingCommandUtilsNum2hex extends IncomingCommandUtilsBase {
   val?: number | null;
   uppercase: boolean;
 }
+
 export interface IncomingCommandUtilsFormatId extends IncomingCommandUtilsBase {
   command: UtilsCommand.formatId;
   id: number | string;
 }
+
 export interface IncomingCommandUtilsBuffer2hex
   extends IncomingCommandUtilsBase {
   command: UtilsCommand.buffer2hex;
   buffer: Buffer;
   uppercase: boolean;
 }
+
 export interface IncomingCommandUtilsGetEnumMemberName
   extends IncomingCommandUtilsBase {
   command: UtilsCommand.getEnumMemberName;
   enumeration: unknown;
   value: number;
 }
+
 export interface IncomingCommandUtilsRssiToString
   extends IncomingCommandUtilsBase {
   command: UtilsCommand.rssiToString;
