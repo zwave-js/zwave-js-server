@@ -7,6 +7,7 @@ export interface ZnifferResultTypes {
   [ZnifferCommand.getCaptureAsZLFBuffer]: { capture: Buffer };
   [ZnifferCommand.capturedFrames]: { capturedFrames: any[] };
   [ZnifferCommand.stop]: Record<string, never>;
+  [ZnifferCommand.destroy]: Record<string, never>;
   [ZnifferCommand.supportedFrequencies]: {
     frequencies: ReadonlyMap<number, string>;
   };

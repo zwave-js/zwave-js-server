@@ -1312,7 +1312,7 @@ interface {
 
 #### Stop Zniffer
 
-Stop and destroy the Zniffer instance.
+Stop the Zniffer instance.
 
 [compatible with schema version: 38+]
 
@@ -1320,6 +1320,19 @@ Stop and destroy the Zniffer instance.
 interface {
   messageId: string;
   command: "zniffer.stop";
+}
+```
+
+#### Destroy Zniffer
+
+Destroy the Zniffer instance.
+
+[compatible with schema version: 38+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.destroy";
 }
 ```
 

@@ -102,6 +102,9 @@ export class ZnifferMessageHandler {
       }
       case ZnifferCommand.stop: {
         await this.zniffer?.stop();
+        return {};
+      }
+      case ZnifferCommand.destroy: {
         this.zniffer?.removeAllListeners();
         await this.zniffer?.destroy();
         this.zniffer = undefined;

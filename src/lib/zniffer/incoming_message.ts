@@ -29,6 +29,11 @@ export interface IncomingCommandZnifferStop extends IncomingCommandZnifferBase {
   command: ZnifferCommand.stop;
 }
 
+export interface IncomingCommandZnifferDestroy
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.destroy;
+}
+
 export interface IncomingCommandZnifferCapturedFrames
   extends IncomingCommandZnifferBase {
   command: ZnifferCommand.capturedFrames;
@@ -59,4 +64,5 @@ export type IncomingMessageZniffer =
   | IncomingCommandZnifferCapturedFrames
   | IncomingCommandZnifferSupportedFrequencies
   | IncomingCommandZnifferCurrentFrequency
-  | IncomingCommandZnifferSetFrequency;
+  | IncomingCommandZnifferSetFrequency
+  | IncomingCommandZnifferDestroy;
