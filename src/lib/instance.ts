@@ -3,9 +3,10 @@ export enum Instance {
   config_manager = "config_manager",
   controller = "controller",
   driver = "driver",
+  endpoint = "endpoint",
   multicast_group = "multicast_group",
   node = "node",
-  endpoint = "endpoint",
+  registries = "registries",
   utils = "utils",
   zniffer = "zniffer",
 }

@@ -3,11 +3,13 @@ import { UnknownCommandError } from "../error";
 import { ConfigManagerCommand } from "./command";
 import { IncomingMessageConfigManager } from "./incoming_message";
 import { ConfigManagerResultTypes } from "./outgoing_message";
+import { MessageHandler } from "../message_handler";
 
-export class ConfigManagerMessageHandler {
+export class ConfigManagerMessageHandler extends MessageHandler {
   private configManager: ConfigManager = new ConfigManager();
 
   constructor() {
+    super();
     this.configManager.loadDeviceIndex().then(() => {});
   }
 

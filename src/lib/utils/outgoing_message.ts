@@ -1,5 +1,4 @@
 import { QRProvisioningInformation } from "@zwave-js/core";
-import { DeviceConfig } from "@zwave-js/config";
 import { UtilsCommand } from "./command";
 
 export interface UtilsResultTypes {
