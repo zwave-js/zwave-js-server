@@ -197,10 +197,18 @@ export interface IncomingCommandNodeGetValueTimestamp
   valueId: ValueID;
 }
 
-export interface IncomingCommandNodeManuallyIdleNotificationValue
+export interface IncomingCommandNodeManuallyIdleNotificationValueMethod1
   extends IncomingCommandNodeBase {
   command: NodeCommand.manuallyIdleNotificationValue;
   valueId: ValueID;
+}
+
+export interface IncomingCommandNodeManuallyIdleNotificationValueMethod2
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.manuallyIdleNotificationValue;
+  notificationType: number;
+  prevValue: number;
+  endpointIndex?: number;
 }
 
 export interface IncomingCommandNodeSetDateAndTime
@@ -276,7 +284,8 @@ export type IncomingMessageNode =
   | IncomingCommandWaitForWakeup
   | IncomingCommandInterview
   | IncomingCommandNodeGetValueTimestamp
-  | IncomingCommandNodeManuallyIdleNotificationValue
+  | IncomingCommandNodeManuallyIdleNotificationValueMethod1
+  | IncomingCommandNodeManuallyIdleNotificationValueMethod2
   | IncomingCommandNodeSetDateAndTime
   | IncomingCommandNodeGetDateAndTime
   | IncomingCommandNodeIsHealthCheckInProgress

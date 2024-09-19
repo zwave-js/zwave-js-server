@@ -77,3 +77,7 @@ Base schema.
 - Added controller `inclusion state changed` event
 - Added `config_manager` commands
 - Added `zniffer` commands
+
+# Schema 39
+
+- Added support for both overloads of `node.manuallyIdleNotificationValue`

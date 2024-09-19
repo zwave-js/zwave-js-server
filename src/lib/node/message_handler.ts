@@ -272,7 +272,15 @@ export class NodeMessageHandler {
         return { timestamp };
       }
       case NodeCommand.manuallyIdleNotificationValue: {
-        node.manuallyIdleNotificationValue(message.valueId);
+        if ("valueId" in message) {
+          node.manuallyIdleNotificationValue(message.valueId);
+        } else {
+          node.manuallyIdleNotificationValue(
+            message.notificationType,
+            message.prevValue,
+            message.endpointIndex,
+          );
+        }
         return {};
       }
       case NodeCommand.setDateAndTime: {
