@@ -11,7 +11,6 @@ import { EndpointResultTypes } from "./endpoint/outgoing_message";
 import { UtilsResultTypes } from "./utils/outgoing_message";
 import { ConfigManagerResultTypes } from "./config_manager/outgoing_message";
 import { ZnifferResultTypes } from "./zniffer/outgoing_message";
-import { RegistriesResultTypes } from "./registries/outgoing_message";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -79,8 +78,7 @@ export type ResultTypes = ServerResultTypes &
   EndpointResultTypes &
   UtilsResultTypes &
   ZnifferResultTypes &
-  ConfigManagerResultTypes &
-  RegistriesResultTypes;
+  ConfigManagerResultTypes;
 
 export interface OutgoingResultMessageSuccess {
   type: "result";

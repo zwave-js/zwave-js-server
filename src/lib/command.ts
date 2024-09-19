@@ -5,7 +5,6 @@ export { DriverCommand } from "./driver/command";
 export { EndpointCommand } from "./endpoint/command";
 export { MulticastGroupCommand } from "./multicast_group/command";
 export { NodeCommand } from "./node/command";
-export { RegistriesCommand } from "./registries/command";
 export { UtilsCommand } from "./utils/command";
 
 export enum ServerCommand {

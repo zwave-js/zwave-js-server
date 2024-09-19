@@ -6,7 +6,6 @@ export enum Instance {
   endpoint = "endpoint",
   multicast_group = "multicast_group",
   node = "node",
-  registries = "registries",
   utils = "utils",
   zniffer = "zniffer",
 }
