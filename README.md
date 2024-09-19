@@ -865,7 +865,21 @@ interface {
 
 #### [Manually Idle Notification CC Value](https://zwave-js.github.io/node-zwave-js/#/api/node?id=manuallyidlenotificationvalue)
 
-[compatible with schema version: 28+]
+[compatible with schema version: 39+]
+
+This can be called in one of two ways:
+
+Method 1:
+
+```ts
+interface {
+  messageId: string;
+  command: "node.manually_idle_notification_value";
+  valueId: ValueID;
+}
+```
+
+Method 2:
 
 ```ts
 interface {
