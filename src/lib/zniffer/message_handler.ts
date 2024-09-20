@@ -1,12 +1,13 @@
-import { Driver, Zniffer, ZnifferOptions } from "zwave-js";
+import { Driver, Zniffer } from "zwave-js";
 import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { ZnifferCommand } from "./command";
 import { IncomingMessageZniffer } from "./incoming_message";
 import { ZnifferResultTypes } from "./outgoing_message";
 import { OutgoingEvent } from "../outgoing_message";
+import { MessageHandler } from "../message_handler";
 
-export class ZnifferMessageHandler {
+export class ZnifferMessageHandler implements MessageHandler {
   private zniffer?: Zniffer;
 
   constructor(
@@ -82,7 +83,7 @@ export class ZnifferMessageHandler {
           .on("error", (error) =>
             this.forwardEvent({
               source: "zniffer",
-              event: "ready",
+              event: "error",
               error,
             }),
           );

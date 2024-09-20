@@ -10,8 +10,9 @@ import { DriverCommand } from "./command";
 import { IncomingMessageDriver } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
 import { dumpDriver, dumpLogConfig } from "../state";
+import { MessageHandler } from "../message_handler";
 
-export class DriverMessageHandler {
+export class DriverMessageHandler implements MessageHandler {
   constructor(
     private remoteController: ZwavejsServerRemoteController,
     private clientsController: ClientsController,

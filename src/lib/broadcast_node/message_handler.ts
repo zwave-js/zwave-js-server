@@ -5,8 +5,9 @@ import { IncomingMessageBroadcastNode } from "./incoming_message";
 import { BroadcastNodeResultTypes } from "./outgoing_message";
 import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
+import { MessageHandler } from "../message_handler";
 
-export class BroadcastNodeMessageHandler {
+export class BroadcastNodeMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,

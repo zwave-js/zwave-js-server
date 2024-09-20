@@ -22,8 +22,9 @@ import {
   setValueOutgoingMessage,
 } from "../common";
 import { OutgoingEvent } from "../outgoing_message";
+import { MessageHandler } from "../message_handler";
 
-export class NodeMessageHandler {
+export class NodeMessageHandler implements MessageHandler {
   constructor(
     private clientsController: ClientsController,
     private driver: Driver,

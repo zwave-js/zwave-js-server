@@ -5,8 +5,9 @@ import { IncomingMessageMulticastGroup } from "./incoming_message";
 import { MulticastGroupResultTypes } from "./outgoing_message";
 import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
+import { MessageHandler } from "../message_handler";
 
-export class MulticastGroupMessageHandler {
+export class MulticastGroupMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,

@@ -1439,7 +1439,7 @@ All `zwave-js` events as documented are forwarded on to clients that have sent t
 interface {
   type: "event";
   event: {
-    source: "driver" | "controller" | "node";
+    source: "driver" | "controller" | "node" | "zniffer";
     event: string;
     ... // Additional parameters dependent on the event, see zwave-js docs for more details
   }

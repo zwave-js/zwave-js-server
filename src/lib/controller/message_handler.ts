@@ -32,8 +32,9 @@ import {
 import { ControllerResultTypes } from "./outgoing_message";
 import { firmwareUpdateOutgoingMessage } from "../common";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks";
+import { MessageHandler } from "../message_handler";
 
-export class ControllerMessageHandler {
+export class ControllerMessageHandler implements MessageHandler {
   constructor(
     private clientsController: ClientsController,
     private driver: Driver,

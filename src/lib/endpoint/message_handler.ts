@@ -10,6 +10,7 @@ import { EndpointCommand } from "./command";
 import { IncomingMessageEndpoint } from "./incoming_message";
 import { EndpointResultTypes } from "./outgoing_message";
 import { setRawConfigParameterValue } from "../common";
+import { MessageHandler } from "../message_handler";
 
 const isBufferObject = (obj: any): boolean => {
   return (
@@ -33,7 +34,7 @@ const deserializeBufferInArray = (array: Array<any>): Array<any> => {
   return array;
 };
 
-export class EndpointMessageHandler {
+export class EndpointMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,
