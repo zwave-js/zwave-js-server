@@ -7,13 +7,11 @@ import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
 import { MessageHandler } from "../message_handler";
 
-export class MulticastGroupMessageHandler extends MessageHandler {
+export class MulticastGroupMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   async handle(
     message: IncomingMessageMulticastGroup,

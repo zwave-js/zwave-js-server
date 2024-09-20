@@ -12,7 +12,7 @@ import { IncomingMessageUtils } from "./incoming_message";
 import { UtilsResultTypes } from "./outgoing_message";
 import { MessageHandler } from "../message_handler";
 
-export class UtilsMessageHandler extends MessageHandler {
+export class UtilsMessageHandler implements MessageHandler {
   async handle(
     message: IncomingMessageUtils,
   ): Promise<UtilsResultTypes[UtilsCommand]> {

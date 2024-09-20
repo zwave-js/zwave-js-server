@@ -24,14 +24,12 @@ import {
 import { OutgoingEvent } from "../outgoing_message";
 import { MessageHandler } from "../message_handler";
 
-export class NodeMessageHandler extends MessageHandler {
+export class NodeMessageHandler implements MessageHandler {
   constructor(
     private clientsController: ClientsController,
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   public async handle(
     message: IncomingMessageNode,

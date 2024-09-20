@@ -34,14 +34,12 @@ import { firmwareUpdateOutgoingMessage } from "../common";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks";
 import { MessageHandler } from "../message_handler";
 
-export class ControllerMessageHandler extends MessageHandler {
+export class ControllerMessageHandler implements MessageHandler {
   constructor(
     private clientsController: ClientsController,
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   async handle(
     message: IncomingMessageController,

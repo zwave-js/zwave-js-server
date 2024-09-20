@@ -5,11 +5,10 @@ import { IncomingMessageConfigManager } from "./incoming_message";
 import { ConfigManagerResultTypes } from "./outgoing_message";
 import { MessageHandler } from "../message_handler";
 
-export class ConfigManagerMessageHandler extends MessageHandler {
+export class ConfigManagerMessageHandler implements MessageHandler {
   private configManager: ConfigManager = new ConfigManager();
 
   constructor() {
-    super();
     this.configManager.loadDeviceIndex().then(() => {});
   }
 

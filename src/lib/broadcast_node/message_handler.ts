@@ -7,13 +7,11 @@ import { Client } from "../server";
 import { setValueOutgoingMessage } from "../common";
 import { MessageHandler } from "../message_handler";
 
-export class BroadcastNodeMessageHandler extends MessageHandler {
+export class BroadcastNodeMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   async handle(
     message: IncomingMessageBroadcastNode,

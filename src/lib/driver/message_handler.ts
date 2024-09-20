@@ -12,16 +12,14 @@ import { DriverResultTypes } from "./outgoing_message";
 import { dumpDriver, dumpLogConfig } from "../state";
 import { MessageHandler } from "../message_handler";
 
-export class DriverMessageHandler extends MessageHandler {
+export class DriverMessageHandler implements MessageHandler {
   constructor(
     private remoteController: ZwavejsServerRemoteController,
     private clientsController: ClientsController,
     private logger: Logger,
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   async handle(
     message: IncomingMessageDriver,

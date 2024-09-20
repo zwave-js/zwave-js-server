@@ -7,15 +7,13 @@ import { ZnifferResultTypes } from "./outgoing_message";
 import { OutgoingEvent } from "../outgoing_message";
 import { MessageHandler } from "../message_handler";
 
-export class ZnifferMessageHandler extends MessageHandler {
+export class ZnifferMessageHandler implements MessageHandler {
   private zniffer?: Zniffer;
 
   constructor(
     private driver: Driver,
     private clientsController: ClientsController,
-  ) {
-    super();
-  }
+  ) {}
 
   forwardEvent(data: OutgoingEvent, minSchemaVersion: number = 38) {
     // Forward event to all clients

@@ -34,13 +34,11 @@ const deserializeBufferInArray = (array: Array<any>): Array<any> => {
   return array;
 };
 
-export class EndpointMessageHandler extends MessageHandler {
+export class EndpointMessageHandler implements MessageHandler {
   constructor(
     private driver: Driver,
     private client: Client,
-  ) {
-    super();
-  }
+  ) {}
 
   async handle(
     message: IncomingMessageEndpoint,
