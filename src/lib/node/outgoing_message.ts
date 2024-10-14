@@ -5,6 +5,7 @@ import {
   RouteHealthCheckSummary,
   TranslatedValueID,
   ValueMetadata,
+  ConfigValue,
 } from "zwave-js";
 import {
   MaybeNotKnown,
@@ -31,6 +32,9 @@ export interface NodeResultTypes {
   };
   [NodeCommand.pollValue]: { value?: any };
   [NodeCommand.setRawConfigParameterValue]: { result?: SupervisionResult };
+  [NodeCommand.getRawConfigParameterValue]: {
+    value: MaybeNotKnown<ConfigValue>;
+  };
   [NodeCommand.refreshValues]: Record<string, never>;
   [NodeCommand.refreshCCValues]: Record<string, never>;
   [NodeCommand.ping]: { responded: boolean };

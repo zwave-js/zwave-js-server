@@ -60,6 +60,14 @@ export interface IncomingCommandEndpointSetRawConfigParameterValue
   valueFormat?: ConfigValueFormat;
 }
 
+export interface IncomingCommandEndpointGetRawConfigParameterValue
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.getRawConfigParameterValue;
+  parameter: number;
+  bitMask?: number;
+  allowUnexpectedResponse?: boolean;
+}
+
 export type IncomingMessageEndpoint =
   | IncomingCommandEndpointInvokeCCAPI
   | IncomingCommandEndpointSupportsCCAPI
@@ -68,4 +76,5 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointIsCCSecure
   | IncomingCommandEndpointGetCCVersion
   | IncomingCommandEndpointGetNodeUnsafe
-  | IncomingCommandEndpointSetRawConfigParameterValue;
+  | IncomingCommandEndpointSetRawConfigParameterValue
+  | IncomingCommandEndpointGetRawConfigParameterValue;

@@ -2,14 +2,21 @@ import {
   ControllerFirmwareUpdateResult,
   Endpoint,
   FirmwareUpdateResult,
+  ConfigValue,
   SetValueResult,
   SetValueStatus,
   ZWaveNode,
 } from "zwave-js";
 import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
-import { SupervisionResult } from "@zwave-js/core";
-import { IncomingCommandNodeSetRawConfigParameterValue } from "./node/incoming_message";
-import { IncomingCommandEndpointSetRawConfigParameterValue } from "./endpoint/incoming_message";
+import { SupervisionResult, MaybeNotKnown } from "@zwave-js/core";
+import {
+  IncomingCommandNodeGetRawConfigParameterValue,
+  IncomingCommandNodeSetRawConfigParameterValue,
+} from "./node/incoming_message";
+import {
+  IncomingCommandEndpointGetRawConfigParameterValue,
+  IncomingCommandEndpointSetRawConfigParameterValue,
+} from "./endpoint/incoming_message";
 import { InvalidParamsPassedToCommandError } from "./error";
 
 export type SetValueResultType =
@@ -83,4 +90,20 @@ export async function setRawConfigParameterValue(
   }
   const result = await nodeOrEndpoint.commandClasses.Configuration.set(options);
   return { result };
+}
+
+export async function getRawConfigParameterValue(
+  message:
+    | IncomingCommandNodeGetRawConfigParameterValue
+    | IncomingCommandEndpointGetRawConfigParameterValue,
+  nodeOrEndpoint: ZWaveNode | Endpoint,
+): Promise<{ value: MaybeNotKnown<ConfigValue> }> {
+  const value = await nodeOrEndpoint.commandClasses.Configuration.get(
+    message.parameter,
+    {
+      valueBitMask: message.bitMask,
+      allowUnexpectedResponse: message.allowUnexpectedResponse,
+    },
+  );
+  return { value };
 }
