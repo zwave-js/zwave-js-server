@@ -7,4 +7,5 @@ export enum EndpointCommand {
   getCCVersion = "endpoint.get_cc_version",
   getNodeUnsafe = "endpoint.get_node_unsafe",
   setRawConfigParameterValue = "endpoint.set_raw_config_parameter_value",
+  getRawConfigParameterValue = "endpoint.get_raw_config_parameter_value",
 }

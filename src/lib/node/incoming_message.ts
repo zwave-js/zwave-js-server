@@ -94,6 +94,13 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   valueFormat?: ConfigValueFormat;
 }
 
+export interface IncomingCommandNodeGetRawConfigParameterValue
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getRawConfigParameterValue;
+  parameter: number;
+  bitMask?: number;
+}
+
 export interface IncomingCommandNodeRefreshValues
   extends IncomingCommandNodeBase {
   command: NodeCommand.refreshValues;
@@ -265,6 +272,7 @@ export type IncomingMessageNode =
   | IncomingCommandGetFirmwareUpdateCapabilitiesCached
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
+  | IncomingCommandNodeGetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues
   | IncomingCommandNodeRefreshCCValues
   | IncomingCommandNodePing
