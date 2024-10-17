@@ -99,7 +99,6 @@ export interface IncomingCommandNodeGetRawConfigParameterValue
   command: NodeCommand.getRawConfigParameterValue;
   parameter: number;
   bitMask?: number;
-  allowUnexpectedResponse?: boolean;
 }
 
 export interface IncomingCommandNodeRefreshValues

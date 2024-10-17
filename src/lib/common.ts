@@ -102,7 +102,6 @@ export async function getRawConfigParameterValue(
     message.parameter,
     {
       valueBitMask: message.bitMask,
-      allowUnexpectedResponse: message.allowUnexpectedResponse,
     },
   );
   return { value };

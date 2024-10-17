@@ -65,7 +65,6 @@ export interface IncomingCommandEndpointGetRawConfigParameterValue
   command: EndpointCommand.getRawConfigParameterValue;
   parameter: number;
   bitMask?: number;
-  allowUnexpectedResponse?: boolean;
 }
 
 export type IncomingMessageEndpoint =
