@@ -362,7 +362,7 @@ export class EventForwarder {
       "notification",
       (endpoint: Endpoint, ccId: CommandClasses, args: any) => {
         // only forward value events for ready nodes
-        const changedNode = endpoint.getNodeUnsafe();
+        const changedNode = endpoint.tryGetNode();
         if (!changedNode) {
           throw new NodeNotFoundError(endpoint.nodeId);
         }

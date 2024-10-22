@@ -6,6 +6,7 @@ export enum EndpointCommand {
   isCCSecure = "endpoint.is_cc_secure",
   getCCVersion = "endpoint.get_cc_version",
   getNodeUnsafe = "endpoint.get_node_unsafe",
+  tryGetNode = "endpoint.try_get_node",
   setRawConfigParameterValue = "endpoint.set_raw_config_parameter_value",
   getRawConfigParameterValue = "endpoint.get_raw_config_parameter_value",
 }

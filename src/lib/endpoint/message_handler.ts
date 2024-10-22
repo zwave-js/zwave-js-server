@@ -92,8 +92,9 @@ export class EndpointMessageHandler implements MessageHandler {
         const version = endpoint.getCCVersion(message.commandClass);
         return { version };
       }
-      case EndpointCommand.getNodeUnsafe: {
-        const node = endpoint.getNodeUnsafe();
+      case EndpointCommand.getNodeUnsafe:
+      case EndpointCommand.tryGetNode: {
+        const node = endpoint.tryGetNode();
         return {
           node:
             node === undefined
