@@ -57,7 +57,7 @@
     "semver": "^7.5.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "zwave-js": "^13.2.0"
+    "zwave-js": "14.0.0-beta.1-pr-7332-f06f160"
   },
   "husky": {
     "hooks": {

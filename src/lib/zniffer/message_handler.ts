@@ -99,7 +99,9 @@ export class ZnifferMessageHandler implements MessageHandler {
         return {};
       }
       case ZnifferCommand.getCaptureAsZLFBuffer: {
-        return { capture: this.zniffer!.getCaptureAsZLFBuffer() };
+        return {
+          capture: Buffer.from(this.zniffer!.getCaptureAsZLFBuffer().buffer),
+        };
       }
       case ZnifferCommand.stop: {
         await this.zniffer?.stop();
