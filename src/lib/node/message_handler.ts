@@ -121,6 +121,10 @@ export class NodeMessageHandler implements MessageHandler {
       case NodeCommand.getRawConfigParameterValue: {
         return getRawConfigParameterValue(message, node);
       }
+      case NodeCommand.resetAllConfigParameters: {
+        await node.commandClasses.Configuration.resetAll();
+        return {};
+      }
       case NodeCommand.refreshValues: {
         await node.refreshValues();
         return {};

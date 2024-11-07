@@ -101,6 +101,11 @@ export interface IncomingCommandNodeGetRawConfigParameterValue
   bitMask?: number;
 }
 
+export interface IncomingCommandNodeResetAllConfigParameters
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.resetAllConfigParameters;
+}
+
 export interface IncomingCommandNodeRefreshValues
   extends IncomingCommandNodeBase {
   command: NodeCommand.refreshValues;
@@ -273,6 +278,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeGetRawConfigParameterValue
+  | IncomingCommandNodeResetAllConfigParameters
   | IncomingCommandNodeRefreshValues
   | IncomingCommandNodeRefreshCCValues
   | IncomingCommandNodePing
