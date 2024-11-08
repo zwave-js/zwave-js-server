@@ -35,6 +35,17 @@ export class EventForwarder {
       this.setupNode(node),
     );
 
+    // Bind to driver events
+    this.clientsController.driver.on("driver ready", () => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clientsController.clients.forEach((client) =>
+        this.sendEvent(client, {
+          source: "driver",
+          event: "driver ready",
+        }),
+      );
+    });
+
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
 
