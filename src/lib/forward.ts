@@ -38,12 +38,14 @@ export class EventForwarder {
     // Bind to driver events
     this.clientsController.driver.on("driver ready", () => {
       // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) =>
-        this.sendEvent(client, {
-          source: "driver",
-          event: "driver ready",
-        }),
-      );
+      this.clientsController.clients.forEach((client) => {
+        if (client.schemaVersion >= 40) {
+          this.sendEvent(client, {
+            source: "driver",
+            event: "driver ready",
+          });
+        }
+      });
     });
 
     // Bind to all controller events
