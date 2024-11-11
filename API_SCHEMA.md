@@ -81,3 +81,8 @@ Base schema.
 # Schema 39
 
 - Added support for both overloads of `node.manuallyIdleNotificationValue`
+- Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
+
+# Schema 40
+
+- Added `endpoint.try_get_node` command

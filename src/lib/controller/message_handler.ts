@@ -254,7 +254,7 @@ export class ControllerMessageHandler implements MessageHandler {
             );
           },
         );
-        return { nvmData: nvmDataRaw.toString("base64") };
+        return { nvmData: Buffer.from(nvmDataRaw.buffer).toString("base64") };
       }
       case ControllerCommand.restoreNVM: {
         const nvmData = Buffer.from(message.nvmData, "base64");

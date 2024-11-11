@@ -1129,7 +1129,18 @@ interface {
 }
 ```
 
-#### [Get node from endpoint](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getnodeunsafe)
+#### [Get node from endpoint](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=trygetnode)
+
+[compatible with schema version: 40+]
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.try_get_node";
+  nodeId: number;
+  endpoint?: number;
+}
+```
 
 [compatible with schema version: 23+]
 
@@ -1142,6 +1153,31 @@ interface {
 }
 ```
 
+#### [Get Raw Config Parameter Value](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=get)
+
+[compatible with schema version: 39+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_raw_config_parameter_value";
+  nodeId: number;
+  parameter: number;
+  bitMask?: number;
+}
+```
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_raw_config_parameter_value";
+  nodeId: number;
+  endpoint?: number;
+  parameter: number;
+  bitMask?: number;
+}
+```
+
 #### [Set Raw Config Parameter Value](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
 
 [compatible with schema version: 33+]
@@ -1149,8 +1185,22 @@ interface {
 ```ts
 interface {
   messageId: string;
+  command: "node.set_raw_config_parameter_value";
+  nodeId: number;
+  parameter: number;
+  bitMask?: number;
+  value: ConfigValue;
+  valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
+  valueFormat?: ConfigValueFormat;
+}
+```
+
+```ts
+interface {
+  messageId: string;
   command: "endpoint.set_raw_config_parameter_value";
   nodeId: number;
+  endpoint?: number;
   parameter: number;
   bitMask?: number;
   value: ConfigValue;

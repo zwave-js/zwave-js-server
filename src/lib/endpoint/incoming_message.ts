@@ -50,6 +50,11 @@ export interface IncomingCommandEndpointGetNodeUnsafe
   command: EndpointCommand.getNodeUnsafe;
 }
 
+export interface IncomingCommandEndpointTryGetNode
+  extends IncomingCommandEndpointBase {
+  command: EndpointCommand.tryGetNode;
+}
+
 export interface IncomingCommandEndpointSetRawConfigParameterValue
   extends IncomingCommandEndpointBase {
   command: EndpointCommand.setRawConfigParameterValue;
@@ -75,5 +80,6 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointIsCCSecure
   | IncomingCommandEndpointGetCCVersion
   | IncomingCommandEndpointGetNodeUnsafe
+  | IncomingCommandEndpointTryGetNode
   | IncomingCommandEndpointSetRawConfigParameterValue
   | IncomingCommandEndpointGetRawConfigParameterValue;

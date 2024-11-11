@@ -809,7 +809,7 @@ export const dumpCommandClass = (
 ): CommandClassState => ({
   id: commandClass.ccId,
   name: CommandClasses[commandClass.ccId],
-  version: commandClass.version,
+  version: endpoint.getCCVersion(commandClass.ccId),
   isSecure: endpoint.isCCSecure(commandClass.ccId),
 });
 
