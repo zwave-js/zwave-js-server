@@ -110,6 +110,10 @@ export class ControllerMessageHandler implements MessageHandler {
         const success = await this.driver.controller.stopInclusion();
         return { success };
       }
+      case ControllerCommand.cancelSecureBootstrapS2: {
+        this.driver.controller.cancelSecureBootstrapS2(message.reason);
+        return {};
+      }
       case ControllerCommand.beginExclusion: {
         const success = await this.driver.controller.beginExclusion(
           processExclusionOptions(message),

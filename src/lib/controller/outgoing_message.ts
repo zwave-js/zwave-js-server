@@ -15,6 +15,7 @@ import { FirmwareUpdateResultType } from "../common";
 export interface ControllerResultTypes {
   [ControllerCommand.beginInclusion]: { success: boolean };
   [ControllerCommand.stopInclusion]: { success: boolean };
+  [ControllerCommand.cancelSecureBootstrapS2]: Record<string, never>;
   [ControllerCommand.beginExclusion]: { success: boolean };
   [ControllerCommand.stopExclusion]: { success: boolean };
   [ControllerCommand.removeFailedNode]: Record<string, never>;

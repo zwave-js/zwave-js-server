@@ -7,6 +7,7 @@ import {
   FirmwareUpdateInfo,
   InclusionGrant,
   InclusionOptions,
+  KEXFailType,
   PlannedProvisioningEntry,
   RebuildRoutesOptions,
   ReplaceNodeOptions,
@@ -36,6 +37,12 @@ export interface IncomingCommandControllerBeginInclusionLegacy
 export interface IncomingCommandControllerStopInclusion
   extends IncomingCommandControllerBase {
   command: ControllerCommand.stopInclusion;
+}
+
+export interface IncomingCommandControllerCancelSecureBootstrapS2
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.cancelSecureBootstrapS2;
+  reason: KEXFailType;
 }
 
 export interface IncomingCommandControllerBeginExclusion // schema >=29
@@ -344,6 +351,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerBeginInclusion
   | IncomingCommandControllerBeginInclusionLegacy
   | IncomingCommandControllerStopInclusion
+  | IncomingCommandControllerCancelSecureBootstrapS2
   | IncomingCommandControllerBeginExclusion
   | IncomingCommandControllerBeginExclusionLegacy
   | IncomingCommandControllerStopExclusion

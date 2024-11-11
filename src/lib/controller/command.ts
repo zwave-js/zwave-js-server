@@ -1,6 +1,7 @@
 export enum ControllerCommand {
   beginInclusion = "controller.begin_inclusion",
   stopInclusion = "controller.stop_inclusion",
+  cancelSecureBootstrapS2 = "controller.cancel_secure_bootstrap_s2",
   beginExclusion = "controller.begin_exclusion",
   stopExclusion = "controller.stop_exclusion",
   removeFailedNode = "controller.remove_failed_node",
