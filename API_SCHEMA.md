@@ -86,3 +86,4 @@ Base schema.
 # Schema 40
 
 - Added `endpoint.try_get_node` command
+- Added `controller.cancelSecureBootstrapS2` command
