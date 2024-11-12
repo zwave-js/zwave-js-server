@@ -1553,6 +1553,20 @@ interface {
 
 ### `zwave-js-server` Driver Events
 
+#### `driver ready`
+
+This event is sent whenever a the driver indicates it is ready to be used, e.g. after a hard reset.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "driver ready";
+  }
+}
+```
+
 #### `log config updated`
 
 This event is sent whenever a client issues the `driver.update_log_config` command with the updated log config.
