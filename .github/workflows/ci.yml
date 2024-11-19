@@ -22,13 +22,3 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm test
-
-      - name: Test if github-script works
-        uses: actions/github-script@v7
-        with:
-          result-encoding: string
-          script: |
-            const semver = require("semver");
-            const version = require(`${process.env.GITHUB_WORKSPACE}/package.json`).version;
-            const parsed = semver.parse(version);
-            console.log(parsed);
