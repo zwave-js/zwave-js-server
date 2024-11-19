@@ -1,7 +1,7 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
 import { SetValueAPIOptions } from "zwave-js";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { MulticastGroupCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { MulticastGroupCommand } from "./command.js";
 
 export interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
   nodeIDs: number[];

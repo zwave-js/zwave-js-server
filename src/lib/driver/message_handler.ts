@@ -1,16 +1,16 @@
 import { Driver } from "zwave-js";
-import { UnknownCommandError } from "../error";
+import { UnknownCommandError } from "../error.js";
 import {
   Client,
   ClientsController,
   Logger,
   ZwavejsServerRemoteController,
-} from "../server";
-import { DriverCommand } from "./command";
-import { IncomingMessageDriver } from "./incoming_message";
-import { DriverResultTypes } from "./outgoing_message";
-import { dumpDriver, dumpLogConfig } from "../state";
-import { MessageHandler } from "../message_handler";
+} from "../server.js";
+import { DriverCommand } from "./command.js";
+import { IncomingMessageDriver } from "./incoming_message.js";
+import { DriverResultTypes } from "./outgoing_message.js";
+import { dumpDriver, dumpLogConfig } from "../state.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class DriverMessageHandler implements MessageHandler {
   constructor(

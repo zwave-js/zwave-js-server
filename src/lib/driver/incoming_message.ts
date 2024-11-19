@@ -1,8 +1,8 @@
 import { LogConfig } from "@zwave-js/core";
-import { DriverCommand } from "./command";
-import { IncomingCommandBase } from "../incoming_message_base";
+import { DriverCommand } from "./command.js";
+import { IncomingCommandBase } from "../incoming_message_base.js";
 import { EditableZWaveOptions, Powerlevel, ZWaveOptions } from "zwave-js";
-import { LogContexts } from "../logging";
+import { LogContexts } from "../logging.js";
 
 interface IncomingCommandGetConfig extends IncomingCommandBase {
   command: DriverCommand.getConfig;

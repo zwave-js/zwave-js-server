@@ -1,5 +1,5 @@
-import { IncomingCommandBase } from "../incoming_message_base";
-import { ConfigManagerCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { ConfigManagerCommand } from "./command.js";
 
 export interface IncomingCommandConfigManagerBase extends IncomingCommandBase {}
 

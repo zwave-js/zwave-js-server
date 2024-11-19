@@ -1,6 +1,6 @@
 import { SupervisionResult, MaybeNotKnown, ConfigValue } from "@zwave-js/core";
-import { EndpointCommand } from "./command";
-import { NodeState } from "../state";
+import { EndpointCommand } from "./command.js";
+import { NodeState } from "../state.js";
 
 export interface EndpointResultTypes {
   [EndpointCommand.invokeCCAPI]: { response: unknown };

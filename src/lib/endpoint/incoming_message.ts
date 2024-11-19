@@ -1,6 +1,6 @@
 import { CommandClasses, ConfigValue, ConfigValueFormat } from "@zwave-js/core";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { EndpointCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { EndpointCommand } from "./command.js";
 
 export interface IncomingCommandEndpointBase extends IncomingCommandBase {
   nodeId: number;

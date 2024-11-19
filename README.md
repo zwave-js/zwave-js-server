@@ -9,7 +9,7 @@ These instructions are for development only. These CLIs will be available as `zw
 ### Start server
 
 ```shell
-ts-node src/bin/server.ts /dev/tty0
+tsx src/bin/server.ts /dev/tty0
 ```
 
 Opens server on `ws://0.0.0.0:3000`.
@@ -31,31 +31,31 @@ Requires server to be running.
 Default connects to `ws://localhost:3000`:
 
 ```shell
-ts-node src/bin/client.ts
+tsx src/bin/client.ts
 ```
 
 To specify different host:
 
 ```shell
-ts-node src/bin/client.ts ws://192.168.1.100:6000
+tsx src/bin/client.ts ws://192.168.1.100:6000
 ```
 
 To specify that it outputs each message on a single line so it can be replayed later:
 
 ```shell
-ts-node src/bin/client.ts --dump
+tsx src/bin/client.ts --dump
 ```
 
 You can filter the output by a specific node ID:
 
 ```shell
-ts-node src/bin/client.ts --node 52
+tsx src/bin/client.ts --node 52
 ```
 
 To specify a schema version other than the latest (`maxSchemaVersion`):
 
 ```shell
-ts-node src/bin/client.ts --schemaVersion 0
+tsx src/bin/client.ts --schemaVersion 0
 ```
 
 All these options can be combined.

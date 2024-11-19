@@ -1,7 +1,7 @@
 import { CommandClasses, ValueID } from "@zwave-js/core";
 import { SetValueAPIOptions } from "zwave-js";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { BroadcastNodeCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { BroadcastNodeCommand } from "./command.js";
 
 export interface IncomingCommandBroadcastNodeBase extends IncomingCommandBase {}
 

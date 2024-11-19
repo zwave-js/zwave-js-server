@@ -9,21 +9,20 @@ import {
   extractFirmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
-import { NodeNotFoundError, UnknownCommandError } from "../error";
-import { Client, ClientsController } from "../server";
-import { dumpConfigurationMetadata, dumpMetadata } from "../state";
-import { NodeCommand } from "./command";
-import { IncomingMessageNode } from "./incoming_message";
-import { NodeResultTypes } from "./outgoing_message";
-import { dumpNode } from "..";
+import { NodeNotFoundError, UnknownCommandError } from "../error.js";
+import { Client, ClientsController } from "../server.js";
+import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "../state.js";
+import { NodeCommand } from "./command.js";
+import { IncomingMessageNode } from "./incoming_message.js";
+import { NodeResultTypes } from "./outgoing_message.js";
 import {
   firmwareUpdateOutgoingMessage,
   getRawConfigParameterValue,
   setRawConfigParameterValue,
   setValueOutgoingMessage,
-} from "../common";
-import { OutgoingEvent } from "../outgoing_message";
-import { MessageHandler } from "../message_handler";
+} from "../common.js";
+import { OutgoingEvent } from "../outgoing_message.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class NodeMessageHandler implements MessageHandler {
   constructor(

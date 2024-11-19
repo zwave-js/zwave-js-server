@@ -6,11 +6,11 @@ import {
   rssiToString,
 } from "zwave-js";
 import { parseQRCodeString, tryParseDSKFromQRCodeString } from "@zwave-js/core";
-import { UnknownCommandError } from "../error";
-import { UtilsCommand } from "./command";
-import { IncomingMessageUtils } from "./incoming_message";
-import { UtilsResultTypes } from "./outgoing_message";
-import { MessageHandler } from "../message_handler";
+import { UnknownCommandError } from "../error.js";
+import { UtilsCommand } from "./command.js";
+import { IncomingMessageUtils } from "./incoming_message.js";
+import { UtilsResultTypes } from "./outgoing_message.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class UtilsMessageHandler implements MessageHandler {
   async handle(

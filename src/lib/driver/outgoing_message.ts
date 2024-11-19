@@ -1,6 +1,6 @@
 import { LogConfig, TransmitStatus } from "@zwave-js/core";
-import { DriverState } from "../state";
-import { DriverCommand } from "./command";
+import { DriverState } from "../state.js";
+import { DriverCommand } from "./command.js";
 
 export interface DriverResultTypes {
   [DriverCommand.getConfig]: { config: DriverState };

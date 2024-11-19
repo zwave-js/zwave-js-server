@@ -7,9 +7,11 @@ import {
   ZWaveErrorCodes,
   driverPresets,
 } from "zwave-js";
-import { ZwavejsServer } from "../lib/server";
-import { createMockDriver } from "../mock";
-import { parseArgs } from "../util/parse-args";
+import { ZwavejsServer } from "../lib/server.js";
+import { createMockDriver } from "../mock/index.js";
+import { parseArgs } from "../util/parse-args.js";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
 const normalizeKey = (key: Buffer | string, keyName: string): Buffer => {
   if (Buffer.isBuffer(key)) return key;

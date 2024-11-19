@@ -2,9 +2,11 @@ import * as assert from "assert";
 import dns from "node:dns";
 import ws from "ws";
 import { libVersion } from "zwave-js";
-import { ZwavejsServer } from "../lib/server";
-import { createMockDriver } from "../mock";
-import { minSchemaVersion, maxSchemaVersion } from "../lib/const";
+import { ZwavejsServer } from "../lib/server.js";
+import { createMockDriver } from "../mock/index.js";
+import { minSchemaVersion, maxSchemaVersion } from "../lib/const.js";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
 dns.setDefaultResultOrder("ipv4first");
 

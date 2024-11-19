@@ -1,5 +1,7 @@
 node_modules
 config.json
 /dist/
+/dist-esm/
+/dist-cjs/
 .vscode/*
 .DS_Store

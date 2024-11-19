@@ -1,11 +1,11 @@
 import { Driver, Zniffer } from "zwave-js";
-import { UnknownCommandError } from "../error";
-import { Client, ClientsController } from "../server";
-import { ZnifferCommand } from "./command";
-import { IncomingMessageZniffer } from "./incoming_message";
-import { ZnifferResultTypes } from "./outgoing_message";
-import { OutgoingEvent } from "../outgoing_message";
-import { MessageHandler } from "../message_handler";
+import { UnknownCommandError } from "../error.js";
+import { Client, ClientsController } from "../server.js";
+import { ZnifferCommand } from "./command.js";
+import { IncomingMessageZniffer } from "./incoming_message.js";
+import { ZnifferResultTypes } from "./outgoing_message.js";
+import { OutgoingEvent } from "../outgoing_message.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class ZnifferMessageHandler implements MessageHandler {
   private zniffer?: Zniffer;
