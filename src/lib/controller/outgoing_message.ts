@@ -8,9 +8,9 @@ import {
   SmartStartProvisioningEntry,
 } from "zwave-js";
 import { LongRangeChannel } from "@zwave-js/core";
-import { ControllerState } from "..";
-import { ControllerCommand } from "./command";
-import { FirmwareUpdateResultType } from "../common";
+import { ControllerCommand } from "./command.js";
+import { FirmwareUpdateResultType } from "../common.js";
+import { ControllerState } from "../state.js";
 
 export interface ControllerResultTypes {
   [ControllerCommand.beginInclusion]: { success: boolean };

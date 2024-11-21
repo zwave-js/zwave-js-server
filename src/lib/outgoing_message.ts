@@ -1,16 +1,16 @@
 import { LogConfig, ZWaveErrorCodes } from "@zwave-js/core";
-import type { ZwaveState } from "./state";
-import { NodeResultTypes } from "./node/outgoing_message";
-import { ControllerResultTypes } from "./controller/outgoing_message";
-import { ServerCommand } from "./command";
-import { DriverResultTypes } from "./driver/outgoing_message";
-import { ErrorCode } from "./error";
-import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message";
-import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message";
-import { EndpointResultTypes } from "./endpoint/outgoing_message";
-import { UtilsResultTypes } from "./utils/outgoing_message";
-import { ConfigManagerResultTypes } from "./config_manager/outgoing_message";
-import { ZnifferResultTypes } from "./zniffer/outgoing_message";
+import type { ZwaveState } from "./state.js";
+import { NodeResultTypes } from "./node/outgoing_message.js";
+import { ControllerResultTypes } from "./controller/outgoing_message.js";
+import { ServerCommand } from "./command.js";
+import { DriverResultTypes } from "./driver/outgoing_message.js";
+import { ErrorCode } from "./error.js";
+import { BroadcastNodeResultTypes } from "./broadcast_node/outgoing_message.js";
+import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message.js";
+import { EndpointResultTypes } from "./endpoint/outgoing_message.js";
+import { UtilsResultTypes } from "./utils/outgoing_message.js";
+import { ConfigManagerResultTypes } from "./config_manager/outgoing_message.js";
+import { ZnifferResultTypes } from "./zniffer/outgoing_message.js";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =

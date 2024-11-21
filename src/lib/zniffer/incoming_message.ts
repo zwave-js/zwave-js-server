@@ -1,6 +1,6 @@
 import { ZnifferOptions } from "zwave-js";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { ZnifferCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { ZnifferCommand } from "./command.js";
 
 export interface IncomingCommandZnifferBase extends IncomingCommandBase {}
 

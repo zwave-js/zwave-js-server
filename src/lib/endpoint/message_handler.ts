@@ -3,17 +3,17 @@ import {
   EndpointNotFoundError,
   NodeNotFoundError,
   UnknownCommandError,
-} from "../error";
-import { Client } from "../server";
-import { dumpNode } from "../state";
-import { EndpointCommand } from "./command";
-import { IncomingMessageEndpoint } from "./incoming_message";
-import { EndpointResultTypes } from "./outgoing_message";
+} from "../error.js";
+import { Client } from "../server.js";
+import { dumpNode } from "../state.js";
+import { EndpointCommand } from "./command.js";
+import { IncomingMessageEndpoint } from "./incoming_message.js";
+import { EndpointResultTypes } from "./outgoing_message.js";
 import {
   getRawConfigParameterValue,
   setRawConfigParameterValue,
-} from "../common";
-import { MessageHandler } from "../message_handler";
+} from "../common.js";
+import { MessageHandler } from "../message_handler.js";
 
 const isBufferObject = (obj: any): boolean => {
   return (

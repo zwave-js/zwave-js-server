@@ -1,4 +1,4 @@
-import { ZnifferCommand } from "./command";
+import { ZnifferCommand } from "./command.js";
 
 export interface ZnifferResultTypes {
   [ZnifferCommand.init]: Record<string, never>;

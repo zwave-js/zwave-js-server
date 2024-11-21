@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import dns from "node:dns";
 import ws from "ws";
-import { maxSchemaVersion } from "../lib/const";
-import { OutgoingMessage, ResultTypes } from "../lib/outgoing_message";
-import { parseArgs } from "../util/parse-args";
+import { maxSchemaVersion } from "../lib/const.js";
+import { OutgoingMessage, ResultTypes } from "../lib/outgoing_message.js";
+import { parseArgs } from "../util/parse-args.js";
 
 dns.setDefaultResultOrder("ipv4first");
 

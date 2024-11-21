@@ -1,11 +1,11 @@
 import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
-import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
-import { MulticastGroupCommand } from "./command";
-import { IncomingMessageMulticastGroup } from "./incoming_message";
-import { MulticastGroupResultTypes } from "./outgoing_message";
-import { Client } from "../server";
-import { setValueOutgoingMessage } from "../common";
-import { MessageHandler } from "../message_handler";
+import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error.js";
+import { MulticastGroupCommand } from "./command.js";
+import { IncomingMessageMulticastGroup } from "./incoming_message.js";
+import { MulticastGroupResultTypes } from "./outgoing_message.js";
+import { Client } from "../server.js";
+import { setValueOutgoingMessage } from "../common.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class MulticastGroupMessageHandler implements MessageHandler {
   constructor(

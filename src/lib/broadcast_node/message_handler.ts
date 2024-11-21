@@ -1,11 +1,11 @@
 import { Driver, VirtualEndpoint, VirtualNode } from "zwave-js";
-import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error";
-import { BroadcastNodeCommand } from "./command";
-import { IncomingMessageBroadcastNode } from "./incoming_message";
-import { BroadcastNodeResultTypes } from "./outgoing_message";
-import { Client } from "../server";
-import { setValueOutgoingMessage } from "../common";
-import { MessageHandler } from "../message_handler";
+import { UnknownCommandError, VirtualEndpointNotFoundError } from "../error.js";
+import { BroadcastNodeCommand } from "./command.js";
+import { IncomingMessageBroadcastNode } from "./incoming_message.js";
+import { BroadcastNodeResultTypes } from "./outgoing_message.js";
+import { Client } from "../server.js";
+import { setValueOutgoingMessage } from "../common.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class BroadcastNodeMessageHandler implements MessageHandler {
   constructor(

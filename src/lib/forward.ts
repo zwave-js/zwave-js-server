@@ -12,15 +12,15 @@ import {
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
 import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
-import { OutgoingEvent } from "./outgoing_message";
+import { OutgoingEvent } from "./outgoing_message.js";
 import {
   dumpConfigurationMetadata,
   dumpFoundNode,
   dumpMetadata,
   dumpNode,
-} from "./state";
-import { Client, ClientsController } from "./server";
-import { NodeNotFoundError } from "./error";
+} from "./state.js";
+import { Client, ClientsController } from "./server.js";
+import { NodeNotFoundError } from "./error.js";
 
 export class EventForwarder {
   /**

@@ -12,9 +12,9 @@ import {
   SecurityClass,
   SupervisionResult,
 } from "@zwave-js/core";
-import { NodeCommand } from "./command";
-import { NodeState } from "../state";
-import { FirmwareUpdateResultType, SetValueResultType } from "../common";
+import { NodeCommand } from "./command.js";
+import { NodeState } from "../state.js";
+import { FirmwareUpdateResultType, SetValueResultType } from "../common.js";
 
 export interface NodeResultTypes {
   [NodeCommand.setValue]: SetValueResultType;

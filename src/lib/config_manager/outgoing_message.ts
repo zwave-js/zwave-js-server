@@ -5,7 +5,7 @@ import {
   FulltextDeviceConfigIndex,
   ManufacturersMap,
 } from "@zwave-js/config";
-import { ConfigManagerCommand } from "./command";
+import { ConfigManagerCommand } from "./command.js";
 
 export interface ConfigManagerResultTypes {
   [ConfigManagerCommand.lookupDevice]: {

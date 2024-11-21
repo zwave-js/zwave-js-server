@@ -1,16 +1,16 @@
 import { LogConfig } from "@zwave-js/core";
-import { IncomingMessageController } from "./controller/incoming_message";
-import { ServerCommand } from "./command";
-import { IncomingCommandBase } from "./incoming_message_base";
-import { IncomingMessageNode } from "./node/incoming_message";
-import { IncomingMessageDriver } from "./driver/incoming_message";
-import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message";
-import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message";
-import { IncomingMessageEndpoint } from "./endpoint/incoming_message";
-import { IncomingMessageUtils } from "./utils/incoming_message";
-import { IncomingMessageConfigManager } from "./config_manager/incoming_message";
-import { LogContexts } from "./logging";
-import { IncomingMessageZniffer } from "./zniffer/incoming_message";
+import { IncomingMessageController } from "./controller/incoming_message.js";
+import { ServerCommand } from "./command.js";
+import { IncomingCommandBase } from "./incoming_message_base.js";
+import { IncomingMessageNode } from "./node/incoming_message.js";
+import { IncomingMessageDriver } from "./driver/incoming_message.js";
+import { IncomingMessageBroadcastNode } from "./broadcast_node/incoming_message.js";
+import { IncomingMessageMulticastGroup } from "./multicast_group/incoming_message.js";
+import { IncomingMessageEndpoint } from "./endpoint/incoming_message.js";
+import { IncomingMessageUtils } from "./utils/incoming_message.js";
+import { IncomingMessageConfigManager } from "./config_manager/incoming_message.js";
+import { LogContexts } from "./logging.js";
+import { IncomingMessageZniffer } from "./zniffer/incoming_message.js";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
   command: ServerCommand.startListening;

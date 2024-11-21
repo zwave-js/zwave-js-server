@@ -3,7 +3,7 @@ import { ConfigLogContext } from "@zwave-js/config";
 import { createDefaultTransportFormat, NodeLogContext } from "@zwave-js/core";
 import type { ZWaveLogInfo } from "@zwave-js/core";
 import { SerialLogContext } from "@zwave-js/serial";
-import { ClientsController, Logger } from "./server";
+import { ClientsController, Logger } from "./server.js";
 import { ControllerLogContext, DriverLogContext, Driver } from "zwave-js";
 
 export type LogContexts =

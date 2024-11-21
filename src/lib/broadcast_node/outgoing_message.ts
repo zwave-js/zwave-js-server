@@ -1,6 +1,6 @@
 import { VirtualValueID } from "zwave-js";
-import { BroadcastNodeCommand } from "./command";
-import { SetValueResultType } from "../common";
+import { BroadcastNodeCommand } from "./command.js";
+import { SetValueResultType } from "../common.js";
 
 export interface BroadcastNodeResultTypes {
   [BroadcastNodeCommand.setValue]: SetValueResultType;

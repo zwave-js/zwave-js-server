@@ -15,8 +15,8 @@ import {
   ZWaveFeature,
 } from "zwave-js";
 import type { QRProvisioningInformation } from "@zwave-js/core";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { ControllerCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { ControllerCommand } from "./command.js";
 
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 

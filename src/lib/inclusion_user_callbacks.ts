@@ -1,6 +1,6 @@
 import { InclusionUserCallbacks } from "zwave-js";
 import { createDeferredPromise } from "alcalzone-shared/deferred-promise";
-import { Client, ClientsController } from "./server";
+import { Client, ClientsController } from "./server.js";
 
 export const inclusionUserCallbacks = (
   clientsController: ClientsController,

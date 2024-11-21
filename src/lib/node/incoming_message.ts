@@ -11,8 +11,8 @@ import {
   FirmwareFileFormat,
   SecurityClass,
 } from "@zwave-js/core";
-import { IncomingCommandBase } from "../incoming_message_base";
-import { NodeCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { NodeCommand } from "./command.js";
 
 export interface IncomingCommandNodeBase extends IncomingCommandBase {
   nodeId: number;

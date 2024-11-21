@@ -1,11 +1,11 @@
-export { BroadcastNodeCommand } from "./broadcast_node/command";
-export { ConfigManagerCommand } from "./config_manager/command";
-export { ControllerCommand } from "./controller/command";
-export { DriverCommand } from "./driver/command";
-export { EndpointCommand } from "./endpoint/command";
-export { MulticastGroupCommand } from "./multicast_group/command";
-export { NodeCommand } from "./node/command";
-export { UtilsCommand } from "./utils/command";
+export { BroadcastNodeCommand } from "./broadcast_node/command.js";
+export { ConfigManagerCommand } from "./config_manager/command.js";
+export { ControllerCommand } from "./controller/command.js";
+export { DriverCommand } from "./driver/command.js";
+export { EndpointCommand } from "./endpoint/command.js";
+export { MulticastGroupCommand } from "./multicast_group/command.js";
+export { NodeCommand } from "./node/command.js";
+export { UtilsCommand } from "./utils/command.js";
 
 export enum ServerCommand {
   startListening = "start_listening",

@@ -12,12 +12,12 @@ import { SupervisionResult, MaybeNotKnown } from "@zwave-js/core";
 import {
   IncomingCommandNodeGetRawConfigParameterValue,
   IncomingCommandNodeSetRawConfigParameterValue,
-} from "./node/incoming_message";
+} from "./node/incoming_message.js";
 import {
   IncomingCommandEndpointGetRawConfigParameterValue,
   IncomingCommandEndpointSetRawConfigParameterValue,
-} from "./endpoint/incoming_message";
-import { InvalidParamsPassedToCommandError } from "./error";
+} from "./endpoint/incoming_message.js";
+import { InvalidParamsPassedToCommandError } from "./error.js";
 
 export type SetValueResultType =
   | { result: SetValueResult } // schemaVersion >= 29

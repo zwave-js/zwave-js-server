@@ -1,9 +1,9 @@
 import { ConfigManager } from "@zwave-js/config";
-import { UnknownCommandError } from "../error";
-import { ConfigManagerCommand } from "./command";
-import { IncomingMessageConfigManager } from "./incoming_message";
-import { ConfigManagerResultTypes } from "./outgoing_message";
-import { MessageHandler } from "../message_handler";
+import { UnknownCommandError } from "../error.js";
+import { ConfigManagerCommand } from "./command.js";
+import { IncomingMessageConfigManager } from "./incoming_message.js";
+import { ConfigManagerResultTypes } from "./outgoing_message.js";
+import { MessageHandler } from "../message_handler.js";
 
 export class ConfigManagerMessageHandler implements MessageHandler {
   private configManager: ConfigManager = new ConfigManager();

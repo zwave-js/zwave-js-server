@@ -1,5 +1,5 @@
 import { QRProvisioningInformation } from "@zwave-js/core";
-import { UtilsCommand } from "./command";
+import { UtilsCommand } from "./command.js";
 
 export interface UtilsResultTypes {
   [UtilsCommand.parseQRCodeString]: {

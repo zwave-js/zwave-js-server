@@ -1,5 +1,4 @@
-import ws from "ws";
-import type WebSocket from "ws";
+import { WebSocketServer, type WebSocket } from "ws";
 import {
   getResponder,
   CiaoService,
@@ -15,10 +14,10 @@ import {
 } from "zwave-js";
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
-import { EventForwarder } from "./forward";
-import type * as OutgoingMessages from "./outgoing_message";
-import { IncomingMessage } from "./incoming_message";
-import { dumpLogConfig, dumpState } from "./state";
+import { EventForwarder } from "./forward.js";
+import type * as OutgoingMessages from "./outgoing_message.js";
+import { IncomingMessage } from "./incoming_message.js";
+import { dumpLogConfig, dumpState } from "./state.js";
 import { Server as HttpServer, createServer } from "http";
 import { EventEmitter, once } from "events";
 import {
@@ -27,27 +26,27 @@ import {
   minSchemaVersion,
   maxSchemaVersion,
   applicationName,
-} from "./const";
-import { NodeMessageHandler } from "./node/message_handler";
-import { ControllerMessageHandler } from "./controller/message_handler";
+} from "./const.js";
+import { NodeMessageHandler } from "./node/message_handler.js";
+import { ControllerMessageHandler } from "./controller/message_handler.js";
 import {
   BaseError,
   ErrorCode,
   SchemaIncompatibleError,
   UnknownCommandError,
-} from "./error";
-import { Instance } from "./instance";
-import { ServerCommand } from "./command";
-import { DriverMessageHandler } from "./driver/message_handler";
-import { LogContexts, LoggingEventForwarder } from "./logging";
-import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler";
-import { MulticastGroupMessageHandler } from "./multicast_group/message_handler";
-import { EndpointMessageHandler } from "./endpoint/message_handler";
-import { UtilsMessageHandler } from "./utils/message_handler";
-import { inclusionUserCallbacks } from "./inclusion_user_callbacks";
-import { MessageHandler } from "./message_handler";
-import { ConfigManagerMessageHandler } from "./config_manager/message_handler";
-import { ZnifferMessageHandler } from "./zniffer/message_handler";
+} from "./error.js";
+import { Instance } from "./instance.js";
+import { ServerCommand } from "./command.js";
+import { DriverMessageHandler } from "./driver/message_handler.js";
+import { LogContexts, LoggingEventForwarder } from "./logging.js";
+import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler.js";
+import { MulticastGroupMessageHandler } from "./multicast_group/message_handler.js";
+import { EndpointMessageHandler } from "./endpoint/message_handler.js";
+import { UtilsMessageHandler } from "./utils/message_handler.js";
+import { inclusionUserCallbacks } from "./inclusion_user_callbacks.js";
+import { MessageHandler } from "./message_handler.js";
+import { ConfigManagerMessageHandler } from "./config_manager/message_handler.js";
+import { ZnifferMessageHandler } from "./zniffer/message_handler.js";
 
 function getVersionData(driver: Driver): {
   homeId: number | undefined;
@@ -483,7 +482,7 @@ export class ZwavejsServerRemoteController {
 
 export class ZwavejsServer extends EventEmitter {
   private server?: HttpServer;
-  private wsServer?: ws.Server;
+  private wsServer?: WebSocketServer;
   private sockets?: ClientsController;
   private logger: Logger;
   private defaultPort: number = 3000;
@@ -507,7 +506,7 @@ export class ZwavejsServer extends EventEmitter {
 
     this.driver.updateUserAgent({ [applicationName]: version });
     this.server = createServer();
-    this.wsServer = new ws.Server({
+    this.wsServer = new WebSocketServer({
       server: this.server,
       perMessageDeflate: true,
     });

@@ -10,16 +10,15 @@ import {
   ExclusionOptions,
   AssociationCheckResult,
 } from "zwave-js";
-import { dumpController } from "..";
 import {
   InclusionAlreadyInProgressError,
   InclusionPhaseNotInProgressError,
   InvalidParamsPassedToCommandError,
   NoLongerSupportedError,
   UnknownCommandError,
-} from "../error";
-import { Client, ClientsController } from "../server";
-import { ControllerCommand } from "./command";
+} from "../error.js";
+import { Client, ClientsController } from "../server.js";
+import { ControllerCommand } from "./command.js";
 import {
   IncomingCommandControllerBeginExclusion,
   IncomingCommandControllerBeginExclusionLegacy,
@@ -28,11 +27,12 @@ import {
   IncomingCommandControllerReplaceFailedNode,
   IncomingCommandControllerReplaceFailedNodeLegacy,
   IncomingMessageController,
-} from "./incoming_message";
-import { ControllerResultTypes } from "./outgoing_message";
-import { firmwareUpdateOutgoingMessage } from "../common";
-import { inclusionUserCallbacks } from "../inclusion_user_callbacks";
-import { MessageHandler } from "../message_handler";
+} from "./incoming_message.js";
+import { ControllerResultTypes } from "./outgoing_message.js";
+import { firmwareUpdateOutgoingMessage } from "../common.js";
+import { inclusionUserCallbacks } from "../inclusion_user_callbacks.js";
+import { MessageHandler } from "../message_handler.js";
+import { dumpController } from "../state.js";
 
 export class ControllerMessageHandler implements MessageHandler {
   constructor(
