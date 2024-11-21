@@ -39,7 +39,7 @@
     "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node18",
     "prepare": "npm run build",
-    "prepublishOnly": "rm -rf dist && npm run build"
+    "prepublishOnly": "rm -rf dist-* && npm run build"
   },
   "author": "",
   "license": "Apache-2.0",
