@@ -14,6 +14,9 @@
     "access": "public"
   },
   "type": "module",
+  "module": "dist-esm/lib/index.js",
+  "main": "dist-cjs/lib/index.js",
+  "types": "dist-cjs/lib/index.d.ts",
   "bin": {
     "zwave-server": "dist-esm/bin/server.js",
     "zwave-client": "dist-esm/bin/client.js"
@@ -25,6 +28,10 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist-esm",
+    "dist-cjs"
+  ],
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
@@ -32,8 +39,7 @@
     "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node18",
     "prepare": "npm run build",
-    "prepublishOnly": "rm -rf dist && npm run build",
-    "try": "testbin"
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "",
   "license": "Apache-2.0",

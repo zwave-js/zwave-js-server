@@ -5,3 +5,4 @@ config.json
 /dist-cjs/
 .vscode/*
 .DS_Store
+*.tgz
