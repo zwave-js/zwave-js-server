@@ -47,6 +47,7 @@ import { inclusionUserCallbacks } from "./inclusion_user_callbacks.js";
 import { MessageHandler } from "./message_handler.js";
 import { ConfigManagerMessageHandler } from "./config_manager/message_handler.js";
 import { ZnifferMessageHandler } from "./zniffer/message_handler.js";
+import { stringifyReplacer } from "../util/stringify.js";
 
 function getVersionData(driver: Driver): {
   homeId: number | undefined;
@@ -318,7 +319,7 @@ export class Client {
   }
 
   sendData(data: OutgoingMessages.OutgoingMessage, compress = false) {
-    this.socket.send(JSON.stringify(data), { compress });
+    this.socket.send(JSON.stringify(data, stringifyReplacer), { compress });
   }
 
   checkAlive() {
