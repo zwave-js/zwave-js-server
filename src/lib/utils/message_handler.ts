@@ -20,7 +20,7 @@ export class UtilsMessageHandler implements MessageHandler {
 
     switch (message.command) {
       case UtilsCommand.parseQRCodeString: {
-        const qrProvisioningInformation = parseQRCodeString(message.qr);
+        const qrProvisioningInformation = await parseQRCodeString(message.qr);
         return { qrProvisioningInformation };
       }
       case UtilsCommand.tryParseDSKFromQRCodeString: {

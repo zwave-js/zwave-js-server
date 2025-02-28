@@ -1,6 +1,8 @@
 import Transport from "winston-transport";
+import { MESSAGE as messageSymbol } from "triple-beam";
 import { ConfigLogContext } from "@zwave-js/config";
-import { createDefaultTransportFormat, NodeLogContext } from "@zwave-js/core";
+import { NodeLogContext } from "@zwave-js/core";
+import { createDefaultTransportFormat } from "@zwave-js/core/bindings/log/node";
 import type { ZWaveLogInfo } from "@zwave-js/core";
 import { SerialLogContext } from "@zwave-js/serial";
 import { ClientsController, Logger } from "./server.js";
@@ -65,8 +67,6 @@ export class LoggingEventForwarder {
 }
 
 class WebSocketLogTransport extends Transport {
-  private messageSymbol = Symbol.for("message");
-
   public constructor(
     level: string,
     private clients: ClientsController,
@@ -96,7 +96,7 @@ class WebSocketLogTransport extends Transport {
           client.sendEvent({
             source: "driver",
             event: "logging",
-            formattedMessage: info[this.messageSymbol as any],
+            formattedMessage: info[messageSymbol] as string,
             ...info,
           }),
         );
