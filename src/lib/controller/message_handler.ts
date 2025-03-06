@@ -368,11 +368,11 @@ export class ControllerMessageHandler implements MessageHandler {
           file,
           message.fileFormat ?? guessFirmwareFileFormat(message.filename, file),
         );
-        const result = await this.driver.controller.firmwareUpdateOTW(data);
+        const result = await this.driver.firmwareUpdateOTW(data);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
-        const progress = this.driver.controller.isFirmwareUpdateInProgress();
+        const progress = this.driver.isOTWFirmwareUpdateInProgress();
         return { progress };
       }
       case ControllerCommand.setMaxLongRangePowerlevel: {

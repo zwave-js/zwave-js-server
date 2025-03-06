@@ -87,3 +87,7 @@ Base schema.
 
 - Added `endpoint.try_get_node` command
 - Added `controller.cancelSecureBootstrapS2` command
+
+# Schema 41
+
+- Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`

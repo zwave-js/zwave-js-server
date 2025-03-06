@@ -1,5 +1,5 @@
 import {
-  ControllerFirmwareUpdateResult,
+  OTWFirmwareUpdateResult,
   Endpoint,
   FirmwareUpdateResult,
   ConfigValue,
@@ -40,11 +40,11 @@ export function setValueOutgoingMessage(
 }
 
 export type FirmwareUpdateResultType =
-  | { result: ControllerFirmwareUpdateResult | FirmwareUpdateResult } // schemaVersion >= 29
+  | { result: OTWFirmwareUpdateResult | FirmwareUpdateResult } // schemaVersion >= 29
   | { success: boolean }; // schemaVersion < 29
 
 export function firmwareUpdateOutgoingMessage<
-  T extends ControllerFirmwareUpdateResult | FirmwareUpdateResult,
+  T extends OTWFirmwareUpdateResult | FirmwareUpdateResult,
 >(result: T, schemaVersion: number): { result: T } | { success: boolean } {
   if (schemaVersion < 29) {
     return {
