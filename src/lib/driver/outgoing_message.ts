@@ -1,6 +1,7 @@
 import { LogConfig, TransmitStatus } from "@zwave-js/core";
 import { DriverState } from "../state.js";
 import { DriverCommand } from "./command.js";
+import { OTWFirmwareUpdateResultType } from "../common.js";
 
 export interface DriverResultTypes {
   [DriverCommand.getConfig]: { config: DriverState };
@@ -25,4 +26,6 @@ export interface DriverResultTypes {
   [DriverCommand.shutdown]: { success: boolean };
   [DriverCommand.updateOptions]: Record<string, never>;
   [DriverCommand.sendTestFrame]: { status?: TransmitStatus };
+  [DriverCommand.firmwareUpdateOTW]: OTWFirmwareUpdateResultType;
+  [DriverCommand.isOTWFirmwareUpdateInProgress]: { progress: boolean };
 }

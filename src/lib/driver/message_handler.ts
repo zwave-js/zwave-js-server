@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, extractFirmware, guessFirmwareFileFormat } from "zwave-js";
 import { UnknownCommandError } from "../error.js";
 import {
   Client,
@@ -11,6 +11,7 @@ import { IncomingMessageDriver } from "./incoming_message.js";
 import { DriverResultTypes } from "./outgoing_message.js";
 import { dumpDriver, dumpLogConfig } from "../state.js";
 import { MessageHandler } from "../message_handler.js";
+import { firmwareUpdateOutgoingMessage } from "../common.js";
 
 export class DriverMessageHandler implements MessageHandler {
   constructor(
@@ -123,6 +124,19 @@ export class DriverMessageHandler implements MessageHandler {
           message.powerlevel,
         );
         return { status };
+      }
+      case DriverCommand.firmwareUpdateOTW: {
+        const file = Buffer.from(message.file, "base64");
+        const { data } = await extractFirmware(
+          file,
+          message.fileFormat ?? guessFirmwareFileFormat(message.filename, file),
+        );
+        const result = await this.driver.firmwareUpdateOTW(data);
+        return { result };
+      }
+      case DriverCommand.isOTWFirmwareUpdateInProgress: {
+        const progress = this.driver.isOTWFirmwareUpdateInProgress();
+        return { progress };
       }
       default: {
         throw new UnknownCommandError(command);

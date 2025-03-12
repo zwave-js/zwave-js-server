@@ -17,4 +17,8 @@ export enum DriverCommand {
   shutdown = "driver.shutdown",
   updateOptions = "driver.update_options",
   sendTestFrame = "driver.send_test_frame",
+  // Schema version >= 41:
+  firmwareUpdateOTW = "driver.firmware_update_otw",
+  // Schema version >= 41:
+  isOTWFirmwareUpdateInProgress = "driver.is_otw_firmware_update_in_progress",
 }

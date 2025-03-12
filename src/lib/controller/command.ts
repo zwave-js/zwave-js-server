@@ -50,7 +50,9 @@ export enum ControllerCommand {
   getAvailableFirmwareUpdates = "controller.get_available_firmware_updates",
   beginOTAFirmwareUpdate = "controller.begin_ota_firmware_update",
   firmwareUpdateOTA = "controller.firmware_update_ota",
+  // Schema version 41+: use corresponding driver command instead
   firmwareUpdateOTW = "controller.firmware_update_otw",
+  // Schema version 41+: use corresponding driver command instead
   isFirmwareUpdateInProgress = "controller.is_firmware_update_in_progress",
   setMaxLongRangePowerlevel = "controller.set_max_long_range_powerlevel",
   getMaxLongRangePowerlevel = "controller.get_max_long_range_powerlevel",

@@ -43,6 +43,9 @@ export type FirmwareUpdateResultType =
   | { result: OTWFirmwareUpdateResult | FirmwareUpdateResult } // schemaVersion >= 29
   | { success: boolean }; // schemaVersion < 29
 
+// Schema version >= 41, driver command only
+export type OTWFirmwareUpdateResultType = { result: OTWFirmwareUpdateResult };
+
 export function firmwareUpdateOutgoingMessage<
   T extends OTWFirmwareUpdateResult | FirmwareUpdateResult,
 >(result: T, schemaVersion: number): { result: T } | { success: boolean } {

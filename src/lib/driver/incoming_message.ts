@@ -1,4 +1,4 @@
-import { LogConfig } from "@zwave-js/core";
+import { FirmwareFileFormat, LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command.js";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { EditableZWaveOptions, Powerlevel, ZWaveOptions } from "zwave-js";
@@ -84,6 +84,18 @@ interface IncomingCommandSendTestFrame extends IncomingCommandBase {
   powerlevel: Powerlevel;
 }
 
+export interface IncomingCommandFirmwareUpdateOTW extends IncomingCommandBase {
+  command: DriverCommand.firmwareUpdateOTW;
+  filename: string;
+  file: string; // use base64 encoding for the file
+  fileFormat?: FirmwareFileFormat;
+}
+
+export interface IncomingCommandIsOTWFirmwareUpdateInProgress
+  extends IncomingCommandBase {
+  command: DriverCommand.isOTWFirmwareUpdateInProgress;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -102,4 +114,6 @@ export type IncomingMessageDriver =
   | IncomingCommandHardReset
   | IncomingCommandShutdown
   | IncomingCommandUpdateOptions
-  | IncomingCommandSendTestFrame;
+  | IncomingCommandSendTestFrame
+  | IncomingCommandFirmwareUpdateOTW
+  | IncomingCommandIsOTWFirmwareUpdateInProgress;
