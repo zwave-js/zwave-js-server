@@ -6,6 +6,7 @@ import {
   TranslatedValueID,
   ValueMetadata,
   ConfigValue,
+  ZWaveNotificationCapability,
 } from "zwave-js";
 import {
   MaybeNotKnown,
@@ -66,4 +67,7 @@ export interface NodeResultTypes {
   [NodeCommand.setDefaultTransitionDuration]: Record<string, never>;
   [NodeCommand.hasDeviceConfigChanged]: { changed: MaybeNotKnown<boolean> };
   [NodeCommand.createDump]: { dump: object }; // TODO: Fix type
+  [NodeCommand.getSupportedNotificationEvents]: {
+    events: ZWaveNotificationCapability[];
+  };
 }

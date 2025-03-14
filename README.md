@@ -551,6 +551,18 @@ interface {
 }
 ```
 
+#### [Get supported `notification` events](https://zwave-js.github.io/zwave-js/#/api/node?id=getsupportednotificationevents)
+
+[compatible with schema version: 41+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_supported_notification_events";
+  nodeId: number;
+}
+```
+
 #### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
 
 [compatible with schema version: 24+]
