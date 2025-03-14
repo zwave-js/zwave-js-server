@@ -7,6 +7,7 @@ import {
   CommandClasses,
   ConfigurationMetadata,
   extractFirmware,
+  Firmware,
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
@@ -73,7 +74,7 @@ export class NodeMessageHandler implements MessageHandler {
       }
       case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        let firmware = extractFirmware(
+        let firmware = await extractFirmware(
           firmwareFile,
           message.firmwareFileFormat ??
             guessFirmwareFileFormat(message.firmwareFilename, firmwareFile),
@@ -84,17 +85,18 @@ export class NodeMessageHandler implements MessageHandler {
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case NodeCommand.updateFirmware: {
-        const updates = message.updates.map((update) => {
+        const updates: Firmware[] = [];
+        for (const update of message.updates) {
           const file = Buffer.from(update.file, "base64");
-          let firmware = extractFirmware(
+          let firmware = await extractFirmware(
             file,
             update.fileFormat ?? guessFirmwareFileFormat(update.filename, file),
           );
           // Defer to the target provided in the messaage when available
           firmware.firmwareTarget =
             update.firmwareTarget ?? firmware.firmwareTarget;
-          return firmware;
-        });
+          updates.push(firmware);
+        }
         const result = await node.updateFirmware(updates);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }

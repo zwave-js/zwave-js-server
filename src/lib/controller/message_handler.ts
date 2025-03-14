@@ -54,7 +54,11 @@ export class ControllerMessageHandler implements MessageHandler {
         )
           throw new InclusionAlreadyInProgressError();
         const success = await this.driver.controller.beginInclusion(
-          processInclusionOptions(this.clientsController, this.client, message),
+          await processInclusionOptions(
+            this.clientsController,
+            this.client,
+            message,
+          ),
         );
         return { success };
       }
@@ -81,7 +85,7 @@ export class ControllerMessageHandler implements MessageHandler {
       case ControllerCommand.provisionSmartStartNode: {
         if (typeof message.entry === "string") {
           this.driver.controller.provisionSmartStartNode(
-            parseQRCodeString(message.entry),
+            await parseQRCodeString(message.entry),
           );
         } else {
           this.driver.controller.provisionSmartStartNode(message.entry);
@@ -131,11 +135,11 @@ export class ControllerMessageHandler implements MessageHandler {
       case ControllerCommand.replaceFailedNode: {
         const success = await this.driver.controller.replaceFailedNode(
           message.nodeId,
-          processInclusionOptions(
+          (await processInclusionOptions(
             this.clientsController,
             this.client,
             message,
-          ) as ReplaceNodeOptions,
+          )) as ReplaceNodeOptions,
         );
         return { success };
       }
@@ -360,17 +364,15 @@ export class ControllerMessageHandler implements MessageHandler {
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        const result = await this.driver.controller.firmwareUpdateOTW(
-          extractFirmware(
-            file,
-            message.fileFormat ??
-              guessFirmwareFileFormat(message.filename, file),
-          ).data,
+        const { data } = await extractFirmware(
+          file,
+          message.fileFormat ?? guessFirmwareFileFormat(message.filename, file),
         );
+        const result = await this.driver.firmwareUpdateOTW(data);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
       case ControllerCommand.isFirmwareUpdateInProgress: {
-        const progress = this.driver.controller.isFirmwareUpdateInProgress();
+        const progress = this.driver.isOTWFirmwareUpdateInProgress();
         return { progress };
       }
       case ControllerCommand.setMaxLongRangePowerlevel: {
@@ -426,7 +428,7 @@ function processExclusionOptions(
   }
 }
 
-function processInclusionOptions(
+async function processInclusionOptions(
   clientsController: ClientsController,
   client: Client,
   message:
@@ -434,7 +436,7 @@ function processInclusionOptions(
     | IncomingCommandControllerBeginInclusionLegacy
     | IncomingCommandControllerReplaceFailedNode
     | IncomingCommandControllerReplaceFailedNodeLegacy,
-): InclusionOptions | ReplaceNodeOptions {
+): Promise<InclusionOptions | ReplaceNodeOptions> {
   // Schema 8+ inclusion handling
   if ("options" in message) {
     const options = message.options;
@@ -452,7 +454,7 @@ function processInclusionOptions(
         // will automatically parse into a QRProvisioningInformation object before proceeding with the
         // inclusion process
         if (typeof options.provisioning === "string") {
-          options.provisioning = parseQRCodeString(options.provisioning);
+          options.provisioning = await parseQRCodeString(options.provisioning);
         }
       } else {
         // @ts-expect-error

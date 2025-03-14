@@ -136,25 +136,27 @@ export class EventForwarder {
       },
     );
 
-    this.clientsController.driver.controller.on(
-      "firmware update progress",
-      (progress) =>
-        this.forwardEvent({
-          source: "controller",
+    this.clientsController.driver.on("firmware update progress", (progress) => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clientsController.clients.forEach((client) => {
+        this.sendEvent(client, {
+          source: client.schemaVersion >= 41 ? "driver" : "controller",
           event: "firmware update progress",
           progress,
-        }),
-    );
+        });
+      });
+    });
 
-    this.clientsController.driver.controller.on(
-      "firmware update finished",
-      (result) =>
-        this.forwardEvent({
-          source: "controller",
+    this.clientsController.driver.on("firmware update finished", (result) => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clientsController.clients.forEach((client) => {
+        this.sendEvent(client, {
+          source: client.schemaVersion >= 41 ? "driver" : "controller",
           event: "firmware update finished",
           result,
-        }),
-    );
+        });
+      });
+    });
 
     this.clientsController.driver.controller.on(
       "node removed",
