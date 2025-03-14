@@ -40,4 +40,5 @@ export enum NodeCommand {
   setDefaultTransitionDuration = "node.set_default_transition_duration",
   hasDeviceConfigChanged = "node.has_device_config_changed",
   createDump = "node.create_dump",
+  getSupportedNotificationEvents = "node.get_supported_notification_events",
 }

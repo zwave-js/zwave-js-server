@@ -92,3 +92,4 @@ Base schema.
 
 - Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`
 - Added `driver.firmware_update_otw` and `driver.is_otw_firmware_update_in_progress` commands
+- Added `node.get_supported_notification_events` command

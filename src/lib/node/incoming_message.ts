@@ -260,6 +260,11 @@ export interface IncomingCommandNodeCreateDump extends IncomingCommandNodeBase {
   command: NodeCommand.createDump;
 }
 
+export interface IncomingCommandNodeGetSupportedNotificationEvents
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.getSupportedNotificationEvents;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -301,4 +306,5 @@ export type IncomingMessageNode =
   | IncomingCommandNodeSetDefaultVolume
   | IncomingCommandNodeSetDefaultTransitionDuration
   | IncomingCommandNodeHasDeviceConfigChanged
-  | IncomingCommandNodeCreateDump;
+  | IncomingCommandNodeCreateDump
+  | IncomingCommandNodeGetSupportedNotificationEvents;
