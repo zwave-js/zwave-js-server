@@ -75,6 +75,9 @@
     "typescript": "^5.3.3",
     "zwave-js": "^15.0.0"
   },
+  "engines": {
+    "node": ">= 20"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
