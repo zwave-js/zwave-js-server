@@ -8,6 +8,7 @@ import {
   InclusionGrant,
   InclusionOptions,
   KEXFailType,
+  MigrateNVMOptions,
   PlannedProvisioningEntry,
   RebuildRoutesOptions,
   ReplaceNodeOptions,
@@ -246,6 +247,7 @@ export interface IncomingCommandControllerRestoreNVM
   extends IncomingCommandControllerBase {
   command: ControllerCommand.restoreNVM;
   nvmData: string;
+  migrateOptions?: MigrateNVMOptions;
 }
 
 export interface IncomingCommandControllerSetRFRegion

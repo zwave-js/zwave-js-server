@@ -288,6 +288,7 @@ export class ControllerMessageHandler implements MessageHandler {
               }),
             );
           },
+          message.migrateOptions,
         );
         return {};
       }
