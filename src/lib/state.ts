@@ -365,6 +365,10 @@ export interface NodeStateSchema35 extends NodeStateSchema31 {
   protocol: Protocols;
 }
 
+export interface NodeStateSchema42 extends NodeStateSchema35 {
+  sdkVersion?: string;
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -377,7 +381,8 @@ export type NodeState =
   | NodeStateSchema29
   | NodeStateSchema30
   | NodeStateSchema31
-  | NodeStateSchema35;
+  | NodeStateSchema35
+  | NodeStateSchema42;
 
 export interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -712,7 +717,14 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node35 = node31 as NodeStateSchema35;
   node35.protocol = node.protocol;
-  return node35;
+
+  if (schemaVersion <= 41) {
+    return node35;
+  }
+
+  const node42 = node35 as NodeStateSchema42;
+  node42.sdkVersion = node.sdkVersion;
+  return node42;
 };
 
 export const dumpFoundNode = (
