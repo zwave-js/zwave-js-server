@@ -1,6 +1,6 @@
 {
   "name": "@zwave-js/server",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Full access to zwave-js driver through Websockets",
   "homepage": "https://github.com/zwave-js/zwave-js-server#readme",
   "repository": {
