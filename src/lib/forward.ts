@@ -31,12 +31,15 @@ export class EventForwarder {
   constructor(private clientsController: ClientsController) {}
 
   start() {
-    this.clientsController.driver.controller.nodes.forEach((node) =>
-      this.setupNode(node),
-    );
+    // Bind events for the controller and all existing nodes
+    this.setupControllerAndNodes();
 
     // Bind to driver events
     this.clientsController.driver.on("driver ready", () => {
+      // Re-bind events for the controller and nodes after the "driver ready" event,
+      // which implies that the old controller and node instances are no longer valid.
+      this.setupControllerAndNodes();
+
       // forward event to all connected clients, respecting schemaVersion it supports
       this.clientsController.clients.forEach((client) => {
         if (client.schemaVersion >= 40) {
@@ -47,6 +50,53 @@ export class EventForwarder {
         }
       });
     });
+
+    this.clientsController.driver.on("firmware update progress", (progress) => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clientsController.clients.forEach((client) => {
+        this.sendEvent(client, {
+          source: client.schemaVersion >= 41 ? "driver" : "controller",
+          event: "firmware update progress",
+          progress,
+        });
+      });
+    });
+
+    this.clientsController.driver.on("firmware update finished", (result) => {
+      // forward event to all connected clients, respecting schemaVersion it supports
+      this.clientsController.clients.forEach((client) => {
+        this.sendEvent(client, {
+          source: client.schemaVersion >= 41 ? "driver" : "controller",
+          event: "firmware update finished",
+          result,
+        });
+      });
+    });
+  }
+
+  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
+    // Forward event to all clients
+    this.clientsController.clients.forEach((client) =>
+      this.sendEvent(client, data, minSchemaVersion),
+    );
+  }
+
+  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
+    // Send event to connected client only
+    if (
+      client.receiveEvents &&
+      client.isConnected &&
+      client.schemaVersion >= (minSchemaVersion ?? 0)
+    ) {
+      client.sendEvent(data);
+    }
+  }
+
+  setupControllerAndNodes() {
+    // Bind events for all existing nodes
+    this.clientsController.driver.controller.nodes.forEach((node) =>
+      this.setupNode(node),
+    );
 
     // Bind to all controller events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/controller/Controller.ts#L112
@@ -135,28 +185,6 @@ export class EventForwarder {
         });
       },
     );
-
-    this.clientsController.driver.on("firmware update progress", (progress) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) => {
-        this.sendEvent(client, {
-          source: client.schemaVersion >= 41 ? "driver" : "controller",
-          event: "firmware update progress",
-          progress,
-        });
-      });
-    });
-
-    this.clientsController.driver.on("firmware update finished", (result) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) => {
-        this.sendEvent(client, {
-          source: client.schemaVersion >= 41 ? "driver" : "controller",
-          event: "firmware update finished",
-          result,
-        });
-      });
-    });
 
     this.clientsController.driver.controller.on(
       "node removed",
@@ -257,24 +285,6 @@ export class EventForwarder {
         31,
       ),
     );
-  }
-
-  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
-    // Forward event to all clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data, minSchemaVersion),
-    );
-  }
-
-  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
-    // Send event to connected client only
-    if (
-      client.receiveEvents &&
-      client.isConnected &&
-      client.schemaVersion >= (minSchemaVersion ?? 0)
-    ) {
-      client.sendEvent(data);
-    }
   }
 
   setupNode(node: ZWaveNode) {
