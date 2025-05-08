@@ -86,7 +86,7 @@ export class Client {
     });
     socket.on("message", (data: string) => this.receiveMessage(data));
     this.instanceHandlers = {
-      [Instance.config_manager]: new ConfigManagerMessageHandler(),
+      [Instance.config_manager]: new ConfigManagerMessageHandler(this.driver),
       [Instance.controller]: new ControllerMessageHandler(
         this.clientsController,
         this.driver,
