@@ -97,3 +97,7 @@ Base schema.
 # Schema 42
 
 - Added `sdkVersion` property to `NodeState`
+
+# Schema 43
+
+- Added `controller.toggle_rf` command
