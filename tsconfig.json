@@ -4,6 +4,7 @@
     "declaration": true,
     "outDir": "dist-esm",
     "rootDir": "src",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "isolatedModules": true
   }
 }
