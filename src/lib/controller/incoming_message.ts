@@ -261,6 +261,12 @@ export interface IncomingCommandControllerGetRFRegion
   command: ControllerCommand.getRFRegion;
 }
 
+export interface IncomingCommandControllerToggleRF
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.toggleRF;
+  enabled: boolean;
+}
+
 export interface IncomingCommandControllerSetPowerlevel
   extends IncomingCommandControllerBase {
   command: ControllerCommand.setPowerlevel;
@@ -386,6 +392,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerRestoreNVM
   | IncomingCommandControllerSetRFRegion
   | IncomingCommandControllerGetRFRegion
+  | IncomingCommandControllerToggleRF
   | IncomingCommandControllerSetPowerlevel
   | IncomingCommandControllerGetPowerlevel
   | IncomingCommandControllerGetState

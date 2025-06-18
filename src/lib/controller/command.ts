@@ -41,6 +41,7 @@ export enum ControllerCommand {
   restoreNVM = "controller.restore_nvm",
   setRFRegion = "controller.set_rf_region",
   getRFRegion = "controller.get_rf_region",
+  toggleRF = "controller.toggle_rf",
   setPowerlevel = "controller.set_powerlevel",
   getPowerlevel = "controller.get_powerlevel",
   getState = "controller.get_state",

@@ -302,6 +302,10 @@ export class ControllerMessageHandler implements MessageHandler {
         const region = await this.driver.controller.getRFRegion();
         return { region };
       }
+      case ControllerCommand.toggleRF: {
+        const success = await this.driver.controller.toggleRF(message.enabled);
+        return { success };
+      }
       case ControllerCommand.setPowerlevel: {
         const success = await this.driver.controller.setPowerlevel(
           message.powerlevel,
