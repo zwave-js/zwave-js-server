@@ -2,7 +2,7 @@ import { WebSocketServer, type WebSocket } from "ws";
 import {
   getResponder,
   CiaoService,
-  Protocol,
+  type Protocol,
   Responder,
 } from "@homebridge/ciao";
 import {
@@ -540,7 +540,7 @@ export class ZwavejsServer extends EventEmitter {
         name: this.driver.controller.homeId!.toString(),
         port,
         type: dnssdServiceType,
-        protocol: Protocol.TCP,
+        protocol: "tcp" as Protocol,
         txt: getVersionData(this.driver),
       });
       this.service.advertise().then(() => {

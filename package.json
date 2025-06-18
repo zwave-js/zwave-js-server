@@ -35,8 +35,8 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
-    "test": "prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
-    "build": "tsc -p .",
+    "test": "prettier --check src && tsgo --noEmit && npm run lint && tsx src/test/integration.ts",
+    "build": "tsgo",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node20",
     "prepare": "npm run build",
     "prepublishOnly": "rm -rf dist-* && npm run build"
@@ -63,6 +63,7 @@
     "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^8.14.0",
     "@typescript-eslint/parser": "^8.14.0",
+    "@typescript/native-preview": "^7.0.0-dev.20250617.1",
     "alcalzone-shared": "^5.0.0",
     "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
@@ -72,7 +73,6 @@
     "prettier": "^3.0.0",
     "semver": "^7.5.4",
     "tsx": "^4.19.2",
-    "typescript": "^5.3.3",
     "zwave-js": "^15.3.0"
   },
   "engines": {
