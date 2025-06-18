@@ -57,6 +57,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.restoreNVM]: Record<string, never>;
   [ControllerCommand.setRFRegion]: { success: boolean };
   [ControllerCommand.getRFRegion]: { region: RFRegion };
+  [ControllerCommand.toggleRF]: { success: boolean };
   [ControllerCommand.setPowerlevel]: { success: boolean };
   [ControllerCommand.getPowerlevel]: {
     powerlevel: number;
