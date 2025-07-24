@@ -100,6 +100,7 @@ export type IncomingCommandFirmwareUpdateOTW = IncomingCommandBase & {
       }
     | {
         // Or as the update info received from the Z-Wave JS update service
+        // (only schema version >= 44)
         updateInfo: FirmwareUpdateInfo;
       }
   );
