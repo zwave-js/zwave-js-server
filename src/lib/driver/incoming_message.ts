@@ -1,7 +1,12 @@
 import { FirmwareFileFormat, LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command.js";
 import { IncomingCommandBase } from "../incoming_message_base.js";
-import { EditableZWaveOptions, Powerlevel, ZWaveOptions } from "zwave-js";
+import {
+  type EditableZWaveOptions,
+  type FirmwareUpdateInfo,
+  Powerlevel,
+  type ZWaveOptions,
+} from "zwave-js";
 import { LogContexts } from "../logging.js";
 
 interface IncomingCommandGetConfig extends IncomingCommandBase {
@@ -84,12 +89,20 @@ interface IncomingCommandSendTestFrame extends IncomingCommandBase {
   powerlevel: Powerlevel;
 }
 
-export interface IncomingCommandFirmwareUpdateOTW extends IncomingCommandBase {
+export type IncomingCommandFirmwareUpdateOTW = IncomingCommandBase & {
   command: DriverCommand.firmwareUpdateOTW;
-  filename: string;
-  file: string; // use base64 encoding for the file
-  fileFormat?: FirmwareFileFormat;
-}
+} & (
+    | {
+        // The firmware update can either be passed as a "raw" file
+        filename: string;
+        file: string; // use base64 encoding for the file
+        fileFormat?: FirmwareFileFormat;
+      }
+    | {
+        // Or as the update info received from the Z-Wave JS update service
+        updateInfo: FirmwareUpdateInfo;
+      }
+  );
 
 export interface IncomingCommandIsOTWFirmwareUpdateInProgress
   extends IncomingCommandBase {
