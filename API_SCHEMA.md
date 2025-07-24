@@ -101,3 +101,7 @@ Base schema.
 # Schema 43
 
 - Added `controller.toggle_rf` command
+
+# Schema 44
+
+- Added another overload to the `driver.firmware_update_otw` command
