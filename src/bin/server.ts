@@ -236,10 +236,7 @@ const logMessage = (...message: string[]) => {
       logMessage("Error in driver", e.message);
       // Driver_Failed cannot be recovered by zwave-js so we restart
       if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
-        startDriverWithRetry().catch((err) => {
-          logMessage("Unable to restart driver", err);
-          handleShutdown(1);
-        });
+        startDriverWithRetry();
       }
     });
 
