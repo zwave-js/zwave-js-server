@@ -7,7 +7,7 @@ import {
   ZWaveErrorCodes,
   driverPresets,
 } from "zwave-js";
-import { ZwavejsServer } from "../lib/server.js";
+import { ZwavejsServer, Logger } from "../lib/server.js";
 import { createMockDriver } from "../mock/index.js";
 import { parseArgs } from "../util/parse-args.js";
 import { createRequire } from "node:module";
@@ -188,6 +188,14 @@ const logMessage = (...message: string[]) => {
   );
 };
 
+const debug = false;
+const logger: Logger = {
+  debug: (msg) => (debug ? logMessage("[DEBUG]", msg) : undefined),
+  info: (msg) => logMessage(msg),
+  warn: (msg) => logMessage("[WARNING]", msg),
+  error: (msg) => logMessage("[ERROR]", msg.toString()),
+};
+
 (() => {
   const params = getDriverParams();
   if (!params) {
@@ -209,7 +217,7 @@ const logMessage = (...message: string[]) => {
     }
 
     if (driver) {
-      logMessage("stopping driver");
+      logger.info("stopping driver");
       if (server) {
         await server.destroy();
       }
@@ -227,7 +235,7 @@ const logMessage = (...message: string[]) => {
         );
 
     driver.on("error", (e) => {
-      logMessage("error in driver", e.message);
+      logger.error("error in driver", e);
       // Driver_Failed cannot be recovered by zwave-js so we restart
       if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
         startDriverWithRetry();
@@ -235,12 +243,13 @@ const logMessage = (...message: string[]) => {
     });
 
     driver.once("driver ready", async () => {
-      logMessage("driver ready - starting server");
+      logger.info("driver ready - starting server");
       retryCount = 0; // Reset retry count on successful connection
       server = new ZwavejsServer(driver!, {
         port: params!.args.port,
         host: params!.args.host,
         enableDNSServiceDiscovery: !params!.args["disable-dns-sd"],
+        logger,
       });
       await server.start(true);
     });
@@ -252,7 +261,7 @@ const logMessage = (...message: string[]) => {
       driver = undefined;
       retryCount++;
       const retryDelay = getRetryDelay();
-      logMessage(
+      logger.error(
         `failed ${retryCount > 1 ? `attempt ${retryCount} ` : ""}starting driver. Retrying in ${Math.round(retryDelay / 1000)}s...`,
       );
       setTimeout(() => {
@@ -272,7 +281,7 @@ const logMessage = (...message: string[]) => {
     // Close gracefully
     closing = true;
     console.log(); // User pressed ctrl+c - move to new line
-    logMessage("shutting down");
+    logger.info("shutting down");
 
     // Clear any pending retry timer
     if (retryTimer) {
