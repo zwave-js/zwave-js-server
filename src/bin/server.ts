@@ -32,7 +32,14 @@ interface Args {
   "disable-dns-sd": boolean;
 }
 
-(async () => {
+const getDriverParams = ():
+  | {
+      args: Args;
+      serialPort: string;
+      options: PartialZWaveOptions;
+      presets?: PartialZWaveOptions[];
+    }
+  | undefined => {
   const args = parseArgs<Args>([
     "_",
     "config",
@@ -48,11 +55,7 @@ interface Args {
     }
   }
 
-  if (args["mock-driver"]) {
-    args._.push("mock-serial-port");
-  }
-
-  if (args._.length < 1) {
+  if (!args["mock-driver"] && args._.length < 1) {
     console.error("Error: Missing path to serial port");
     return;
   }
@@ -165,30 +168,98 @@ interface Args {
       >((name) => (driverPresets as any)[name])
       .filter((preset): preset is PartialZWaveOptions => preset !== undefined);
   }
-  const driver = args["mock-driver"]
-    ? createMockDriver()
-    : new Driver(serialPort, options, ...(presets ?? []));
 
-  driver.on("error", (e) => {
-    console.error("Error in driver", e);
-    // Driver_Failed cannot be recovered by zwave-js so we shut down
-    if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
-      handleShutdown(1);
+  return {
+    args,
+    serialPort,
+    options,
+    presets,
+  };
+};
+
+const logMessage = (...message: string[]) => {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+  const milliseconds = now.getMilliseconds().toString().padStart(3, "0");
+  console.log(
+    `${hours}:${minutes}:${seconds}.${milliseconds} SERVER   ${message.join(" ")}`,
+  );
+};
+
+(() => {
+  const params = getDriverParams();
+  if (!params) {
+    process.exit(1);
+  }
+
+  let driver: Driver | undefined;
+  let server: ZwavejsServer | undefined;
+  let retryCount = 0;
+  let retryTimer: NodeJS.Timeout | undefined;
+
+  // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 32s, then cap at 60s
+  const getRetryDelay = () => Math.min(Math.pow(2, retryCount) * 1000, 60000);
+
+  const startDriverWithRetry = async (): Promise<void> => {
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = undefined;
     }
-  });
 
-  let server: ZwavejsServer;
+    if (driver) {
+      logMessage("stopping driver");
+      if (server) {
+        await server.destroy();
+      }
+      if (driver) {
+        await driver.destroy();
+      }
+    }
 
-  driver.once("driver ready", async () => {
-    server = new ZwavejsServer(driver, {
-      port: args.port,
-      host: args.host,
-      enableDNSServiceDiscovery: !args["disable-dns-sd"],
+    driver = params!.args["mock-driver"]
+      ? createMockDriver()
+      : new Driver(
+          params!.serialPort,
+          params!.options,
+          ...(params!.presets ?? []),
+        );
+
+    driver.on("error", (e) => {
+      logMessage("error in driver", e.message);
+      // Driver_Failed cannot be recovered by zwave-js so we restart
+      if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
+        startDriverWithRetry();
+      }
     });
-    await server.start(true);
-  });
 
-  await driver.start();
+    driver.once("driver ready", async () => {
+      logMessage("driver ready - starting server");
+      retryCount = 0; // Reset retry count on successful connection
+      server = new ZwavejsServer(driver!, {
+        port: params!.args.port,
+        host: params!.args.host,
+        enableDNSServiceDiscovery: !params!.args["disable-dns-sd"],
+      });
+      await server.start(true);
+    });
+
+    try {
+      await driver.start();
+    } catch (e) {
+      await driver.destroy();
+      driver = undefined;
+      retryCount++;
+      const retryDelay = getRetryDelay();
+      logMessage(
+        `failed ${retryCount > 1 ? `attempt ${retryCount} ` : ""}starting driver. Retrying in ${Math.round(retryDelay / 1000)}s...`,
+      );
+      setTimeout(() => {
+        startDriverWithRetry();
+      }, retryDelay);
+    }
+  };
 
   let closing = false;
 
@@ -200,7 +271,15 @@ interface Args {
 
     // Close gracefully
     closing = true;
-    console.log("Shutting down");
+    console.log(); // User pressed ctrl+c - move to new line
+    logMessage("shutting down");
+
+    // Clear any pending retry timer
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = undefined;
+    }
+
     if (server) {
       await server.destroy();
     }
@@ -212,7 +291,6 @@ interface Args {
 
   process.on("SIGINT", () => handleShutdown(0));
   process.on("SIGTERM", () => handleShutdown(0));
-})().catch((err) => {
-  console.error("Unable to start driver", err);
-  process.exit(1);
-});
+
+  startDriverWithRetry();
+})();
