@@ -30,6 +30,7 @@ interface Args {
   port?: number;
   host?: string;
   "disable-dns-sd": boolean;
+  reconnect: boolean;
 }
 
 const getDriverParams = ():
@@ -47,6 +48,7 @@ const getDriverParams = ():
     "port",
     "host",
     "disable-dns-sd",
+    "reconnect",
   ]);
 
   if (args.port) {
@@ -238,7 +240,12 @@ const logger: Logger = {
       logger.error("error in driver", e);
       // Driver_Failed cannot be recovered by zwave-js so we restart
       if (e instanceof ZWaveError && e.code === ZWaveErrorCodes.Driver_Failed) {
-        startDriverWithRetry();
+        if (params!.args["reconnect"]) {
+          startDriverWithRetry();
+        } else {
+          logger.error("driver failure is unrecoverable, exiting...");
+          process.exit(1);
+        }
       }
     });
 
@@ -259,6 +266,12 @@ const logger: Logger = {
     } catch (e) {
       await driver.destroy();
       driver = undefined;
+
+      if (!params!.args["reconnect"]) {
+        logger.error("failed starting driver.");
+        throw e;
+      }
+
       retryCount++;
       const retryDelay = getRetryDelay();
       logger.error(

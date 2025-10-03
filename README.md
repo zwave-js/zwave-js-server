@@ -24,6 +24,8 @@ If you don't have a USB stick, you can add `--mock-driver` to use a fake stick.
 
 DNS-SD is enabled in the server by default. If you would like to disable it, add `--disable-dns-sd`.
 
+If you want to enable automatic reconnection, add `--reconnect`.
+
 ### Start client
 
 Requires server to be running.
