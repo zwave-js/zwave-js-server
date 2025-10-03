@@ -211,6 +211,20 @@ const logger: Logger = {
   const getRetryDelay = () => Math.min(Math.pow(2, retryCount) * 1000, 60000);
 
   const startDriverWithRetry = async (): Promise<void> => {
+    // We only want to show the logo the very first connection attempt.
+    if (
+      retryCount > 0 &&
+      (!params!.options.logConfig || params.options.logConfig.showLogo)
+    ) {
+      if (!params.options.logConfig) {
+        params.options.logConfig = {
+          showLogo: false,
+        };
+      } else {
+        params.options.logConfig.showLogo = false;
+      }
+    }
+
     if (retryTimer) {
       clearTimeout(retryTimer);
       retryTimer = undefined;
