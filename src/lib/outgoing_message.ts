@@ -20,7 +20,7 @@ export type JSONValue =
   | null
   | JSONValue[]
   | { [key: string]: JSONValue }
-  | {};
+  | object;
 
 export interface OutgoingEvent {
   source: "controller" | "node" | "driver" | "zniffer";

@@ -253,7 +253,7 @@ export class ControllerMessageHandler implements MessageHandler {
         const nvmDataRaw = await this.driver.controller.backupNVMRaw(
           (bytesRead: number, total: number) => {
             this.clientsController.clients.forEach((client) =>
-              this.client.sendEvent({
+              client.sendEvent({
                 source: "controller",
                 event: "nvm backup progress",
                 bytesRead,
@@ -270,7 +270,7 @@ export class ControllerMessageHandler implements MessageHandler {
           nvmData,
           (bytesRead: number, total: number) => {
             this.clientsController.clients.forEach((client) =>
-              this.client.sendEvent({
+              client.sendEvent({
                 source: "controller",
                 event: "nvm convert progress",
                 bytesRead,
@@ -280,7 +280,7 @@ export class ControllerMessageHandler implements MessageHandler {
           },
           (bytesWritten: number, total: number) => {
             this.clientsController.clients.forEach((client) =>
-              this.client.sendEvent({
+              client.sendEvent({
                 source: "controller",
                 event: "nvm restore progress",
                 bytesWritten,
@@ -462,7 +462,9 @@ async function processInclusionOptions(
           options.provisioning = await parseQRCodeString(options.provisioning);
         }
       } else {
-        // @ts-expect-error
+        // @ts-expect-error for some reason, TS doesn't understand that
+        // the default and S2 strategies always accept either a provisioning
+        // entry or the user callbacks
         options.userCallbacks = inclusionUserCallbacks(
           clientsController,
           client,

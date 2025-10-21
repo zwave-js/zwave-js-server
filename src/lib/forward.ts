@@ -395,7 +395,7 @@ export class EventForwarder {
         this.clientsController.clients.forEach((client) => {
           // Only send notification events from the Notification CC for schema version < 3
           if (client.schemaVersion < 3 && ccId == CommandClasses.Notification) {
-            let eventData: OutgoingEvent = {
+            const eventData: OutgoingEvent = {
               source: "node",
               event: "notification",
               nodeId: changedNode.nodeId,

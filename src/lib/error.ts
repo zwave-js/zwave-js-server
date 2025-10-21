@@ -12,9 +12,8 @@ export enum ErrorCode {
   noLongerSupported = "no_longer_supported",
 }
 
-export class BaseError extends Error {
-  // @ts-ignore
-  errorCode: ErrorCode;
+export abstract class BaseError extends Error {
+  abstract errorCode: ErrorCode;
 
   constructor(message?: string) {
     super(message);

@@ -74,7 +74,7 @@ export class NodeMessageHandler implements MessageHandler {
       }
       case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        let firmware = await extractFirmware(
+        const firmware = await extractFirmware(
           firmwareFile,
           message.firmwareFileFormat ??
             guessFirmwareFileFormat(message.firmwareFilename, firmwareFile),
@@ -88,7 +88,7 @@ export class NodeMessageHandler implements MessageHandler {
         const updates: Firmware[] = [];
         for (const update of message.updates) {
           const file = Buffer.from(update.file, "base64");
-          let firmware = await extractFirmware(
+          const firmware = await extractFirmware(
             file,
             update.fileFormat ?? guessFirmwareFileFormat(update.filename, file),
           );
