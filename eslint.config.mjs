@@ -18,6 +18,10 @@ export default tseslint.config(
       ecmaVersion: 2020,
       sourceType: "module",
     },
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "off",
+    }
   },
   eslintConfigPrettier,
 );

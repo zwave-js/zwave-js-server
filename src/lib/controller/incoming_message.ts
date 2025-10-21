@@ -19,6 +19,7 @@ import type { QRProvisioningInformation } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { ControllerCommand } from "./command.js";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IncomingCommandControllerBase extends IncomingCommandBase {}
 
 // Schema >= 8

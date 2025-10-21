@@ -15,27 +15,30 @@ import {
 } from "../common.js";
 import { MessageHandler } from "../message_handler.js";
 
-const isBufferObject = (obj: any): boolean => {
+function isBufferObject(
+  obj: unknown,
+): obj is { type: "Buffer"; data: number[] } {
   return (
     obj instanceof Object &&
     Object.keys(obj).length === 2 &&
     "type" in obj &&
     obj.type === "Buffer" &&
     "data" in obj &&
-    Array.isArray(obj.data)
+    Array.isArray(obj.data) &&
+    obj.data.every((item) => typeof item === "number")
   );
-};
+}
 
-const deserializeBufferInArray = (array: Array<any>): Array<any> => {
+function deserializeBufferInArray(array: unknown[]): unknown[] {
   // Iterate over all items in array and deserialize any Buffer objects
-  for (var idx = 0; idx < array.length; idx++) {
+  for (let idx = 0; idx < array.length; idx++) {
     const value = array[idx];
     if (isBufferObject(value)) {
       array[idx] = Buffer.from(value.data);
     }
   }
   return array;
-};
+}
 
 export class EndpointMessageHandler implements MessageHandler {
   constructor(

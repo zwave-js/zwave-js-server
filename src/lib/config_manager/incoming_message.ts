@@ -1,6 +1,7 @@
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { ConfigManagerCommand } from "./command.js";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IncomingCommandConfigManagerBase extends IncomingCommandBase {}
 
 export interface IncomingCommandConfigManagerLookupDevice

@@ -829,6 +829,8 @@ export const dumpLogConfig = (
   driver: Driver,
   schemaVersion: number,
 ): LogConfigState => {
+  // transports is used to remove fields from partialLogConfig
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { transports, ...partialLogConfig } = driver.getLogConfig();
   if (schemaVersion < 3 && typeof partialLogConfig.level === "string") {
     const levelNum = numberFromLogLevel(partialLogConfig.level);

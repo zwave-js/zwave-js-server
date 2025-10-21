@@ -26,13 +26,13 @@ class MockDriver extends EventEmitter {
     };
   }
 
-  public updateLogConfig(config: Partial<LogConfig>) {}
+  public updateLogConfig(_config: Partial<LogConfig>) {}
 
   public updateUserAgent(
-    additionalUserAgentComponents?: Record<string, string> | null,
+    _additionalUserAgentComponents?: Record<string, string> | null,
   ) {}
 
-  public updateOptions(options: Partial<ZWaveOptions>) {}
+  public updateOptions(_options: Partial<ZWaveOptions>) {}
 
   async destroy() {}
 }

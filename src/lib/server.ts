@@ -137,7 +137,7 @@ export class Client {
     let msg: IncomingMessage;
     try {
       msg = JSON.parse(data);
-    } catch (err) {
+    } catch {
       // We don't have the message ID. Just close it.
       this.logger.debug(`Unable to parse data: ${data}`);
       this.socket.close();
@@ -161,9 +161,7 @@ export class Client {
       if (msg.command === ServerCommand.startListening) {
         this.sendResultSuccess(
           msg.messageId,
-          {
-            state: dumpState(this.driver, this.schemaVersion),
-          },
+          { state: dumpState(this.driver, this.schemaVersion) },
           true,
         );
         this.receiveEvents = true;
@@ -209,6 +207,9 @@ export class Client {
     } catch (err: unknown) {
       if (err instanceof BaseError) {
         this.logger.error("Message error", err);
+
+        // name and stack are used to remove fields from args
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { errorCode, name, message, stack, ...args } = err;
         return this.sendResultError(msg.messageId, errorCode, message, args);
       }
@@ -235,10 +236,7 @@ export class Client {
   }
 
   sendVersion() {
-    this.sendData({
-      type: "version",
-      ...getVersionData(this.driver),
-    });
+    this.sendData({ type: "version", ...getVersionData(this.driver) });
   }
 
   sendResultSuccess(
@@ -247,12 +245,7 @@ export class Client {
     compress = false,
   ) {
     this.sendData(
-      {
-        type: "result",
-        success: true,
-        messageId,
-        result,
-      },
+      { type: "result", success: true, messageId, result },
       compress,
     );
   }
@@ -269,7 +262,7 @@ export class Client {
       // for the client to consume and display.
       this.sendResultZWaveError(
         messageId,
-        -1 as any,
+        -1 as unknown as ZWaveErrorCodes,
         `${errorCode}: ${message}`,
       );
     } else {
@@ -312,10 +305,7 @@ export class Client {
   }
 
   sendEvent(event: OutgoingMessages.OutgoingEvent) {
-    this.sendData({
-      type: "event",
-      event,
-    });
+    this.sendData({ type: "event", event });
   }
 
   sendData(data: OutgoingMessages.OutgoingMessage, compress = false) {
