@@ -1,4 +1,3 @@
-import globals from "globals";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 
@@ -12,9 +11,6 @@ export default tseslint.config(
       ...tseslint.configs.recommended,
     ],
     languageOptions: {
-      globals: {
-        ...globals.node,
-      },
       ecmaVersion: 2020,
       sourceType: "module",
     },
