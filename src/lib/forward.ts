@@ -500,5 +500,9 @@ export class EventForwarder {
         notifyNode(changedNode, "statistics updated", { statistics });
       },
     );
+
+    node.on("node info received", (changedNode: ZWaveNode) => {
+      notifyNode(changedNode, "node info received");
+    });
   }
 }
