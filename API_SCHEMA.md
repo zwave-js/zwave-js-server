@@ -213,4 +213,4 @@ Base schema.
 | Node       | `hardwareVersion`        | Hardware version number                                         |
 | Node       | `hasSUCReturnRoute`      | Whether the node has a SUC return route configured              |
 | Node       | `manufacturer`           | Manufacturer name string                                        |
-| Node       | `dsk`                    | Device Specific Key for S2 (hex encoded string)                 |
+| Node       | `dsk`                    | Device Specific Key for S2 (human-readable format)              |
