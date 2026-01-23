@@ -88,6 +88,8 @@ const runTest = async () => {
             logConfig: { enabled: true, level: "debug" },
             statisticsEnabled: true,
             ready: true,
+            allNodesReady: true,
+            configVersion: "0.0.0-mock",
           },
           controller: { homeId: 1 },
           nodes: [],
