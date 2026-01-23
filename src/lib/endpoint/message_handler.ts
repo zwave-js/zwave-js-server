@@ -112,13 +112,13 @@ export class EndpointMessageHandler implements MessageHandler {
         return getRawConfigParameterValue(message, endpoint);
       }
       case EndpointCommand.getCCs: {
-        const commandClasses: { [key: number]: unknown } = {};
+        const result: EndpointResultTypes[EndpointCommand.getCCs] = {
+          commandClasses: {},
+        };
         for (const [ccId, info] of endpoint.getCCs()) {
-          commandClasses[ccId] = info;
+          result.commandClasses[ccId] = info;
         }
-        return {
-          commandClasses,
-        } as EndpointResultTypes[EndpointCommand.getCCs];
+        return result;
       }
       case EndpointCommand.maySupportBasicCC: {
         const maySupport = endpoint.maySupportBasicCC();

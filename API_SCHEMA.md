@@ -179,16 +179,17 @@ Base schema.
 
 ### Events
 
-| Object     | Category          | Event                    | Description                                                                      |
-| ---------- | ----------------- | ------------------------ | -------------------------------------------------------------------------------- |
-| Controller | Network Lifecycle | `network found`          | Emitted when a new network is found during join (includes `homeId`, `ownNodeId`) |
-| Controller | Network Lifecycle | `network joined`         | Emitted when successfully joined a network                                       |
-| Controller | Network Lifecycle | `network left`           | Emitted when left the current network                                            |
-| Controller | Network Lifecycle | `joining network failed` | Emitted when joining a network fails                                             |
-| Controller | Network Lifecycle | `leaving network failed` | Emitted when leaving a network fails                                             |
-| Driver     |                   | `all nodes ready`        | Emitted when all nodes are ready                                                 |
-| Driver     |                   | `error`                  | Emitted when a driver error occurs (includes `error` message string)             |
-| Driver     |                   | `bootloader ready`       | Emitted when the controller enters bootloader mode                               |
+| Object     | Category          | Event                             | Description                                                                      |
+| ---------- | ----------------- | --------------------------------- | -------------------------------------------------------------------------------- |
+| Controller | Network Lifecycle | `network found`                   | Emitted when a new network is found during join (includes `homeId`, `ownNodeId`) |
+| Controller | Network Lifecycle | `network joined`                  | Emitted when successfully joined a network                                       |
+| Controller | Network Lifecycle | `network left`                    | Emitted when left the current network                                            |
+| Controller | Network Lifecycle | `joining network failed`          | Emitted when joining a network fails                                             |
+| Controller | Network Lifecycle | `leaving network failed`          | Emitted when leaving a network fails                                             |
+| Driver     |                   | `all nodes ready`                 | Emitted when all nodes are ready                                                 |
+| Driver     |                   | `error`                           | Emitted when a driver error occurs (includes `error` message string)             |
+| Driver     |                   | `bootloader ready`                | Emitted when the controller enters bootloader mode                               |
+| Node       | Diagnostics       | `check link reliability progress` | Emitted during link reliability check (includes `nodeId`, `progress`)            |
 
 ### State Properties
 
