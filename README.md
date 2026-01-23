@@ -368,29 +368,6 @@ interface {
 }
 ```
 
-#### [Shutdown](https://zwave-js.github.io/node-zwave-js/#/api/node?id=shutdown)
-
-[compatible with schema version: 27+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.shutdown";
-}
-```
-
-#### [Update Options](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updateoptions)
-
-[compatible with schema version: 33+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.update_options";
-  options: EditableZWaveOptions;
-}
-```
-
 #### [Perform a hard reset on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=hardreset)
 
 [compatible with schema version: 25+]
@@ -966,6 +943,18 @@ interface {
 }
 ```
 
+#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_progress";
+  nodeId: number;
+}
+```
+
 #### [Wait for wakeup](https://zwave-js.github.io/node-zwave-js/#/api/node?id=waitforwakeup)
 
 [compatible with schema version: 18+]
@@ -1149,18 +1138,6 @@ interface {
 interface {
   messageId: string;
   command: "node.create_dump";
-}
-```
-
-#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
-
-[compatible with schema version: 21+]
-
-```ts
-interface {
-  messageId: string;
-  command: "node.get_firmware_update_progress";
-  nodeId: number;
 }
 ```
 
