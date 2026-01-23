@@ -110,6 +110,8 @@ Base schema.
 
 - Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
 - Added new commands, events, and state properties (see tables below)
+- Added automatic ZIP extraction for firmware update commands (`node.begin_firmware_update`, `node.update_firmware`, `controller.firmware_update_otw`, `driver.firmware_update_otw`). When the file format cannot be detected, the server will automatically attempt to extract firmware from a ZIP archive.
+- Added new utility commands for firmware handling: `utils.guess_firmware_file_format`, `utils.try_unzip_firmware_file`, `utils.extract_firmware`
 
 ## Schema 46
 

@@ -1,10 +1,6 @@
-import {
-  Driver,
-  extractFirmware,
-  guessFirmwareFileFormat,
-  OTWFirmwareUpdateResult,
-} from "zwave-js";
+import { Driver, extractFirmware, OTWFirmwareUpdateResult } from "zwave-js";
 import { UnknownCommandError } from "../error.js";
+import { parseFirmwareFile } from "../common.js";
 import {
   Client,
   ClientsController,
@@ -136,11 +132,12 @@ export class DriverMessageHandler implements MessageHandler {
           result = await this.driver.firmwareUpdateOTW(message.updateInfo);
         } else {
           const file = Buffer.from(message.file, "base64");
-          const { data } = await extractFirmware(
+          const parsed = parseFirmwareFile(
+            message.filename,
             file,
-            message.fileFormat ??
-              guessFirmwareFileFormat(message.filename, file),
+            message.fileFormat,
           );
+          const { data } = await extractFirmware(parsed.rawData, parsed.format);
           result = await this.driver.firmwareUpdateOTW(data);
         }
         return { result };
