@@ -16,7 +16,7 @@ Opens server on `ws://0.0.0.0:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
-> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+> NOTE: Unless specified in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
 
 You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to using `--host`, the default host is **0.0.0.0** i.e all interfaces.
 
@@ -71,7 +71,9 @@ interface {
   type: "version";
   driverVersion: string;
   serverVersion: string;
-  homeId: number;
+  homeId: number | undefined;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
 }
 ```
 
@@ -104,6 +106,7 @@ interface {
   success: true,
   result: {
     state: {
+      driver: Partial<DriverState>;
       controller: Partial<ZWaveController>;
       nodes: Partial<ZWaveNode>[];
     }
@@ -119,7 +122,7 @@ Event keys follow the names/types as used by Z-Wave JS.
 interface {
   type: "event",
   event: {
-    source: "driver" | "controller" | "node";
+    source: "driver" | "controller" | "node" | "zniffer";
     event: string;
     [key: string]: unknown;
   }
@@ -365,29 +368,6 @@ interface {
 }
 ```
 
-#### [Shutdown](https://zwave-js.github.io/node-zwave-js/#/api/node?id=shutdown)
-
-[compatible with schema version: 27+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.shutdown";
-}
-```
-
-#### [Update Options](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updateoptions)
-
-[compatible with schema version: 33+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.update_options";
-  options: EditableZWaveOptions;
-}
-```
-
 #### [Perform a hard reset on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=hardreset)
 
 [compatible with schema version: 25+]
@@ -432,6 +412,63 @@ interface {
   command: "driver.send_test_frame";
   nodeId: number;
   powerlevel: Powerlevel;
+}
+```
+
+#### [Firmware Update OTW (Over The Wire)](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=firmwareupdateotw)
+
+[compatible with schema version: 41+]
+
+This command performs a controller firmware update using firmware obtained over the wire (e.g., downloaded from the internet). The firmware update can be provided in two ways:
+
+**Option 1**: Provide the raw firmware file (schema 41+):
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  filename: string;
+  file: string; // use base64 encoding for the file
+  fileFormat?: FirmwareFileFormat;
+}
+```
+
+**Option 2**: Provide the update info from Z-Wave JS update service (schema 44+):
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  updateInfo: FirmwareUpdateInfo;
+}
+```
+
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+
+Returns:
+
+```ts
+interface {
+  result: OTWFirmwareUpdateResult;
+}
+```
+
+#### [Is OTW Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=isotwfirmwareupdateinprogress)
+
+[compatible with schema version: 41+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.is_otw_firmware_update_in_progress";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  progress: boolean;
 }
 ```
 
@@ -565,9 +602,11 @@ interface {
 }
 ```
 
-#### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
+#### [Begin Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
 
-[compatible with schema version: 24+]
+[compatible with schema version: 0-23]
+
+> **Note**: For schema versions 24 and higher, use `node.update_firmware` instead.
 
 If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload.
 
@@ -576,10 +615,31 @@ interface {
   messageId: string;
   command: "node.begin_firmware_update";
   nodeId: number;
+  firmwareFilename: string;
+  firmwareFile: string; // use base64 encoding for the file
+  firmwareFileFormat?: FirmwareFileFormat;
+  target?: number;
+}
+```
+
+#### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
+
+[compatible with schema version: 24+]
+
+This command supports updating multiple firmware files in a single operation.
+
+If `fileFormat` is not provided, the format will be guessed based on the filename and file payload.
+
+```ts
+interface {
+  messageId: string;
+  command: "node.update_firmware";
+  nodeId: number;
   updates: {
     filename: string;
     file: string; // use base64 encoding for the file
-    fileFormat?: FileFormat;
+    fileFormat?: FirmwareFileFormat;
+    firmwareTarget?: number;
   }[];
 }
 ```
@@ -635,18 +695,6 @@ interface {
     property: string | number;
     propertyKey?: string | number;
   };
-}
-```
-
-#### [Set raw configuration parameter value (Advanced)](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
-
-[compatible with schema version: 1+]
-
-```ts
-interface {
-  messageId: string;
-  command: "node.set_raw_config_parameter_value";
-  nodeId: number;
 }
 ```
 
@@ -827,11 +875,33 @@ interface {
 
 [compatible with schema version: 21+]
 
+> **Note**: The command `node.get_firmware_update_progress` is an alias for this command and can be used interchangeably.
+
 ```ts
 interface {
   messageId: string;
   nodeId: number;
   command: "node.is_firmware_update_in_progress";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  progress: boolean;
+}
+```
+
+#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_progress";
+  nodeId: number;
 }
 ```
 
@@ -1329,7 +1399,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "<prefix>.get_cc_version"
+  command: "<prefix>.supports_cc_api"
   index?: number;  // Endpoint index
   commandClass: CommandClasses;
 }
@@ -1468,7 +1538,7 @@ interface {
 
 #### Get current frequency
 
-Gets list of current frequency.
+Gets the current frequency.
 
 [compatible with schema version: 38+]
 
@@ -1681,7 +1751,7 @@ interface {
 }
 ```
 
-#### `nvm backup progress`
+#### `nvm convert progress`
 
 This event is sent on progress updates to the NVM conversion process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM file that was passed in is being converted to the right format.
 
@@ -1690,7 +1760,7 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm convert progress";
     bytesRead: number;
     total: number;
   }
@@ -1706,7 +1776,7 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm restore progress";
     bytesWritten: number;
     total: number;
   }
@@ -1775,24 +1845,32 @@ If a command results in an error, the following response is returned:
 
 The following error codes exist:
 
-| code                | description          |
-| ------------------- | -------------------- |
-| unknown_command     | Unknown command      |
-| node_not_found      | Node not found       |
-| schema_incompatible | Incompatible Schema  |
-| zwave_error         | Error from Z-Wave JS |
-| unknown_error       | Unknown exception    |
+| code                             | description                          |
+| -------------------------------- | ------------------------------------ |
+| unknown_command                  | Unknown command                      |
+| node_not_found                   | Node not found                       |
+| endpoint_not_found               | Endpoint not found                   |
+| virtual_endpoint_not_found       | Virtual endpoint not found           |
+| schema_incompatible              | Incompatible Schema                  |
+| zwave_error                      | Error from Z-Wave JS                 |
+| inclusion_phase_not_in_progress  | Inclusion phase not in progress      |
+| inclusion_already_in_progress    | Inclusion already in progress        |
+| invalid_params_passed_to_command | Invalid parameters passed to command |
+| no_longer_supported              | Feature no longer supported          |
+| unknown_error                    | Unknown exception                    |
 
 In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
+```json
 {
-"type": "result",
-"success": false,
-"messageId": 1,
-"errorCode": "zwave_error",
-"zwaveErrorCode": 18,
-"zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
+  "type": "result",
+  "success": false,
+  "messageId": 1,
+  "errorCode": "zwave_error",
+  "zwaveErrorCode": 18,
+  "zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
 }
+```
 
 ## Authentication
 
