@@ -7,3 +7,4 @@ config.json
 .DS_Store
 *.tgz
 cache
+.claude
