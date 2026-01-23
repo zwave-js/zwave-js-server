@@ -15,7 +15,7 @@ Base schema.
 
 - `Buffer` values were previously exposed with a `ValueType` of `string`. They are now exposed with a `ValueType` of `Buffer`
 
-# Schema 3
+## Schema 3
 
 - Renamed `controller.removeNodeFromAllAssocations` to `controller.removeNodeFromAllAssociations` to fix a typo
 - Numeric loglevels are converted to the corresponding string loglevel internally. driver.getLogConfig always returns the string loglevel regardless.
@@ -29,11 +29,11 @@ Base schema.
 - The node `notification` event was reworked and decoupled from the Notification CC. The event callback now indicates which CC raised the event and its arguments are moved into a single object parameter.
 - Moved the `deviceClass` property from `ZWaveNode` to its base class `Endpoint` and consider the endpoint's device class where necessary
 
-# Schema 4
+## Schema 4
 
 - Node `interviewStage` property was changed from type `number` to type `string`
 
-# Schema 5
+## Schema 5
 
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
@@ -44,64 +44,64 @@ Base schema.
 
 ---
 
-# Schema 33
+## Schema 33
 
 - Fixed `node.set_raw_config_parameter_value` command to match Z-Wave JS types
 - Added `endpoint.set_raw_config_parameter_value` command
 - Added `driver.update_options` command
 
-# Schema 34
+## Schema 34
 
 - Added `rebuildRoutesProgress` to controller state dump
 - Listen for clients using IPv6 in addition to IPv4 which was already supported
 
-# Schema 35
+## Schema 35
 
 - Adds Z-Wave Long Range support
 - Added `supportsLongRange` to controller state dump
 
-# Schema 36
+## Schema 36
 
 - Added `maxLongRangePowerlevel`, `longRangeChannel`, and `supportsLongRangeAutoChannelSelection` to controller state dump
 - Added commands for controller methods `getMaxLongRangePowerlevel`, `setMaxLongRangePowerlevel`, `getLongRangeChannel`, and `setLongRangeChannel`
 - Removed deprecated `mandatoryControlledCCs` and `mandatorySupportedCCs` properties from device class dump
 - Added commands for `node.createDump` and `driver.sendTestFrame`
 
-# Schema 37
+## Schema 37
 
 - Added command for `checkAssocation` controller method
 - Updated payload for `inclusion started` controller event
 
-# Schema 38
+## Schema 38
 
 - Added controller `inclusion state changed` event
 - Added `config_manager` commands
 - Added `zniffer` commands
 
-# Schema 39
+## Schema 39
 
 - Added support for both overloads of `node.manuallyIdleNotificationValue`
 - Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
 
-# Schema 40
+## Schema 40
 
 - Added `endpoint.try_get_node` command
 - Added `controller.cancelSecureBootstrapS2` command
 
-# Schema 41
+## Schema 41
 
 - Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`
 - Added `driver.firmware_update_otw` and `driver.is_otw_firmware_update_in_progress` commands
 - Added `node.get_supported_notification_events` command
 
-# Schema 42
+## Schema 42
 
 - Added `sdkVersion` property to `NodeState`
 
-# Schema 43
+## Schema 43
 
 - Added `controller.toggle_rf` command
 
-# Schema 44
+## Schema 44
 
 - Added another overload to the `driver.firmware_update_otw` command
