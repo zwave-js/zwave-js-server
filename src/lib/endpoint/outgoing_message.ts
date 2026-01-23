@@ -8,9 +8,6 @@ import {
 import { EndpointCommand } from "./command.js";
 import { NodeState } from "../state.js";
 
-// EndpointDump is not exported from zwave-js, so we use unknown for the dump result
-// The actual structure matches what createEndpointDump returns
-
 export interface EndpointResultTypes {
   [EndpointCommand.invokeCCAPI]: { response: unknown };
   [EndpointCommand.supportsCCAPI]: { supported: boolean };

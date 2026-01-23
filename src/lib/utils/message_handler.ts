@@ -7,7 +7,6 @@ import {
 } from "zwave-js";
 import {
   extractFirmware,
-  FirmwareFileFormat,
   guessFirmwareFileFormat,
   parseQRCodeString,
   tryParseDSKFromQRCodeString,
@@ -75,10 +74,7 @@ export class UtilsMessageHandler implements MessageHandler {
       }
       case UtilsCommand.extractFirmware: {
         const fileBuffer = Buffer.from(message.file, "base64");
-        const firmware = await extractFirmware(
-          fileBuffer,
-          message.format as FirmwareFileFormat,
-        );
+        const firmware = await extractFirmware(fileBuffer, message.format);
         return {
           firmware: {
             data: Buffer.from(firmware.data).toString("base64"),
