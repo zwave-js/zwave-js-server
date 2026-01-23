@@ -5,7 +5,6 @@ import {
   InclusionStrategy,
   ReplaceNodeOptions,
   extractFirmware,
-  guessFirmwareFileFormat,
   ExclusionStrategy,
   ExclusionOptions,
   AssociationCheckResult,
@@ -29,7 +28,7 @@ import {
   IncomingMessageController,
 } from "./incoming_message.js";
 import { ControllerResultTypes } from "./outgoing_message.js";
-import { firmwareUpdateOutgoingMessage } from "../common.js";
+import { firmwareUpdateOutgoingMessage, parseFirmwareFile } from "../common.js";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks.js";
 import { MessageHandler } from "../message_handler.js";
 import { dumpController } from "../state.js";
@@ -370,10 +369,12 @@ export class ControllerMessageHandler implements MessageHandler {
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        const { data } = await extractFirmware(
+        const parsed = parseFirmwareFile(
+          message.filename,
           file,
-          message.fileFormat ?? guessFirmwareFileFormat(message.filename, file),
+          message.fileFormat,
         );
+        const { data } = await extractFirmware(parsed.rawData, parsed.format);
         const result = await this.driver.firmwareUpdateOTW(data);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }

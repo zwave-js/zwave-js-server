@@ -110,6 +110,8 @@ Base schema.
 
 - Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
 - Added new commands, events, and state properties (see tables below)
+- Added automatic ZIP extraction for firmware update commands (`node.begin_firmware_update`, `node.update_firmware`, `controller.firmware_update_otw`, `driver.firmware_update_otw`). When the file format cannot be detected, the server will automatically attempt to extract firmware from a ZIP archive.
+- Added new utility commands for firmware handling: `utils.guess_firmware_file_format`, `utils.try_unzip_firmware_file`, `utils.extract_firmware`
 
 ### Commands
 
@@ -176,6 +178,9 @@ Base schema.
 | Zniffer    | Long Range         | `zniffer.get_current_lr_channel_config`           | Get currently configured LR channel configuration                          |
 | Zniffer    | Long Range         | `zniffer.get_supported_lr_channel_configs`        | Get map of supported LR channel configurations                             |
 | Zniffer    | Long Range         | `zniffer.set_lr_channel_config`                   | Set Long Range channel configuration (800 series)                          |
+| Utils      | Firmware           | `utils.guess_firmware_file_format`                | Guess the firmware file format from filename and file contents             |
+| Utils      | Firmware           | `utils.try_unzip_firmware_file`                   | Extract firmware from a ZIP archive (returns undefined if not valid)       |
+| Utils      | Firmware           | `utils.extract_firmware`                          | Extract firmware data from a firmware file given its format                |
 
 ### Events
 

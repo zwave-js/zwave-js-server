@@ -8,7 +8,6 @@ import {
   ConfigurationMetadata,
   extractFirmware,
   Firmware,
-  guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
 import { Client, ClientsController } from "../server.js";
@@ -19,6 +18,7 @@ import { NodeResultTypes } from "./outgoing_message.js";
 import {
   firmwareUpdateOutgoingMessage,
   getRawConfigParameterValue,
+  parseFirmwareFile,
   setRawConfigParameterValue,
   setValueOutgoingMessage,
 } from "../common.js";
@@ -74,11 +74,12 @@ export class NodeMessageHandler implements MessageHandler {
       }
       case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        const firmware = await extractFirmware(
+        const parsed = parseFirmwareFile(
+          message.firmwareFilename,
           firmwareFile,
-          message.firmwareFileFormat ??
-            guessFirmwareFileFormat(message.firmwareFilename, firmwareFile),
+          message.firmwareFileFormat,
         );
+        const firmware = await extractFirmware(parsed.rawData, parsed.format);
         // Defer to the target provided in the messaage when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
@@ -88,10 +89,12 @@ export class NodeMessageHandler implements MessageHandler {
         const updates: Firmware[] = [];
         for (const update of message.updates) {
           const file = Buffer.from(update.file, "base64");
-          const firmware = await extractFirmware(
+          const parsed = parseFirmwareFile(
+            update.filename,
             file,
-            update.fileFormat ?? guessFirmwareFileFormat(update.filename, file),
+            update.fileFormat,
           );
+          const firmware = await extractFirmware(parsed.rawData, parsed.format);
           // Defer to the target provided in the messaage when available
           firmware.firmwareTarget =
             update.firmwareTarget ?? firmware.firmwareTarget;
