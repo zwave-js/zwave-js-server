@@ -1175,6 +1175,9 @@ interface {
   messageId: string;
   command: "node.check_link_reliability";
   nodeId: number;
+  mode: string;
+  interval: number;
+  rounds?: number;
 }
 ```
 
@@ -1434,7 +1437,7 @@ interface {
 }
 ```
 
-#### [Was CC Removed Via Config](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=wasccremovvedviaconfig)
+#### [Was CC Removed Via Config](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=wasccremovedviaconfig)
 
 [compatible with schema version: 47+]
 
