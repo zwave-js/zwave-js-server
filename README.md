@@ -379,6 +379,29 @@ interface {
 }
 ```
 
+#### [Shutdown the Z-Wave API on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=shutdown)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.shutdown";
+}
+```
+
+#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateoptions)
+
+[compatible with schema version: 36+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_options";
+  options: EditableZWaveOptions;
+}
+```
+
 #### [Send test frame to node](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=sendtestframe)
 
 [compatible with schema version: 36+]
