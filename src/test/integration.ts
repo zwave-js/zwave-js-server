@@ -87,6 +87,7 @@ const runTest = async () => {
           driver: {
             logConfig: { enabled: true, level: "debug" },
             statisticsEnabled: true,
+            ready: true,
           },
           controller: { homeId: 1 },
           nodes: [],
