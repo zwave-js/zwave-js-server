@@ -1748,11 +1748,9 @@ The following error codes exist:
 | unknown_command                  | Unknown command                      |
 | node_not_found                   | Node not found                       |
 | endpoint_not_found               | Endpoint not found                   |
-| virtual_node_not_found           | Virtual node not found               |
 | virtual_endpoint_not_found       | Virtual endpoint not found           |
 | schema_incompatible              | Incompatible Schema                  |
 | zwave_error                      | Error from Z-Wave JS                 |
-| zniffer_not_initialized          | Zniffer not initialized              |
 | inclusion_phase_not_in_progress  | Inclusion phase not in progress      |
 | inclusion_already_in_progress    | Inclusion already in progress        |
 | invalid_params_passed_to_command | Invalid parameters passed to command |
