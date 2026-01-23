@@ -435,6 +435,63 @@ interface {
 }
 ```
 
+#### [Firmware Update OTW (Over The Wire)](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=firmwareupdateotw)
+
+[compatible with schema version: 41+]
+
+This command performs a controller firmware update using firmware obtained over the wire (e.g., downloaded from the internet). The firmware update can be provided in two ways:
+
+**Option 1**: Provide the raw firmware file (schema 41+):
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  filename: string;
+  file: string; // use base64 encoding for the file
+  fileFormat?: FirmwareFileFormat;
+}
+```
+
+**Option 2**: Provide the update info from Z-Wave JS update service (schema 44+):
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  updateInfo: FirmwareUpdateInfo;
+}
+```
+
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+
+Returns:
+
+```ts
+interface {
+  result: OTWFirmwareUpdateResult;
+}
+```
+
+#### [Check if OTW firmware update is in progress](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=isotwfirmwareupdateinprogress)
+
+[compatible with schema version: 41+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.is_otw_firmware_update_in_progress";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  progress: boolean;
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
@@ -565,9 +622,11 @@ interface {
 }
 ```
 
-#### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
+#### [Begin Firmware Update](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
 
-[compatible with schema version: 24+]
+[compatible with schema version: 0-23]
+
+> **Note**: For schema versions 24 and higher, use `node.update_firmware` instead.
 
 If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload.
 
@@ -576,10 +635,31 @@ interface {
   messageId: string;
   command: "node.begin_firmware_update";
   nodeId: number;
+  firmwareFilename: string;
+  firmwareFile: string; // use base64 encoding for the file
+  firmwareFileFormat?: FirmwareFileFormat;
+  target?: number;
+}
+```
+
+#### [Update Firmware](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updatefirmware)
+
+[compatible with schema version: 24+]
+
+This command supports updating multiple firmware files in a single operation.
+
+If `fileFormat` is not provided, the format will be guessed based on the filename and file payload.
+
+```ts
+interface {
+  messageId: string;
+  command: "node.update_firmware";
+  nodeId: number;
   updates: {
     filename: string;
     file: string; // use base64 encoding for the file
-    fileFormat?: FileFormat;
+    fileFormat?: FirmwareFileFormat;
+    firmwareTarget?: number;
   }[];
 }
 ```
@@ -827,11 +907,21 @@ interface {
 
 [compatible with schema version: 21+]
 
+> **Note**: The command `node.get_firmware_update_progress` is an alias for this command and can be used interchangeably.
+
 ```ts
 interface {
   messageId: string;
   nodeId: number;
   command: "node.is_firmware_update_in_progress";
+}
+```
+
+Returns:
+
+```ts
+interface {
+  progress: boolean;
 }
 ```
 
