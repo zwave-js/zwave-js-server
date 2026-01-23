@@ -80,7 +80,7 @@ export class NodeMessageHandler implements MessageHandler {
           message.firmwareFileFormat,
         );
         const firmware = await extractFirmware(parsed.rawData, parsed.format);
-        // Defer to the target provided in the messaage when available
+        // Defer to the target provided in the message when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
@@ -95,7 +95,7 @@ export class NodeMessageHandler implements MessageHandler {
             update.fileFormat,
           );
           const firmware = await extractFirmware(parsed.rawData, parsed.format);
-          // Defer to the target provided in the messaage when available
+          // Defer to the target provided in the message when available
           firmware.firmwareTarget =
             update.firmwareTarget ?? firmware.firmwareTarget;
           updates.push(firmware);

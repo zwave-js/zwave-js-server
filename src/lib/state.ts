@@ -408,7 +408,7 @@ export interface NodeStateSchema45 extends NodeStateSchema42 {
   hardwareVersion: MaybeNotKnown<number>;
   hasSUCReturnRoute: boolean;
   manufacturer: MaybeNotKnown<string>;
-  dsk?: string; // hex encoded
+  dsk?: string; // human-readable DSK string
 }
 
 export type NodeState =
