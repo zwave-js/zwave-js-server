@@ -16,7 +16,7 @@ Opens server on `ws://0.0.0.0:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
-> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+> NOTE: Unless specified in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
 
 You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to using `--host`, the default host is **0.0.0.0** i.e all interfaces.
 
@@ -72,6 +72,8 @@ interface {
   driverVersion: string;
   serverVersion: string;
   homeId: number;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
 }
 ```
 
@@ -104,6 +106,7 @@ interface {
   success: true,
   result: {
     state: {
+      driver: Partial<ZWaveDriver>;
       controller: Partial<ZWaveController>;
       nodes: Partial<ZWaveNode>[];
     }
@@ -1775,24 +1778,28 @@ If a command results in an error, the following response is returned:
 
 The following error codes exist:
 
-| code                | description          |
-| ------------------- | -------------------- |
-| unknown_command     | Unknown command      |
-| node_not_found      | Node not found       |
-| schema_incompatible | Incompatible Schema  |
-| zwave_error         | Error from Z-Wave JS |
-| unknown_error       | Unknown exception    |
+| code                    | description             |
+| ----------------------- | ----------------------- |
+| unknown_command         | Unknown command         |
+| node_not_found          | Node not found          |
+| virtual_node_not_found  | Virtual node not found  |
+| schema_incompatible     | Incompatible Schema     |
+| zwave_error             | Error from Z-Wave JS    |
+| unknown_error           | Unknown exception       |
+| zniffer_not_initialized | Zniffer not initialized |
 
 In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
+```json
 {
-"type": "result",
-"success": false,
-"messageId": 1,
-"errorCode": "zwave_error",
-"zwaveErrorCode": 18,
-"zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
+  "type": "result",
+  "success": false,
+  "messageId": 1,
+  "errorCode": "zwave_error",
+  "zwaveErrorCode": 18,
+  "zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
 }
+```
 
 ## Authentication
 
