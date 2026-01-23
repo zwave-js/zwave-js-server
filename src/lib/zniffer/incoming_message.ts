@@ -56,6 +56,28 @@ export interface IncomingCommandZnifferSetFrequency
   frequency: number;
 }
 
+// Long Range
+export interface IncomingCommandZnifferGetLRRegions
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getLRRegions;
+}
+
+export interface IncomingCommandZnifferGetCurrentLRChannelConfig
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getCurrentLRChannelConfig;
+}
+
+export interface IncomingCommandZnifferGetSupportedLRChannelConfigs
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getSupportedLRChannelConfigs;
+}
+
+export interface IncomingCommandZnifferSetLRChannelConfig
+  extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.setLRChannelConfig;
+  channelConfig: number;
+}
+
 export type IncomingMessageZniffer =
   | IncomingCommandZnifferClearCapturedFrames
   | IncomingCommandZnifferGetCaptureAsZLFBuffer
@@ -66,4 +88,8 @@ export type IncomingMessageZniffer =
   | IncomingCommandZnifferSupportedFrequencies
   | IncomingCommandZnifferCurrentFrequency
   | IncomingCommandZnifferSetFrequency
-  | IncomingCommandZnifferDestroy;
+  | IncomingCommandZnifferDestroy
+  | IncomingCommandZnifferGetLRRegions
+  | IncomingCommandZnifferGetCurrentLRChannelConfig
+  | IncomingCommandZnifferGetSupportedLRChannelConfigs
+  | IncomingCommandZnifferSetLRChannelConfig;

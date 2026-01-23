@@ -16,7 +16,7 @@ Opens server on `ws://0.0.0.0:3000`.
 
 You can specify a configuration file with `--config`. This can be a JSON file or a JS file that exports the config. It needs to follow the [Z-Wave JS config format](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions).
 
-> NOTE: Unless specificed in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+> NOTE: Unless specified in the configuration file, the [`emitValueUpdateAfterSetValue` configuration option](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=zwaveoptions) will be set to `true`. This is recommended for multi-client setups and for cases where multiple applications are sharing access to the same driver, e.g. [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
 
 You can specify a different port for the websocket server to listen on with `--port`, as well as the interface to attach to using `--host`, the default host is **0.0.0.0** i.e all interfaces.
 
@@ -71,7 +71,9 @@ interface {
   type: "version";
   driverVersion: string;
   serverVersion: string;
-  homeId: number;
+  homeId: number | undefined;
+  minSchemaVersion: number;
+  maxSchemaVersion: number;
 }
 ```
 
@@ -104,6 +106,7 @@ interface {
   success: true,
   result: {
     state: {
+      driver: Partial<DriverState>;
       controller: Partial<ZWaveController>;
       nodes: Partial<ZWaveNode>[];
     }
@@ -119,7 +122,7 @@ Event keys follow the names/types as used by Z-Wave JS.
 interface {
   type: "event",
   event: {
-    source: "driver" | "controller" | "node";
+    source: "driver" | "controller" | "node" | "zniffer";
     event: string;
     [key: string]: unknown;
   }
@@ -399,29 +402,6 @@ interface {
 }
 ```
 
-#### [Shutdown the Z-Wave API on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=shutdown)
-
-[compatible with schema version: 36+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.shutdown";
-}
-```
-
-#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateoptions)
-
-[compatible with schema version: 36+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.update_options";
-  options: EditableZWaveOptions;
-}
-```
-
 #### [Send test frame to node](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=sendtestframe)
 
 [compatible with schema version: 36+]
@@ -432,6 +412,114 @@ interface {
   command: "driver.send_test_frame";
   nodeId: number;
   powerlevel: Powerlevel;
+}
+```
+
+#### [Firmware Update OTW](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=firmwareupdateotw)
+
+[compatible with schema version: 41+]
+
+This command accepts either update info from the Z-Wave JS update service, or a file directly.
+
+```ts
+// Using update info from Z-Wave JS update service
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  updateInfo: FirmwareUpdateFileInfo;
+}
+
+// Using a file directly
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  filename: string;
+  file: string; // base64 encoded
+  fileFormat?: FileFormat;
+}
+```
+
+#### [Is OTW Firmware Update In Progress](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=isotwfirmwareupdateinprogress)
+
+[compatible with schema version: 41+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.is_otw_firmware_update_in_progress";
+}
+```
+
+#### [Soft Reset and Restart](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softresetandrestart)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.soft_reset_and_restart";
+}
+```
+
+#### [Enter Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enterbootloader)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enter_bootloader";
+}
+```
+
+#### [Leave Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=leavebootloader)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.leave_bootloader";
+}
+```
+
+#### [Get Supported CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsupportedccversion)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_supported_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Get Safe CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsafeccversion)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_safe_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Update User Agent](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateuseragent)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_user_agent";
+  components: Record<string, string | null | undefined>;
 }
 ```
 
@@ -635,18 +723,6 @@ interface {
     property: string | number;
     propertyKey?: string | number;
   };
-}
-```
-
-#### [Set raw configuration parameter value (Advanced)](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
-
-[compatible with schema version: 1+]
-
-```ts
-interface {
-  messageId: string;
-  command: "node.set_raw_config_parameter_value";
-  nodeId: number;
 }
 ```
 
@@ -1021,6 +1097,56 @@ interface {
 }
 ```
 
+#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_progress";
+  nodeId: number;
+}
+```
+
+#### [Check Link Reliability](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklinkreliability)
+
+[compatible with schema version: 45+]
+
+Run an extended link reliability check on a node.
+
+```ts
+interface {
+  messageId: string;
+  command: "node.check_link_reliability";
+  nodeId: number;
+}
+```
+
+#### [Is Link Reliability Check In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=islinkreliabilitycheckinprogress)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.is_link_reliability_check_in_progress";
+  nodeId: number;
+}
+```
+
+#### [Abort Link Reliability Check](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortlinkreliabilitycheck)
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.abort_link_reliability_check";
+  nodeId: number;
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
@@ -1223,6 +1349,52 @@ interface {
 }
 ```
 
+#### [Get Command Classes](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getccs)
+
+[compatible with schema version: 45+]
+
+Get all command classes supported by this endpoint.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_ccs";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [May Support Basic CC](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=maysupportbasiccc)
+
+[compatible with schema version: 45+]
+
+Check if the endpoint may support Basic CC.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.may_support_basic_cc";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [Was CC Removed Via Config](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=wasccremovvedviaconfig)
+
+[compatible with schema version: 45+]
+
+Check if a command class was removed from the endpoint via device config.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.was_cc_removed_via_config";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
 ### Multicasting
 
 There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
@@ -1329,7 +1501,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "<prefix>.get_cc_version"
+  command: "<prefix>.supports_cc_api"
   index?: number;  // Endpoint index
   commandClass: CommandClasses;
 }
@@ -1468,7 +1640,7 @@ interface {
 
 #### Get current frequency
 
-Gets list of current frequency.
+Gets the current frequency.
 
 [compatible with schema version: 38+]
 
@@ -1490,6 +1662,59 @@ interface {
   messageId: string;
   command: "zniffer.set_frequency";
   frequency: number;
+}
+```
+
+#### Get Long Range regions
+
+Gets list of Long Range capable regions.
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_lr_regions";
+}
+```
+
+#### Get current Long Range channel config
+
+Gets currently configured Long Range channel configuration.
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_current_lr_channel_config";
+}
+```
+
+#### Get supported Long Range channel configs
+
+Gets map of supported Long Range channel configurations.
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_supported_lr_channel_configs";
+}
+```
+
+#### Set Long Range channel config
+
+Set Long Range channel configuration (800 series only).
+
+[compatible with schema version: 45+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_lr_channel_config";
+  channelConfig: number;
 }
 ```
 
@@ -1577,6 +1802,55 @@ interface {
   event: {
     source: "driver";
     event: "driver ready";
+  }
+}
+```
+
+#### `all nodes ready`
+
+[compatible with schema version: 45+]
+
+This event is sent when all nodes have been interviewed and are ready.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "all nodes ready";
+  }
+}
+```
+
+#### `error`
+
+[compatible with schema version: 45+]
+
+This event is sent when a driver error occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "error";
+    error: string;
+  }
+}
+```
+
+#### `bootloader ready`
+
+[compatible with schema version: 45+]
+
+This event is sent when the controller enters bootloader mode.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "bootloader ready";
   }
 }
 ```
@@ -1681,7 +1955,7 @@ interface {
 }
 ```
 
-#### `nvm backup progress`
+#### `nvm convert progress`
 
 This event is sent on progress updates to the NVM conversion process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM file that was passed in is being converted to the right format.
 
@@ -1690,7 +1964,7 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm convert progress";
     bytesRead: number;
     total: number;
   }
@@ -1706,9 +1980,91 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm restore progress";
     bytesWritten: number;
     total: number;
+  }
+}
+```
+
+#### `network found`
+
+[compatible with schema version: 45+]
+
+This event is sent when a new network is found during the join process (learn mode).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network found";
+    homeId: number;
+    ownNodeId: number;
+  }
+}
+```
+
+#### `network joined`
+
+[compatible with schema version: 45+]
+
+This event is sent when the controller successfully joins a network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network joined";
+  }
+}
+```
+
+#### `network left`
+
+[compatible with schema version: 45+]
+
+This event is sent when the controller leaves the current network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network left";
+  }
+}
+```
+
+#### `joining network failed`
+
+[compatible with schema version: 45+]
+
+This event is sent when joining a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network failed";
+  }
+}
+```
+
+#### `leaving network failed`
+
+[compatible with schema version: 45+]
+
+This event is sent when leaving a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "leaving network failed";
   }
 }
 ```
@@ -1775,24 +2131,32 @@ If a command results in an error, the following response is returned:
 
 The following error codes exist:
 
-| code                | description          |
-| ------------------- | -------------------- |
-| unknown_command     | Unknown command      |
-| node_not_found      | Node not found       |
-| schema_incompatible | Incompatible Schema  |
-| zwave_error         | Error from Z-Wave JS |
-| unknown_error       | Unknown exception    |
+| code                             | description                          |
+| -------------------------------- | ------------------------------------ |
+| unknown_command                  | Unknown command                      |
+| node_not_found                   | Node not found                       |
+| endpoint_not_found               | Endpoint not found                   |
+| virtual_endpoint_not_found       | Virtual endpoint not found           |
+| schema_incompatible              | Incompatible Schema                  |
+| zwave_error                      | Error from Z-Wave JS                 |
+| inclusion_phase_not_in_progress  | Inclusion phase not in progress      |
+| inclusion_already_in_progress    | Inclusion already in progress        |
+| invalid_params_passed_to_command | Invalid parameters passed to command |
+| no_longer_supported              | Feature no longer supported          |
+| unknown_error                    | Unknown exception                    |
 
 In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
+```json
 {
-"type": "result",
-"success": false,
-"messageId": 1,
-"errorCode": "zwave_error",
-"zwaveErrorCode": 18,
-"zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
+  "type": "result",
+  "success": false,
+  "messageId": 1,
+  "errorCode": "zwave_error",
+  "zwaveErrorCode": 18,
+  "zwaveErrorMessage": "The message cannot be sent because node 61 is dead"
 }
+```
 
 ## Authentication
 

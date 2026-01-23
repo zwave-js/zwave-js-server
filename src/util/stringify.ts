@@ -6,5 +6,9 @@ export function stringifyReplacer(key: string, value: any): any {
   if (isUint8Array(value)) {
     return Buffer.from(value).toJSON();
   }
+  // Convert Map to object for JSON serialization
+  if (value instanceof Map) {
+    return Object.fromEntries(value);
+  }
   return value;
 }
