@@ -25,7 +25,7 @@ export interface EndpointResultTypes {
     value: MaybeNotKnown<ConfigValue>;
   };
   [EndpointCommand.getCCs]: {
-    commandClasses: Record<CommandClasses, CommandClassInfo>;
+    commandClasses: Partial<Record<CommandClasses, CommandClassInfo>>;
   };
   [EndpointCommand.maySupportBasicCC]: { maySupport: boolean };
   [EndpointCommand.wasCCRemovedViaConfig]: { removed: boolean };

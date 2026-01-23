@@ -1170,12 +1170,14 @@ interface {
 
 Run an extended link reliability check on a node.
 
+While this command is running, the server emits `check link reliability progress` events with progress updates containing `{ nodeId, progress }`.
+
 ```ts
 interface {
   messageId: string;
   command: "node.check_link_reliability";
   nodeId: number;
-  mode: string;
+  mode: "rssi" | "latency" | "routeChanges";
   interval: number;
   rounds?: number;
 }

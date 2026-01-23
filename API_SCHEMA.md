@@ -126,6 +126,7 @@ Base schema.
 - Added driver events: `all nodes ready`, `error`, `bootloader ready`
 - Added driver state properties: `ready`, `allNodesReady`, `configVersion`
 - Added node commands: `check_link_reliability`, `is_link_reliability_check_in_progress`, `abort_link_reliability_check`
+- Added node event: `check link reliability progress`
 - Added node state properties: `canSleep`, `supportsWakeUpOnDemand`, `hardwareVersion`, `hasSUCReturnRoute`, `manufacturer`, `dsk`
 - Added endpoint commands: `get_ccs`, `may_support_basic_cc`, `was_cc_removed_via_config`
 - Added controller state properties: `isSIS`, `maxPayloadSize`, `maxPayloadSizeLR`, `zwaveApiVersion`, `zwaveChipType`
