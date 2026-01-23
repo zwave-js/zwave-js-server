@@ -105,3 +105,7 @@ Base schema.
 # Schema 44
 
 - Added another overload to the `driver.firmware_update_otw` command
+
+# Schema 45
+
+- Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
