@@ -109,6 +109,7 @@ Base schema.
 ## Schema 45
 
 - Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
+- Added new commands, events, and state properties (see tables below)
 
 ## Schema 46
 
