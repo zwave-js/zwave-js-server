@@ -34,6 +34,7 @@ import {
   ConfigurationMetadata,
   ConfigValue,
   ConfigValueFormat,
+  dskToString,
   LogConfig,
   LongRangeChannel,
   MaybeNotKnown,
@@ -790,9 +791,8 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   node45.hardwareVersion = node.hardwareVersion;
   node45.hasSUCReturnRoute = node.hasSUCReturnRoute;
   node45.manufacturer = node.manufacturer;
-  // Serialize DSK as hex string
   if (node.dsk) {
-    node45.dsk = Buffer.from(node.dsk).toString("hex");
+    node45.dsk = dskToString(node.dsk);
   }
   return node45;
 };
