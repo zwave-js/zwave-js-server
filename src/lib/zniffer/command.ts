@@ -9,4 +9,9 @@ export enum ZnifferCommand {
   supportedFrequencies = "zniffer.supported_frequencies",
   currentFrequency = "zniffer.current_frequency",
   setFrequency = "zniffer.set_frequency",
+  // Long Range
+  getLRRegions = "zniffer.get_lr_regions",
+  getCurrentLRChannelConfig = "zniffer.get_current_lr_channel_config",
+  getSupportedLRChannelConfigs = "zniffer.get_supported_lr_channel_configs",
+  setLRChannelConfig = "zniffer.set_lr_channel_config",
 }

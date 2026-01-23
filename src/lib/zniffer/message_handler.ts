@@ -126,6 +126,20 @@ export class ZnifferMessageHandler implements MessageHandler {
         await this.zniffer?.setFrequency(message.frequency);
         return {};
       }
+      // Long Range
+      case ZnifferCommand.getLRRegions: {
+        return { regions: Array.from(this.zniffer!.lrRegions) };
+      }
+      case ZnifferCommand.getCurrentLRChannelConfig: {
+        return { channelConfig: this.zniffer!.currentLRChannelConfig };
+      }
+      case ZnifferCommand.getSupportedLRChannelConfigs: {
+        return { channelConfigs: this.zniffer!.supportedLRChannelConfigs };
+      }
+      case ZnifferCommand.setLRChannelConfig: {
+        await this.zniffer?.setLRChannelConfig(message.channelConfig);
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }

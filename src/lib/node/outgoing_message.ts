@@ -2,6 +2,7 @@ import {
   DateAndTime,
   FirmwareUpdateCapabilities,
   LifelineHealthCheckSummary,
+  LinkReliabilityCheckResult,
   RouteHealthCheckSummary,
   TranslatedValueID,
   ValueMetadata,
@@ -70,4 +71,8 @@ export interface NodeResultTypes {
   [NodeCommand.getSupportedNotificationEvents]: {
     events: ZWaveNotificationCapability[];
   };
+  // Link reliability check
+  [NodeCommand.checkLinkReliability]: { result: LinkReliabilityCheckResult };
+  [NodeCommand.isLinkReliabilityCheckInProgress]: { progress: boolean };
+  [NodeCommand.abortLinkReliabilityCheck]: Record<string, never>;
 }

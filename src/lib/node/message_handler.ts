@@ -304,7 +304,7 @@ export class NodeMessageHandler implements MessageHandler {
         return { progress };
       }
       case NodeCommand.abortHealthCheck: {
-        await node.abortHealthCheck();
+        node.abortHealthCheck();
         return {};
       }
       case NodeCommand.setDefaultVolume: {
@@ -322,6 +322,37 @@ export class NodeMessageHandler implements MessageHandler {
       case NodeCommand.createDump: {
         const dump = node.createDump();
         return { dump };
+      }
+      case NodeCommand.getSupportedNotificationEvents: {
+        const events = node.getSupportedNotificationEvents();
+        return { events };
+      }
+      // Link reliability check
+      case NodeCommand.checkLinkReliability: {
+        const result = await node.checkLinkReliability({
+          mode: message.mode,
+          interval: message.interval,
+          rounds: message.rounds,
+          onProgress: (progress) => {
+            this.clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "node",
+                event: "check link reliability progress",
+                nodeId: message.nodeId,
+                progress,
+              }),
+            );
+          },
+        });
+        return { result };
+      }
+      case NodeCommand.isLinkReliabilityCheckInProgress: {
+        const progress = node.isLinkReliabilityCheckInProgress();
+        return { progress };
+      }
+      case NodeCommand.abortLinkReliabilityCheck: {
+        node.abortLinkReliabilityCheck();
+        return {};
       }
       default: {
         throw new UnknownCommandError(command);

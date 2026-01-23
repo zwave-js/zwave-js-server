@@ -149,6 +149,41 @@ export class DriverMessageHandler implements MessageHandler {
         const progress = this.driver.isOTWFirmwareUpdateInProgress();
         return { progress };
       }
+      // Bootloader operations
+      case DriverCommand.softResetAndRestart: {
+        await this.driver.softResetAndRestart();
+        return {};
+      }
+      case DriverCommand.enterBootloader: {
+        await this.driver.enterBootloader();
+        return {};
+      }
+      case DriverCommand.leaveBootloader: {
+        await this.driver.leaveBootloader();
+        return {};
+      }
+      // CC version queries
+      case DriverCommand.getSupportedCCVersion: {
+        const version = this.driver.getSupportedCCVersion(
+          message.cc,
+          message.nodeId,
+          message.endpointIndex,
+        );
+        return { version };
+      }
+      case DriverCommand.getSafeCCVersion: {
+        const version = this.driver.getSafeCCVersion(
+          message.cc,
+          message.nodeId,
+          message.endpointIndex,
+        );
+        return { version };
+      }
+      // User agent
+      case DriverCommand.updateUserAgent: {
+        this.driver.updateUserAgent(message.components);
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }

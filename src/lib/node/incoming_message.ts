@@ -1,4 +1,5 @@
 import {
+  LinkReliabilityCheckMode,
   Powerlevel,
   RefreshInfoOptions,
   SetValueAPIOptions,
@@ -236,6 +237,25 @@ export interface IncomingCommandNodeGetSupportedNotificationEvents extends Incom
   command: NodeCommand.getSupportedNotificationEvents;
 }
 
+// Link reliability check
+export interface IncomingCommandNodeCheckLinkReliability
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.checkLinkReliability;
+  mode: LinkReliabilityCheckMode;
+  interval: number;
+  rounds?: number;
+}
+
+export interface IncomingCommandNodeIsLinkReliabilityCheckInProgress
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.isLinkReliabilityCheckInProgress;
+}
+
+export interface IncomingCommandNodeAbortLinkReliabilityCheck
+  extends IncomingCommandNodeBase {
+  command: NodeCommand.abortLinkReliabilityCheck;
+}
+
 export type IncomingMessageNode =
   | IncomingCommandNodeSetValue
   | IncomingCommandNodeRefreshInfo
@@ -278,4 +298,7 @@ export type IncomingMessageNode =
   | IncomingCommandNodeSetDefaultTransitionDuration
   | IncomingCommandNodeHasDeviceConfigChanged
   | IncomingCommandNodeCreateDump
-  | IncomingCommandNodeGetSupportedNotificationEvents;
+  | IncomingCommandNodeGetSupportedNotificationEvents
+  | IncomingCommandNodeCheckLinkReliability
+  | IncomingCommandNodeIsLinkReliabilityCheckInProgress
+  | IncomingCommandNodeAbortLinkReliabilityCheck;

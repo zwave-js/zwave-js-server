@@ -379,29 +379,6 @@ interface {
 }
 ```
 
-#### [Shutdown the Z-Wave API on the controller](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=shutdown)
-
-[compatible with schema version: 36+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.shutdown";
-}
-```
-
-#### [Update driver options](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateoptions)
-
-[compatible with schema version: 36+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.update_options";
-  options: EditableZWaveOptions;
-}
-```
-
 #### [Send test frame to node](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=sendtestframe)
 
 [compatible with schema version: 36+]
@@ -415,41 +392,27 @@ interface {
 }
 ```
 
-#### [Firmware Update OTW (Over The Wire)](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=firmwareupdateotw)
+#### [Firmware Update OTW](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=firmwareupdateotw)
 
 [compatible with schema version: 41+]
 
-This command performs a controller firmware update using firmware obtained over the wire (e.g., downloaded from the internet). The firmware update can be provided in two ways:
-
-**Option 1**: Provide the raw firmware file (schema 41+):
+This command accepts either update info from the Z-Wave JS update service, or a file directly.
 
 ```ts
+// Using update info from Z-Wave JS update service
+interface {
+  messageId: string;
+  command: "driver.firmware_update_otw";
+  updateInfo: FirmwareUpdateFileInfo;
+}
+
+// Using a file directly
 interface {
   messageId: string;
   command: "driver.firmware_update_otw";
   filename: string;
-  file: string; // use base64 encoding for the file
+  file: string; // base64 encoded
   fileFormat?: FirmwareFileFormat;
-}
-```
-
-**Option 2**: Provide the update info from Z-Wave JS update service (schema 44+):
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.firmware_update_otw";
-  updateInfo: FirmwareUpdateInfo;
-}
-```
-
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
-
-Returns:
-
-```ts
-interface {
-  result: OTWFirmwareUpdateResult;
 }
 ```
 
@@ -464,11 +427,76 @@ interface {
 }
 ```
 
-Returns:
+#### [Soft Reset and Restart](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softresetandrestart)
+
+[compatible with schema version: 47+]
 
 ```ts
 interface {
-  progress: boolean;
+  messageId: string;
+  command: "driver.soft_reset_and_restart";
+}
+```
+
+#### [Enter Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enterbootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enter_bootloader";
+}
+```
+
+#### [Leave Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=leavebootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.leave_bootloader";
+}
+```
+
+#### [Get Supported CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsupportedccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_supported_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Get Safe CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsafeccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_safe_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Update User Agent](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateuseragent)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_user_agent";
+  components: Record<string, string | null | undefined>;
 }
 ```
 
@@ -1091,6 +1119,56 @@ interface {
 }
 ```
 
+#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_progress";
+  nodeId: number;
+}
+```
+
+#### [Check Link Reliability](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklinkreliability)
+
+[compatible with schema version: 47+]
+
+Run an extended link reliability check on a node.
+
+```ts
+interface {
+  messageId: string;
+  command: "node.check_link_reliability";
+  nodeId: number;
+}
+```
+
+#### [Is Link Reliability Check In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=islinkreliabilitycheckinprogress)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.is_link_reliability_check_in_progress";
+  nodeId: number;
+}
+```
+
+#### [Abort Link Reliability Check](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortlinkreliabilitycheck)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.abort_link_reliability_check";
+  nodeId: number;
+}
+```
+
 ### Endpoint level commands
 
 #### [Invoke a Command Classes API method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=invokeccapi)
@@ -1290,6 +1368,52 @@ interface {
   value: ConfigValue;
   valueSize?: 1 | 2 | 4; // valueSize and valueFormat should be used together.
   valueFormat?: ConfigValueFormat;
+}
+```
+
+#### [Get Command Classes](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getccs)
+
+[compatible with schema version: 47+]
+
+Get all command classes supported by this endpoint.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_ccs";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [May Support Basic CC](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=maysupportbasiccc)
+
+[compatible with schema version: 47+]
+
+Check if the endpoint may support Basic CC.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.may_support_basic_cc";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [Was CC Removed Via Config](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=wasccremovvedviaconfig)
+
+[compatible with schema version: 47+]
+
+Check if a command class was removed from the endpoint via device config.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.was_cc_removed_via_config";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
 }
 ```
 
@@ -1563,6 +1687,59 @@ interface {
 }
 ```
 
+#### Get Long Range regions
+
+Gets list of Long Range capable regions.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_lr_regions";
+}
+```
+
+#### Get current Long Range channel config
+
+Gets currently configured Long Range channel configuration.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_current_lr_channel_config";
+}
+```
+
+#### Get supported Long Range channel configs
+
+Gets map of supported Long Range channel configurations.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_supported_lr_channel_configs";
+}
+```
+
+#### Set Long Range channel config
+
+Set Long Range channel configuration (800 series only).
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_lr_channel_config";
+  channelConfig: number;
+}
+```
+
 ## Events
 
 ### `zwave-js` Events
@@ -1647,6 +1824,55 @@ interface {
   event: {
     source: "driver";
     event: "driver ready";
+  }
+}
+```
+
+#### `all nodes ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when all nodes have been interviewed and are ready.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "all nodes ready";
+  }
+}
+```
+
+#### `error`
+
+[compatible with schema version: 47+]
+
+This event is sent when a driver error occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "error";
+    error: string;
+  }
+}
+```
+
+#### `bootloader ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller enters bootloader mode.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "bootloader ready";
   }
 }
 ```
@@ -1779,6 +2005,88 @@ interface {
     event: "nvm restore progress";
     bytesWritten: number;
     total: number;
+  }
+}
+```
+
+#### `network found`
+
+[compatible with schema version: 47+]
+
+This event is sent when a new network is found during the join process (learn mode).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network found";
+    homeId: number;
+    ownNodeId: number;
+  }
+}
+```
+
+#### `network joined`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller successfully joins a network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network joined";
+  }
+}
+```
+
+#### `network left`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller leaves the current network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network left";
+  }
+}
+```
+
+#### `joining network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when joining a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network failed";
+  }
+}
+```
+
+#### `leaving network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when leaving a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "leaving network failed";
   }
 }
 ```

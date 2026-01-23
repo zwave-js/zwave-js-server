@@ -39,6 +39,7 @@ import {
   MaybeNotKnown,
   RFRegion,
   SecurityClass,
+  UnknownZWaveChipType,
   ValueChangeOptions,
   ValueMetadataAny,
   ValueMetadataBoolean,
@@ -46,16 +47,26 @@ import {
   ValueMetadataDuration,
   ValueMetadataNumeric,
   ValueMetadataString,
+  ZWaveApiVersion,
 } from "@zwave-js/core";
 import { numberFromLogLevel } from "../util/logger.js";
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
 type LogConfigState = Omit<LogConfig, "transports">;
-export interface DriverState {
+
+export interface DriverStateSchema0 {
   logConfig: LogConfigState;
   statisticsEnabled: boolean;
 }
+
+export interface DriverStateSchema45 extends DriverStateSchema0 {
+  ready: boolean;
+  allNodesReady: boolean;
+  configVersion: string;
+}
+
+export type DriverState = DriverStateSchema0 | DriverStateSchema45;
 
 export interface ControllerStateSchema0 {
   libraryVersion?: string;
@@ -130,6 +141,14 @@ export type ControllerStateSchema36 = ControllerStateSchema35 & {
   supportsLongRangeAutoChannelSelection: MaybeNotKnown<boolean>;
 };
 
+export type ControllerStateSchema45 = ControllerStateSchema36 & {
+  isSIS: MaybeNotKnown<boolean>;
+  maxPayloadSize: MaybeNotKnown<number>;
+  maxPayloadSizeLR: MaybeNotKnown<number>;
+  zwaveApiVersion: MaybeNotKnown<ZWaveApiVersion>;
+  zwaveChipType: MaybeNotKnown<string | UnknownZWaveChipType>;
+};
+
 export type ControllerState =
   | ControllerStateSchema0
   | ControllerStateSchema16
@@ -139,7 +158,8 @@ export type ControllerState =
   | ControllerStateSchema32
   | ControllerStateSchema34
   | ControllerStateSchema35
-  | ControllerStateSchema36;
+  | ControllerStateSchema36
+  | ControllerStateSchema45;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -381,6 +401,15 @@ export interface NodeStateSchema42 extends NodeStateSchema35 {
   sdkVersion?: string;
 }
 
+export interface NodeStateSchema45 extends NodeStateSchema42 {
+  canSleep: MaybeNotKnown<boolean>;
+  supportsWakeUpOnDemand: MaybeNotKnown<boolean>;
+  hardwareVersion: MaybeNotKnown<number>;
+  hasSUCReturnRoute: boolean;
+  manufacturer: MaybeNotKnown<string>;
+  dsk?: string; // hex encoded
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -394,7 +423,8 @@ export type NodeState =
   | NodeStateSchema30
   | NodeStateSchema31
   | NodeStateSchema35
-  | NodeStateSchema42;
+  | NodeStateSchema42
+  | NodeStateSchema45;
 
 export interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -750,7 +780,21 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node42 = node35 as NodeStateSchema42;
   node42.sdkVersion = node.sdkVersion;
-  return node42;
+  if (schemaVersion < 45) {
+    return node42;
+  }
+
+  const node45 = node42 as NodeStateSchema45;
+  node45.canSleep = node.canSleep;
+  node45.supportsWakeUpOnDemand = node.supportsWakeUpOnDemand;
+  node45.hardwareVersion = node.hardwareVersion;
+  node45.hasSUCReturnRoute = node.hasSUCReturnRoute;
+  node45.manufacturer = node.manufacturer;
+  // Serialize DSK as hex string
+  if (node.dsk) {
+    node45.dsk = Buffer.from(node.dsk).toString("hex");
+  }
+  return node45;
 };
 
 export const dumpFoundNode = (
@@ -871,10 +915,20 @@ export const dumpDriver = (
   driver: Driver,
   schemaVersion: number,
 ): DriverState => {
-  return {
+  const base: DriverStateSchema0 = {
     logConfig: dumpLogConfig(driver, schemaVersion),
     statisticsEnabled: driver.statisticsEnabled,
   };
+
+  if (schemaVersion < 45) {
+    return base;
+  }
+
+  const driver45 = base as DriverStateSchema45;
+  driver45.ready = driver.ready;
+  driver45.allNodesReady = driver.allNodesReady;
+  driver45.configVersion = driver.configVersion;
+  return driver45;
 };
 
 export const dumpController = (
@@ -967,7 +1021,17 @@ export const dumpController = (
   controller36.longRangeChannel = controller.longRangeChannel;
   controller36.supportsLongRangeAutoChannelSelection =
     controller.supportsLongRangeAutoChannelSelection;
-  return controller36;
+  if (schemaVersion < 45) {
+    return controller36;
+  }
+
+  const controller45 = controller36 as ControllerStateSchema45;
+  controller45.isSIS = controller.isSIS;
+  controller45.maxPayloadSize = controller.maxPayloadSize;
+  controller45.maxPayloadSizeLR = controller.maxPayloadSizeLR;
+  controller45.zwaveApiVersion = controller.zwaveApiVersion;
+  controller45.zwaveChipType = controller.zwaveChipType;
+  return controller45;
 };
 
 export const dumpState = (
