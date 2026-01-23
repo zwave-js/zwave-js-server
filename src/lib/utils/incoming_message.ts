@@ -1,4 +1,5 @@
 import { RSSI } from "zwave-js";
+import { FirmwareFileFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { UtilsCommand } from "./command.js";
 
@@ -60,7 +61,7 @@ export interface IncomingCommandUtilsExtractFirmware
   extends IncomingCommandUtilsBase {
   command: UtilsCommand.extractFirmware;
   file: string; // base64 encoded firmware file
-  format: string; // FirmwareFileFormat
+  format: FirmwareFileFormat;
 }
 
 export type IncomingMessageUtils =
