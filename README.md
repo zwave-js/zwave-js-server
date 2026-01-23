@@ -71,7 +71,7 @@ interface {
   type: "version";
   driverVersion: string;
   serverVersion: string;
-  homeId: number;
+  homeId: number | undefined;
   minSchemaVersion: number;
   maxSchemaVersion: number;
 }
@@ -106,7 +106,7 @@ interface {
   success: true,
   result: {
     state: {
-      driver: Partial<ZWaveDriver>;
+      driver: Partial<DriverState>;
       controller: Partial<ZWaveController>;
       nodes: Partial<ZWaveNode>[];
     }
@@ -122,7 +122,7 @@ Event keys follow the names/types as used by Z-Wave JS.
 interface {
   type: "event",
   event: {
-    source: "driver" | "controller" | "node";
+    source: "driver" | "controller" | "node" | "zniffer";
     event: string;
     [key: string]: unknown;
   }
@@ -365,29 +365,6 @@ interface {
 interface {
   messageId: string;
   command: "driver.try_soft_reset";
-}
-```
-
-#### [Shutdown](https://zwave-js.github.io/node-zwave-js/#/api/node?id=shutdown)
-
-[compatible with schema version: 27+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.shutdown";
-}
-```
-
-#### [Update Options](https://zwave-js.github.io/node-zwave-js/#/api/node?id=updateoptions)
-
-[compatible with schema version: 33+]
-
-```ts
-interface {
-  messageId: string;
-  command: "driver.update_options";
-  options: EditableZWaveOptions;
 }
 ```
 
@@ -638,18 +615,6 @@ interface {
     property: string | number;
     propertyKey?: string | number;
   };
-}
-```
-
-#### [Set raw configuration parameter value (Advanced)](https://zwave-js.github.io/node-zwave-js/#/api/CCs/Configuration?id=set)
-
-[compatible with schema version: 1+]
-
-```ts
-interface {
-  messageId: string;
-  command: "node.set_raw_config_parameter_value";
-  nodeId: number;
 }
 ```
 
@@ -1332,7 +1297,7 @@ interface {
 ```ts
 interface {
   messageId: string;
-  command: "<prefix>.get_cc_version"
+  command: "<prefix>.supports_cc_api"
   index?: number;  // Endpoint index
   commandClass: CommandClasses;
 }
@@ -1471,7 +1436,7 @@ interface {
 
 #### Get current frequency
 
-Gets list of current frequency.
+Gets the current frequency.
 
 [compatible with schema version: 38+]
 
@@ -1684,7 +1649,7 @@ interface {
 }
 ```
 
-#### `nvm backup progress`
+#### `nvm convert progress`
 
 This event is sent on progress updates to the NVM conversion process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM file that was passed in is being converted to the right format.
 
@@ -1693,7 +1658,7 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm convert progress";
     bytesRead: number;
     total: number;
   }
@@ -1709,7 +1674,7 @@ interface {
   type: "event";
   event: {
     source: "controller";
-    event: "nvm backup progress";
+    event: "nvm restore progress";
     bytesWritten: number;
     total: number;
   }
@@ -1778,15 +1743,21 @@ If a command results in an error, the following response is returned:
 
 The following error codes exist:
 
-| code                    | description             |
-| ----------------------- | ----------------------- |
-| unknown_command         | Unknown command         |
-| node_not_found          | Node not found          |
-| virtual_node_not_found  | Virtual node not found  |
-| schema_incompatible     | Incompatible Schema     |
-| zwave_error             | Error from Z-Wave JS    |
-| unknown_error           | Unknown exception       |
-| zniffer_not_initialized | Zniffer not initialized |
+| code                             | description                          |
+| -------------------------------- | ------------------------------------ |
+| unknown_command                  | Unknown command                      |
+| node_not_found                   | Node not found                       |
+| endpoint_not_found               | Endpoint not found                   |
+| virtual_node_not_found           | Virtual node not found               |
+| virtual_endpoint_not_found       | Virtual endpoint not found           |
+| schema_incompatible              | Incompatible Schema                  |
+| zwave_error                      | Error from Z-Wave JS                 |
+| zniffer_not_initialized          | Zniffer not initialized              |
+| inclusion_phase_not_in_progress  | Inclusion phase not in progress      |
+| inclusion_already_in_progress    | Inclusion already in progress        |
+| invalid_params_passed_to_command | Invalid parameters passed to command |
+| no_longer_supported              | Feature no longer supported          |
+| unknown_error                    | Unknown exception                    |
 
 In the case of `zwave_error`, the extra keys `zwaveErrorCode` and `zwaveErrorMessage` will be added.
 
