@@ -9,4 +9,7 @@ export enum EndpointCommand {
   tryGetNode = "endpoint.try_get_node",
   setRawConfigParameterValue = "endpoint.set_raw_config_parameter_value",
   getRawConfigParameterValue = "endpoint.get_raw_config_parameter_value",
+  getCCs = "endpoint.get_ccs",
+  maySupportBasicCC = "endpoint.may_support_basic_cc",
+  wasCCRemovedViaConfig = "endpoint.was_cc_removed_via_config",
 }

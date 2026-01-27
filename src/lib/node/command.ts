@@ -41,4 +41,8 @@ export enum NodeCommand {
   hasDeviceConfigChanged = "node.has_device_config_changed",
   createDump = "node.create_dump",
   getSupportedNotificationEvents = "node.get_supported_notification_events",
+  // Link reliability check
+  checkLinkReliability = "node.check_link_reliability",
+  isLinkReliabilityCheckInProgress = "node.is_link_reliability_check_in_progress",
+  abortLinkReliabilityCheck = "node.abort_link_reliability_check",
 }

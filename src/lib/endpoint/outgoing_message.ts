@@ -1,4 +1,10 @@
-import { SupervisionResult, MaybeNotKnown, ConfigValue } from "@zwave-js/core";
+import {
+  SupervisionResult,
+  MaybeNotKnown,
+  ConfigValue,
+  CommandClasses,
+  CommandClassInfo,
+} from "@zwave-js/core";
 import { EndpointCommand } from "./command.js";
 import { NodeState } from "../state.js";
 
@@ -15,4 +21,9 @@ export interface EndpointResultTypes {
   [EndpointCommand.getRawConfigParameterValue]: {
     value: MaybeNotKnown<ConfigValue>;
   };
+  [EndpointCommand.getCCs]: {
+    commandClasses: Partial<Record<CommandClasses, CommandClassInfo>>;
+  };
+  [EndpointCommand.maySupportBasicCC]: { maySupport: boolean };
+  [EndpointCommand.wasCCRemovedViaConfig]: { removed: boolean };
 }
