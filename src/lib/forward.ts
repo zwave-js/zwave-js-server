@@ -72,6 +72,38 @@ export class EventForwarder {
         });
       });
     });
+
+    // Schema 45+ driver events
+    this.clientsController.driver.on("all nodes ready", () => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "all nodes ready",
+        },
+        45,
+      );
+    });
+
+    this.clientsController.driver.on("error", (error) => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "error",
+          error: error.message,
+        },
+        45,
+      );
+    });
+
+    this.clientsController.driver.on("bootloader ready", () => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "bootloader ready",
+        },
+        45,
+      );
+    });
   }
 
   forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
@@ -283,6 +315,61 @@ export class EventForwarder {
           nodeId: triggeringNode.nodeId,
         },
         31,
+      ),
+    );
+
+    // Schema 45+ controller network lifecycle events
+    this.clientsController.driver.controller.on(
+      "network found",
+      (homeId: number, ownNodeId: number) =>
+        this.forwardEvent(
+          {
+            source: "controller",
+            event: "network found",
+            homeId,
+            ownNodeId,
+          },
+          45,
+        ),
+    );
+
+    this.clientsController.driver.controller.on("network joined", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "network joined",
+        },
+        45,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("network left", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "network left",
+        },
+        45,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("joining network failed", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "joining network failed",
+        },
+        45,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("leaving network failed", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "leaving network failed",
+        },
+        45,
       ),
     );
   }
