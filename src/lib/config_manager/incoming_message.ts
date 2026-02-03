@@ -4,8 +4,7 @@ import { ConfigManagerCommand } from "./command.js";
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IncomingCommandConfigManagerBase extends IncomingCommandBase {}
 
-export interface IncomingCommandConfigManagerLookupDevice
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLookupDevice extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.lookupDevice;
   manufacturerId: number;
   productType: number;
@@ -13,50 +12,40 @@ export interface IncomingCommandConfigManagerLookupDevice
   firmwareVersion?: string;
 }
 
-export interface IncomingCommandConfigManagerLoadManufacturers
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLoadManufacturers extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.loadManufacturers;
 }
 
-export interface IncomingCommandConfigManagerLookupManufacturer
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLookupManufacturer extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.lookupManufacturer;
   manufacturerId: number;
 }
-export interface IncomingCommandConfigManagerLoadDeviceIndex
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLoadDeviceIndex extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.loadDeviceIndex;
 }
-export interface IncomingCommandConfigManagerGetIndex
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerGetIndex extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.getIndex;
 }
-export interface IncomingCommandConfigManagerLoadFulltextDeviceIndex
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLoadFulltextDeviceIndex extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.loadFulltextDeviceIndex;
 }
-export interface IncomingCommandConfigManagerGetFulltextIndex
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerGetFulltextIndex extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.getFulltextIndex;
 }
-export interface IncomingCommandConfigManagerLookupDevicePreserveConditions
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLookupDevicePreserveConditions extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.lookupDevicePreserveConditions;
   manufacturerId: number;
   productType: number;
   productId: number;
   firmwareVersion?: string;
 }
-export interface IncomingCommandConfigManagerManufacturers
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerManufacturers extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.manufacturers;
 }
-export interface IncomingCommandConfigManagerLoadAll
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerLoadAll extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.loadAll;
 }
-export interface IncomingCommandConfigManagerConfigVersion
-  extends IncomingCommandConfigManagerBase {
+export interface IncomingCommandConfigManagerConfigVersion extends IncomingCommandConfigManagerBase {
   command: ConfigManagerCommand.configVersion;
 }
 export type IncomingMessageConfigManager =

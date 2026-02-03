@@ -11,18 +11,15 @@ export interface IncomingCommandZnifferInit extends IncomingCommandZnifferBase {
   options: ZnifferOptions;
 }
 
-export interface IncomingCommandZnifferStart
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferStart extends IncomingCommandZnifferBase {
   command: ZnifferCommand.start;
 }
 
-export interface IncomingCommandZnifferClearCapturedFrames
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferClearCapturedFrames extends IncomingCommandZnifferBase {
   command: ZnifferCommand.clearCapturedFrames;
 }
 
-export interface IncomingCommandZnifferGetCaptureAsZLFBuffer
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferGetCaptureAsZLFBuffer extends IncomingCommandZnifferBase {
   command: ZnifferCommand.getCaptureAsZLFBuffer;
 }
 
@@ -30,28 +27,23 @@ export interface IncomingCommandZnifferStop extends IncomingCommandZnifferBase {
   command: ZnifferCommand.stop;
 }
 
-export interface IncomingCommandZnifferDestroy
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferDestroy extends IncomingCommandZnifferBase {
   command: ZnifferCommand.destroy;
 }
 
-export interface IncomingCommandZnifferCapturedFrames
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferCapturedFrames extends IncomingCommandZnifferBase {
   command: ZnifferCommand.capturedFrames;
 }
 
-export interface IncomingCommandZnifferSupportedFrequencies
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferSupportedFrequencies extends IncomingCommandZnifferBase {
   command: ZnifferCommand.supportedFrequencies;
 }
 
-export interface IncomingCommandZnifferCurrentFrequency
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferCurrentFrequency extends IncomingCommandZnifferBase {
   command: ZnifferCommand.currentFrequency;
 }
 
-export interface IncomingCommandZnifferSetFrequency
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferSetFrequency extends IncomingCommandZnifferBase {
   command: ZnifferCommand.setFrequency;
   frequency: number;
 }

@@ -105,8 +105,7 @@ export type IncomingCommandFirmwareUpdateOTW = IncomingCommandBase & {
       }
   );
 
-export interface IncomingCommandIsOTWFirmwareUpdateInProgress
-  extends IncomingCommandBase {
+export interface IncomingCommandIsOTWFirmwareUpdateInProgress extends IncomingCommandBase {
   command: DriverCommand.isOTWFirmwareUpdateInProgress;
 }
 

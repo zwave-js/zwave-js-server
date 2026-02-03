@@ -25,26 +25,22 @@ export interface IncomingCommandNodeSetValue extends IncomingCommandNodeBase {
   options?: SetValueAPIOptions;
 }
 
-export interface IncomingCommandNodeRefreshInfo
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeRefreshInfo extends IncomingCommandNodeBase {
   command: NodeCommand.refreshInfo;
   options?: RefreshInfoOptions;
 }
 
-export interface IncomingCommandNodeGetDefinedValueIDs
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetDefinedValueIDs extends IncomingCommandNodeBase {
   command: NodeCommand.getDefinedValueIDs;
 }
 
-export interface IncomingCommandNodeGetValueMetadata
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetValueMetadata extends IncomingCommandNodeBase {
   command: NodeCommand.getValueMetadata;
   valueId: ValueID;
 }
 
 // Schema <= 23
-export interface IncomingCommandNodeBeginFirmwareUpdate
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeBeginFirmwareUpdate extends IncomingCommandNodeBase {
   command: NodeCommand.beginFirmwareUpdate;
   firmwareFilename: string;
   firmwareFile: string; // use base64 encoding for the file
@@ -53,8 +49,7 @@ export interface IncomingCommandNodeBeginFirmwareUpdate
 }
 
 // Schema > 23
-export interface IncomingCommandNodeUpdateFirmware
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeUpdateFirmware extends IncomingCommandNodeBase {
   command: NodeCommand.updateFirmware;
   updates: {
     filename: string;
@@ -64,18 +59,15 @@ export interface IncomingCommandNodeUpdateFirmware
   }[];
 }
 
-export interface IncomingCommandNodeAbortFirmwareUpdate
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeAbortFirmwareUpdate extends IncomingCommandNodeBase {
   command: NodeCommand.abortFirmwareUpdate;
 }
 
-export interface IncomingCommandGetFirmwareUpdateCapabilities
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandGetFirmwareUpdateCapabilities extends IncomingCommandNodeBase {
   command: NodeCommand.getFirmwareUpdateCapabilities;
 }
 
-export interface IncomingCommandGetFirmwareUpdateCapabilitiesCached
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandGetFirmwareUpdateCapabilitiesCached extends IncomingCommandNodeBase {
   command: NodeCommand.getFirmwareUpdateCapabilitiesCached;
 }
 
@@ -84,8 +76,7 @@ export interface IncomingCommandNodePollValue extends IncomingCommandNodeBase {
   valueId: ValueID;
 }
 
-export interface IncomingCommandNodeSetRawConfigParameterValue
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetRawConfigParameterValue extends IncomingCommandNodeBase {
   command: NodeCommand.setRawConfigParameterValue;
   parameter: number;
   bitMask?: number;
@@ -94,20 +85,17 @@ export interface IncomingCommandNodeSetRawConfigParameterValue
   valueFormat?: ConfigValueFormat;
 }
 
-export interface IncomingCommandNodeGetRawConfigParameterValue
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetRawConfigParameterValue extends IncomingCommandNodeBase {
   command: NodeCommand.getRawConfigParameterValue;
   parameter: number;
   bitMask?: number;
 }
 
-export interface IncomingCommandNodeRefreshValues
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeRefreshValues extends IncomingCommandNodeBase {
   command: NodeCommand.refreshValues;
 }
 
-export interface IncomingCommandNodeRefreshCCValues
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeRefreshCCValues extends IncomingCommandNodeBase {
   command: NodeCommand.refreshCCValues;
   commandClass: CommandClasses;
 }
@@ -116,14 +104,12 @@ export interface IncomingCommandNodePing extends IncomingCommandNodeBase {
   command: NodeCommand.ping;
 }
 
-export interface IncomingCommandHasSecurityClass
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandHasSecurityClass extends IncomingCommandNodeBase {
   command: NodeCommand.hasSecurityClass;
   securityClass: SecurityClass;
 }
 
-export interface IncomingCommandGetHighestSecurityClass
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandGetHighestSecurityClass extends IncomingCommandNodeBase {
   command: NodeCommand.getHighestSecurityClass;
 }
 
@@ -134,14 +120,12 @@ export interface IncomingCommandTestPowerlevel extends IncomingCommandNodeBase {
   testFrameCount: number;
 }
 
-export interface IncomingCommandCheckLifelineHealth
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandCheckLifelineHealth extends IncomingCommandNodeBase {
   command: NodeCommand.checkLifelineHealth;
   rounds?: number;
 }
 
-export interface IncomingCommandCheckRouteHealth
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandCheckRouteHealth extends IncomingCommandNodeBase {
   command: NodeCommand.checkRouteHealth;
   targetNodeId: number;
   rounds?: number;
@@ -152,8 +136,7 @@ export interface IncomingCommandGetValue extends IncomingCommandNodeBase {
   valueId: ValueID;
 }
 
-export interface IncomingCommandGetEndpointCount
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandGetEndpointCount extends IncomingCommandNodeBase {
   command: NodeCommand.getEndpointCount;
 }
 
@@ -183,8 +166,7 @@ export interface IncomingCommandSetKeepAwake extends IncomingCommandNodeBase {
   keepAwake: boolean;
 }
 
-export interface IncomingCommandIsFirmwareUpdateInProgress
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandIsFirmwareUpdateInProgress extends IncomingCommandNodeBase {
   command:
     | NodeCommand.isFirmwareUpdateInProgress
     | NodeCommand.getFirmwareUpdateProgress;
@@ -198,61 +180,51 @@ export interface IncomingCommandInterview extends IncomingCommandNodeBase {
   command: NodeCommand.interview;
 }
 
-export interface IncomingCommandNodeGetValueTimestamp
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetValueTimestamp extends IncomingCommandNodeBase {
   command: NodeCommand.getValueTimestamp;
   valueId: ValueID;
 }
 
-export interface IncomingCommandNodeManuallyIdleNotificationValueMethod1
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeManuallyIdleNotificationValueMethod1 extends IncomingCommandNodeBase {
   command: NodeCommand.manuallyIdleNotificationValue;
   valueId: ValueID;
 }
 
-export interface IncomingCommandNodeManuallyIdleNotificationValueMethod2
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeManuallyIdleNotificationValueMethod2 extends IncomingCommandNodeBase {
   command: NodeCommand.manuallyIdleNotificationValue;
   notificationType: number;
   prevValue: number;
   endpointIndex?: number;
 }
 
-export interface IncomingCommandNodeSetDateAndTime
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetDateAndTime extends IncomingCommandNodeBase {
   command: NodeCommand.setDateAndTime;
   date?: string; // use ISO 8601 date string format
 }
 
-export interface IncomingCommandNodeGetDateAndTime
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetDateAndTime extends IncomingCommandNodeBase {
   command: NodeCommand.getDateAndTime;
 }
 
-export interface IncomingCommandNodeIsHealthCheckInProgress
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeIsHealthCheckInProgress extends IncomingCommandNodeBase {
   command: NodeCommand.isHealthCheckInProgress;
 }
 
-export interface IncomingCommandNodeAbortHealthCheck
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeAbortHealthCheck extends IncomingCommandNodeBase {
   command: NodeCommand.abortHealthCheck;
 }
 
-export interface IncomingCommandNodeSetDefaultVolume
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetDefaultVolume extends IncomingCommandNodeBase {
   command: NodeCommand.setDefaultVolume;
   defaultVolume?: number;
 }
 
-export interface IncomingCommandNodeSetDefaultTransitionDuration
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetDefaultTransitionDuration extends IncomingCommandNodeBase {
   command: NodeCommand.setDefaultTransitionDuration;
   defaultTransitionDuration?: string; // Will be converted to a Duration object
 }
 
-export interface IncomingCommandNodeHasDeviceConfigChanged
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeHasDeviceConfigChanged extends IncomingCommandNodeBase {
   command: NodeCommand.hasDeviceConfigChanged;
 }
 
@@ -260,8 +232,7 @@ export interface IncomingCommandNodeCreateDump extends IncomingCommandNodeBase {
   command: NodeCommand.createDump;
 }
 
-export interface IncomingCommandNodeGetSupportedNotificationEvents
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetSupportedNotificationEvents extends IncomingCommandNodeBase {
   command: NodeCommand.getSupportedNotificationEvents;
 }
 
