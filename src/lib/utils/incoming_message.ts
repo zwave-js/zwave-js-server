@@ -31,7 +31,7 @@ export interface IncomingCommandUtilsFormatId extends IncomingCommandUtilsBase {
 export interface IncomingCommandUtilsBuffer2hex
   extends IncomingCommandUtilsBase {
   command: UtilsCommand.buffer2hex;
-  buffer: Buffer;
+  buffer: Buffer<ArrayBuffer>; // Parsed buffers own their data
   uppercase: boolean;
 }
 
