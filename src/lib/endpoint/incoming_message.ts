@@ -7,56 +7,47 @@ export interface IncomingCommandEndpointBase extends IncomingCommandBase {
   endpoint?: number;
 }
 
-export interface IncomingCommandEndpointInvokeCCAPI
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointInvokeCCAPI extends IncomingCommandEndpointBase {
   command: EndpointCommand.invokeCCAPI;
   commandClass: CommandClasses;
   methodName: string;
   args: unknown[];
 }
 
-export interface IncomingCommandEndpointSupportsCCAPI
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointSupportsCCAPI extends IncomingCommandEndpointBase {
   command: EndpointCommand.supportsCCAPI;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointSupportsCC
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointSupportsCC extends IncomingCommandEndpointBase {
   command: EndpointCommand.supportsCC;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointControlsCC
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointControlsCC extends IncomingCommandEndpointBase {
   command: EndpointCommand.controlsCC;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointIsCCSecure
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointIsCCSecure extends IncomingCommandEndpointBase {
   command: EndpointCommand.isCCSecure;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointGetCCVersion
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointGetCCVersion extends IncomingCommandEndpointBase {
   command: EndpointCommand.getCCVersion;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandEndpointGetNodeUnsafe
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointGetNodeUnsafe extends IncomingCommandEndpointBase {
   command: EndpointCommand.getNodeUnsafe;
 }
 
-export interface IncomingCommandEndpointTryGetNode
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointTryGetNode extends IncomingCommandEndpointBase {
   command: EndpointCommand.tryGetNode;
 }
 
-export interface IncomingCommandEndpointSetRawConfigParameterValue
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointSetRawConfigParameterValue extends IncomingCommandEndpointBase {
   command: EndpointCommand.setRawConfigParameterValue;
   parameter: number;
   bitMask?: number;
@@ -65,8 +56,7 @@ export interface IncomingCommandEndpointSetRawConfigParameterValue
   valueFormat?: ConfigValueFormat;
 }
 
-export interface IncomingCommandEndpointGetRawConfigParameterValue
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointGetRawConfigParameterValue extends IncomingCommandEndpointBase {
   command: EndpointCommand.getRawConfigParameterValue;
   parameter: number;
   bitMask?: number;

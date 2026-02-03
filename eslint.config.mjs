@@ -7,17 +7,18 @@ export default tseslint.config(
   },
   {
     files: ["**/*.ts"],
-    extends: [
-      ...tseslint.configs.recommended,
-    ],
+    extends: [...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: "module",
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-explicit-any": "off",
-    }
+    },
   },
   eslintConfigPrettier,
 );
