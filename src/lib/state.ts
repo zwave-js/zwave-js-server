@@ -28,6 +28,7 @@ import {
 } from "zwave-js";
 import { DeviceConfig } from "@zwave-js/config";
 import {
+  type AllowedValue,
   BasicDeviceClass,
   CommandClasses,
   ConfigurationMetadata,
@@ -234,9 +235,14 @@ export interface ValueMetadataStateSchema28 extends ValueMetadataStateSchema0 {
   secret?: boolean;
 }
 
+export interface ValueMetadataStateSchema46 extends ValueMetadataStateSchema28 {
+  allowed?: readonly AllowedValue[];
+}
+
 export type ValueMetadataState =
   | ValueMetadataStateSchema0
-  | ValueMetadataStateSchema28;
+  | ValueMetadataStateSchema28
+  | ValueMetadataStateSchema46;
 
 export interface ConfigurationMetadataStateSchema0 {
   type: ValueType;
@@ -267,9 +273,15 @@ export type ConfigurationMetadataStateSchema29 = Omit<
   "name" | "info"
 >;
 
+export interface ConfigurationMetadataStateSchema46 extends ConfigurationMetadataStateSchema29 {
+  allowed?: readonly AllowedValue[];
+  purpose?: string;
+}
+
 export type ConfigurationMetadataState =
   | ConfigurationMetadataStateSchema0
-  | ConfigurationMetadataStateSchema29;
+  | ConfigurationMetadataStateSchema29
+  | ConfigurationMetadataStateSchema46;
 
 export interface NodeStateSchema0 extends EndpointStateSchema0 {
   status: NodeStatus;
@@ -496,9 +508,14 @@ export const dumpConfigurationMetadata = (
     return base;
   }
 
-  const metadata29 = base as ConfigurationMetadataStateSchema29;
+  if (schemaVersion < 46) {
+    return base as ConfigurationMetadataStateSchema29;
+  }
 
-  return metadata29;
+  const metadata46 = base as ConfigurationMetadataStateSchema46;
+  metadata46.allowed = metadata.allowed;
+  metadata46.purpose = metadata.purpose;
+  return metadata46;
 };
 
 export const dumpMetadata = (
@@ -561,7 +578,16 @@ export const dumpMetadata = (
   const metadata28 = base as ValueMetadataStateSchema28;
   metadata28.stateful = metadata.stateful;
   metadata28.secret = metadata.secret;
-  return metadata28;
+
+  if (schemaVersion < 46) {
+    return metadata28;
+  }
+
+  const metadata46 = metadata28 as ValueMetadataStateSchema46;
+  if ("allowed" in metadata) {
+    metadata46.allowed = metadata.allowed;
+  }
+  return metadata46;
 };
 
 export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
