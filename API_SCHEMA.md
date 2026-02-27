@@ -32,15 +32,20 @@ Base schema.
 ## Schema 4
 
 - Node `interviewStage` property was changed from type `number` to type `string`
+- Added `driver` command namespace (`driver.get_config`, `driver.update_log_config`, `driver.get_log_config`, `driver.enable_statistics`, `driver.disable_statistics`, `driver.is_statistics_enabled`, `driver.start_listening_logs`, `driver.stop_listening_logs`)
+- Added `node.refresh_values` and `node.refresh_cc_values` commands
 
 ## Schema 5
 
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
+- Added `broadcast_node` and `multicast_group` command namespaces
+- Added `node.begin_firmware_update` and `node.ping` commands
 
 ## Schema 6
 
 - Added `driver.set_preferred_scales` command
+- Added `driver.check_for_config_updates` and `driver.install_config_update` commands
 - Added `options` parameter to `node.set_value` command (`SetValueAPIOptions`)
 
 ## Schema 7
@@ -56,6 +61,7 @@ Base schema.
 
 - Added `node.has_security_class` command
 - Added `node.get_highest_security_class` command
+- Added `node.get_firmware_update_capabilities` command
 - Added `controller.grant_security_classes` command
 - Added `controller.validate_dsk_and_enter_pin` command
 - Added controller events: `grant security classes`, `validate dsk and enter pin`, `inclusion aborted`
@@ -99,6 +105,10 @@ Base schema.
 - Added `node.get_value` command
 - Added `node.get_endpoint_count` command
 - Added `node.interview_cc` command
+- Added `controller.backup_nvm_raw`, `controller.restore_nvm`, `controller.set_rf_region`, `controller.get_rf_region`, `controller.set_powerlevel`, `controller.get_powerlevel`, and `controller.get_state` commands
+- Added `node.get_state`, `node.set_name`, `node.set_location`, and `node.set_keep_awake` commands
+- Added `isControllerNode` and `keepAwake` properties to `NodeState`
+- Added `inclusionState` property and full controller state dump to `ControllerState`
 
 ## Schema 15
 
@@ -110,23 +120,25 @@ Base schema.
 - Added `driver.enable_error_reporting` command
 - Added `controller.get_known_lifeline_routes` command
 - Changed controller state: replaced `libraryVersion` and `serialApiVersion` with `sdkVersion` and `firmwareVersion`
+- Added optional `filter` parameter to `driver.start_listening_logs` command
+- Added DNS-SD/mDNS service discovery support
 
 ## Schema 17
 
 - Changed `controller.begin_exclusion`: `unprovision` parameter now accepts `boolean | "inactive"` (previously just `boolean`)
-- Added optional `filter` parameter to `driver.start_listening_logs` command
-- Added DNS-SD/mDNS service discovery support
+- Changed `controller.get_provisioning_entry`: parameter changed from `dsk` (string) to `dskOrNodeId` (string | number)
+- Added `installedVersion` to `driver.check_for_config_updates` response
 
 ## Schema 18
 
 - Added `node.get_firmware_update_progress` command
+- Added `target` parameter to `node.begin_firmware_update` command
+- Added `node.wait_for_wakeup` command
 
 ## Schema 19
 
 - Added controller `node found` event
 - Added `node` property to `node found` event containing `FoundNodeState` with `nodeId`, `deviceClass`, and `status`
-- Added `target` parameter to `node.begin_firmware_update` command
-- Added `node.wait_for_wakeup` command
 
 ## Schema 20
 
@@ -138,12 +150,13 @@ Base schema.
 - Added `controller.get_available_firmware_updates` command
 - Added `controller.begin_ota_firmware_update` command
 - Added `node.is_firmware_update_in_progress` command
+- Added `node.get_firmware_update_capabilities_cached` command
 - Refactored firmware update progress tracking to use built-in zwave-js methods
+- Added `eventTypeLabel` and `dataTypeLabel` properties to `notification` node event (for Notification CC and Entry Control CC respectively)
 
 ## Schema 22
 
 - Added `node.interview` command
-- Added `node.get_firmware_update_capabilities_cached` command
 - Added `strategy` parameter to `controller.begin_exclusion` command (`ExclusionStrategy`)
 - Added `apiKey` parameter to `controller.get_available_firmware_updates` command
 - Changed controller state: replaced `isSlave`, `isSecondary`, and `isStaticUpdateController` with `isPrimary`, `isSUC`, and `nodeType`
@@ -152,12 +165,13 @@ Base schema.
 ## Schema 23
 
 - Added `supportedCCs` and `controlledCCs` properties to `FoundNodeState`
+- Added `initialize` server command (alternative to `set_api_schema`, also accepts `additionalUserAgentComponents` parameter)
+- Added `endpoint.supports_cc`, `endpoint.controls_cc`, `endpoint.is_cc_secure`, `endpoint.get_cc_version`, and `endpoint.get_node_unsafe` commands
 
 ## Schema 24
 
 - Added `node.update_firmware` command supporting multiple firmware files in a single request
 - Added `controller.firmware_update_ota` command supporting multiple firmware updates
-- Added `endpoint.supports_cc`, `endpoint.controls_cc`, `endpoint.is_cc_secure`, `endpoint.get_cc_version`, and `endpoint.get_node_unsafe` commands
 - Added `includePrereleases` parameter to `controller.get_available_firmware_updates` command
 - Changed `firmware update progress` node event payload from `{sentFragments, totalFragments}` to `{progress}` object
 - Changed `firmware update finished` node event payload from `{status, waitTime}` to `{result}` object
@@ -167,14 +181,14 @@ Base schema.
 - Added `driver.soft_reset` command
 - Added `driver.try_soft_reset` command
 - Added `driver.hard_reset` command
-
-## Schema 26
-
-- Added `controller.is_firmware_update_in_progress` command
 - Added `controller.firmware_update_otw` command
 - Added `utils.try_parse_dsk_from_qr_code_string` command
 - Added `rfRegion` property to `ControllerState`
 - Added controller events: `firmware update progress`, `firmware update finished`
+
+## Schema 26
+
+- Added `controller.is_firmware_update_in_progress` command
 - Added `endpointLabel` property to `Endpoint` state dump
 
 ## Schema 27
@@ -193,6 +207,8 @@ Base schema.
 - Changed `node removed` controller event: `replaced` property changed to `reason` property (`RemoveNodeReason`)
 - Changed `controller.begin_exclusion` to accept `ExclusionOptions` object parameter (in addition to legacy `unprovision` parameter for backwards compatibility)
 - Removed `name` and `info` properties from `ConfigurationMetadataState`
+- Changed `node.set_value` return type from `{ success: boolean }` to `{ result: SetValueResult }`
+- Changed firmware update command return types from `{ success: boolean }` to `{ result }` objects
 
 ## Schema 30
 
@@ -211,6 +227,7 @@ Base schema.
 - Added `lastResult` property to `check lifeline health progress` and `check route health progress` node events
 - Added controller `status changed` event
 - Added controller `identify` event
+- Added `start_listening_logs` and `stop_listening_logs` as top-level server commands
 
 ## Schema 32
 
@@ -257,35 +274,35 @@ Base schema.
 ## Schema 38
 
 - Added controller `inclusion state changed` event
-
-## Schema 39
-
-- Added support for both overloads of `node.manuallyIdleNotificationValue`
 - Added `config_manager` commands (`config_manager.lookup_device`)
 - Added `zniffer` commands
 - Added `utils` commands: `utils.num2hex`, `utils.format_id`, `utils.buffer2hex`, `utils.get_enum_member_name`, `utils.rssi_to_string`
 
+## Schema 39
+
+- Added support for both overloads of `node.manuallyIdleNotificationValue`
+- Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
+
 ## Schema 40
 
 - Added `endpoint.try_get_node` command
-- Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
 - Added `driver ready` driver event
+- Added `controller.cancel_secure_bootstrap_s2` command
 
 ## Schema 41
 
 - Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`
 - Added `driver.firmware_update_otw` and `driver.is_otw_firmware_update_in_progress` commands
-- Added `controller.cancel_secure_bootstrap_s2` command
+- Added `node.get_supported_notification_events` command
 
 ## Schema 42
 
 - Added `sdkVersion` property to `NodeState`
-- Added `node.get_supported_notification_events` command
+- Added optional `migrateOptions` parameter to `controller.restore_nvm` command
 
 ## Schema 43
 
 - Added `controller.toggle_rf` command
-- Added optional `migrateOptions` parameter to `controller.restore_nvm` command
 
 ## Schema 44
 
