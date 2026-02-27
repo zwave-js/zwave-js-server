@@ -1,4 +1,4 @@
-import { FirmwareFileFormat, LogConfig } from "@zwave-js/core";
+import { CommandClasses, FirmwareFileFormat, LogConfig } from "@zwave-js/core";
 import { DriverCommand } from "./command.js";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import {
@@ -110,6 +110,52 @@ export interface IncomingCommandIsOTWFirmwareUpdateInProgress
   command: DriverCommand.isOTWFirmwareUpdateInProgress;
 }
 
+// Bootloader operations
+interface IncomingCommandSoftResetAndRestart extends IncomingCommandBase {
+  command: DriverCommand.softResetAndRestart;
+}
+
+interface IncomingCommandEnterBootloader extends IncomingCommandBase {
+  command: DriverCommand.enterBootloader;
+}
+
+interface IncomingCommandLeaveBootloader extends IncomingCommandBase {
+  command: DriverCommand.leaveBootloader;
+}
+
+// CC version queries
+interface IncomingCommandGetSupportedCCVersion extends IncomingCommandBase {
+  command: DriverCommand.getSupportedCCVersion;
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+
+interface IncomingCommandGetSafeCCVersion extends IncomingCommandBase {
+  command: DriverCommand.getSafeCCVersion;
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+
+// User agent
+interface IncomingCommandUpdateUserAgent extends IncomingCommandBase {
+  command: DriverCommand.updateUserAgent;
+  components: Record<string, string | null | undefined>;
+}
+
+// RSSI monitoring
+interface IncomingCommandEnableFrequentRSSIMonitoring
+  extends IncomingCommandBase {
+  command: DriverCommand.enableFrequentRSSIMonitoring;
+  durationMs: number;
+}
+
+interface IncomingCommandDisableFrequentRSSIMonitoring
+  extends IncomingCommandBase {
+  command: DriverCommand.disableFrequentRSSIMonitoring;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -130,4 +176,12 @@ export type IncomingMessageDriver =
   | IncomingCommandUpdateOptions
   | IncomingCommandSendTestFrame
   | IncomingCommandFirmwareUpdateOTW
-  | IncomingCommandIsOTWFirmwareUpdateInProgress;
+  | IncomingCommandIsOTWFirmwareUpdateInProgress
+  | IncomingCommandSoftResetAndRestart
+  | IncomingCommandEnterBootloader
+  | IncomingCommandLeaveBootloader
+  | IncomingCommandGetSupportedCCVersion
+  | IncomingCommandGetSafeCCVersion
+  | IncomingCommandUpdateUserAgent
+  | IncomingCommandEnableFrequentRSSIMonitoring
+  | IncomingCommandDisableFrequentRSSIMonitoring;
