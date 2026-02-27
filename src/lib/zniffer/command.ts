@@ -17,4 +17,8 @@ export enum ZnifferCommand {
   getSupportedLRChannelConfigs = "zniffer.get_supported_lr_channel_configs",
   // Undocumented
   setLRChannelConfig = "zniffer.set_lr_channel_config",
+  // File I/O
+  saveCaptureToFile = "zniffer.save_capture_to_file",
+  loadCaptureFromFile = "zniffer.load_capture_from_file",
+  loadCaptureFromBuffer = "zniffer.load_capture_from_buffer",
 }
