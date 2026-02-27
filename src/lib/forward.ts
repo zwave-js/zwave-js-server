@@ -30,6 +30,24 @@ export class EventForwarder {
    */
   constructor(private clientsController: ClientsController) {}
 
+  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
+    // Forward event to all clients
+    this.clientsController.clients.forEach((client) =>
+      this.sendEvent(client, data, minSchemaVersion),
+    );
+  }
+
+  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
+    // Send event to connected client only
+    if (
+      client.receiveEvents &&
+      client.isConnected &&
+      client.schemaVersion >= (minSchemaVersion ?? 0)
+    ) {
+      client.sendEvent(data);
+    }
+  }
+
   start() {
     // Bind events for the controller and all existing nodes
     this.setupControllerAndNodes();
@@ -104,24 +122,6 @@ export class EventForwarder {
         45,
       );
     });
-  }
-
-  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
-    // Forward event to all clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data, minSchemaVersion),
-    );
-  }
-
-  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
-    // Send event to connected client only
-    if (
-      client.receiveEvents &&
-      client.isConnected &&
-      client.schemaVersion >= (minSchemaVersion ?? 0)
-    ) {
-      client.sendEvent(data);
-    }
   }
 
   setupControllerAndNodes() {
