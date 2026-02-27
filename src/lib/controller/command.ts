@@ -39,6 +39,7 @@ export enum ControllerCommand {
   supportsFeature = "controller.supports_feature",
   backupNVMRaw = "controller.backup_nvm_raw",
   restoreNVM = "controller.restore_nvm",
+  restoreNVMRaw = "controller.restore_nvm_raw",
   setRFRegion = "controller.set_rf_region",
   getRFRegion = "controller.get_rf_region",
   toggleRF = "controller.toggle_rf",
@@ -72,12 +73,13 @@ export enum ControllerCommand {
   setPriorityRoute = "controller.set_priority_route",
   removePriorityRoute = "controller.remove_priority_route",
   getPriorityRoute = "controller.get_priority_route",
+  // Undocumented
   discoverNodeNeighbors = "controller.discover_node_neighbors",
-  // Diagnostics
+  // Undocumented
   getBackgroundRSSI = "controller.get_background_rssi",
-  // Long Range
+  // Undocumented
   getLongRangeNodes = "controller.get_long_range_nodes",
-  // Controller identification
+  // Undocumented
   getDSK = "controller.get_dsk",
   // NVM operations
   getNVMId = "controller.get_nvm_id",
@@ -89,15 +91,21 @@ export enum ControllerCommand {
   externalNVMWriteBuffer = "controller.external_nvm_write_buffer",
   externalNVMReadBuffer700 = "controller.external_nvm_read_buffer_700",
   externalNVMWriteBuffer700 = "controller.external_nvm_write_buffer_700",
+  // Undocumented
   externalNVMOpenExt = "controller.external_nvm_open_ext",
+  // Undocumented
   externalNVMCloseExt = "controller.external_nvm_close_ext",
+  // Undocumented
   externalNVMReadBufferExt = "controller.external_nvm_read_buffer_ext",
+  // Undocumented
   externalNVMWriteBufferExt = "controller.external_nvm_write_buffer_ext",
-  // Watchdog operations
+  // Undocumented
   startWatchdog = "controller.start_watchdog",
+  // Undocumented
   stopWatchdog = "controller.stop_watchdog",
-  // RF region extended
+  // Undocumented
   querySupportedRFRegions = "controller.query_supported_rf_regions",
+  // Undocumented
   queryRFRegionInfo = "controller.query_rf_region_info",
   // Network join/leave
   beginJoiningNetwork = "controller.begin_joining_network",

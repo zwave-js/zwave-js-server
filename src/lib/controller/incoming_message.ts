@@ -217,11 +217,18 @@ export interface IncomingCommandControllerBackupNVMRaw extends IncomingCommandCo
 
 export interface IncomingCommandControllerRestoreNVM extends IncomingCommandControllerBase {
   command: ControllerCommand.restoreNVM;
-  nvmData: string;
+  nvmData: string; // base64 encoded
   migrateOptions?: MigrateNVMOptions;
 }
 
-export interface IncomingCommandControllerSetRFRegion extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerRestoreNVMRaw
+  extends IncomingCommandControllerBase {
+  command: ControllerCommand.restoreNVMRaw;
+  nvmData: string; // base64 encoded
+}
+
+export interface IncomingCommandControllerSetRFRegion
+  extends IncomingCommandControllerBase {
   command: ControllerCommand.setRFRegion;
   region: RFRegion;
 }
@@ -636,6 +643,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerSupportsFeature
   | IncomingCommandControllerBackupNVMRaw
   | IncomingCommandControllerRestoreNVM
+  | IncomingCommandControllerRestoreNVMRaw
   | IncomingCommandControllerSetRFRegion
   | IncomingCommandControllerGetRFRegion
   | IncomingCommandControllerToggleRF

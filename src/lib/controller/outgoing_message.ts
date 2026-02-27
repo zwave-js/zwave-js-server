@@ -68,6 +68,7 @@ export interface ControllerResultTypes {
   [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
   [ControllerCommand.backupNVMRaw]: { nvmData: string };
   [ControllerCommand.restoreNVM]: Record<string, never>;
+  [ControllerCommand.restoreNVMRaw]: Record<string, never>;
   [ControllerCommand.setRFRegion]: { success: boolean };
   [ControllerCommand.getRFRegion]: { region: RFRegion };
   [ControllerCommand.toggleRF]: { success: boolean };

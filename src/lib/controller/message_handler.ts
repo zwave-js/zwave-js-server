@@ -297,6 +297,23 @@ export class ControllerMessageHandler implements MessageHandler {
         );
         return {};
       }
+      case ControllerCommand.restoreNVMRaw: {
+        const nvmData = Buffer.from(message.nvmData, "base64");
+        await this.driver.controller.restoreNVMRaw(
+          nvmData,
+          (bytesWritten: number, total: number) => {
+            this.clientsController.clients.forEach((client) =>
+              client.sendEvent({
+                source: "controller",
+                event: "nvm restore progress",
+                bytesWritten,
+                total,
+              }),
+            );
+          },
+        );
+        return {};
+      }
       case ControllerCommand.setRFRegion: {
         const success = await this.driver.controller.setRFRegion(
           message.region,
