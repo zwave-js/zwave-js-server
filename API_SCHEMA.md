@@ -38,11 +38,176 @@ Base schema.
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
 
----
+## Schema 6
 
-> Missing schemas (6 - 32) will be added later
+- Added `driver.set_preferred_scales` command
+- Added `options` parameter to `node.set_value` command (`SetValueAPIOptions`)
 
----
+## Schema 7
+
+- Added `endpoint.invoke_cc_api` command
+- Added `endpoint.supports_cc_api` command
+
+## Schema 8
+
+- Added `node.has_security_class` command
+- Added `node.get_highest_security_class` command
+- Added `controller.grant_security_classes` command
+- Added `controller.validate_dsk_and_enter_pin` command
+- Added controller events: `grant security classes`, `validate dsk and enter pin`, `inclusion aborted`
+- Updated `controller.begin_inclusion` and `controller.replace_failed_node` to support S2 inclusion options
+
+## Schema 9
+
+- Bumped `zwave-js` to `^8.3.1` (no server API changes)
+
+## Schema 10
+
+- Added `replaced` boolean to `node removed` controller event
+- Added `highestSecurityClass` property to `NodeState`
+- Added server message compression support
+
+## Schema 11
+
+- Added `controller.provision_smart_start_node` command
+- Added `controller.unprovision_smart_start_node` command
+- Added `controller.get_provisioning_entry` command
+- Added `controller.get_provisioning_entries` command
+- Added `utils.parse_qr_code_string` command
+- Updated `controller.begin_inclusion` to support QR code string provisioning
+- Updated `controller.begin_exclusion` with `unprovision` parameter
+
+## Schema 12
+
+- Added `controller.supports_feature` command
+- Server now enables `emitValueUpdateAfterSetValue` driver option by default
+
+## Schema 13
+
+- Added `node.test_powerlevel` command
+- Added `node.check_lifeline_health` command
+- Added `node.check_route_health` command
+- Added optional `options` parameter to `node.refresh_info` command
+- Added node events: `test powerlevel progress`, `check lifeline health progress`, `check route health progress`
+
+## Schema 14
+
+- Added `node.get_value` command
+- Added `node.get_endpoint_count` command
+- Added `node.interview_cc` command
+
+## Schema 15
+
+- Added `commandClasses` property to `Endpoint` state dump (array of `CommandClassState` with `id`, `name`, `version`, and `isSecure`)
+- Moved `commandClasses` from `Node` state to `Endpoint` state
+
+## Schema 16
+
+- Added `driver.enable_error_reporting` command
+- Added `controller.get_known_lifeline_routes` command
+- Changed controller state: replaced `libraryVersion` and `serialApiVersion` with `sdkVersion` and `firmwareVersion`
+
+## Schema 17
+
+- Changed `controller.begin_exclusion`: `unprovision` parameter now accepts `boolean | "inactive"` (previously just `boolean`)
+- Added optional `filter` parameter to `driver.start_listening_logs` command
+- Added DNS-SD/mDNS service discovery support
+
+## Schema 18
+
+- Added `node.get_firmware_update_progress` command
+
+## Schema 19
+
+- Added controller `node found` event
+- Added `node` property to `node found` event containing `FoundNodeState` with `nodeId`, `deviceClass`, and `status`
+- Added `target` parameter to `node.begin_firmware_update` command
+- Added `node.wait_for_wakeup` command
+
+## Schema 20
+
+- Added `controller.get_any_firmware_update_progress` command
+
+## Schema 21
+
+- Added `controller.is_any_ota_firmware_update_in_progress` command
+- Added `controller.get_available_firmware_updates` command
+- Added `controller.begin_ota_firmware_update` command
+- Added `node.is_firmware_update_in_progress` command
+- Refactored firmware update progress tracking to use built-in zwave-js methods
+
+## Schema 22
+
+- Added `node.interview` command
+- Added `strategy` parameter to `controller.begin_exclusion` command (`ExclusionStrategy`)
+- Added `apiKey` parameter to `controller.get_available_firmware_updates` command
+- Changed controller state: replaced `isSlave`, `isSecondary`, and `isStaticUpdateController` with `isPrimary`, `isSUC`, and `nodeType`
+
+## Schema 23
+
+- Added `supportedCCs` and `controlledCCs` properties to `FoundNodeState`
+
+## Schema 24
+
+- Added `node.update_firmware` command supporting multiple firmware files in a single request
+- Added `controller.firmware_update_ota` command supporting multiple firmware updates
+- Added `includePrereleases` parameter to `controller.get_available_firmware_updates` command
+- Changed `firmware update progress` node event payload from `{sentFragments, totalFragments}` to `{progress}` object
+- Changed `firmware update finished` node event payload from `{status, waitTime}` to `{result}` object
+
+## Schema 25
+
+- Added `driver.soft_reset` command
+- Added `driver.try_soft_reset` command
+- Added `driver.hard_reset` command
+
+## Schema 26
+
+- Added `controller.is_firmware_update_in_progress` command
+- Added `controller.firmware_update_otw` command
+- Added `utils.try_parse_dsk_from_qr_code_string` command
+- Added `rfRegion` property to `ControllerState`
+- Added controller events: `firmware update progress`, `firmware update finished`
+
+## Schema 27
+
+- Added `stateful` and `secret` properties to value metadata
+- Added `endpointLabel` property to `Endpoint` state dump
+
+## Schema 28
+
+- Added `node.manually_idle_notification_value` command
+- Added `node.set_date_and_time` command
+- Added `node.get_value_timestamp` command
+
+## Schema 29
+
+- Changed `node removed` controller event: `replaced` property changed to `reason` property (`RemoveNodeReason`)
+- Changed `controller.begin_exclusion` to accept `ExclusionOptions` object parameter (in addition to legacy `unprovision` parameter for backwards compatibility)
+- Removed `name` and `info` properties from `ConfigurationMetadataState`
+
+## Schema 30
+
+- Added `lastSeen` property to `NodeState`
+
+## Schema 31
+
+- Added `node.get_date_and_time` command
+- Added `node.is_health_check_in_progress` command
+- Added `node.abort_health_check` command
+- Added `lastResult` property to `check lifeline health progress` and `check route health progress` node events
+
+## Schema 32
+
+- Replaced `controller.heal_node` with `controller.rebuild_node_routes`
+- Replaced `controller.begin_healing_network` with `controller.begin_rebuilding_routes` (added `options` parameter)
+- Replaced `controller.stop_healing_network` with `controller.stop_rebuilding_routes`
+- Renamed controller events `heal network progress` to `rebuild routes progress` and `heal network done` to `rebuild routes done`
+- Removed `isHealNetworkActive` property from `ControllerState`, replaced with `isRebuildingRoutes`
+- Changed `controller.firmware_update_ota` command: `updates` parameter replaced with `updateInfo`
+- Deprecated `controller.begin_ota_firmware_update` command
+- Changed `notification` node event to include `endpointIndex` property
+- Added `driver.shutdown` command
 
 ## Schema 33
 
@@ -69,7 +234,7 @@ Base schema.
 
 ## Schema 37
 
-- Added command for `checkAssocation` controller method
+- Added command for `checkAssociation` controller method
 - Updated payload for `inclusion started` controller event
 
 ## Schema 38
