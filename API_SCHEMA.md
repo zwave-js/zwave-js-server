@@ -47,6 +47,10 @@ Base schema.
 
 - Added `endpoint.invoke_cc_api` command
 - Added `endpoint.supports_cc_api` command
+- Added `statistics` property (`NodeStatistics`) to `NodeState`
+- Added `statistics` property (`ControllerStatistics`) to controller state dump
+- Added `statistics updated` controller event
+- Added `statistics updated` node event
 
 ## Schema 8
 
@@ -139,9 +143,11 @@ Base schema.
 ## Schema 22
 
 - Added `node.interview` command
+- Added `node.get_firmware_update_capabilities_cached` command
 - Added `strategy` parameter to `controller.begin_exclusion` command (`ExclusionStrategy`)
 - Added `apiKey` parameter to `controller.get_available_firmware_updates` command
 - Changed controller state: replaced `isSlave`, `isSecondary`, and `isStaticUpdateController` with `isPrimary`, `isSUC`, and `nodeType`
+- Removed `status` property from `FoundNodeState` (was always `NodeStatus.Unknown` for schema < 22)
 
 ## Schema 23
 
@@ -151,6 +157,7 @@ Base schema.
 
 - Added `node.update_firmware` command supporting multiple firmware files in a single request
 - Added `controller.firmware_update_ota` command supporting multiple firmware updates
+- Added `endpoint.supports_cc`, `endpoint.controls_cc`, `endpoint.is_cc_secure`, `endpoint.get_cc_version`, and `endpoint.get_node_unsafe` commands
 - Added `includePrereleases` parameter to `controller.get_available_firmware_updates` command
 - Changed `firmware update progress` node event payload from `{sentFragments, totalFragments}` to `{progress}` object
 - Changed `firmware update finished` node event payload from `{status, waitTime}` to `{result}` object
@@ -173,12 +180,13 @@ Base schema.
 
 - Added `stateful` and `secret` properties to value metadata
 - Added `endpointLabel` property to `Endpoint` state dump
+- Added `node.get_value_timestamp` command
+- Added `driver.shutdown` command
 
 ## Schema 28
 
 - Added `node.manually_idle_notification_value` command
 - Added `node.set_date_and_time` command
-- Added `node.get_value_timestamp` command
 
 ## Schema 29
 
@@ -195,7 +203,14 @@ Base schema.
 - Added `node.get_date_and_time` command
 - Added `node.is_health_check_in_progress` command
 - Added `node.abort_health_check` command
+- Added `node.set_default_volume` command
+- Added `node.set_default_transition_duration` command
+- Added `node.has_device_config_changed` command
+- Added `status` property (`ControllerStatus`) to `ControllerState`
+- Added `defaultVolume` and `defaultTransitionDuration` properties to `NodeState`
 - Added `lastResult` property to `check lifeline health progress` and `check route health progress` node events
+- Added controller `status changed` event
+- Added controller `identify` event
 
 ## Schema 32
 
@@ -207,7 +222,7 @@ Base schema.
 - Changed `controller.firmware_update_ota` command: `updates` parameter replaced with `updateInfo`
 - Deprecated `controller.begin_ota_firmware_update` command
 - Changed `notification` node event to include `endpointIndex` property
-- Added `driver.shutdown` command
+- Added `message` property to error responses and `zwaveErrorCodeName` to Z-Wave error responses
 
 ## Schema 33
 
@@ -224,6 +239,7 @@ Base schema.
 
 - Adds Z-Wave Long Range support
 - Added `supportsLongRange` to controller state dump
+- Added `protocol` property to `NodeState`
 
 ## Schema 36
 
@@ -235,37 +251,41 @@ Base schema.
 ## Schema 37
 
 - Added command for `checkAssociation` controller method
-- Updated payload for `inclusion started` controller event
+- Updated payload for `inclusion started` controller event (sends `strategy` instead of `secure` boolean)
+- Removed `noBulkSupport` from `ConfigurationMetadataState` dump
 
 ## Schema 38
 
 - Added controller `inclusion state changed` event
-- Added `config_manager` commands
-- Added `zniffer` commands
 
 ## Schema 39
 
 - Added support for both overloads of `node.manuallyIdleNotificationValue`
-- Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
+- Added `config_manager` commands (`config_manager.lookup_device`)
+- Added `zniffer` commands
+- Added `utils` commands: `utils.num2hex`, `utils.format_id`, `utils.buffer2hex`, `utils.get_enum_member_name`, `utils.rssi_to_string`
 
 ## Schema 40
 
 - Added `endpoint.try_get_node` command
-- Added `controller.cancelSecureBootstrapS2` command
+- Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
 
 ## Schema 41
 
 - Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`
 - Added `driver.firmware_update_otw` and `driver.is_otw_firmware_update_in_progress` commands
-- Added `node.get_supported_notification_events` command
+- Added `controller.cancel_secure_bootstrap_s2` command
+- Added `driver ready` driver event
 
 ## Schema 42
 
 - Added `sdkVersion` property to `NodeState`
+- Added `node.get_supported_notification_events` command
 
 ## Schema 43
 
 - Added `controller.toggle_rf` command
+- Added optional `migrateOptions` parameter to `controller.restore_nvm` command
 
 ## Schema 44
 
@@ -274,6 +294,7 @@ Base schema.
 ## Schema 45
 
 - Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
+- Added `node info received` node event
 
 ## Schema 46
 
