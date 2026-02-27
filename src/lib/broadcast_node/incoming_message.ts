@@ -3,8 +3,9 @@ import { SetValueAPIOptions } from "zwave-js";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { BroadcastNodeCommand } from "./command.js";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface IncomingCommandBroadcastNodeBase extends IncomingCommandBase {}
+export interface IncomingCommandBroadcastNodeBase extends IncomingCommandBase {
+  longRange?: boolean;
+}
 
 export interface IncomingCommandBroadcastNodeSetValue
   extends IncomingCommandBroadcastNodeBase {

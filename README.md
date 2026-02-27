@@ -1489,7 +1489,9 @@ interface {
 
 ### Multicasting
 
-There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
+There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter.
+
+> NOTE: For `broadcast_node` commands, you can pass a `longRange` boolean flag to broadcast to Long Range nodes instead of classic Z-Wave nodes.
 
 ```ts
 interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
@@ -1754,6 +1756,101 @@ interface {
   messageId: string;
   command: "zniffer.set_frequency";
   frequency: number;
+}
+```
+
+#### Get Long Range regions
+
+Gets list of Long Range capable regions.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_lr_regions";
+}
+```
+
+#### Get current Long Range channel config
+
+Gets currently configured Long Range channel configuration.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_current_lr_channel_config";
+}
+```
+
+#### Get supported Long Range channel configs
+
+Gets map of supported Long Range channel configurations.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_supported_lr_channel_configs";
+}
+```
+
+#### Set Long Range channel config
+
+Set Long Range channel configuration (800 series only).
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_lr_channel_config";
+  channelConfig: number;
+}
+```
+
+#### [Save capture to file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Saves the captured frames to a `.zlf` file that can be read by the official Zniffer application.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.save_capture_to_file";
+  filePath: string;
+}
+```
+
+#### [Load capture from file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Loads previously saved captured frames from a `.zlf` file.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.load_capture_from_file";
+  filePath: string;
+}
+```
+
+#### [Load capture from buffer](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Loads captured frames from a base64 encoded buffer.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.load_capture_from_buffer";
+  data: string; // base64 encoded .zlf data
 }
 ```
 

@@ -131,3 +131,7 @@ Base schema.
 - Added node event: `check link reliability progress`
 - Added controller events: `joining network show dsk`, `joining network done`
 - Added endpoint commands: `get_ccs`, `may_support_basic_cc`, `was_cc_removed_via_config`
+- Added broadcast node Long Range support via `longRange` flag on `broadcast_node` commands
+- Added zniffer Long Range commands: `get_lr_regions`, `get_current_lr_channel_config`, `get_supported_lr_channel_configs`, `set_lr_channel_config`
+- Added zniffer file I/O commands: `save_capture_to_file`, `load_capture_from_file`, `load_capture_from_buffer`
+- Added utility commands: `guess_firmware_file_format`, `try_unzip_firmware_file`, `extract_firmware`
