@@ -238,21 +238,18 @@ export interface IncomingCommandNodeGetSupportedNotificationEvents extends Incom
 }
 
 // Link reliability check
-export interface IncomingCommandNodeCheckLinkReliability
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeCheckLinkReliability extends IncomingCommandNodeBase {
   command: NodeCommand.checkLinkReliability;
   mode: LinkReliabilityCheckMode;
   interval: number;
   rounds?: number;
 }
 
-export interface IncomingCommandNodeIsLinkReliabilityCheckInProgress
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeIsLinkReliabilityCheckInProgress extends IncomingCommandNodeBase {
   command: NodeCommand.isLinkReliabilityCheckInProgress;
 }
 
-export interface IncomingCommandNodeAbortLinkReliabilityCheck
-  extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeAbortLinkReliabilityCheck extends IncomingCommandNodeBase {
   command: NodeCommand.abortLinkReliabilityCheck;
 }
 

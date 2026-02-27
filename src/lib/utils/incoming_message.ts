@@ -44,21 +44,18 @@ export interface IncomingCommandUtilsRssiToString extends IncomingCommandUtilsBa
   rssi: RSSI;
 }
 
-export interface IncomingCommandUtilsGuessFirmwareFileFormat
-  extends IncomingCommandUtilsBase {
+export interface IncomingCommandUtilsGuessFirmwareFileFormat extends IncomingCommandUtilsBase {
   command: UtilsCommand.guessFirmwareFileFormat;
   filename: string;
   file: string; // base64 encoded
 }
 
-export interface IncomingCommandUtilsTryUnzipFirmwareFile
-  extends IncomingCommandUtilsBase {
+export interface IncomingCommandUtilsTryUnzipFirmwareFile extends IncomingCommandUtilsBase {
   command: UtilsCommand.tryUnzipFirmwareFile;
   file: string; // base64 encoded ZIP file
 }
 
-export interface IncomingCommandUtilsExtractFirmware
-  extends IncomingCommandUtilsBase {
+export interface IncomingCommandUtilsExtractFirmware extends IncomingCommandUtilsBase {
   command: UtilsCommand.extractFirmware;
   file: string; // base64 encoded firmware file
   format: FirmwareFileFormat;

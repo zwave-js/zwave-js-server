@@ -62,18 +62,15 @@ export interface IncomingCommandEndpointGetRawConfigParameterValue extends Incom
   bitMask?: number;
 }
 
-export interface IncomingCommandEndpointGetCCs
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointGetCCs extends IncomingCommandEndpointBase {
   command: EndpointCommand.getCCs;
 }
 
-export interface IncomingCommandEndpointMaySupportBasicCC
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointMaySupportBasicCC extends IncomingCommandEndpointBase {
   command: EndpointCommand.maySupportBasicCC;
 }
 
-export interface IncomingCommandEndpointWasCCRemovedViaConfig
-  extends IncomingCommandEndpointBase {
+export interface IncomingCommandEndpointWasCCRemovedViaConfig extends IncomingCommandEndpointBase {
   command: EndpointCommand.wasCCRemovedViaConfig;
   commandClass: CommandClasses;
 }

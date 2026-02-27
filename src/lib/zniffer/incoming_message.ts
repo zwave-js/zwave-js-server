@@ -49,42 +49,35 @@ export interface IncomingCommandZnifferSetFrequency extends IncomingCommandZniff
 }
 
 // Long Range
-export interface IncomingCommandZnifferGetLRRegions
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferGetLRRegions extends IncomingCommandZnifferBase {
   command: ZnifferCommand.getLRRegions;
 }
 
-export interface IncomingCommandZnifferGetCurrentLRChannelConfig
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferGetCurrentLRChannelConfig extends IncomingCommandZnifferBase {
   command: ZnifferCommand.getCurrentLRChannelConfig;
 }
 
-export interface IncomingCommandZnifferGetSupportedLRChannelConfigs
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferGetSupportedLRChannelConfigs extends IncomingCommandZnifferBase {
   command: ZnifferCommand.getSupportedLRChannelConfigs;
 }
 
-export interface IncomingCommandZnifferSetLRChannelConfig
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferSetLRChannelConfig extends IncomingCommandZnifferBase {
   command: ZnifferCommand.setLRChannelConfig;
   channelConfig: number;
 }
 
 // File I/O
-export interface IncomingCommandZnifferSaveCaptureToFile
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferSaveCaptureToFile extends IncomingCommandZnifferBase {
   command: ZnifferCommand.saveCaptureToFile;
   filePath: string;
 }
 
-export interface IncomingCommandZnifferLoadCaptureFromFile
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferLoadCaptureFromFile extends IncomingCommandZnifferBase {
   command: ZnifferCommand.loadCaptureFromFile;
   filePath: string;
 }
 
-export interface IncomingCommandZnifferLoadCaptureFromBuffer
-  extends IncomingCommandZnifferBase {
+export interface IncomingCommandZnifferLoadCaptureFromBuffer extends IncomingCommandZnifferBase {
   command: ZnifferCommand.loadCaptureFromBuffer;
   data: string; // base64 encoded
 }

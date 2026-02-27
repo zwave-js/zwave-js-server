@@ -151,15 +151,16 @@ export class NodeMessageHandler implements MessageHandler {
           message.powerlevel,
           message.testFrameCount,
           (acknowledged: number, total: number) => {
-            this.clientsController.clients.forEach((client) =>
+            this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent({
                 source: "node",
                 event: "test powerlevel progress",
                 nodeId: message.nodeId,
                 acknowledged,
                 total,
-              }),
-            );
+              });
+            });
           },
         );
         return { framesAcked };
@@ -183,6 +184,7 @@ export class NodeMessageHandler implements MessageHandler {
             };
             const returnEvent31 = { ...returnEvent0, lastResult };
             this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );
@@ -211,6 +213,7 @@ export class NodeMessageHandler implements MessageHandler {
             };
             const returnEvent31 = { ...returnEvent0, lastResult };
             this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent(
                 client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
               );

@@ -248,6 +248,7 @@ export class EventForwarder {
       "rebuild routes progress",
       (progress) => {
         this.clientsController.clients.forEach((client) => {
+          if (!client.isConnected || !client.receiveEvents) return;
           if (client.schemaVersion <= 31) {
             client.sendEvent({
               source: "controller",
@@ -280,6 +281,7 @@ export class EventForwarder {
       "rebuild routes done",
       (result) => {
         this.clientsController.clients.forEach((client) => {
+          if (!client.isConnected || !client.receiveEvents) return;
           if (client.schemaVersion <= 31) {
             client.sendEvent({
               source: "controller",

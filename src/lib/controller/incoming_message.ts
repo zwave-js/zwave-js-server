@@ -221,14 +221,12 @@ export interface IncomingCommandControllerRestoreNVM extends IncomingCommandCont
   migrateOptions?: MigrateNVMOptions;
 }
 
-export interface IncomingCommandControllerRestoreNVMRaw
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerRestoreNVMRaw extends IncomingCommandControllerBase {
   command: ControllerCommand.restoreNVMRaw;
   nvmData: string; // base64 encoded
 }
 
-export interface IncomingCommandControllerSetRFRegion
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerSetRFRegion extends IncomingCommandControllerBase {
   command: ControllerCommand.setRFRegion;
   region: RFRegion;
 }
@@ -317,8 +315,7 @@ export interface IncomingCommandControllerGetLongRangeChannel extends IncomingCo
   command: ControllerCommand.getLongRangeChannel;
 }
 
-export interface IncomingCommandControllerGetAllAvailableFirmwareUpdates
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetAllAvailableFirmwareUpdates extends IncomingCommandControllerBase {
   command: ControllerCommand.getAllAvailableFirmwareUpdates;
   apiKey?: string;
   includePrereleases?: boolean;
@@ -326,33 +323,28 @@ export interface IncomingCommandControllerGetAllAvailableFirmwareUpdates
 }
 
 // Routing operations
-export interface IncomingCommandControllerAssignReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.assignReturnRoutes;
   nodeId: number;
   destinationNodeId: number;
 }
 
-export interface IncomingCommandControllerDeleteReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerDeleteReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.deleteReturnRoutes;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerAssignSUCReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignSUCReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.assignSUCReturnRoutes;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerDeleteSUCReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerDeleteSUCReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.deleteSUCReturnRoutes;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerAssignPriorityReturnRoute
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignPriorityReturnRoute extends IncomingCommandControllerBase {
   command: ControllerCommand.assignPriorityReturnRoute;
   nodeId: number;
   destinationNodeId: number;
@@ -360,16 +352,14 @@ export interface IncomingCommandControllerAssignPriorityReturnRoute
   routeSpeed: ZWaveDataRate;
 }
 
-export interface IncomingCommandControllerAssignPrioritySUCReturnRoute
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignPrioritySUCReturnRoute extends IncomingCommandControllerBase {
   command: ControllerCommand.assignPrioritySUCReturnRoute;
   nodeId: number;
   repeaters: number[];
   routeSpeed: ZWaveDataRate;
 }
 
-export interface IncomingCommandControllerAssignCustomReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignCustomReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.assignCustomReturnRoutes;
   nodeId: number;
   destinationNodeId: number;
@@ -377,233 +367,196 @@ export interface IncomingCommandControllerAssignCustomReturnRoutes
   priorityRoute?: Route;
 }
 
-export interface IncomingCommandControllerAssignCustomSUCReturnRoutes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerAssignCustomSUCReturnRoutes extends IncomingCommandControllerBase {
   command: ControllerCommand.assignCustomSUCReturnRoutes;
   nodeId: number;
   routes: Route[];
   priorityRoute?: Route;
 }
 
-export interface IncomingCommandControllerSetPriorityRoute
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerSetPriorityRoute extends IncomingCommandControllerBase {
   command: ControllerCommand.setPriorityRoute;
   destinationNodeId: number;
   repeaters: number[];
   routeSpeed: ZWaveDataRate;
 }
 
-export interface IncomingCommandControllerRemovePriorityRoute
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerRemovePriorityRoute extends IncomingCommandControllerBase {
   command: ControllerCommand.removePriorityRoute;
   destinationNodeId: number;
 }
 
-export interface IncomingCommandControllerGetPriorityRoute
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetPriorityRoute extends IncomingCommandControllerBase {
   command: ControllerCommand.getPriorityRoute;
   destinationNodeId: number;
 }
 
-export interface IncomingCommandControllerDiscoverNodeNeighbors
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerDiscoverNodeNeighbors extends IncomingCommandControllerBase {
   command: ControllerCommand.discoverNodeNeighbors;
   nodeId: number;
 }
 
 // Diagnostics
-export interface IncomingCommandControllerGetBackgroundRSSI
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetBackgroundRSSI extends IncomingCommandControllerBase {
   command: ControllerCommand.getBackgroundRSSI;
 }
 
 // Long Range
-export interface IncomingCommandControllerGetLongRangeNodes
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetLongRangeNodes extends IncomingCommandControllerBase {
   command: ControllerCommand.getLongRangeNodes;
 }
 
 // Controller identification
-export interface IncomingCommandControllerGetDSK
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetDSK extends IncomingCommandControllerBase {
   command: ControllerCommand.getDSK;
 }
 
 // NVM operations
-export interface IncomingCommandControllerGetNVMId
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetNVMId extends IncomingCommandControllerBase {
   command: ControllerCommand.getNVMId;
 }
 
-export interface IncomingCommandControllerExternalNVMOpen
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMOpen extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMOpen;
 }
 
-export interface IncomingCommandControllerExternalNVMClose
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMClose extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMClose;
 }
 
-export interface IncomingCommandControllerExternalNVMReadByte
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMReadByte extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMReadByte;
   offset: number;
 }
 
-export interface IncomingCommandControllerExternalNVMWriteByte
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMWriteByte extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMWriteByte;
   offset: number;
   data: number;
 }
 
-export interface IncomingCommandControllerExternalNVMReadBuffer
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMReadBuffer extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMReadBuffer;
   offset: number;
   length: number;
 }
 
-export interface IncomingCommandControllerExternalNVMWriteBuffer
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMWriteBuffer extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMWriteBuffer;
   offset: number;
   buffer: string; // base64 encoded
 }
 
-export interface IncomingCommandControllerExternalNVMReadBuffer700
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMReadBuffer700 extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMReadBuffer700;
   offset: number;
   length: number;
 }
 
-export interface IncomingCommandControllerExternalNVMWriteBuffer700
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMWriteBuffer700 extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMWriteBuffer700;
   offset: number;
   buffer: string; // base64 encoded
 }
 
-export interface IncomingCommandControllerExternalNVMOpenExt
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMOpenExt extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMOpenExt;
 }
 
-export interface IncomingCommandControllerExternalNVMCloseExt
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMCloseExt extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMCloseExt;
 }
 
-export interface IncomingCommandControllerExternalNVMReadBufferExt
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMReadBufferExt extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMReadBufferExt;
   offset: number;
   length: number;
 }
 
-export interface IncomingCommandControllerExternalNVMWriteBufferExt
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerExternalNVMWriteBufferExt extends IncomingCommandControllerBase {
   command: ControllerCommand.externalNVMWriteBufferExt;
   offset: number;
   buffer: string; // base64 encoded
 }
 
 // Watchdog operations
-export interface IncomingCommandControllerStartWatchdog
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStartWatchdog extends IncomingCommandControllerBase {
   command: ControllerCommand.startWatchdog;
 }
 
-export interface IncomingCommandControllerStopWatchdog
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopWatchdog extends IncomingCommandControllerBase {
   command: ControllerCommand.stopWatchdog;
 }
 
 // RF region extended
-export interface IncomingCommandControllerQuerySupportedRFRegions
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerQuerySupportedRFRegions extends IncomingCommandControllerBase {
   command: ControllerCommand.querySupportedRFRegions;
 }
 
-export interface IncomingCommandControllerQueryRFRegionInfo
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerQueryRFRegionInfo extends IncomingCommandControllerBase {
   command: ControllerCommand.queryRFRegionInfo;
   region: RFRegion;
 }
 
 // Network join/leave
-export interface IncomingCommandControllerBeginJoiningNetwork
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerBeginJoiningNetwork extends IncomingCommandControllerBase {
   command: ControllerCommand.beginJoiningNetwork;
   strategy?: JoinNetworkStrategy;
 }
 
-export interface IncomingCommandControllerStopJoiningNetwork
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopJoiningNetwork extends IncomingCommandControllerBase {
   command: ControllerCommand.stopJoiningNetwork;
 }
 
-export interface IncomingCommandControllerBeginLeavingNetwork
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerBeginLeavingNetwork extends IncomingCommandControllerBase {
   command: ControllerCommand.beginLeavingNetwork;
 }
 
-export interface IncomingCommandControllerStopLeavingNetwork
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerStopLeavingNetwork extends IncomingCommandControllerBase {
   command: ControllerCommand.stopLeavingNetwork;
 }
 
 // Cached route queries
-export interface IncomingCommandControllerGetPriorityReturnRouteCached
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetPriorityReturnRouteCached extends IncomingCommandControllerBase {
   command: ControllerCommand.getPriorityReturnRouteCached;
   nodeId: number;
   destinationNodeId: number;
 }
 
-export interface IncomingCommandControllerGetPriorityReturnRoutesCached
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetPriorityReturnRoutesCached extends IncomingCommandControllerBase {
   command: ControllerCommand.getPriorityReturnRoutesCached;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerGetPrioritySUCReturnRouteCached
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetPrioritySUCReturnRouteCached extends IncomingCommandControllerBase {
   command: ControllerCommand.getPrioritySUCReturnRouteCached;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerGetCustomReturnRoutesCached
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetCustomReturnRoutesCached extends IncomingCommandControllerBase {
   command: ControllerCommand.getCustomReturnRoutesCached;
   nodeId: number;
   destinationNodeId: number;
 }
 
-export interface IncomingCommandControllerGetCustomSUCReturnRoutesCached
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetCustomSUCReturnRoutesCached extends IncomingCommandControllerBase {
   command: ControllerCommand.getCustomSUCReturnRoutesCached;
   nodeId: number;
 }
 
 // Association queries (all endpoints)
-export interface IncomingCommandControllerGetAllAssociationGroups
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetAllAssociationGroups extends IncomingCommandControllerBase {
   command: ControllerCommand.getAllAssociationGroups;
   nodeId: number;
 }
 
-export interface IncomingCommandControllerGetAllAssociations
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetAllAssociations extends IncomingCommandControllerBase {
   command: ControllerCommand.getAllAssociations;
   nodeId: number;
 }
 
 // RF region info
-export interface IncomingCommandControllerGetSupportedRFRegions
-  extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerGetSupportedRFRegions extends IncomingCommandControllerBase {
   command: ControllerCommand.getSupportedRFRegions;
   filterSubsets?: boolean;
 }
