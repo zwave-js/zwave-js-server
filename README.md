@@ -555,6 +555,7 @@ interface {
 > - `controller.provision_smart_start_node`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
 > - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data.
 > - `controller.restore_nvm`: The NVM input should be a base64 encoded string.
+> - `controller.restore_nvm_raw`: The NVM input should be a base64 encoded string. Unlike `restore_nvm`, this command does not convert the NVM data before restoring.
 > - `controller.firmware_update_otw`: This command accepts two required parameters (`file`, a base64 representation of the file, and `filename`, the filename of the file) as well as an optional parameter (`fileFormat`, which provides the format of the file to the server so the driver does not have to guess the format)
 
 #### Get controller state
@@ -1457,7 +1458,9 @@ interface {
 
 ### Multicasting
 
-There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
+There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter.
+
+> NOTE: For `broadcast_node` commands, you can pass a `longRange` boolean flag to broadcast to Long Range nodes instead of classic Z-Wave nodes.
 
 ```ts
 interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
@@ -2033,7 +2036,7 @@ interface {
 
 #### `nvm restore progress`
 
-This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM data is being restored to the controller.
+This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) or `controller.restore_nvm_raw` command is issued by a client to the server and the NVM data is being restored to the controller.
 
 ```ts
 interface {

@@ -21,9 +21,11 @@ export enum DriverCommand {
   firmwareUpdateOTW = "driver.firmware_update_otw",
   // Schema version >= 41:
   isOTWFirmwareUpdateInProgress = "driver.is_otw_firmware_update_in_progress",
-  // Bootloader operations
+  // Undocumented
   softResetAndRestart = "driver.soft_reset_and_restart",
+  // Undocumented
   enterBootloader = "driver.enter_bootloader",
+  // Undocumented
   leaveBootloader = "driver.leave_bootloader",
   // CC version queries
   getSupportedCCVersion = "driver.get_supported_cc_version",
