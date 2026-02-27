@@ -105,3 +105,20 @@ Base schema.
 ## Schema 44
 
 - Added another overload to the `driver.firmware_update_otw` command
+
+## Schema 45
+
+- Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
+
+## Schema 46
+
+- Added `allowed` property to numeric value metadata and configuration metadata
+- Added `purpose` property to configuration metadata
+
+## Schema 47
+
+- Added driver state properties: `ready`, `allNodesReady`, `configVersion`
+- Added node state properties: `canSleep`, `supportsWakeUpOnDemand`, `hardwareVersion`, `hasSUCReturnRoute`, `manufacturer`, `dsk`
+- Added controller state properties: `isSIS`, `maxPayloadSize`, `maxPayloadSizeLR`, `zwaveApiVersion`, `zwaveChipType`
+- Added driver events: `all nodes ready`, `error`, `bootloader ready`
+- Added controller events: `network found`, `network joined`, `network left`, `joining network failed`, `leaving network failed`

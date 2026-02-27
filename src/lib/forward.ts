@@ -30,6 +30,24 @@ export class EventForwarder {
    */
   constructor(private clientsController: ClientsController) {}
 
+  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
+    // Forward event to all clients
+    this.clientsController.clients.forEach((client) =>
+      this.sendEvent(client, data, minSchemaVersion),
+    );
+  }
+
+  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
+    // Send event to connected client only
+    if (
+      client.receiveEvents &&
+      client.isConnected &&
+      client.schemaVersion >= (minSchemaVersion ?? 0)
+    ) {
+      client.sendEvent(data);
+    }
+  }
+
   start() {
     // Bind events for the controller and all existing nodes
     this.setupControllerAndNodes();
@@ -72,24 +90,38 @@ export class EventForwarder {
         });
       });
     });
-  }
 
-  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
-    // Forward event to all clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data, minSchemaVersion),
-    );
-  }
+    // Schema 47+ driver events
+    this.clientsController.driver.on("all nodes ready", () => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "all nodes ready",
+        },
+        47,
+      );
+    });
 
-  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
-    // Send event to connected client only
-    if (
-      client.receiveEvents &&
-      client.isConnected &&
-      client.schemaVersion >= (minSchemaVersion ?? 0)
-    ) {
-      client.sendEvent(data);
-    }
+    this.clientsController.driver.on("error", (error) => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "error",
+          error: error.message,
+        },
+        47,
+      );
+    });
+
+    this.clientsController.driver.on("bootloader ready", () => {
+      this.forwardEvent(
+        {
+          source: "driver",
+          event: "bootloader ready",
+        },
+        47,
+      );
+    });
   }
 
   setupControllerAndNodes() {
@@ -285,6 +317,61 @@ export class EventForwarder {
           nodeId: triggeringNode.nodeId,
         },
         31,
+      ),
+    );
+
+    // Schema 47+ controller network lifecycle events
+    this.clientsController.driver.controller.on(
+      "network found",
+      (homeId: number, ownNodeId: number) =>
+        this.forwardEvent(
+          {
+            source: "controller",
+            event: "network found",
+            homeId,
+            ownNodeId,
+          },
+          47,
+        ),
+    );
+
+    this.clientsController.driver.controller.on("network joined", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "network joined",
+        },
+        47,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("network left", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "network left",
+        },
+        47,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("joining network failed", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "joining network failed",
+        },
+        47,
+      ),
+    );
+
+    this.clientsController.driver.controller.on("leaving network failed", () =>
+      this.forwardEvent(
+        {
+          source: "controller",
+          event: "leaving network failed",
+        },
+        47,
       ),
     );
   }
