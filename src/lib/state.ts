@@ -61,13 +61,13 @@ export interface DriverStateSchema0 {
   statisticsEnabled: boolean;
 }
 
-export interface DriverStateSchema45 extends DriverStateSchema0 {
+export interface DriverStateSchema47 extends DriverStateSchema0 {
   ready: boolean;
   allNodesReady: boolean;
   configVersion: string;
 }
 
-export type DriverState = DriverStateSchema0 | DriverStateSchema45;
+export type DriverState = DriverStateSchema0 | DriverStateSchema47;
 
 export interface ControllerStateSchema0 {
   libraryVersion?: string;
@@ -142,7 +142,7 @@ export type ControllerStateSchema36 = ControllerStateSchema35 & {
   supportsLongRangeAutoChannelSelection: MaybeNotKnown<boolean>;
 };
 
-export type ControllerStateSchema45 = ControllerStateSchema36 & {
+export type ControllerStateSchema47 = ControllerStateSchema36 & {
   isSIS: MaybeNotKnown<boolean>;
   maxPayloadSize: MaybeNotKnown<number>;
   maxPayloadSizeLR: MaybeNotKnown<number>;
@@ -160,7 +160,7 @@ export type ControllerState =
   | ControllerStateSchema34
   | ControllerStateSchema35
   | ControllerStateSchema36
-  | ControllerStateSchema45;
+  | ControllerStateSchema47;
 
 export interface ZwaveState {
   driver: DriverState;
@@ -402,7 +402,7 @@ export interface NodeStateSchema42 extends NodeStateSchema35 {
   sdkVersion?: string;
 }
 
-export interface NodeStateSchema45 extends NodeStateSchema42 {
+export interface NodeStateSchema47 extends NodeStateSchema42 {
   canSleep: MaybeNotKnown<boolean>;
   supportsWakeUpOnDemand: MaybeNotKnown<boolean>;
   hardwareVersion: MaybeNotKnown<number>;
@@ -425,7 +425,7 @@ export type NodeState =
   | NodeStateSchema31
   | NodeStateSchema35
   | NodeStateSchema42
-  | NodeStateSchema45;
+  | NodeStateSchema47;
 
 export interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -781,20 +781,20 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
 
   const node42 = node35 as NodeStateSchema42;
   node42.sdkVersion = node.sdkVersion;
-  if (schemaVersion < 45) {
+  if (schemaVersion < 47) {
     return node42;
   }
 
-  const node45 = node42 as NodeStateSchema45;
-  node45.canSleep = node.canSleep;
-  node45.supportsWakeUpOnDemand = node.supportsWakeUpOnDemand;
-  node45.hardwareVersion = node.hardwareVersion;
-  node45.hasSUCReturnRoute = node.hasSUCReturnRoute;
-  node45.manufacturer = node.manufacturer;
+  const node47 = node42 as NodeStateSchema47;
+  node47.canSleep = node.canSleep;
+  node47.supportsWakeUpOnDemand = node.supportsWakeUpOnDemand;
+  node47.hardwareVersion = node.hardwareVersion;
+  node47.hasSUCReturnRoute = node.hasSUCReturnRoute;
+  node47.manufacturer = node.manufacturer;
   if (node.dsk) {
-    node45.dsk = dskToString(node.dsk);
+    node47.dsk = dskToString(node.dsk);
   }
-  return node45;
+  return node47;
 };
 
 export const dumpFoundNode = (
@@ -920,15 +920,15 @@ export const dumpDriver = (
     statisticsEnabled: driver.statisticsEnabled,
   };
 
-  if (schemaVersion < 45) {
+  if (schemaVersion < 47) {
     return base;
   }
 
-  const driver45 = base as DriverStateSchema45;
-  driver45.ready = driver.ready;
-  driver45.allNodesReady = driver.allNodesReady;
-  driver45.configVersion = driver.configVersion;
-  return driver45;
+  const driver47 = base as DriverStateSchema47;
+  driver47.ready = driver.ready;
+  driver47.allNodesReady = driver.allNodesReady;
+  driver47.configVersion = driver.configVersion;
+  return driver47;
 };
 
 export const dumpController = (
@@ -1021,17 +1021,17 @@ export const dumpController = (
   controller36.longRangeChannel = controller.longRangeChannel;
   controller36.supportsLongRangeAutoChannelSelection =
     controller.supportsLongRangeAutoChannelSelection;
-  if (schemaVersion < 45) {
+  if (schemaVersion < 47) {
     return controller36;
   }
 
-  const controller45 = controller36 as ControllerStateSchema45;
-  controller45.isSIS = controller.isSIS;
-  controller45.maxPayloadSize = controller.maxPayloadSize;
-  controller45.maxPayloadSizeLR = controller.maxPayloadSizeLR;
-  controller45.zwaveApiVersion = controller.zwaveApiVersion;
-  controller45.zwaveChipType = controller.zwaveChipType;
-  return controller45;
+  const controller47 = controller36 as ControllerStateSchema47;
+  controller47.isSIS = controller.isSIS;
+  controller47.maxPayloadSize = controller.maxPayloadSize;
+  controller47.maxPayloadSizeLR = controller.maxPayloadSizeLR;
+  controller47.zwaveApiVersion = controller.zwaveApiVersion;
+  controller47.zwaveChipType = controller.zwaveChipType;
+  return controller47;
 };
 
 export const dumpState = (

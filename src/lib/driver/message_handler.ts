@@ -181,6 +181,15 @@ export class DriverMessageHandler implements MessageHandler {
         this.driver.updateUserAgent(message.components);
         return {};
       }
+      // RSSI monitoring
+      case DriverCommand.enableFrequentRSSIMonitoring: {
+        this.driver.enableFrequentRSSIMonitoring(message.durationMs);
+        return {};
+      }
+      case DriverCommand.disableFrequentRSSIMonitoring: {
+        this.driver.disableFrequentRSSIMonitoring();
+        return {};
+      }
       default: {
         throw new UnknownCommandError(command);
       }

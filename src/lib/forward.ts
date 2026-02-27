@@ -91,14 +91,14 @@ export class EventForwarder {
       });
     });
 
-    // Schema 45+ driver events
+    // Schema 47+ driver events
     this.clientsController.driver.on("all nodes ready", () => {
       this.forwardEvent(
         {
           source: "driver",
           event: "all nodes ready",
         },
-        45,
+        47,
       );
     });
 
@@ -109,7 +109,7 @@ export class EventForwarder {
           event: "error",
           error: error.message,
         },
-        45,
+        47,
       );
     });
 
@@ -119,7 +119,7 @@ export class EventForwarder {
           source: "driver",
           event: "bootloader ready",
         },
-        45,
+        47,
       );
     });
   }
@@ -318,7 +318,7 @@ export class EventForwarder {
       ),
     );
 
-    // Schema 45+ controller network lifecycle events
+    // Schema 47+ controller network lifecycle events
     this.clientsController.driver.controller.on(
       "network found",
       (homeId: number, ownNodeId: number) =>
@@ -329,7 +329,7 @@ export class EventForwarder {
             homeId,
             ownNodeId,
           },
-          45,
+          47,
         ),
     );
 
@@ -339,7 +339,7 @@ export class EventForwarder {
           source: "controller",
           event: "network joined",
         },
-        45,
+        47,
       ),
     );
 
@@ -349,7 +349,7 @@ export class EventForwarder {
           source: "controller",
           event: "network left",
         },
-        45,
+        47,
       ),
     );
 
@@ -359,7 +359,7 @@ export class EventForwarder {
           source: "controller",
           event: "joining network failed",
         },
-        45,
+        47,
       ),
     );
 
@@ -369,7 +369,7 @@ export class EventForwarder {
           source: "controller",
           event: "leaving network failed",
         },
-        45,
+        47,
       ),
     );
   }

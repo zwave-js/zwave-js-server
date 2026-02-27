@@ -37,4 +37,7 @@ export interface DriverResultTypes {
   [DriverCommand.getSafeCCVersion]: { version: number | undefined };
   // User agent
   [DriverCommand.updateUserAgent]: Record<string, never>;
+  // RSSI monitoring
+  [DriverCommand.enableFrequentRSSIMonitoring]: Record<string, never>;
+  [DriverCommand.disableFrequentRSSIMonitoring]: Record<string, never>;
 }

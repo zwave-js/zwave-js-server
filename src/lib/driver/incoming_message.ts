@@ -143,6 +143,16 @@ interface IncomingCommandUpdateUserAgent extends IncomingCommandBase {
   components: Record<string, string | null | undefined>;
 }
 
+// RSSI monitoring
+interface IncomingCommandEnableFrequentRSSIMonitoring extends IncomingCommandBase {
+  command: DriverCommand.enableFrequentRSSIMonitoring;
+  durationMs: number;
+}
+
+interface IncomingCommandDisableFrequentRSSIMonitoring extends IncomingCommandBase {
+  command: DriverCommand.disableFrequentRSSIMonitoring;
+}
+
 export type IncomingMessageDriver =
   | IncomingCommandGetConfig
   | IncomingCommandUpdateLogConfig
@@ -169,4 +179,6 @@ export type IncomingMessageDriver =
   | IncomingCommandLeaveBootloader
   | IncomingCommandGetSupportedCCVersion
   | IncomingCommandGetSafeCCVersion
-  | IncomingCommandUpdateUserAgent;
+  | IncomingCommandUpdateUserAgent
+  | IncomingCommandEnableFrequentRSSIMonitoring
+  | IncomingCommandDisableFrequentRSSIMonitoring;

@@ -109,9 +109,6 @@ Base schema.
 ## Schema 45
 
 - Fixed JSON serialization of `Map` objects in responses (affects `controller.get_known_lifeline_routes` and other Map-returning commands)
-- Added new commands, events, and state properties (see tables below)
-- Added automatic ZIP extraction for firmware update commands (`node.begin_firmware_update`, `node.update_firmware`, `controller.firmware_update_otw`, `driver.firmware_update_otw`). When the file format cannot be detected, the server will automatically attempt to extract firmware from a ZIP archive.
-- Added new utility commands for firmware handling: `utils.guess_firmware_file_format`, `utils.try_unzip_firmware_file`, `utils.extract_firmware`
 
 ## Schema 46
 
@@ -124,7 +121,7 @@ Base schema.
 - Added `controller.restore_nvm_raw` command for raw NVM restoration without format conversion
 - Added broadcast node Long Range support via `longRange` flag on `broadcast_node` commands
 - Added `controller.get_all_associations` with nested map return type (`nodeId -> endpoint -> groupId -> addresses`)
-- Added driver commands: `soft_reset_and_restart`, `enter_bootloader`, `leave_bootloader`, `get_supported_cc_version`, `get_safe_cc_version`, `update_user_agent`
+- Added driver commands: `soft_reset_and_restart`, `enter_bootloader`, `leave_bootloader`, `get_supported_cc_version`, `get_safe_cc_version`, `update_user_agent`, `enable_frequent_rssi_monitoring`, `disable_frequent_rssi_monitoring`
 - Added driver events: `all nodes ready`, `error`, `bootloader ready`
 - Added driver state properties: `ready`, `allNodesReady`, `configVersion`
 - Added node commands: `check_link_reliability`, `is_link_reliability_check_in_progress`, `abort_link_reliability_check`

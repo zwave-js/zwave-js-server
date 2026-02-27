@@ -32,4 +32,7 @@ export enum DriverCommand {
   getSafeCCVersion = "driver.get_safe_cc_version",
   // User agent
   updateUserAgent = "driver.update_user_agent",
+  // RSSI monitoring
+  enableFrequentRSSIMonitoring = "driver.enable_frequent_rssi_monitoring",
+  disableFrequentRSSIMonitoring = "driver.disable_frequent_rssi_monitoring",
 }

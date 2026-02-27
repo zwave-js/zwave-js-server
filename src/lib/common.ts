@@ -121,7 +121,7 @@ export async function getRawConfigParameterValue(
 
 export interface FirmwareFileInfo {
   filename: string;
-  rawData: Buffer;
+  rawData: Uint8Array<ArrayBuffer>;
   format: FirmwareFileFormat;
 }
 
@@ -131,7 +131,7 @@ export interface FirmwareFileInfo {
  */
 export function parseFirmwareFile(
   filename: string,
-  rawData: Buffer,
+  rawData: Uint8Array<ArrayBuffer>,
   explicitFormat?: FirmwareFileFormat,
 ): FirmwareFileInfo {
   // If format is explicitly provided, use it directly
@@ -149,7 +149,7 @@ export function parseFirmwareFile(
     if (unzipped) {
       return {
         filename: unzipped.filename,
-        rawData: Buffer.from(unzipped.rawData),
+        rawData: unzipped.rawData,
         format: unzipped.format,
       };
     }

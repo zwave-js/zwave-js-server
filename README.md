@@ -545,6 +545,29 @@ interface {
 }
 ```
 
+#### [Enable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_frequent_rssi_monitoring";
+  durationMs: number;
+}
+```
+
+#### [Disable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=disablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.disable_frequent_rssi_monitoring";
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
@@ -1785,7 +1808,7 @@ interface {
 
 Saves the captured frames to a `.zlf` file that can be read by the official Zniffer application.
 
-[compatible with schema version: 45+]
+[compatible with schema version: 47+]
 
 ```ts
 interface {
@@ -1799,7 +1822,7 @@ interface {
 
 Loads previously saved captured frames from a `.zlf` file.
 
-[compatible with schema version: 45+]
+[compatible with schema version: 47+]
 
 ```ts
 interface {
@@ -1813,7 +1836,7 @@ interface {
 
 Loads captured frames from a base64 encoded buffer.
 
-[compatible with schema version: 45+]
+[compatible with schema version: 47+]
 
 ```ts
 interface {
