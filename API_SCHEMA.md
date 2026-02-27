@@ -175,11 +175,11 @@ Base schema.
 - Added `utils.try_parse_dsk_from_qr_code_string` command
 - Added `rfRegion` property to `ControllerState`
 - Added controller events: `firmware update progress`, `firmware update finished`
+- Added `endpointLabel` property to `Endpoint` state dump
 
 ## Schema 27
 
 - Added `stateful` and `secret` properties to value metadata
-- Added `endpointLabel` property to `Endpoint` state dump
 - Added `node.get_value_timestamp` command
 - Added `driver.shutdown` command
 
@@ -269,13 +269,13 @@ Base schema.
 
 - Added `endpoint.try_get_node` command
 - Added `node.get_raw_config_parameter_value` and `endpoint.get_raw_config_parameter_value` commands
+- Added `driver ready` driver event
 
 ## Schema 41
 
 - Changed `source` of the `firmware update progress` and `firmware update finished` events from `controller` to `driver`
 - Added `driver.firmware_update_otw` and `driver.is_otw_firmware_update_in_progress` commands
 - Added `controller.cancel_secure_bootstrap_s2` command
-- Added `driver ready` driver event
 
 ## Schema 42
 
