@@ -5,10 +5,11 @@ import {
   InclusionStrategy,
   ReplaceNodeOptions,
   extractFirmware,
-  guessFirmwareFileFormat,
   ExclusionStrategy,
   ExclusionOptions,
   AssociationCheckResult,
+  JoinNetworkStrategy,
+  type AssociationAddress,
 } from "zwave-js";
 import {
   InclusionAlreadyInProgressError,
@@ -29,7 +30,11 @@ import {
   IncomingMessageController,
 } from "./incoming_message.js";
 import { ControllerResultTypes } from "./outgoing_message.js";
-import { firmwareUpdateOutgoingMessage } from "../common.js";
+import {
+  firmwareUpdateOutgoingMessage,
+  getFirmwareUpdateOptions,
+  parseFirmwareFile,
+} from "../common.js";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks.js";
 import { MessageHandler } from "../message_handler.js";
 import { dumpController } from "../state.js";
@@ -295,6 +300,24 @@ export class ControllerMessageHandler implements MessageHandler {
         );
         return {};
       }
+      case ControllerCommand.restoreNVMRaw: {
+        const nvmData = Buffer.from(message.nvmData, "base64");
+        await this.driver.controller.restoreNVMRaw(
+          nvmData,
+          (bytesWritten: number, total: number) => {
+            this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
+              client.sendEvent({
+                source: "controller",
+                event: "nvm restore progress",
+                bytesWritten,
+                total,
+              });
+            });
+          },
+        );
+        return {};
+      }
       case ControllerCommand.setRFRegion: {
         const success = await this.driver.controller.setRFRegion(
           message.region,
@@ -337,12 +360,7 @@ export class ControllerMessageHandler implements MessageHandler {
         return {
           updates: await this.driver.controller.getAvailableFirmwareUpdates(
             message.nodeId,
-            {
-              apiKey: message.apiKey,
-              additionalUserAgentComponents:
-                this.client.additionalUserAgentComponents,
-              includePrereleases: message.includePrereleases,
-            },
+            getFirmwareUpdateOptions(message, this.client),
           ),
         };
       }
@@ -372,10 +390,12 @@ export class ControllerMessageHandler implements MessageHandler {
       }
       case ControllerCommand.firmwareUpdateOTW: {
         const file = Buffer.from(message.file, "base64");
-        const { data } = await extractFirmware(
+        const parsed = parseFirmwareFile(
+          message.filename,
           file,
-          message.fileFormat ?? guessFirmwareFileFormat(message.filename, file),
+          message.fileFormat,
         );
+        const { data } = await extractFirmware(parsed.rawData, parsed.format);
         const result = await this.driver.firmwareUpdateOTW(data);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
       }
@@ -404,6 +424,329 @@ export class ControllerMessageHandler implements MessageHandler {
       case ControllerCommand.getLongRangeChannel: {
         const response = await this.driver.controller.getLongRangeChannel();
         return response;
+      }
+      case ControllerCommand.getAllAvailableFirmwareUpdates: {
+        return {
+          updates: await this.driver.controller.getAllAvailableFirmwareUpdates(
+            getFirmwareUpdateOptions(message, this.client),
+          ),
+        };
+      }
+      // Routing operations
+      case ControllerCommand.assignReturnRoutes: {
+        const success = await this.driver.controller.assignReturnRoutes(
+          message.nodeId,
+          message.destinationNodeId,
+        );
+        return { success };
+      }
+      case ControllerCommand.deleteReturnRoutes: {
+        const success = await this.driver.controller.deleteReturnRoutes(
+          message.nodeId,
+        );
+        return { success };
+      }
+      case ControllerCommand.assignSUCReturnRoutes: {
+        const success = await this.driver.controller.assignSUCReturnRoutes(
+          message.nodeId,
+        );
+        return { success };
+      }
+      case ControllerCommand.deleteSUCReturnRoutes: {
+        const success = await this.driver.controller.deleteSUCReturnRoutes(
+          message.nodeId,
+        );
+        return { success };
+      }
+      case ControllerCommand.assignPriorityReturnRoute: {
+        const success = await this.driver.controller.assignPriorityReturnRoute(
+          message.nodeId,
+          message.destinationNodeId,
+          message.repeaters,
+          message.routeSpeed,
+        );
+        return { success };
+      }
+      case ControllerCommand.assignPrioritySUCReturnRoute: {
+        const success =
+          await this.driver.controller.assignPrioritySUCReturnRoute(
+            message.nodeId,
+            message.repeaters,
+            message.routeSpeed,
+          );
+        return { success };
+      }
+      case ControllerCommand.assignCustomReturnRoutes: {
+        const success = await this.driver.controller.assignCustomReturnRoutes(
+          message.nodeId,
+          message.destinationNodeId,
+          message.routes,
+          message.priorityRoute,
+        );
+        return { success };
+      }
+      case ControllerCommand.assignCustomSUCReturnRoutes: {
+        const success =
+          await this.driver.controller.assignCustomSUCReturnRoutes(
+            message.nodeId,
+            message.routes,
+            message.priorityRoute,
+          );
+        return { success };
+      }
+      case ControllerCommand.setPriorityRoute: {
+        const success = await this.driver.controller.setPriorityRoute(
+          message.destinationNodeId,
+          message.repeaters,
+          message.routeSpeed,
+        );
+        return { success };
+      }
+      case ControllerCommand.removePriorityRoute: {
+        const success = await this.driver.controller.removePriorityRoute(
+          message.destinationNodeId,
+        );
+        return { success };
+      }
+      case ControllerCommand.getPriorityRoute: {
+        const route = await this.driver.controller.getPriorityRoute(
+          message.destinationNodeId,
+        );
+        return { route };
+      }
+      case ControllerCommand.discoverNodeNeighbors: {
+        const success = await this.driver.controller.discoverNodeNeighbors(
+          message.nodeId,
+        );
+        return { success };
+      }
+      // Diagnostics
+      case ControllerCommand.getBackgroundRSSI: {
+        return await this.driver.controller.getBackgroundRSSI();
+      }
+      // Long Range
+      case ControllerCommand.getLongRangeNodes: {
+        const nodeIds = await this.driver.controller.getLongRangeNodes();
+        return { nodeIds };
+      }
+      // Controller identification
+      case ControllerCommand.getDSK: {
+        const dskBytes = await this.driver.controller.getDSK();
+        return { dsk: Buffer.from(dskBytes).toString("base64") };
+      }
+      // NVM operations
+      case ControllerCommand.getNVMId: {
+        const nvmId = await this.driver.controller.getNVMId();
+        return { nvmId };
+      }
+      case ControllerCommand.externalNVMOpen: {
+        const size = await this.driver.controller.externalNVMOpen();
+        return { size };
+      }
+      case ControllerCommand.externalNVMClose: {
+        await this.driver.controller.externalNVMClose();
+        return {};
+      }
+      case ControllerCommand.externalNVMReadByte: {
+        const byte = await this.driver.controller.externalNVMReadByte(
+          message.offset,
+        );
+        return { byte };
+      }
+      case ControllerCommand.externalNVMWriteByte: {
+        const success = await this.driver.controller.externalNVMWriteByte(
+          message.offset,
+          message.data,
+        );
+        return { success };
+      }
+      case ControllerCommand.externalNVMReadBuffer: {
+        const bufferData = await this.driver.controller.externalNVMReadBuffer(
+          message.offset,
+          message.length,
+        );
+        return { buffer: Buffer.from(bufferData).toString("base64") };
+      }
+      case ControllerCommand.externalNVMWriteBuffer: {
+        const buffer = Buffer.from(message.buffer, "base64");
+        const success = await this.driver.controller.externalNVMWriteBuffer(
+          message.offset,
+          buffer,
+        );
+        return { success };
+      }
+      case ControllerCommand.externalNVMReadBuffer700: {
+        const result = await this.driver.controller.externalNVMReadBuffer700(
+          message.offset,
+          message.length,
+        );
+        return {
+          buffer: Buffer.from(result.buffer).toString("base64"),
+          endOfFile: result.endOfFile,
+        };
+      }
+      case ControllerCommand.externalNVMWriteBuffer700: {
+        const buffer = Buffer.from(message.buffer, "base64");
+        const result = await this.driver.controller.externalNVMWriteBuffer700(
+          message.offset,
+          buffer,
+        );
+        return { endOfFile: result.endOfFile };
+      }
+      case ControllerCommand.externalNVMOpenExt: {
+        const result = await this.driver.controller.externalNVMOpenExt();
+        return {
+          size: result.size,
+          supportedOperations: result.supportedOperations,
+        };
+      }
+      case ControllerCommand.externalNVMCloseExt: {
+        await this.driver.controller.externalNVMCloseExt();
+        return {};
+      }
+      case ControllerCommand.externalNVMReadBufferExt: {
+        const result = await this.driver.controller.externalNVMReadBufferExt(
+          message.offset,
+          message.length,
+        );
+        return {
+          buffer: Buffer.from(result.buffer).toString("base64"),
+          endOfFile: result.endOfFile,
+        };
+      }
+      case ControllerCommand.externalNVMWriteBufferExt: {
+        const buffer = Buffer.from(message.buffer, "base64");
+        const result = await this.driver.controller.externalNVMWriteBufferExt(
+          message.offset,
+          buffer,
+        );
+        return { endOfFile: result.endOfFile };
+      }
+      // Watchdog operations
+      case ControllerCommand.startWatchdog: {
+        const success = await this.driver.controller.startWatchdog();
+        return { success };
+      }
+      case ControllerCommand.stopWatchdog: {
+        const success = await this.driver.controller.stopWatchdog();
+        return { success };
+      }
+      // RF region extended
+      case ControllerCommand.querySupportedRFRegions: {
+        const regions = await this.driver.controller.querySupportedRFRegions();
+        return { regions };
+      }
+      case ControllerCommand.queryRFRegionInfo: {
+        const result = await this.driver.controller.queryRFRegionInfo(
+          message.region,
+        );
+        return result;
+      }
+      // Network join/leave
+      case ControllerCommand.beginJoiningNetwork: {
+        const result = await this.driver.controller.beginJoiningNetwork({
+          strategy: message.strategy ?? JoinNetworkStrategy.Default,
+          userCallbacks: {
+            showDSK: (dsk: string) => {
+              this.clientsController.clients.forEach((client) => {
+                if (!client.isConnected || !client.receiveEvents) return;
+                if (client.schemaVersion < 47) return;
+                client.sendEvent({
+                  source: "controller",
+                  event: "joining network show dsk",
+                  dsk,
+                });
+              });
+            },
+            done: () => {
+              this.clientsController.clients.forEach((client) => {
+                if (!client.isConnected || !client.receiveEvents) return;
+                if (client.schemaVersion < 47) return;
+                client.sendEvent({
+                  source: "controller",
+                  event: "joining network done",
+                });
+              });
+            },
+          },
+        });
+        return { result };
+      }
+      case ControllerCommand.stopJoiningNetwork: {
+        const success = await this.driver.controller.stopJoiningNetwork();
+        return { success };
+      }
+      case ControllerCommand.beginLeavingNetwork: {
+        const result = await this.driver.controller.beginLeavingNetwork();
+        return { result };
+      }
+      case ControllerCommand.stopLeavingNetwork: {
+        const success = await this.driver.controller.stopLeavingNetwork();
+        return { success };
+      }
+      // Cached route queries
+      case ControllerCommand.getPriorityReturnRouteCached: {
+        const route = this.driver.controller.getPriorityReturnRouteCached(
+          message.nodeId,
+          message.destinationNodeId,
+        );
+        return { route };
+      }
+      case ControllerCommand.getPriorityReturnRoutesCached: {
+        const routes = this.driver.controller.getPriorityReturnRoutesCached(
+          message.nodeId,
+        );
+        return { routes };
+      }
+      case ControllerCommand.getPrioritySUCReturnRouteCached: {
+        const route = this.driver.controller.getPrioritySUCReturnRouteCached(
+          message.nodeId,
+        );
+        return { route };
+      }
+      case ControllerCommand.getCustomReturnRoutesCached: {
+        const routes = this.driver.controller.getCustomReturnRoutesCached(
+          message.nodeId,
+          message.destinationNodeId,
+        );
+        return { routes };
+      }
+      case ControllerCommand.getCustomSUCReturnRoutesCached: {
+        const routes = this.driver.controller.getCustomSUCReturnRoutesCached(
+          message.nodeId,
+        );
+        return { routes };
+      }
+      // Association queries (all endpoints)
+      case ControllerCommand.getAllAssociationGroups: {
+        const groups = this.driver.controller.getAllAssociationGroups(
+          message.nodeId,
+        );
+        return { groups };
+      }
+      case ControllerCommand.getAllAssociations: {
+        const associations = new Map<
+          number,
+          Map<number, ReadonlyMap<number, readonly AssociationAddress[]>>
+        >();
+        this.driver.controller
+          .getAllAssociations(message.nodeId)
+          .forEach((groupAssociations, source) => {
+            let endpointMap = associations.get(source.nodeId);
+            if (!endpointMap) {
+              endpointMap = new Map();
+              associations.set(source.nodeId, endpointMap);
+            }
+            endpointMap.set(source.endpoint ?? 0, groupAssociations);
+          });
+        return { associations };
+      }
+      // RF region info (cached)
+      case ControllerCommand.getSupportedRFRegions: {
+        const regions = this.driver.controller.getSupportedRFRegions(
+          message.filterSubsets,
+        );
+        return { regions: regions ? [...regions] : undefined };
       }
       default: {
         throw new UnknownCommandError(command);
