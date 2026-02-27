@@ -443,7 +443,7 @@ interface {
 }
 ```
 
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 Returns:
 
@@ -469,6 +469,102 @@ Returns:
 ```ts
 interface {
   progress: boolean;
+}
+```
+
+#### [Soft Reset and Restart](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softresetandrestart)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.soft_reset_and_restart";
+}
+```
+
+#### [Enter Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enterbootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enter_bootloader";
+}
+```
+
+#### [Leave Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=leavebootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.leave_bootloader";
+}
+```
+
+#### [Get Supported CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsupportedccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_supported_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Get Safe CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsafeccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_safe_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Update User Agent](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateuseragent)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_user_agent";
+  components: Record<string, string | null | undefined>;
+}
+```
+
+#### [Enable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_frequent_rssi_monitoring";
+  durationMs: number;
+}
+```
+
+#### [Disable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=disablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.disable_frequent_rssi_monitoring";
 }
 ```
 
