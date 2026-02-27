@@ -8,6 +8,8 @@ import {
   ExclusionStrategy,
   ExclusionOptions,
   AssociationCheckResult,
+  JoinNetworkStrategy,
+  type AssociationAddress,
 } from "zwave-js";
 import {
   InclusionAlreadyInProgressError,
@@ -28,7 +30,11 @@ import {
   IncomingMessageController,
 } from "./incoming_message.js";
 import { ControllerResultTypes } from "./outgoing_message.js";
-import { firmwareUpdateOutgoingMessage, parseFirmwareFile } from "../common.js";
+import {
+  firmwareUpdateOutgoingMessage,
+  getFirmwareUpdateOptions,
+  parseFirmwareFile,
+} from "../common.js";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks.js";
 import { MessageHandler } from "../message_handler.js";
 import { dumpController } from "../state.js";
@@ -333,13 +339,7 @@ export class ControllerMessageHandler implements MessageHandler {
         return {
           updates: await this.driver.controller.getAvailableFirmwareUpdates(
             message.nodeId,
-            {
-              apiKey: message.apiKey,
-              additionalUserAgentComponents:
-                this.client.additionalUserAgentComponents,
-              includePrereleases: message.includePrereleases,
-              rfRegion: message.rfRegion,
-            },
+            getFirmwareUpdateOptions(message, this.client),
           ),
         };
       }
@@ -406,13 +406,9 @@ export class ControllerMessageHandler implements MessageHandler {
       }
       case ControllerCommand.getAllAvailableFirmwareUpdates: {
         return {
-          updates: await this.driver.controller.getAllAvailableFirmwareUpdates({
-            apiKey: message.apiKey,
-            additionalUserAgentComponents:
-              this.client.additionalUserAgentComponents,
-            includePrereleases: message.includePrereleases,
-            rfRegion: message.rfRegion,
-          }),
+          updates: await this.driver.controller.getAllAvailableFirmwareUpdates(
+            getFirmwareUpdateOptions(message, this.client),
+          ),
         };
       }
       // Routing operations
@@ -627,9 +623,28 @@ export class ControllerMessageHandler implements MessageHandler {
       }
       // Network join/leave
       case ControllerCommand.beginJoiningNetwork: {
-        const result = await this.driver.controller.beginJoiningNetwork(
-          message.options,
-        );
+        const result = await this.driver.controller.beginJoiningNetwork({
+          strategy: message.strategy ?? JoinNetworkStrategy.Default,
+          userCallbacks: {
+            showDSK: (dsk: string) => {
+              this.clientsController.clients.forEach((client) =>
+                client.sendEvent({
+                  source: "controller",
+                  event: "join network show dsk",
+                  dsk,
+                }),
+              );
+            },
+            done: () => {
+              this.clientsController.clients.forEach((client) =>
+                client.sendEvent({
+                  source: "controller",
+                  event: "join network done",
+                }),
+              );
+            },
+          },
+        });
         return { result };
       }
       case ControllerCommand.stopJoiningNetwork: {
@@ -685,19 +700,19 @@ export class ControllerMessageHandler implements MessageHandler {
         return { groups };
       }
       case ControllerCommand.getAllAssociations: {
-        // ObjectKeyMap uses object keys - must convert to string keys manually
-        const associations: ControllerResultTypes[ControllerCommand.getAllAssociations]["associations"] =
-          {};
+        const associations = new Map<
+          number,
+          Map<number, ReadonlyMap<number, readonly AssociationAddress[]>>
+        >();
         this.driver.controller
           .getAllAssociations(message.nodeId)
           .forEach((groupAssociations, source) => {
-            // Convert ObjectKeyMap to regular object with key as "nodeId" or "nodeId:endpoint" and value
-            // as ReadonlyMap<number, readonly AssociationAddress[]>
-            const key =
-              source.endpoint !== undefined
-                ? `${source.nodeId}:${source.endpoint}`
-                : `${source.nodeId}`;
-            associations[key] = groupAssociations;
+            let endpointMap = associations.get(source.nodeId);
+            if (!endpointMap) {
+              endpointMap = new Map();
+              associations.set(source.nodeId, endpointMap);
+            }
+            endpointMap.set(source.endpoint ?? 0, groupAssociations);
           });
         return { associations };
       }

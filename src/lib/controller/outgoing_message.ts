@@ -191,10 +191,9 @@ export interface ControllerResultTypes {
     groups: ReadonlyMap<number, ReadonlyMap<number, AssociationGroup>>;
   };
   [ControllerCommand.getAllAssociations]: {
-    // Key is "nodeId" or "nodeId:endpoint", inner Map serialized by JSON replacer
-    associations: Record<
-      string,
-      ReadonlyMap<number, readonly AssociationAddress[]>
+    associations: ReadonlyMap<
+      number,
+      ReadonlyMap<number, ReadonlyMap<number, readonly AssociationAddress[]>>
     >;
   };
   // RF region info

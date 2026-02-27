@@ -7,7 +7,7 @@ import {
   FirmwareUpdateInfo,
   InclusionGrant,
   InclusionOptions,
-  JoinNetworkOptions,
+  JoinNetworkStrategy,
   KEXFailType,
   MigrateNVMOptions,
   PlannedProvisioningEntry,
@@ -530,7 +530,7 @@ export interface IncomingCommandControllerQueryRFRegionInfo
 export interface IncomingCommandControllerBeginJoiningNetwork
   extends IncomingCommandControllerBase {
   command: ControllerCommand.beginJoiningNetwork;
-  options?: JoinNetworkOptions;
+  strategy?: JoinNetworkStrategy;
 }
 
 export interface IncomingCommandControllerStopJoiningNetwork
