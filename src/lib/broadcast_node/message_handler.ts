@@ -18,7 +18,9 @@ export class BroadcastNodeMessageHandler implements MessageHandler {
   ): Promise<BroadcastNodeResultTypes[BroadcastNodeCommand]> {
     const { command } = message;
 
-    const virtualNode = this.driver.controller.getBroadcastNode();
+    const virtualNode = message.longRange
+      ? this.driver.controller.getBroadcastNodeLR()
+      : this.driver.controller.getBroadcastNode();
 
     switch (message.command) {
       case BroadcastNodeCommand.setValue: {
