@@ -8,7 +8,13 @@ import {
   ZWaveNode,
 } from "zwave-js";
 import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
-import { SupervisionResult, MaybeNotKnown } from "@zwave-js/core";
+import {
+  FirmwareFileFormat,
+  guessFirmwareFileFormat,
+  MaybeNotKnown,
+  SupervisionResult,
+  tryUnzipFirmwareFile,
+} from "@zwave-js/core";
 import {
   IncomingCommandNodeGetRawConfigParameterValue,
   IncomingCommandNodeSetRawConfigParameterValue,
@@ -108,4 +114,43 @@ export async function getRawConfigParameterValue(
     },
   );
   return { value };
+}
+
+export interface FirmwareFileInfo {
+  filename: string;
+  rawData: Uint8Array<ArrayBuffer>;
+  format: FirmwareFileFormat;
+}
+
+/**
+ * Tries to determine the firmware file format, with automatic ZIP extraction fallback.
+ * First attempts guessFirmwareFileFormat. If that fails, tries to extract from ZIP archive.
+ */
+export function parseFirmwareFile(
+  filename: string,
+  rawData: Uint8Array<ArrayBuffer>,
+  explicitFormat?: FirmwareFileFormat,
+): FirmwareFileInfo {
+  // If format is explicitly provided, use it directly
+  if (explicitFormat !== undefined) {
+    return { filename, rawData, format: explicitFormat };
+  }
+
+  try {
+    // First, try to guess the format directly
+    const format = guessFirmwareFileFormat(filename, rawData);
+    return { filename, rawData, format };
+  } catch (guessError) {
+    // If guessing failed, try to extract from ZIP
+    const unzipped = tryUnzipFirmwareFile(rawData);
+    if (unzipped) {
+      return {
+        filename: unzipped.filename,
+        rawData: unzipped.rawData,
+        format: unzipped.format,
+      };
+    }
+    // If unzip also failed, re-throw the original error
+    throw guessError;
+  }
 }
