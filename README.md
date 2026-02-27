@@ -443,7 +443,7 @@ interface {
 }
 ```
 
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 Returns:
 
@@ -574,12 +574,20 @@ interface {
 
 > NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The exceptions are:
 >
-> - `controller.begin_inclusion`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> **Callback-to-event conversions:** Several Z-Wave JS controller methods accept callback parameters (e.g. `userCallbacks`, `onProgress`). Since callbacks cannot be passed over a WebSocket connection, the server automatically provides the callbacks and emits events to the client instead. See the Events section for details on the events emitted by each command.
+>
+> - `controller.begin_inclusion`, `controller.replace_failed_node`: The `userCallbacks` option (for S2 security bootstrapping) is handled by the server. The server emits `grant security classes`, `validate dsk and enter pin`, and `inclusion aborted` events instead. In addition, `controller.begin_inclusion` will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> - `controller.begin_joining_network`: The `userCallbacks` option is handled by the server. The server emits `joining network show dsk` and `joining network done` events instead.
+> - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data. Progress is reported via `nvm backup progress` events.
+> - `controller.restore_nvm`: The NVM input should be a base64 encoded string. Progress is reported via `nvm convert progress` and `nvm restore progress` events.
+> - `controller.restore_nvm_raw`: The NVM input should be a base64 encoded string. Unlike `restore_nvm`, this command does not convert the NVM data before restoring. Progress is reported via `nvm restore progress` events.
 > - `controller.provision_smart_start_node`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
-> - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data.
-> - `controller.restore_nvm`: The NVM input should be a base64 encoded string.
-> - `controller.restore_nvm_raw`: The NVM input should be a base64 encoded string. Unlike `restore_nvm`, this command does not convert the NVM data before restoring.
 > - `controller.firmware_update_otw`: This command accepts two required parameters (`file`, a base64 representation of the file, and `filename`, the filename of the file) as well as an optional parameter (`fileFormat`, which provides the format of the file to the server so the driver does not have to guess the format)
+> - `controller.get_dsk`: Returns the controller's DSK as a base64 encoded string.
+> - `controller.external_nvm_read_buffer`, `controller.external_nvm_read_buffer_700`, `controller.external_nvm_read_buffer_ext`: These commands return the NVM data as a base64 encoded string in the `buffer` field.
+> - `controller.external_nvm_write_buffer`, `controller.external_nvm_write_buffer_700`, `controller.external_nvm_write_buffer_ext`: The `buffer` input should be a base64 encoded string.
+> - `controller.get_all_associations`: Returns a nested map structure (`nodeId -> endpoint -> groupId -> addresses`) rather than the flat structure used by the Z-Wave JS API.
+> - `controller.get_all_available_firmware_updates`: Accepts optional `apiKey`, `includePrereleases`, and `rfRegion` parameters.
 
 #### Get controller state
 
@@ -705,7 +713,7 @@ interface {
 
 > **Note**: For schema versions 24 and higher, use `node.update_firmware` instead.
 
-If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload.
+If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 ```ts
 interface {
@@ -725,7 +733,7 @@ interface {
 
 This command supports updating multiple firmware files in a single operation.
 
-If `fileFormat` is not provided, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 ```ts
 interface {
@@ -1918,6 +1926,24 @@ interface {
 }
 ```
 
+#### `check link reliability progress`
+
+[compatible with schema version: 47+]
+
+This event is sent after a `node.check_link_reliability` command is issued and contains progress updates from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklinkreliability) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check link reliability progress";
+    nodeId: number;
+    progress: LinkReliabilityCheckResult;
+  }
+}
+```
+
 ### `zwave-js-server` Driver Events
 
 #### `driver ready`
@@ -2161,6 +2187,39 @@ interface {
   event: {
     source: "controller";
     event: "network left";
+  }
+}
+```
+
+#### `joining network show dsk`
+
+[compatible with schema version: 47+]
+
+This event is sent during the `controller.begin_joining_network` process when the DSK needs to be displayed to the user for verification. This event replaces the `showDSK` callback from the Z-Wave JS API.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network show dsk";
+    dsk: string;
+  }
+}
+```
+
+#### `joining network done`
+
+[compatible with schema version: 47+]
+
+This event is sent when the `controller.begin_joining_network` process has completed its user-facing steps. This event replaces the `done` callback from the Z-Wave JS API.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network done";
   }
 }
 ```

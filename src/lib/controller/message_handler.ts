@@ -647,7 +647,7 @@ export class ControllerMessageHandler implements MessageHandler {
               this.clientsController.clients.forEach((client) =>
                 client.sendEvent({
                   source: "controller",
-                  event: "join network show dsk",
+                  event: "joining network show dsk",
                   dsk,
                 }),
               );
@@ -656,7 +656,7 @@ export class ControllerMessageHandler implements MessageHandler {
               this.clientsController.clients.forEach((client) =>
                 client.sendEvent({
                   source: "controller",
-                  event: "join network done",
+                  event: "joining network done",
                 }),
               );
             },
