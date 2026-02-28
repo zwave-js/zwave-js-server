@@ -479,15 +479,6 @@ export interface IncomingCommandControllerExternalNVMWriteBufferExt extends Inco
   buffer: string; // base64 encoded
 }
 
-// Watchdog operations
-export interface IncomingCommandControllerStartWatchdog extends IncomingCommandControllerBase {
-  command: ControllerCommand.startWatchdog;
-}
-
-export interface IncomingCommandControllerStopWatchdog extends IncomingCommandControllerBase {
-  command: ControllerCommand.stopWatchdog;
-}
-
 // RF region extended
 export interface IncomingCommandControllerQuerySupportedRFRegions extends IncomingCommandControllerBase {
   command: ControllerCommand.querySupportedRFRegions;
@@ -643,8 +634,6 @@ export type IncomingMessageController =
   | IncomingCommandControllerExternalNVMCloseExt
   | IncomingCommandControllerExternalNVMReadBufferExt
   | IncomingCommandControllerExternalNVMWriteBufferExt
-  | IncomingCommandControllerStartWatchdog
-  | IncomingCommandControllerStopWatchdog
   | IncomingCommandControllerQuerySupportedRFRegions
   | IncomingCommandControllerQueryRFRegionInfo
   | IncomingCommandControllerBeginJoiningNetwork

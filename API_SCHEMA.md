@@ -117,7 +117,7 @@ Base schema.
 
 ## Schema 47
 
-- Added new controller commands for associations, diagnostics, firmware updates, network join/leave, NVM operations, RF region queries, routing, and watchdog
+- Added new controller commands for associations, diagnostics, firmware updates, network join/leave, NVM operations, RF region queries, and routing
 - Added `controller.restore_nvm_raw` command for raw NVM restoration without format conversion
 - Added broadcast node Long Range support via `longRange` flag on `broadcast_node` commands
 - Added `controller.get_all_associations` with nested map return type (`nodeId -> endpoint -> groupId -> addresses`)
