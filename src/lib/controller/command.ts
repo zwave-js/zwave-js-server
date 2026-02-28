@@ -100,10 +100,6 @@ export enum ControllerCommand {
   // Undocumented
   externalNVMWriteBufferExt = "controller.external_nvm_write_buffer_ext",
   // Undocumented
-  startWatchdog = "controller.start_watchdog",
-  // Undocumented
-  stopWatchdog = "controller.stop_watchdog",
-  // Undocumented
   querySupportedRFRegions = "controller.query_supported_rf_regions",
   // Undocumented
   queryRFRegionInfo = "controller.query_rf_region_info",

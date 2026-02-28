@@ -622,15 +622,6 @@ export class ControllerMessageHandler implements MessageHandler {
         );
         return { endOfFile: result.endOfFile };
       }
-      // Watchdog operations
-      case ControllerCommand.startWatchdog: {
-        const success = await this.driver.controller.startWatchdog();
-        return { success };
-      }
-      case ControllerCommand.stopWatchdog: {
-        const success = await this.driver.controller.stopWatchdog();
-        return { success };
-      }
       // RF region extended
       case ControllerCommand.querySupportedRFRegions: {
         const regions = await this.driver.controller.querySupportedRFRegions();

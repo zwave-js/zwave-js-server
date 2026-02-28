@@ -159,9 +159,6 @@ export interface ControllerResultTypes {
     endOfFile: boolean;
   };
   [ControllerCommand.externalNVMWriteBufferExt]: { endOfFile: boolean };
-  // Watchdog operations
-  [ControllerCommand.startWatchdog]: { success: boolean };
-  [ControllerCommand.stopWatchdog]: { success: boolean };
   // RF region extended
   [ControllerCommand.querySupportedRFRegions]: { regions: RFRegion[] };
   [ControllerCommand.queryRFRegionInfo]: {

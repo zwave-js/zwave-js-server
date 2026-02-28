@@ -124,7 +124,7 @@ Base schema.
 - Added controller events: `network found`, `network joined`, `network left`, `joining network failed`, `leaving network failed`
 - Added driver commands: `soft_reset_and_restart`, `enter_bootloader`, `leave_bootloader`, `get_supported_cc_version`, `get_safe_cc_version`, `update_user_agent`, `enable_frequent_rssi_monitoring`, `disable_frequent_rssi_monitoring`
 - Automatic ZIP extraction for firmware update commands
-- Added new controller commands for associations, diagnostics, firmware updates, network join/leave, NVM operations, RF region queries, routing, and watchdog
+- Added new controller commands for associations, diagnostics, firmware updates, network join/leave, NVM operations, RF region queries, and routing
 - Added `controller.restore_nvm_raw` command for raw NVM restoration without format conversion
 - Added `controller.get_all_associations` with nested map return type (`nodeId -> endpoint -> groupId -> addresses`)
 - Added node commands: `check_link_reliability`, `is_link_reliability_check_in_progress`, `abort_link_reliability_check`
