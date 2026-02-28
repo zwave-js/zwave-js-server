@@ -43,6 +43,7 @@ Base schema.
 
 - Added `deviceDatabaseUrl` property to Node
 - Removed `neighbors` property from Node. Use `controller.get_node_neighbors` instead.
+- Added `controller.get_node_neighbors` command
 - Added `broadcast_node` and `multicast_group` command namespaces
 - Added `node.begin_firmware_update` and `node.ping` commands
 
@@ -122,6 +123,7 @@ Base schema.
 - Added `node.get_state`, `node.set_name`, `node.set_location`, and `node.set_keep_awake` commands
 - Added `isControllerNode` and `keepAwake` properties to `NodeState`
 - Added `inclusionState` property and full controller state dump to `ControllerState`
+- Added controller events: `nvm backup progress`, `nvm convert progress`, `nvm restore progress` (emitted during NVM backup/restore operations)
 
 ## Schema 15
 
