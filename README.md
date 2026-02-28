@@ -443,7 +443,7 @@ interface {
 }
 ```
 
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 Returns:
 
@@ -469,6 +469,102 @@ Returns:
 ```ts
 interface {
   progress: boolean;
+}
+```
+
+#### [Soft Reset and Restart](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softresetandrestart)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.soft_reset_and_restart";
+}
+```
+
+#### [Enter Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enterbootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enter_bootloader";
+}
+```
+
+#### [Leave Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=leavebootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.leave_bootloader";
+}
+```
+
+#### [Get Supported CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsupportedccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_supported_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Get Safe CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsafeccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_safe_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Update User Agent](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateuseragent)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_user_agent";
+  components: Record<string, string | null | undefined>;
+}
+```
+
+#### [Enable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_frequent_rssi_monitoring";
+  durationMs: number;
+}
+```
+
+#### [Disable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=disablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.disable_frequent_rssi_monitoring";
 }
 ```
 
@@ -1651,6 +1747,55 @@ interface {
 }
 ```
 
+#### `all nodes ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when all nodes have been interviewed and are ready.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "all nodes ready";
+  }
+}
+```
+
+#### `error`
+
+[compatible with schema version: 47+]
+
+This event is sent when a driver error occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "error";
+    error: string;
+  }
+}
+```
+
+#### `bootloader ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller enters bootloader mode.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "bootloader ready";
+  }
+}
+```
+
 #### `log config updated`
 
 This event is sent whenever a client issues the `driver.update_log_config` command with the updated log config.
@@ -1769,7 +1914,7 @@ interface {
 
 #### `nvm restore progress`
 
-This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM data is being restored to the controller.
+This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) or `controller.restore_nvm_raw` command is issued by a client to the server and the NVM data is being restored to the controller.
 
 ```ts
 interface {
@@ -1779,6 +1924,88 @@ interface {
     event: "nvm restore progress";
     bytesWritten: number;
     total: number;
+  }
+}
+```
+
+#### `network found`
+
+[compatible with schema version: 47+]
+
+This event is sent when a new network is found during the join process (learn mode).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network found";
+    homeId: number;
+    ownNodeId: number;
+  }
+}
+```
+
+#### `network joined`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller successfully joins a network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network joined";
+  }
+}
+```
+
+#### `network left`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller leaves the current network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network left";
+  }
+}
+```
+
+#### `joining network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when joining a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network failed";
+  }
+}
+```
+
+#### `leaving network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when leaving a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "leaving network failed";
   }
 }
 ```

@@ -335,3 +335,13 @@ Base schema.
 
 - Added `allowed` property to numeric value metadata and configuration metadata
 - Added `purpose` property to configuration metadata
+
+## Schema 47
+
+- Added driver state properties: `ready`, `allNodesReady`, `configVersion`
+- Added node state properties: `canSleep`, `supportsWakeUpOnDemand`, `hardwareVersion`, `hasSUCReturnRoute`, `manufacturer`, `dsk`
+- Added controller state properties: `isSIS`, `maxPayloadSize`, `maxPayloadSizeLR`, `zwaveApiVersion`, `zwaveChipType`
+- Added driver events: `all nodes ready`, `error`, `bootloader ready`
+- Added controller events: `network found`, `network joined`, `network left`, `joining network failed`, `leaving network failed`
+- Added driver commands: `soft_reset_and_restart`, `enter_bootloader`, `leave_bootloader`, `get_supported_cc_version`, `get_safe_cc_version`, `update_user_agent`, `enable_frequent_rssi_monitoring`, `disable_frequent_rssi_monitoring`
+- Automatic ZIP extraction for firmware update commands
