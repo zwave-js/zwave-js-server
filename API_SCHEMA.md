@@ -335,3 +335,23 @@ Base schema.
 
 - Added `allowed` property to numeric value metadata and configuration metadata
 - Added `purpose` property to configuration metadata
+
+## Schema 47
+
+- Added new controller commands for associations, diagnostics, firmware updates, network join/leave, NVM operations, RF region queries, and routing
+- Added `controller.restore_nvm_raw` command for raw NVM restoration without format conversion
+- Added broadcast node Long Range support via `longRange` flag on `broadcast_node` commands
+- Added `controller.get_all_associations` with nested map return type (`nodeId -> endpoint -> groupId -> addresses`)
+- Added driver commands: `soft_reset_and_restart`, `enter_bootloader`, `leave_bootloader`, `get_supported_cc_version`, `get_safe_cc_version`, `update_user_agent`, `enable_frequent_rssi_monitoring`, `disable_frequent_rssi_monitoring`
+- Added driver events: `all nodes ready`, `error`, `bootloader ready`
+- Added driver state properties: `ready`, `allNodesReady`, `configVersion`
+- Added node commands: `check_link_reliability`, `is_link_reliability_check_in_progress`, `abort_link_reliability_check`
+- Added controller events: `network found`, `network joined`, `network left`, `joining network failed`, `leaving network failed`, `joining network show dsk`, `joining network done`
+- Added node event: `check link reliability progress`
+- Added node state properties: `canSleep`, `supportsWakeUpOnDemand`, `hardwareVersion`, `hasSUCReturnRoute`, `manufacturer`, `dsk`
+- Added endpoint commands: `get_ccs`, `may_support_basic_cc`, `was_cc_removed_via_config`
+- Added controller state properties: `isSIS`, `maxPayloadSize`, `maxPayloadSizeLR`, `zwaveApiVersion`, `zwaveChipType`
+- Added zniffer Long Range commands: `get_lr_regions`, `get_current_lr_channel_config`, `get_supported_lr_channel_configs`, `set_lr_channel_config`
+- Added zniffer file I/O commands: `save_capture_to_file`, `load_capture_from_file`, `load_capture_from_buffer`
+- Added utility commands: `guess_firmware_file_format`, `try_unzip_firmware_file`, `extract_firmware`
+- Automatic ZIP extraction for firmware update commands

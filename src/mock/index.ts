@@ -12,6 +12,10 @@ class MockDriver extends EventEmitter {
 
   public ready = true;
 
+  public allNodesReady = true;
+
+  public configVersion = "0.0.0-mock";
+
   public statisticsEnabled = true;
 
   async start() {
