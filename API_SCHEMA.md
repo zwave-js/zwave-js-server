@@ -33,7 +33,11 @@ Base schema.
 
 - Node `interviewStage` property was changed from type `number` to type `string`
 - Added `driver` command namespace (`driver.get_config`, `driver.update_log_config`, `driver.get_log_config`, `driver.enable_statistics`, `driver.disable_statistics`, `driver.is_statistics_enabled`, `driver.start_listening_logs`, `driver.stop_listening_logs`)
+- Added `driver` state (`logConfig`, `statisticsEnabled`) to the state dump
 - Added `node.refresh_values` and `node.refresh_cc_values` commands
+- Added `interview started` node event
+- Added `interview stage completed` node event (with `stageName` argument)
+- Added `logging` driver event (emitted when `driver.start_listening_logs` is active)
 
 ## Schema 5
 
@@ -47,6 +51,10 @@ Base schema.
 - Added `driver.set_preferred_scales` command
 - Added `driver.check_for_config_updates` and `driver.install_config_update` commands
 - Added `options` parameter to `node.set_value` command (`SetValueAPIOptions`)
+- Added optional `endpoint` parameter to `controller.get_association_groups`, `controller.get_associations`, `controller.is_association_allowed`, `controller.add_associations`, and `controller.remove_associations` commands
+- Changed `Association` type to `AssociationAddress` in association commands
+- Added `isHealNetworkActive` property to controller state dump
+- Added `valueChangeOptions` property to value metadata and configuration metadata
 
 ## Schema 7
 
@@ -66,6 +74,10 @@ Base schema.
 - Added `controller.validate_dsk_and_enter_pin` command
 - Added controller events: `grant security classes`, `validate dsk and enter pin`, `inclusion aborted`
 - Updated `controller.begin_inclusion` and `controller.replace_failed_node` to support S2 inclusion options
+- Added `result` (`InclusionResult`) to `node added` controller event payload
+- Added `broadcast_node.invoke_cc_api` and `broadcast_node.supports_cc_api` commands
+- Added `multicast_group.invoke_cc_api` and `multicast_group.supports_cc_api` commands
+- Added `options` parameter (`SetValueAPIOptions`) to `broadcast_node.set_value` and `multicast_group.set_value` commands
 
 ## Schema 9
 
@@ -86,6 +98,7 @@ Base schema.
 - Added `utils.parse_qr_code_string` command
 - Updated `controller.begin_inclusion` to support QR code string provisioning
 - Updated `controller.begin_exclusion` with `unprovision` parameter
+- Added `broadcast_node.get_defined_value_ids` and `multicast_group.get_defined_value_ids` commands
 
 ## Schema 12
 
@@ -152,7 +165,8 @@ Base schema.
 - Added `node.is_firmware_update_in_progress` command
 - Added `node.get_firmware_update_capabilities_cached` command
 - Refactored firmware update progress tracking to use built-in zwave-js methods
-- Added `eventTypeLabel` and `dataTypeLabel` properties to `notification` node event (for Notification CC and Entry Control CC respectively)
+- Added `eventTypeLabel` property to `notification` node event for Multilevel Switch CC and Entry Control CC
+- Added `dataTypeLabel` property to `notification` node event for Entry Control CC
 
 ## Schema 22
 
@@ -175,6 +189,8 @@ Base schema.
 - Added `includePrereleases` parameter to `controller.get_available_firmware_updates` command
 - Changed `firmware update progress` node event payload from `{sentFragments, totalFragments}` to `{progress}` object
 - Changed `firmware update finished` node event payload from `{status, waitTime}` to `{result}` object
+- Changed `node.begin_firmware_update` return type from empty `{}` to `{ success: boolean }`
+- Changed `controller.begin_ota_firmware_update` return type from empty `{}` to `{ success: boolean }`
 
 ## Schema 25
 
@@ -243,7 +259,7 @@ Base schema.
 
 ## Schema 33
 
-- Fixed `node.set_raw_config_parameter_value` command to match Z-Wave JS types
+- Fixed `node.set_raw_config_parameter_value` command to match Z-Wave JS types (added `bitMask` and `valueFormat` parameters, made `valueSize` optional, return type changed from `{}` to `{ result?: SupervisionResult }`)
 - Added `endpoint.set_raw_config_parameter_value` command
 - Added `driver.update_options` command
 
