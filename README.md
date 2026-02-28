@@ -443,7 +443,7 @@ interface {
 }
 ```
 
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 Returns:
 
@@ -472,17 +472,122 @@ interface {
 }
 ```
 
+#### [Soft Reset and Restart](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=softresetandrestart)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.soft_reset_and_restart";
+}
+```
+
+#### [Enter Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enterbootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enter_bootloader";
+}
+```
+
+#### [Leave Bootloader](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=leavebootloader)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.leave_bootloader";
+}
+```
+
+#### [Get Supported CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsupportedccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_supported_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Get Safe CC Version](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=getsafeccversion)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.get_safe_cc_version";
+  cc: CommandClasses;
+  nodeId: number;
+  endpointIndex?: number;
+}
+```
+
+#### [Update User Agent](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=updateuseragent)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.update_user_agent";
+  components: Record<string, string | null | undefined>;
+}
+```
+
+#### [Enable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=enablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.enable_frequent_rssi_monitoring";
+  durationMs: number;
+}
+```
+
+#### [Disable Frequent RSSI Monitoring](https://zwave-js.github.io/node-zwave-js/#/api/driver?id=disablefrequentrssimonitoring)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "driver.disable_frequent_rssi_monitoring";
+}
+```
+
 ### Controller level commands
 
 `zwave-js-server` supports all of the controller methods listed in the [Z-Wave JS documentation](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=controller-methods). `zwave-js-server` uses [snake casing](https://en.wikipedia.org/wiki/Snake_case) for commands and prefixes every controller command with `controller.`, so `beginInclusion` is called using the `controller.begin_inclusion` command.
 
 > NOTE: For the most part, `controller` commands have the same inputs as documented in the Z-Wave JS documentation. The exceptions are:
 >
-> - `controller.begin_inclusion`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> **Callback-to-event conversions:** Several Z-Wave JS controller methods accept callback parameters (e.g. `userCallbacks`, `onProgress`). Since callbacks cannot be passed over a WebSocket connection, the server automatically provides the callbacks and emits events to the client instead. See the Events section for details on the events emitted by each command.
+>
+> - `controller.begin_inclusion`, `controller.replace_failed_node`: The `userCallbacks` option (for S2 security bootstrapping) is handled by the server. The server emits `grant security classes`, `validate dsk and enter pin`, and `inclusion aborted` events instead. In addition, `controller.begin_inclusion` will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
+> - `controller.begin_joining_network`: The `userCallbacks` option is handled by the server. The server emits `joining network show dsk` and `joining network done` events instead.
+> - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data. Progress is reported via `nvm backup progress` events.
+> - `controller.restore_nvm`: The NVM input should be a base64 encoded string. Progress is reported via `nvm convert progress` and `nvm restore progress` events.
+> - `controller.restore_nvm_raw`: The NVM input should be a base64 encoded string. Unlike `restore_nvm`, this command does not convert the NVM data before restoring. Progress is reported via `nvm restore progress` events.
 > - `controller.provision_smart_start_node`: in addition to the input types that are documented, this command will also accept the QR code string directly and will convert the string to a `QRProvisioningInformation` object automatically.
-> - `controller.backup_nvm_raw`: This command will return a base64 encoded string for the NVM data.
-> - `controller.restore_nvm`: The NVM input should be a base64 encoded string.
 > - `controller.firmware_update_otw`: This command accepts two required parameters (`file`, a base64 representation of the file, and `filename`, the filename of the file) as well as an optional parameter (`fileFormat`, which provides the format of the file to the server so the driver does not have to guess the format)
+> - `controller.get_dsk`: Returns the controller's DSK as a base64 encoded string.
+> - `controller.external_nvm_read_buffer`, `controller.external_nvm_read_buffer_700`, `controller.external_nvm_read_buffer_ext`: These commands return the NVM data as a base64 encoded string in the `buffer` field.
+> - `controller.external_nvm_write_buffer`, `controller.external_nvm_write_buffer_700`, `controller.external_nvm_write_buffer_ext`: The `buffer` input should be a base64 encoded string.
+> - `controller.get_all_associations`: Returns a nested map structure (`nodeId -> endpoint -> groupId -> addresses`) rather than the flat structure used by the Z-Wave JS API.
+> - `controller.get_all_available_firmware_updates`: Accepts optional `apiKey`, `includePrereleases`, and `rfRegion` parameters.
 
 #### Get controller state
 
@@ -608,7 +713,7 @@ interface {
 
 > **Note**: For schema versions 24 and higher, use `node.update_firmware` instead.
 
-If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload.
+If `firmwareFileFormat` is not provided, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 ```ts
 interface {
@@ -628,7 +733,7 @@ interface {
 
 This command supports updating multiple firmware files in a single operation.
 
-If `fileFormat` is not provided, the format will be guessed based on the filename and file payload.
+If `fileFormat` is not provided, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
 
 ```ts
 interface {
@@ -893,18 +998,6 @@ interface {
 }
 ```
 
-#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
-
-[compatible with schema version: 21+]
-
-```ts
-interface {
-  messageId: string;
-  command: "node.get_firmware_update_progress";
-  nodeId: number;
-}
-```
-
 #### [Wait for wakeup](https://zwave-js.github.io/node-zwave-js/#/api/node?id=waitforwakeup)
 
 [compatible with schema version: 18+]
@@ -1088,6 +1181,61 @@ interface {
 interface {
   messageId: string;
   command: "node.create_dump";
+}
+```
+
+#### [Get Firmware Update Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=getfirmwareupdateprogress)
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.get_firmware_update_progress";
+  nodeId: number;
+}
+```
+
+#### [Check Link Reliability](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklinkreliability)
+
+[compatible with schema version: 47+]
+
+Run an extended link reliability check on a node.
+
+While this command is running, the server emits `check link reliability progress` events with progress updates containing `{ nodeId, progress }`.
+
+```ts
+interface {
+  messageId: string;
+  command: "node.check_link_reliability";
+  nodeId: number;
+  mode: "rssi" | "latency" | "routeChanges";
+  interval: number;
+  rounds?: number;
+}
+```
+
+#### [Is Link Reliability Check In Progress](https://zwave-js.github.io/node-zwave-js/#/api/node?id=islinkreliabilitycheckinprogress)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.is_link_reliability_check_in_progress";
+  nodeId: number;
+}
+```
+
+#### [Abort Link Reliability Check](https://zwave-js.github.io/node-zwave-js/#/api/node?id=abortlinkreliabilitycheck)
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "node.abort_link_reliability_check";
+  nodeId: number;
 }
 ```
 
@@ -1293,9 +1441,57 @@ interface {
 }
 ```
 
+#### [Get Command Classes](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=getccs)
+
+[compatible with schema version: 47+]
+
+Get all command classes supported by this endpoint.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.get_ccs";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [May Support Basic CC](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=maysupportbasiccc)
+
+[compatible with schema version: 47+]
+
+Check if the endpoint may support Basic CC.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.may_support_basic_cc";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+#### [Was CC Removed Via Config](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=wasccremovedviaconfig)
+
+[compatible with schema version: 47+]
+
+Check if a command class was removed from the endpoint via device config.
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.was_cc_removed_via_config";
+  nodeId: number;
+  endpoint?: number;
+  commandClass: CommandClasses;
+}
+```
+
 ### Multicasting
 
-There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter:
+There are several commands available that can be multicast to multiple nodes simultaneously. If you would like to broadcast to all nodes, use the `broadcast_node` prefix for the following commands. If you would like to multicast to a subset of nodes, use the `multicast_group` prefix for the following commands, adding a `nodeIDs` list as an input parameter.
+
+> NOTE: For `broadcast_node` commands, you can pass a `longRange` boolean flag to broadcast to Long Range nodes instead of classic Z-Wave nodes.
 
 ```ts
 interface IncomingCommandMulticastGroupBase extends IncomingCommandBase {
@@ -1563,6 +1759,101 @@ interface {
 }
 ```
 
+#### Get Long Range regions
+
+Gets list of Long Range capable regions.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_lr_regions";
+}
+```
+
+#### Get current Long Range channel config
+
+Gets currently configured Long Range channel configuration.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_current_lr_channel_config";
+}
+```
+
+#### Get supported Long Range channel configs
+
+Gets map of supported Long Range channel configurations.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.get_supported_lr_channel_configs";
+}
+```
+
+#### Set Long Range channel config
+
+Set Long Range channel configuration (800 series only).
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.set_lr_channel_config";
+  channelConfig: number;
+}
+```
+
+#### [Save capture to file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Saves the captured frames to a `.zlf` file that can be read by the official Zniffer application.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.save_capture_to_file";
+  filePath: string;
+}
+```
+
+#### [Load capture from file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Loads previously saved captured frames from a `.zlf` file.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.load_capture_from_file";
+  filePath: string;
+}
+```
+
+#### [Load capture from buffer](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
+
+Loads captured frames from a base64 encoded buffer.
+
+[compatible with schema version: 47+]
+
+```ts
+interface {
+  messageId: string;
+  command: "zniffer.load_capture_from_buffer";
+  data: string; // base64 encoded .zlf data
+}
+```
+
 ## Events
 
 ### `zwave-js` Events
@@ -1635,6 +1926,24 @@ interface {
 }
 ```
 
+#### `check link reliability progress`
+
+[compatible with schema version: 47+]
+
+This event is sent after a `node.check_link_reliability` command is issued and contains progress updates from the driver. See the [`zwave-js` docs on this command](https://zwave-js.github.io/node-zwave-js/#/api/node?id=checklinkreliability) for more information.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: "check link reliability progress";
+    nodeId: number;
+    progress: LinkReliabilityCheckResult;
+  }
+}
+```
+
 ### `zwave-js-server` Driver Events
 
 #### `driver ready`
@@ -1647,6 +1956,55 @@ interface {
   event: {
     source: "driver";
     event: "driver ready";
+  }
+}
+```
+
+#### `all nodes ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when all nodes have been interviewed and are ready.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "all nodes ready";
+  }
+}
+```
+
+#### `error`
+
+[compatible with schema version: 47+]
+
+This event is sent when a driver error occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "error";
+    error: string;
+  }
+}
+```
+
+#### `bootloader ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller enters bootloader mode.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "bootloader ready";
   }
 }
 ```
@@ -1769,7 +2127,7 @@ interface {
 
 #### `nvm restore progress`
 
-This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM data is being restored to the controller.
+This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) or `controller.restore_nvm_raw` command is issued by a client to the server and the NVM data is being restored to the controller.
 
 ```ts
 interface {
@@ -1779,6 +2137,121 @@ interface {
     event: "nvm restore progress";
     bytesWritten: number;
     total: number;
+  }
+}
+```
+
+#### `network found`
+
+[compatible with schema version: 47+]
+
+This event is sent when a new network is found during the join process (learn mode).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network found";
+    homeId: number;
+    ownNodeId: number;
+  }
+}
+```
+
+#### `network joined`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller successfully joins a network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network joined";
+  }
+}
+```
+
+#### `network left`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller leaves the current network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network left";
+  }
+}
+```
+
+#### `joining network show dsk`
+
+[compatible with schema version: 47+]
+
+This event is sent during the `controller.begin_joining_network` process when the DSK needs to be displayed to the user for verification. This event replaces the `showDSK` callback from the Z-Wave JS API.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network show dsk";
+    dsk: string;
+  }
+}
+```
+
+#### `joining network done`
+
+[compatible with schema version: 47+]
+
+This event is sent when the `controller.begin_joining_network` process has completed its user-facing steps. This event replaces the `done` callback from the Z-Wave JS API.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network done";
+  }
+}
+```
+
+#### `joining network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when joining a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network failed";
+  }
+}
+```
+
+#### `leaving network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when leaving a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "leaving network failed";
   }
 }
 ```

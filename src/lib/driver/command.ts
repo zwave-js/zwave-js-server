@@ -21,4 +21,18 @@ export enum DriverCommand {
   firmwareUpdateOTW = "driver.firmware_update_otw",
   // Schema version >= 41:
   isOTWFirmwareUpdateInProgress = "driver.is_otw_firmware_update_in_progress",
+  // Undocumented
+  softResetAndRestart = "driver.soft_reset_and_restart",
+  // Undocumented
+  enterBootloader = "driver.enter_bootloader",
+  // Undocumented
+  leaveBootloader = "driver.leave_bootloader",
+  // CC version queries
+  getSupportedCCVersion = "driver.get_supported_cc_version",
+  getSafeCCVersion = "driver.get_safe_cc_version",
+  // User agent
+  updateUserAgent = "driver.update_user_agent",
+  // RSSI monitoring
+  enableFrequentRSSIMonitoring = "driver.enable_frequent_rssi_monitoring",
+  disableFrequentRSSIMonitoring = "driver.disable_frequent_rssi_monitoring",
 }
