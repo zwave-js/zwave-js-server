@@ -62,6 +62,19 @@ export interface IncomingCommandEndpointGetRawConfigParameterValue extends Incom
   bitMask?: number;
 }
 
+export interface IncomingCommandEndpointGetCCs extends IncomingCommandEndpointBase {
+  command: EndpointCommand.getCCs;
+}
+
+export interface IncomingCommandEndpointMaySupportBasicCC extends IncomingCommandEndpointBase {
+  command: EndpointCommand.maySupportBasicCC;
+}
+
+export interface IncomingCommandEndpointWasCCRemovedViaConfig extends IncomingCommandEndpointBase {
+  command: EndpointCommand.wasCCRemovedViaConfig;
+  commandClass: CommandClasses;
+}
+
 export type IncomingMessageEndpoint =
   | IncomingCommandEndpointInvokeCCAPI
   | IncomingCommandEndpointSupportsCCAPI
@@ -72,4 +85,7 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointGetNodeUnsafe
   | IncomingCommandEndpointTryGetNode
   | IncomingCommandEndpointSetRawConfigParameterValue
-  | IncomingCommandEndpointGetRawConfigParameterValue;
+  | IncomingCommandEndpointGetRawConfigParameterValue
+  | IncomingCommandEndpointGetCCs
+  | IncomingCommandEndpointMaySupportBasicCC
+  | IncomingCommandEndpointWasCCRemovedViaConfig;
