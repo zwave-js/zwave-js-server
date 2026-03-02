@@ -131,9 +131,7 @@ export function parseFirmwareFile(
 
   if (filename.toLowerCase().endsWith(".zip")) {
     const unzipped = tryUnzipFirmwareFile(rawData);
-    if (unzipped) {
-      return { rawData: unzipped.rawData, format: unzipped.format };
-    }
+    if (unzipped) return unzipped;
   }
 
   return { rawData, format: guessFirmwareFileFormat(filename, rawData) };
