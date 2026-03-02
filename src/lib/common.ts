@@ -118,6 +118,12 @@ export async function getRawConfigParameterValue(
   return { value };
 }
 
+// Precedence:
+// 1. Always try ZIP extraction first — firmware files may be zipped
+//    regardless of filename extension or explicit format.
+// 2. If an explicit format is provided, use it (on the unzipped data if
+//    applicable, otherwise on the raw data as-is).
+// 3. Fall back to guessing the format from the filename and raw data.
 function parseFirmwareFile(
   filename: string,
   rawData: Uint8Array<ArrayBuffer>,
