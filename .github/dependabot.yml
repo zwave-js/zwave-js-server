@@ -9,6 +9,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # @types/node should match the minimum supported Node.js version (currently 20).
+      # Do not let Dependabot bump it to a newer major version automatically.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   # Keep GitHub Actions up to date
   - package-ecosystem: "github-actions"
