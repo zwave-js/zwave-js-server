@@ -109,7 +109,6 @@ export interface IncomingCommandIsOTWFirmwareUpdateInProgress extends IncomingCo
   command: DriverCommand.isOTWFirmwareUpdateInProgress;
 }
 
-// Bootloader operations
 interface IncomingCommandSoftResetAndRestart extends IncomingCommandBase {
   command: DriverCommand.softResetAndRestart;
 }

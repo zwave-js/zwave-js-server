@@ -28,13 +28,12 @@ export interface DriverResultTypes {
   [DriverCommand.sendTestFrame]: { status?: TransmitStatus };
   [DriverCommand.firmwareUpdateOTW]: OTWFirmwareUpdateResultType;
   [DriverCommand.isOTWFirmwareUpdateInProgress]: { progress: boolean };
-  // Bootloader operations
   [DriverCommand.softResetAndRestart]: Record<string, never>;
   [DriverCommand.enterBootloader]: Record<string, never>;
   [DriverCommand.leaveBootloader]: Record<string, never>;
   // CC version queries
   [DriverCommand.getSupportedCCVersion]: { version: number };
-  [DriverCommand.getSafeCCVersion]: { version: number | undefined };
+  [DriverCommand.getSafeCCVersion]: { version?: number };
   // User agent
   [DriverCommand.updateUserAgent]: Record<string, never>;
   // RSSI monitoring

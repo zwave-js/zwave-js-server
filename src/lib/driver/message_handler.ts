@@ -146,7 +146,6 @@ export class DriverMessageHandler implements MessageHandler {
         const progress = this.driver.isOTWFirmwareUpdateInProgress();
         return { progress };
       }
-      // Bootloader operations
       case DriverCommand.softResetAndRestart: {
         await this.driver.softResetAndRestart();
         return {};

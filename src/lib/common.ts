@@ -116,41 +116,25 @@ export async function getRawConfigParameterValue(
   return { value };
 }
 
-export interface FirmwareFileInfo {
-  filename: string;
-  rawData: Uint8Array<ArrayBuffer>;
-  format: FirmwareFileFormat;
-}
-
 /**
- * Tries to determine the firmware file format, with automatic ZIP extraction fallback.
- * First attempts guessFirmwareFileFormat. If that fails, tries to extract from ZIP archive.
+ * Determines the firmware file format, extracting from ZIP if needed.
+ * Returns the raw data and format ready for {@link extractFirmware}.
  */
 export function parseFirmwareFile(
   filename: string,
   rawData: Uint8Array<ArrayBuffer>,
   explicitFormat?: FirmwareFileFormat,
-): FirmwareFileInfo {
-  // If format is explicitly provided, use it directly
+): { rawData: Uint8Array<ArrayBuffer>; format: FirmwareFileFormat } {
   if (explicitFormat !== undefined) {
-    return { filename, rawData, format: explicitFormat };
+    return { rawData, format: explicitFormat };
   }
 
-  try {
-    // First, try to guess the format directly
-    const format = guessFirmwareFileFormat(filename, rawData);
-    return { filename, rawData, format };
-  } catch (guessError) {
-    // If guessing failed, try to extract from ZIP
+  if (filename.toLowerCase().endsWith(".zip")) {
     const unzipped = tryUnzipFirmwareFile(rawData);
     if (unzipped) {
-      return {
-        filename: unzipped.filename,
-        rawData: unzipped.rawData,
-        format: unzipped.format,
-      };
+      return { rawData: unzipped.rawData, format: unzipped.format };
     }
-    // If unzip also failed, re-throw the original error
-    throw guessError;
   }
+
+  return { rawData, format: guessFirmwareFileFormat(filename, rawData) };
 }
