@@ -123,13 +123,15 @@ function parseFirmwareFile(
   rawData: Uint8Array<ArrayBuffer>,
   explicitFormat?: FirmwareFileFormat,
 ): { rawData: Uint8Array<ArrayBuffer>; format: FirmwareFileFormat } {
-  if (explicitFormat !== undefined) {
-    return { rawData, format: explicitFormat };
+  const unzipped = tryUnzipFirmwareFile(rawData);
+  if (unzipped) {
+    return explicitFormat !== undefined
+      ? { rawData: unzipped.rawData, format: explicitFormat }
+      : unzipped;
   }
 
-  if (filename.toLowerCase().endsWith(".zip")) {
-    const unzipped = tryUnzipFirmwareFile(rawData);
-    if (unzipped) return unzipped;
+  if (explicitFormat !== undefined) {
+    return { rawData, format: explicitFormat };
   }
 
   return { rawData, format: guessFirmwareFileFormat(filename, rawData) };
