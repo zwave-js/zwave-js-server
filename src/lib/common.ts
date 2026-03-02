@@ -9,6 +9,8 @@ import {
 } from "zwave-js";
 import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
 import {
+  extractFirmware,
+  Firmware,
   FirmwareFileFormat,
   guessFirmwareFileFormat,
   MaybeNotKnown,
@@ -116,11 +118,7 @@ export async function getRawConfigParameterValue(
   return { value };
 }
 
-/**
- * Determines the firmware file format, extracting from ZIP if needed.
- * Returns the raw data and format ready for {@link extractFirmware}.
- */
-export function parseFirmwareFile(
+function parseFirmwareFile(
   filename: string,
   rawData: Uint8Array<ArrayBuffer>,
   explicitFormat?: FirmwareFileFormat,
@@ -135,4 +133,17 @@ export function parseFirmwareFile(
   }
 
   return { rawData, format: guessFirmwareFileFormat(filename, rawData) };
+}
+
+/**
+ * Parses a firmware file (handling format detection and ZIP extraction)
+ * and extracts the firmware data.
+ */
+export async function parseAndExtractFirmware(
+  filename: string,
+  rawData: Uint8Array<ArrayBuffer>,
+  explicitFormat?: FirmwareFileFormat,
+): Promise<Firmware> {
+  const parsed = parseFirmwareFile(filename, rawData, explicitFormat);
+  return extractFirmware(parsed.rawData, parsed.format);
 }
