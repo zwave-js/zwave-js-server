@@ -9,8 +9,8 @@ export interface EndpointResultTypes {
   [EndpointCommand.controlsCC]: { controlled: boolean };
   [EndpointCommand.isCCSecure]: { secure: boolean };
   [EndpointCommand.getCCVersion]: { version: number };
-  [EndpointCommand.getNodeUnsafe]: { node: NodeState | undefined };
-  [EndpointCommand.tryGetNode]: { node: NodeState | undefined };
+  [EndpointCommand.getNodeUnsafe]: { node?: NodeState };
+  [EndpointCommand.tryGetNode]: { node?: NodeState };
   [EndpointCommand.setRawConfigParameterValue]: { result?: SupervisionResult };
   [EndpointCommand.getRawConfigParameterValue]: {
     value: MaybeNotKnown<ConfigValue>;

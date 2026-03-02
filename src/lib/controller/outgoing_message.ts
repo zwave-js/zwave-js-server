@@ -47,12 +47,12 @@ export interface ControllerResultTypes {
   [ControllerCommand.provisionSmartStartNode]: Record<string, never>;
   [ControllerCommand.unprovisionSmartStartNode]: Record<string, never>;
   [ControllerCommand.getProvisioningEntry]: {
-    entry: SmartStartProvisioningEntry | undefined;
+    entry?: SmartStartProvisioningEntry;
   };
   [ControllerCommand.getProvisioningEntries]: {
     entries: SmartStartProvisioningEntry[];
   };
-  [ControllerCommand.supportsFeature]: { supported: boolean | undefined };
+  [ControllerCommand.supportsFeature]: { supported?: boolean };
   [ControllerCommand.backupNVMRaw]: { nvmData: string };
   [ControllerCommand.restoreNVM]: Record<string, never>;
   [ControllerCommand.setRFRegion]: { success: boolean };
