@@ -32,7 +32,7 @@ interface OutgoingVersionMessage {
   type: "version";
   driverVersion: string;
   serverVersion: string;
-  homeId: number | undefined;
+  homeId?: number;
   minSchemaVersion: number;
   maxSchemaVersion: number;
 }
