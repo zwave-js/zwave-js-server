@@ -1651,6 +1651,55 @@ interface {
 }
 ```
 
+#### `all nodes ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when all nodes have been interviewed and are ready.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "all nodes ready";
+  }
+}
+```
+
+#### `error`
+
+[compatible with schema version: 47+]
+
+This event is sent when a driver error occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "error";
+    error: string;
+  }
+}
+```
+
+#### `bootloader ready`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller enters bootloader mode.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "bootloader ready";
+  }
+}
+```
+
 #### `log config updated`
 
 This event is sent whenever a client issues the `driver.update_log_config` command with the updated log config.
@@ -1769,7 +1818,7 @@ interface {
 
 #### `nvm restore progress`
 
-This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) command is issued by a client to the server and the NVM data is being restored to the controller.
+This event is sent on progress updates to the NVM restoration process when the [`controller.restore_nvm`](https://zwave-js.github.io/node-zwave-js/#/api/controller?id=nvm-backup-and-restore) or `controller.restore_nvm_raw` command is issued by a client to the server and the NVM data is being restored to the controller.
 
 ```ts
 interface {
@@ -1779,6 +1828,88 @@ interface {
     event: "nvm restore progress";
     bytesWritten: number;
     total: number;
+  }
+}
+```
+
+#### `network found`
+
+[compatible with schema version: 47+]
+
+This event is sent when a new network is found during the join process (learn mode).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network found";
+    homeId: number;
+    ownNodeId: number;
+  }
+}
+```
+
+#### `network joined`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller successfully joins a network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network joined";
+  }
+}
+```
+
+#### `network left`
+
+[compatible with schema version: 47+]
+
+This event is sent when the controller leaves the current network.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "network left";
+  }
+}
+```
+
+#### `joining network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when joining a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "joining network failed";
+  }
+}
+```
+
+#### `leaving network failed`
+
+[compatible with schema version: 47+]
+
+This event is sent when leaving a network fails.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "controller";
+    event: "leaving network failed";
   }
 }
 ```
