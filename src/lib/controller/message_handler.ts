@@ -252,14 +252,15 @@ export class ControllerMessageHandler implements MessageHandler {
       case ControllerCommand.backupNVMRaw: {
         const nvmDataRaw = await this.driver.controller.backupNVMRaw(
           (bytesRead: number, total: number) => {
-            this.clientsController.clients.forEach((client) =>
+            this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent({
                 source: "controller",
                 event: "nvm backup progress",
                 bytesRead,
                 total,
-              }),
-            );
+              });
+            });
           },
         );
         return { nvmData: Buffer.from(nvmDataRaw.buffer).toString("base64") };
@@ -269,24 +270,26 @@ export class ControllerMessageHandler implements MessageHandler {
         await this.driver.controller.restoreNVM(
           nvmData,
           (bytesRead: number, total: number) => {
-            this.clientsController.clients.forEach((client) =>
+            this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent({
                 source: "controller",
                 event: "nvm convert progress",
                 bytesRead,
                 total,
-              }),
-            );
+              });
+            });
           },
           (bytesWritten: number, total: number) => {
-            this.clientsController.clients.forEach((client) =>
+            this.clientsController.clients.forEach((client) => {
+              if (!client.isConnected || !client.receiveEvents) return;
               client.sendEvent({
                 source: "controller",
                 event: "nvm restore progress",
                 bytesWritten,
                 total,
-              }),
-            );
+              });
+            });
           },
           message.migrateOptions,
         );
