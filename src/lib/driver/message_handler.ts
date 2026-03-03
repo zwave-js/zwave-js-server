@@ -1,10 +1,6 @@
-import {
-  Driver,
-  extractFirmware,
-  guessFirmwareFileFormat,
-  OTWFirmwareUpdateResult,
-} from "zwave-js";
+import { Driver, OTWFirmwareUpdateResult } from "zwave-js";
 import { UnknownCommandError } from "../error.js";
+import { parseAndExtractFirmware } from "../common.js";
 import {
   Client,
   ClientsController,
@@ -136,10 +132,10 @@ export class DriverMessageHandler implements MessageHandler {
           result = await this.driver.firmwareUpdateOTW(message.updateInfo);
         } else {
           const file = Buffer.from(message.file, "base64");
-          const { data } = await extractFirmware(
+          const { data } = await parseAndExtractFirmware(
+            message.filename,
             file,
-            message.fileFormat ??
-              guessFirmwareFileFormat(message.filename, file),
+            message.fileFormat,
           );
           result = await this.driver.firmwareUpdateOTW(data);
         }
@@ -148,6 +144,49 @@ export class DriverMessageHandler implements MessageHandler {
       case DriverCommand.isOTWFirmwareUpdateInProgress: {
         const progress = this.driver.isOTWFirmwareUpdateInProgress();
         return { progress };
+      }
+      case DriverCommand.softResetAndRestart: {
+        await this.driver.softResetAndRestart();
+        return {};
+      }
+      case DriverCommand.enterBootloader: {
+        await this.driver.enterBootloader();
+        return {};
+      }
+      case DriverCommand.leaveBootloader: {
+        await this.driver.leaveBootloader();
+        return {};
+      }
+      // CC version queries
+      case DriverCommand.getSupportedCCVersion: {
+        const version = this.driver.getSupportedCCVersion(
+          message.cc,
+          message.nodeId,
+          message.endpointIndex,
+        );
+        return { version };
+      }
+      case DriverCommand.getSafeCCVersion: {
+        const version = this.driver.getSafeCCVersion(
+          message.cc,
+          message.nodeId,
+          message.endpointIndex,
+        );
+        return { version };
+      }
+      // User agent
+      case DriverCommand.updateUserAgent: {
+        this.driver.updateUserAgent(message.components);
+        return {};
+      }
+      // RSSI monitoring
+      case DriverCommand.enableFrequentRSSIMonitoring: {
+        this.driver.enableFrequentRSSIMonitoring(message.durationMs);
+        return {};
+      }
+      case DriverCommand.disableFrequentRSSIMonitoring: {
+        this.driver.disableFrequentRSSIMonitoring();
+        return {};
       }
       default: {
         throw new UnknownCommandError(command);

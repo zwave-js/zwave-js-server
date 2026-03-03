@@ -8,7 +8,15 @@ import {
   ZWaveNode,
 } from "zwave-js";
 import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
-import { SupervisionResult, MaybeNotKnown } from "@zwave-js/core";
+import {
+  extractFirmware,
+  Firmware,
+  FirmwareFileFormat,
+  guessFirmwareFileFormat,
+  MaybeNotKnown,
+  SupervisionResult,
+  tryUnzipFirmwareFile,
+} from "@zwave-js/core";
 import {
   IncomingCommandNodeGetRawConfigParameterValue,
   IncomingCommandNodeSetRawConfigParameterValue,
@@ -108,4 +116,42 @@ export async function getRawConfigParameterValue(
     },
   );
   return { value };
+}
+
+// Precedence:
+// 1. Always try ZIP extraction first — firmware files may be zipped
+//    regardless of filename extension or explicit format.
+// 2. If an explicit format is provided, use it (on the unzipped data if
+//    applicable, otherwise on the raw data as-is).
+// 3. Fall back to guessing the format from the filename and raw data.
+function parseFirmwareFile(
+  filename: string,
+  rawData: Uint8Array<ArrayBuffer>,
+  explicitFormat?: FirmwareFileFormat,
+): { rawData: Uint8Array<ArrayBuffer>; format: FirmwareFileFormat } {
+  const unzipped = tryUnzipFirmwareFile(rawData);
+  if (unzipped) {
+    return explicitFormat !== undefined
+      ? { rawData: unzipped.rawData, format: explicitFormat }
+      : unzipped;
+  }
+
+  if (explicitFormat !== undefined) {
+    return { rawData, format: explicitFormat };
+  }
+
+  return { rawData, format: guessFirmwareFileFormat(filename, rawData) };
+}
+
+/**
+ * Parses a firmware file (handling format detection and ZIP extraction)
+ * and extracts the firmware data.
+ */
+export async function parseAndExtractFirmware(
+  filename: string,
+  rawData: Uint8Array<ArrayBuffer>,
+  explicitFormat?: FirmwareFileFormat,
+): Promise<Firmware> {
+  const parsed = parseFirmwareFile(filename, rawData, explicitFormat);
+  return extractFirmware(parsed.rawData, parsed.format);
 }
