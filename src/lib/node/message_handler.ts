@@ -148,15 +148,12 @@ export class NodeMessageHandler implements MessageHandler {
           message.powerlevel,
           message.testFrameCount,
           (acknowledged: number, total: number) => {
-            this.clientsController.clients.forEach((client) => {
-              if (!client.isConnected || !client.receiveEvents) return;
-              client.sendEvent({
-                source: "node",
-                event: "test powerlevel progress",
-                nodeId: message.nodeId,
-                acknowledged,
-                total,
-              });
+            this.clientsController.sendEventToListeningClients({
+              source: "node",
+              event: "test powerlevel progress",
+              nodeId: message.nodeId,
+              acknowledged,
+              total,
             });
           },
         );
@@ -171,7 +168,7 @@ export class NodeMessageHandler implements MessageHandler {
             lastRating: number,
             lastResult: LifelineHealthCheckResult,
           ) => {
-            const returnEvent0: OutgoingEvent = {
+            const returnEvent: OutgoingEvent = {
               source: "node",
               event: "check lifeline health progress",
               nodeId: message.nodeId,
@@ -179,13 +176,13 @@ export class NodeMessageHandler implements MessageHandler {
               totalRounds,
               lastRating,
             };
-            const returnEvent31 = { ...returnEvent0, lastResult };
-            this.clientsController.clients.forEach((client) => {
-              if (!client.isConnected || !client.receiveEvents) return;
-              client.sendEvent(
-                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
-              );
+            this.clientsController.sendEventToListeningClients(returnEvent, {
+              maxSchemaVersion: 30,
             });
+            this.clientsController.sendEventToListeningClients(
+              { ...returnEvent, lastResult },
+              { minSchemaVersion: 31 },
+            );
           },
         );
         return { summary };
@@ -200,7 +197,7 @@ export class NodeMessageHandler implements MessageHandler {
             lastRating: number,
             lastResult: RouteHealthCheckResult,
           ) => {
-            const returnEvent0: OutgoingEvent = {
+            const returnEvent: OutgoingEvent = {
               source: "node",
               event: "check route health progress",
               nodeId: message.nodeId,
@@ -208,13 +205,13 @@ export class NodeMessageHandler implements MessageHandler {
               totalRounds,
               lastRating,
             };
-            const returnEvent31 = { ...returnEvent0, lastResult };
-            this.clientsController.clients.forEach((client) => {
-              if (!client.isConnected || !client.receiveEvents) return;
-              client.sendEvent(
-                client.schemaVersion >= 31 ? returnEvent31 : returnEvent0,
-              );
+            this.clientsController.sendEventToListeningClients(returnEvent, {
+              maxSchemaVersion: 30,
             });
+            this.clientsController.sendEventToListeningClients(
+              { ...returnEvent, lastResult },
+              { minSchemaVersion: 31 },
+            );
           },
         );
         return { summary };

@@ -429,6 +429,27 @@ export class ClientsController extends EventEmitter {
     this.cleanupLoggingEventForwarder();
   }
 
+  public sendEventToListeningClients(
+    event:
+      | OutgoingMessages.OutgoingEvent
+      | ((client: Client) => OutgoingMessages.OutgoingEvent),
+    options?: {
+      minSchemaVersion?: number;
+      maxSchemaVersion?: number;
+    },
+  ) {
+    for (const client of this.clients) {
+      if (
+        client.isConnected &&
+        client.receiveEvents &&
+        client.schemaVersion >= (options?.minSchemaVersion ?? 0) &&
+        client.schemaVersion <= (options?.maxSchemaVersion ?? Infinity)
+      ) {
+        client.sendEvent(typeof event === "function" ? event(client) : event);
+      }
+    }
+  }
+
   disconnect() {
     if (this.pingInterval !== undefined) {
       clearInterval(this.pingInterval);

@@ -1,10 +1,9 @@
 import { Driver, Zniffer } from "zwave-js";
 import { UnknownCommandError } from "../error.js";
-import { Client, ClientsController } from "../server.js";
+import { ClientsController } from "../server.js";
 import { ZnifferCommand } from "./command.js";
 import { IncomingMessageZniffer } from "./incoming_message.js";
 import { ZnifferResultTypes } from "./outgoing_message.js";
-import { OutgoingEvent } from "../outgoing_message.js";
 import { MessageHandler } from "../message_handler.js";
 
 export class ZnifferMessageHandler implements MessageHandler {
@@ -14,24 +13,6 @@ export class ZnifferMessageHandler implements MessageHandler {
     private driver: Driver,
     private clientsController: ClientsController,
   ) {}
-
-  forwardEvent(data: OutgoingEvent, minSchemaVersion: number = 38) {
-    // Forward event to all clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data, minSchemaVersion),
-    );
-  }
-
-  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
-    // Send event to connected client only
-    if (
-      client.receiveEvents &&
-      client.isConnected &&
-      client.schemaVersion >= (minSchemaVersion ?? 0)
-    ) {
-      client.sendEvent(data);
-    }
-  }
 
   async handle(
     message: IncomingMessageZniffer,
@@ -59,33 +40,33 @@ export class ZnifferMessageHandler implements MessageHandler {
         this.zniffer = new Zniffer(message.devicePath, message.options);
         this.zniffer
           .on("ready", () =>
-            this.forwardEvent({
-              source: "zniffer",
-              event: "ready",
-            }),
+            this.clientsController.sendEventToListeningClients(
+              { source: "zniffer", event: "ready" },
+              { minSchemaVersion: 38 },
+            ),
           )
           .on("corrupted frame", (corruptedFrame, rawDate) =>
-            this.forwardEvent({
-              source: "zniffer",
-              event: "corrupted frame",
-              corruptedFrame,
-              rawDate,
-            }),
+            this.clientsController.sendEventToListeningClients(
+              {
+                source: "zniffer",
+                event: "corrupted frame",
+                corruptedFrame,
+                rawDate,
+              },
+              { minSchemaVersion: 38 },
+            ),
           )
           .on("frame", (frame, rawData) =>
-            this.forwardEvent({
-              source: "zniffer",
-              event: "frame",
-              frame,
-              rawData,
-            }),
+            this.clientsController.sendEventToListeningClients(
+              { source: "zniffer", event: "frame", frame, rawData },
+              { minSchemaVersion: 38 },
+            ),
           )
           .on("error", (error) =>
-            this.forwardEvent({
-              source: "zniffer",
-              event: "error",
-              error,
-            }),
+            this.clientsController.sendEventToListeningClients(
+              { source: "zniffer", event: "error", error },
+              { minSchemaVersion: 38 },
+            ),
           );
         await this.zniffer.init();
         return {};

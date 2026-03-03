@@ -51,13 +51,11 @@ export class DriverMessageHandler implements MessageHandler {
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
         this.clientsController.restartLoggingEventForwarderIfNeeded();
-        this.clientsController.clients.forEach((cl) => {
-          cl.sendEvent({
-            source: "driver",
-            event: "log config updated",
-            config: dumpLogConfig(this.driver, cl.schemaVersion),
-          });
-        });
+        this.clientsController.sendEventToListeningClients((client) => ({
+          source: "driver",
+          event: "log config updated",
+          config: dumpLogConfig(this.driver, client.schemaVersion),
+        }));
         return {};
       }
       case DriverCommand.isStatisticsEnabled: {

@@ -12,14 +12,13 @@ import {
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
 import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
-import { OutgoingEvent } from "./outgoing_message.js";
 import {
   dumpConfigurationMetadata,
   dumpFoundNode,
   dumpMetadata,
   dumpNode,
 } from "./state.js";
-import { Client, ClientsController } from "./server.js";
+import { ClientsController } from "./server.js";
 import { NodeNotFoundError } from "./error.js";
 
 export class EventForwarder {
@@ -29,24 +28,6 @@ export class EventForwarder {
    * @param clientsController
    */
   constructor(private clientsController: ClientsController) {}
-
-  forwardEvent(data: OutgoingEvent, minSchemaVersion?: number) {
-    // Forward event to all clients
-    this.clientsController.clients.forEach((client) =>
-      this.sendEvent(client, data, minSchemaVersion),
-    );
-  }
-
-  sendEvent(client: Client, data: OutgoingEvent, minSchemaVersion?: number) {
-    // Send event to connected client only
-    if (
-      client.receiveEvents &&
-      client.isConnected &&
-      client.schemaVersion >= (minSchemaVersion ?? 0)
-    ) {
-      client.sendEvent(data);
-    }
-  }
 
   start() {
     // Bind events for the controller and all existing nodes
@@ -58,68 +39,60 @@ export class EventForwarder {
       // which implies that the old controller and node instances are no longer valid.
       this.setupControllerAndNodes();
 
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) => {
-        if (client.schemaVersion >= 40) {
-          this.sendEvent(client, {
-            source: "driver",
-            event: "driver ready",
-          });
-        }
-      });
+      this.clientsController.sendEventToListeningClients(
+        {
+          source: "driver",
+          event: "driver ready",
+        },
+        { minSchemaVersion: 40 },
+      );
     });
 
     this.clientsController.driver.on("firmware update progress", (progress) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) => {
-        this.sendEvent(client, {
-          source: client.schemaVersion >= 41 ? "driver" : "controller",
-          event: "firmware update progress",
-          progress,
-        });
-      });
+      this.clientsController.sendEventToListeningClients((client) => ({
+        source: client.schemaVersion >= 41 ? "driver" : "controller",
+        event: "firmware update progress",
+        progress,
+      }));
     });
 
     this.clientsController.driver.on("firmware update finished", (result) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients.forEach((client) => {
-        this.sendEvent(client, {
-          source: client.schemaVersion >= 41 ? "driver" : "controller",
-          event: "firmware update finished",
-          result,
-        });
-      });
+      this.clientsController.sendEventToListeningClients((client) => ({
+        source: client.schemaVersion >= 41 ? "driver" : "controller",
+        event: "firmware update finished",
+        result,
+      }));
     });
 
     // Schema 47+ driver events
     this.clientsController.driver.on("all nodes ready", () => {
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "driver",
           event: "all nodes ready",
         },
-        47,
+        { minSchemaVersion: 47 },
       );
     });
 
     this.clientsController.driver.on("error", (error) => {
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "driver",
           event: "error",
           error: error.message,
         },
-        47,
+        { minSchemaVersion: 47 },
       );
     });
 
     this.clientsController.driver.on("bootloader ready", () => {
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "driver",
           event: "bootloader ready",
         },
-        47,
+        { minSchemaVersion: 47 },
       );
     });
   }
@@ -136,45 +109,38 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node added",
       (node, result) => {
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clientsController.clients.forEach((client) =>
-          this.sendEvent(client, {
-            source: "controller",
-            event: "node added",
-            node: dumpNode(node, client.schemaVersion),
-            result,
-          }),
-        );
+        this.clientsController.sendEventToListeningClients((client) => ({
+          source: "controller",
+          event: "node added",
+          node: dumpNode(node, client.schemaVersion),
+          result,
+        }));
         this.setupNode(node);
       },
     );
 
     this.clientsController.driver.controller.on("node found", (node) => {
-      // forward event to all connected clients, respecting schemaVersion it supports
-      this.clientsController.clients
-        .filter((client) => client.schemaVersion > 18)
-        .forEach((client) =>
-          this.sendEvent(client, {
-            source: "controller",
-            event: "node found",
-            node: dumpFoundNode(node, client.schemaVersion),
-          }),
-        );
+      this.clientsController.sendEventToListeningClients(
+        (client) => ({
+          source: "controller",
+          event: "node found",
+          node: dumpFoundNode(node, client.schemaVersion),
+        }),
+        { minSchemaVersion: 19 },
+      );
     });
 
     this.clientsController.driver.controller.on(
       "inclusion state changed",
       (state) => {
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clientsController.clients
-          .filter((client) => client.schemaVersion > 37)
-          .forEach((client) =>
-            this.sendEvent(client, {
-              source: "controller",
-              event: "inclusion state changed",
-              state,
-            }),
-          );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "inclusion state changed",
+            state,
+          },
+          { minSchemaVersion: 38 },
+        );
       },
     );
 
@@ -188,7 +154,7 @@ export class EventForwarder {
       ];
       for (const event of events) {
         this.clientsController.driver.controller.on(event, () =>
-          this.forwardEvent({
+          this.clientsController.sendEventToListeningClients({
             source: "controller",
             event,
           }),
@@ -199,110 +165,113 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "inclusion started",
       (strategy) => {
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion >= 37) {
-            this.sendEvent(client, {
-              source: "controller",
-              event: "inclusion started",
-              strategy,
-            });
-          } else {
-            this.sendEvent(client, {
-              source: "controller",
-              event: "inclusion started",
-              secure: strategy !== InclusionStrategy.Insecure,
-            });
-          }
-        });
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "inclusion started",
+            secure: strategy !== InclusionStrategy.Insecure,
+          },
+          { maxSchemaVersion: 36 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "inclusion started",
+            strategy,
+          },
+          { minSchemaVersion: 37 },
+        );
       },
     );
 
     this.clientsController.driver.controller.on(
       "node removed",
-      (node, reason) =>
-        // forward event to all connected clients, respecting schemaVersion it supports
-        this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion < 29) {
-            this.sendEvent(client, {
-              source: "controller",
-              event: "node removed",
-              node: dumpNode(node, client.schemaVersion),
-              replaced: [
-                RemoveNodeReason.Replaced,
-                RemoveNodeReason.ProxyReplaced,
-              ].includes(reason),
-            });
-          } else {
-            this.sendEvent(client, {
-              source: "controller",
-              event: "node removed",
-              node: dumpNode(node, client.schemaVersion),
-              reason,
-            });
-          }
-        }),
+      (node, reason) => {
+        this.clientsController.sendEventToListeningClients(
+          (client) => ({
+            source: "controller",
+            event: "node removed",
+            node: dumpNode(node, client.schemaVersion),
+            replaced: [
+              RemoveNodeReason.Replaced,
+              RemoveNodeReason.ProxyReplaced,
+            ].includes(reason),
+          }),
+          { maxSchemaVersion: 28 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          (client) => ({
+            source: "controller",
+            event: "node removed",
+            node: dumpNode(node, client.schemaVersion),
+            reason,
+          }),
+          { minSchemaVersion: 29 },
+        );
+      },
     );
 
     this.clientsController.driver.controller.on(
       "rebuild routes progress",
       (progress) => {
-        this.clientsController.clients.forEach((client) => {
-          if (!client.isConnected || !client.receiveEvents) return;
-          if (client.schemaVersion <= 31) {
-            client.sendEvent({
-              source: "controller",
-              event: "heal network progress",
-              progress: Object.fromEntries(progress),
-            });
-          } else {
-            client.sendEvent({
-              source: "controller",
-              event: "rebuild routes progress",
-              progress: Object.fromEntries(progress),
-            });
-          }
-        });
+        const progressObj = Object.fromEntries(progress);
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "heal network progress",
+            progress: progressObj,
+          },
+          { maxSchemaVersion: 31 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "rebuild routes progress",
+            progress: progressObj,
+          },
+          { minSchemaVersion: 32 },
+        );
       },
     );
 
     this.clientsController.driver.controller.on("status changed", (status) =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "status changed",
           status,
         },
-        31,
+        { minSchemaVersion: 31 },
       ),
     );
 
     this.clientsController.driver.controller.on(
       "rebuild routes done",
       (result) => {
-        this.clientsController.clients.forEach((client) => {
-          if (!client.isConnected || !client.receiveEvents) return;
-          if (client.schemaVersion <= 31) {
-            client.sendEvent({
-              source: "controller",
-              event: "heal network done",
-              result: Object.fromEntries(result),
-            });
-          } else {
-            client.sendEvent({
-              source: "controller",
-              event: "rebuild routes done",
-              result: Object.fromEntries(result),
-            });
-          }
-        });
+        const resultObj = Object.fromEntries(result);
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "heal network done",
+            result: resultObj,
+          },
+          { maxSchemaVersion: 31 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "controller",
+            event: "rebuild routes done",
+            result: resultObj,
+          },
+          { minSchemaVersion: 32 },
+        );
       },
     );
 
     this.clientsController.driver.controller.on(
       "statistics updated",
       (statistics) =>
-        this.forwardEvent({
+        this.clientsController.sendEventToListeningClients({
           source: "controller",
           event: "statistics updated",
           statistics,
@@ -310,13 +279,13 @@ export class EventForwarder {
     );
 
     this.clientsController.driver.controller.on("identify", (triggeringNode) =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "identify",
           nodeId: triggeringNode.nodeId,
         },
-        31,
+        { minSchemaVersion: 31 },
       ),
     );
 
@@ -324,54 +293,54 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "network found",
       (homeId: number, ownNodeId: number) =>
-        this.forwardEvent(
+        this.clientsController.sendEventToListeningClients(
           {
             source: "controller",
             event: "network found",
             homeId,
             ownNodeId,
           },
-          47,
+          { minSchemaVersion: 47 },
         ),
     );
 
     this.clientsController.driver.controller.on("network joined", () =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "network joined",
         },
-        47,
+        { minSchemaVersion: 47 },
       ),
     );
 
     this.clientsController.driver.controller.on("network left", () =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "network left",
         },
-        47,
+        { minSchemaVersion: 47 },
       ),
     );
 
     this.clientsController.driver.controller.on("joining network failed", () =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "joining network failed",
         },
-        47,
+        { minSchemaVersion: 47 },
       ),
     );
 
     this.clientsController.driver.controller.on("leaving network failed", () =>
-      this.forwardEvent(
+      this.clientsController.sendEventToListeningClients(
         {
           source: "controller",
           event: "leaving network failed",
         },
-        47,
+        { minSchemaVersion: 47 },
       ),
     );
   }
@@ -380,7 +349,7 @@ export class EventForwarder {
     // Bind to all node events
     // https://github.com/zwave-js/node-zwave-js/blob/master/packages/zwave-js/src/lib/node/Types.ts#L84-L103
     const notifyNode = (node: ZWaveNode, event: string, extra = {}) =>
-      this.forwardEvent({
+      this.clientsController.sendEventToListeningClients({
         source: "node",
         event,
         nodeId: node.nodeId,
@@ -388,15 +357,12 @@ export class EventForwarder {
       });
 
     node.on("ready", (changedNode: ZWaveNode) => {
-      // Dump full node state on ready event
-      this.clientsController.clients.forEach((client) =>
-        this.sendEvent(client, {
-          source: "node",
-          event: "ready",
-          nodeId: changedNode.nodeId,
-          nodeState: dumpNode(changedNode, client.schemaVersion),
-        }),
-      );
+      this.clientsController.sendEventToListeningClients((client) => ({
+        source: "node",
+        event: "ready",
+        nodeId: changedNode.nodeId,
+        nodeState: dumpNode(changedNode, client.schemaVersion),
+      }));
     });
 
     {
@@ -449,7 +415,7 @@ export class EventForwarder {
       (changedNode: ZWaveNode, oldArgs: ZWaveNodeMetadataUpdatedArgs) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
-        this.clientsController.clients.forEach((client) => {
+        this.clientsController.sendEventToListeningClients((client) => {
           // Copy arguments for each client so transforms don't impact all clients
           const args = { ...oldArgs };
           if (args.metadata != undefined) {
@@ -462,12 +428,12 @@ export class EventForwarder {
               args.metadata = dumpMetadata(args.metadata, client.schemaVersion);
             }
           }
-          this.sendEvent(client, {
-            source: "node",
+          return {
+            source: "node" as const,
             event: "metadata updated",
             nodeId: changedNode.nodeId,
             args,
-          });
+          };
         });
       },
     );
@@ -481,53 +447,60 @@ export class EventForwarder {
           throw new NodeNotFoundError(endpoint.nodeId);
         }
         if (!changedNode.ready) return;
-        this.clientsController.clients.forEach((client) => {
-          // Only send notification events from the Notification CC for schema version < 3
-          if (client.schemaVersion < 3 && ccId == CommandClasses.Notification) {
-            const eventData: OutgoingEvent = {
+        // Fields set to undefined are omitted during JSON serialization,
+        // which lets us exclude fields from older schema versions without
+        // mutating the original args object.
+        // Schema < 3: only Notification CC, legacy format
+        if (ccId == CommandClasses.Notification) {
+          this.clientsController.sendEventToListeningClients(
+            {
               source: "node",
               event: "notification",
               nodeId: changedNode.nodeId,
               notificationLabel: args.eventLabel,
-            };
-            if ("parameters" in args) {
-              eventData["parameters"] = args.parameters;
-            }
-            this.sendEvent(client, eventData);
-          } else if (client.schemaVersion >= 3) {
-            if (client.schemaVersion < 21) {
-              if (
-                [
-                  CommandClasses["Multilevel Switch"],
-                  CommandClasses["Entry Control"],
-                ].includes(ccId)
-              ) {
-                delete args.eventTypeLabel;
-              }
-              if (ccId == CommandClasses["Entry Control"]) {
-                delete args.dataTypeLabel;
-              }
-            }
-            if (client.schemaVersion <= 31) {
-              this.sendEvent(client, {
-                source: "node",
-                event: "notification",
-                nodeId: changedNode.nodeId,
-                ccId,
-                args,
-              });
-            } else {
-              this.sendEvent(client, {
-                source: "node",
-                event: "notification",
-                nodeId: endpoint.nodeId,
-                endpointIndex: endpoint.index,
-                ccId,
-                args,
-              });
-            }
-          }
-        });
+              parameters: args.parameters,
+            },
+            { maxSchemaVersion: 2 },
+          );
+        }
+        // Schema 3-20: strip fields not yet supported
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "notification",
+            nodeId: changedNode.nodeId,
+            ccId,
+            args: {
+              ...args,
+              eventTypeLabel: undefined,
+              dataTypeLabel: undefined,
+            },
+          },
+          { minSchemaVersion: 3, maxSchemaVersion: 20 },
+        );
+        // Schema 21-31: node-based notification
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "notification",
+            nodeId: changedNode.nodeId,
+            ccId,
+            args,
+          },
+          { minSchemaVersion: 21, maxSchemaVersion: 31 },
+        );
+        // Schema 32+: endpoint-based notification
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "notification",
+            nodeId: endpoint.nodeId,
+            endpointIndex: endpoint.index,
+            ccId,
+            args,
+          },
+          { minSchemaVersion: 32 },
+        );
       },
     );
 
@@ -536,24 +509,25 @@ export class EventForwarder {
       (changedNode: ZWaveNode, progress: FirmwareUpdateProgress) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
-        this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion <= 23) {
-            this.sendEvent(client, {
-              source: "node",
-              event: "firmware update progress",
-              nodeId: changedNode.nodeId,
-              sentFragments: progress.sentFragments,
-              totalFragments: progress.totalFragments,
-            });
-          } else {
-            this.sendEvent(client, {
-              source: "node",
-              event: "firmware update progress",
-              nodeId: changedNode.nodeId,
-              progress,
-            });
-          }
-        });
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "firmware update progress",
+            nodeId: changedNode.nodeId,
+            sentFragments: progress.sentFragments,
+            totalFragments: progress.totalFragments,
+          },
+          { maxSchemaVersion: 23 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "firmware update progress",
+            nodeId: changedNode.nodeId,
+            progress,
+          },
+          { minSchemaVersion: 24 },
+        );
       },
     );
 
@@ -562,24 +536,25 @@ export class EventForwarder {
       (changedNode: ZWaveNode, result: FirmwareUpdateResult) => {
         // only forward value events for ready nodes
         if (!changedNode.ready) return;
-        this.clientsController.clients.forEach((client) => {
-          if (client.schemaVersion <= 23) {
-            this.sendEvent(client, {
-              source: "node",
-              event: "firmware update finished",
-              nodeId: changedNode.nodeId,
-              status: result.status,
-              waitTime: result.waitTime as any,
-            });
-          } else {
-            this.sendEvent(client, {
-              source: "node",
-              event: "firmware update finished",
-              nodeId: changedNode.nodeId,
-              result,
-            });
-          }
-        });
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "firmware update finished",
+            nodeId: changedNode.nodeId,
+            status: result.status,
+            waitTime: result.waitTime as any,
+          },
+          { maxSchemaVersion: 23 },
+        );
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "firmware update finished",
+            nodeId: changedNode.nodeId,
+            result,
+          },
+          { minSchemaVersion: 24 },
+        );
       },
     );
 
