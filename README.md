@@ -443,7 +443,9 @@ interface {
 }
 ```
 
-If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload. If guessing fails, the server will automatically attempt to extract firmware from a ZIP archive.
+The server will automatically attempt to extract firmware from a ZIP archive.
+
+If `fileFormat` is not provided in Option 1, the format will be guessed based on the filename and file payload.
 
 Returns:
 
