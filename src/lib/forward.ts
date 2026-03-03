@@ -472,10 +472,13 @@ export class EventForwarder {
             ccId,
             args: {
               ...args,
+              // Strip eventTypeLabel for Multilevel Switch and Entry Control CCs
+              // (condition && object) spreads the object when true, nothing when false
               ...([
                 CommandClasses["Multilevel Switch"],
                 CommandClasses["Entry Control"],
               ].includes(ccId) && { eventTypeLabel: undefined }),
+              // Strip dataTypeLabel for Entry Control CC only
               ...(ccId === CommandClasses["Entry Control"] && {
                 dataTypeLabel: undefined,
               }),
