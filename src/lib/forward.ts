@@ -463,7 +463,7 @@ export class EventForwarder {
             { maxSchemaVersion: 2 },
           );
         }
-        // Schema 3-20: strip fields not yet supported
+        // Schema 3-20: strip fields not yet supported for specific CCs
         this.clientsController.sendEventToListeningClients(
           {
             source: "node",
@@ -472,8 +472,13 @@ export class EventForwarder {
             ccId,
             args: {
               ...args,
-              eventTypeLabel: undefined,
-              dataTypeLabel: undefined,
+              ...([
+                CommandClasses["Multilevel Switch"],
+                CommandClasses["Entry Control"],
+              ].includes(ccId) && { eventTypeLabel: undefined }),
+              ...(ccId === CommandClasses["Entry Control"] && {
+                dataTypeLabel: undefined,
+              }),
             },
           },
           { minSchemaVersion: 3, maxSchemaVersion: 20 },
