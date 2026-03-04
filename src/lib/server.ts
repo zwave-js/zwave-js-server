@@ -202,6 +202,7 @@ export class Client {
         return this.sendResultSuccess(
           msg.messageId,
           await this.instanceHandlers[instance].handle(msg),
+          instance === Instance.introspect,
         );
       }
 
