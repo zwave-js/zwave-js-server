@@ -19,6 +19,7 @@ import {
   dumpNode,
 } from "./state.js";
 import { ClientsController } from "./server.js";
+import { OutgoingEvent } from "./outgoing_message.js";
 import { NodeNotFoundError } from "./error.js";
 
 export class EventForwarder {
@@ -49,19 +50,25 @@ export class EventForwarder {
     });
 
     this.clientsController.driver.on("firmware update progress", (progress) => {
-      this.clientsController.sendEventToListeningClients((client) => ({
-        source: client.schemaVersion >= 41 ? "driver" : "controller",
-        event: "firmware update progress",
-        progress,
-      }));
+      this.clientsController.sendEventToListeningClients(
+        (client) =>
+          ({
+            source: client.schemaVersion >= 41 ? "driver" : "controller",
+            event: "firmware update progress",
+            progress,
+          }) satisfies OutgoingEvent,
+      );
     });
 
     this.clientsController.driver.on("firmware update finished", (result) => {
-      this.clientsController.sendEventToListeningClients((client) => ({
-        source: client.schemaVersion >= 41 ? "driver" : "controller",
-        event: "firmware update finished",
-        result,
-      }));
+      this.clientsController.sendEventToListeningClients(
+        (client) =>
+          ({
+            source: client.schemaVersion >= 41 ? "driver" : "controller",
+            event: "firmware update finished",
+            result,
+          }) satisfies OutgoingEvent,
+      );
     });
 
     // Schema 47+ driver events
@@ -109,23 +116,27 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node added",
       (node, result) => {
-        this.clientsController.sendEventToListeningClients((client) => ({
-          source: "controller",
-          event: "node added",
-          node: dumpNode(node, client.schemaVersion),
-          result,
-        }));
+        this.clientsController.sendEventToListeningClients(
+          (client) =>
+            ({
+              source: "controller",
+              event: "node added",
+              node: dumpNode(node, client.schemaVersion),
+              result,
+            }) satisfies OutgoingEvent,
+        );
         this.setupNode(node);
       },
     );
 
     this.clientsController.driver.controller.on("node found", (node) => {
       this.clientsController.sendEventToListeningClients(
-        (client) => ({
-          source: "controller",
-          event: "node found",
-          node: dumpFoundNode(node, client.schemaVersion),
-        }),
+        (client) =>
+          ({
+            source: "controller",
+            event: "node found",
+            node: dumpFoundNode(node, client.schemaVersion),
+          }) satisfies OutgoingEvent,
         { minSchemaVersion: 19 },
       );
     });
@@ -188,24 +199,26 @@ export class EventForwarder {
       "node removed",
       (node, reason) => {
         this.clientsController.sendEventToListeningClients(
-          (client) => ({
-            source: "controller",
-            event: "node removed",
-            node: dumpNode(node, client.schemaVersion),
-            replaced: [
-              RemoveNodeReason.Replaced,
-              RemoveNodeReason.ProxyReplaced,
-            ].includes(reason),
-          }),
+          (client) =>
+            ({
+              source: "controller",
+              event: "node removed",
+              node: dumpNode(node, client.schemaVersion),
+              replaced: [
+                RemoveNodeReason.Replaced,
+                RemoveNodeReason.ProxyReplaced,
+              ].includes(reason),
+            }) satisfies OutgoingEvent,
           { maxSchemaVersion: 28 },
         );
         this.clientsController.sendEventToListeningClients(
-          (client) => ({
-            source: "controller",
-            event: "node removed",
-            node: dumpNode(node, client.schemaVersion),
-            reason,
-          }),
+          (client) =>
+            ({
+              source: "controller",
+              event: "node removed",
+              node: dumpNode(node, client.schemaVersion),
+              reason,
+            }) satisfies OutgoingEvent,
           { minSchemaVersion: 29 },
         );
       },
@@ -357,12 +370,15 @@ export class EventForwarder {
       });
 
     node.on("ready", (changedNode: ZWaveNode) => {
-      this.clientsController.sendEventToListeningClients((client) => ({
-        source: "node",
-        event: "ready",
-        nodeId: changedNode.nodeId,
-        nodeState: dumpNode(changedNode, client.schemaVersion),
-      }));
+      this.clientsController.sendEventToListeningClients(
+        (client) =>
+          ({
+            source: "node",
+            event: "ready",
+            nodeId: changedNode.nodeId,
+            nodeState: dumpNode(changedNode, client.schemaVersion),
+          }) satisfies OutgoingEvent,
+      );
     });
 
     {
@@ -429,11 +445,11 @@ export class EventForwarder {
             }
           }
           return {
-            source: "node" as const,
+            source: "node",
             event: "metadata updated",
             nodeId: changedNode.nodeId,
             args,
-          };
+          } satisfies OutgoingEvent;
         });
       },
     );
