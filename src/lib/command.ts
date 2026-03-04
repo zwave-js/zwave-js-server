@@ -3,9 +3,11 @@ export { ConfigManagerCommand } from "./config_manager/command.js";
 export { ControllerCommand } from "./controller/command.js";
 export { DriverCommand } from "./driver/command.js";
 export { EndpointCommand } from "./endpoint/command.js";
+export { IntrospectCommand } from "./introspect/command.js";
 export { MulticastGroupCommand } from "./multicast_group/command.js";
 export { NodeCommand } from "./node/command.js";
 export { UtilsCommand } from "./utils/command.js";
+export { ZnifferCommand } from "./zniffer/command.js";
 
 export enum ServerCommand {
   startListening = "start_listening",

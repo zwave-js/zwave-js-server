@@ -10,6 +10,7 @@ import { MulticastGroupResultTypes } from "./multicast_group/outgoing_message.js
 import { EndpointResultTypes } from "./endpoint/outgoing_message.js";
 import { UtilsResultTypes } from "./utils/outgoing_message.js";
 import { ConfigManagerResultTypes } from "./config_manager/outgoing_message.js";
+import { IntrospectResultTypes } from "./introspect/outgoing_message.js";
 import { ZnifferResultTypes } from "./zniffer/outgoing_message.js";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
@@ -77,6 +78,7 @@ export type ResultTypes = ServerResultTypes &
   BroadcastNodeResultTypes &
   EndpointResultTypes &
   UtilsResultTypes &
+  IntrospectResultTypes &
   ZnifferResultTypes &
   ConfigManagerResultTypes;
 

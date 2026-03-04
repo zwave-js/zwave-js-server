@@ -38,6 +38,7 @@ import {
 import { Instance } from "./instance.js";
 import { ServerCommand } from "./command.js";
 import { DriverMessageHandler } from "./driver/message_handler.js";
+import { IntrospectMessageHandler } from "./introspect/message_handler.js";
 import { LogContexts, LoggingEventForwarder } from "./logging.js";
 import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler.js";
 import { MulticastGroupMessageHandler } from "./multicast_group/message_handler.js";
@@ -113,6 +114,7 @@ export class Client {
         this,
       ),
       [Instance.endpoint]: new EndpointMessageHandler(this.driver, this),
+      [Instance.introspect]: new IntrospectMessageHandler(),
       [Instance.utils]: new UtilsMessageHandler(),
       [Instance.zniffer]: new ZnifferMessageHandler(driver, clientsController),
     };

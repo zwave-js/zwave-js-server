@@ -181,6 +181,33 @@ interface {
 }
 ```
 
+### Introspection
+
+The server supports introspection commands that allow clients to discover the API at runtime. These commands work **before `initialize`**, so clients can explore the API before negotiating a schema version.
+
+#### Get command schema
+
+Returns the full [JSON Schema](https://json-schema.org/) describing all incoming message types. The schema uses `$ref` pointers and a shared `definitions` dictionary for compact representation.
+
+```ts
+interface {
+  messageId: string;
+  command: "introspect.commands";
+}
+```
+
+Returns a JSON Schema (Draft 7) object describing all valid incoming messages.
+
+**Exploring the schema**
+
+The returned schema can be explored with any JSON Schema-compatible tool:
+
+- **[jq](https://jqlang.org/)** — Query the schema from the command line (e.g. `jq '.definitions.IncomingMessageNode'`)
+- **[JSON Schema Viewer](https://json-schema.app/)** — Paste the schema into the online viewer for interactive exploration
+- **[JSON Crack](https://jsoncrack.com/)** — Visualize the schema as an interactive graph
+- **VS Code** — Extensions like [JSON Schema Viewer](https://marketplace.visualstudio.com/items?itemName=jock.svg) provide in-editor navigation
+- **[jsonschema](https://python-jsonschema.readthedocs.io/) (Python)** / **[ajv](https://ajv.js.org/) (JS)** — Validate messages programmatically against the schema
+
 ### Driver level commands
 
 #### Get the config of the driver
