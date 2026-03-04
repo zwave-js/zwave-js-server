@@ -183,7 +183,7 @@ interface {
 
 ### Introspection
 
-The server supports introspection commands that allow clients to discover the API at runtime. These commands work **before `initialize`**, so clients can explore the API before negotiating a schema version.
+The server supports introspection commands that allow clients to discover the API at runtime. These commands work both before and after `initialize`, so clients can explore the API at any point — including before negotiating a schema version.
 
 #### Get command schema
 

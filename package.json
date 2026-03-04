@@ -36,7 +36,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
     "test": "npm run generate:schema && prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
-    "generate:schema": "ts-json-schema-generator --path src/lib/incoming_message.ts --type IncomingMessage --tsconfig tsconfig.json --out src/lib/generated/incoming_message_schema.json",
+    "generate:schema": "mkdir -p src/lib/generated && ts-json-schema-generator --path src/lib/incoming_message.ts --type IncomingMessage --tsconfig tsconfig.json --no-type-check --out src/lib/generated/incoming_message_schema.json",
     "prebuild": "npm run generate:schema",
     "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node20",
