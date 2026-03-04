@@ -6,6 +6,7 @@ export interface IncomingCommandIntrospectBase extends IncomingCommandBase {}
 
 export interface IncomingCommandIntrospectCommands extends IncomingCommandIntrospectBase {
   command: IntrospectCommand.commands;
+  commandType?: string;
 }
 
 export type IncomingMessageIntrospect = IncomingCommandIntrospectCommands;
