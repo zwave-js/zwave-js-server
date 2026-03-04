@@ -726,7 +726,7 @@ export class ControllerMessageHandler implements MessageHandler {
         const regions = this.driver.controller.getSupportedRFRegions(
           message.filterSubsets,
         );
-        return { regions: regions ? [...regions] : undefined };
+        return { regions: regions ?? undefined };
       }
       default: {
         throw new UnknownCommandError(command);

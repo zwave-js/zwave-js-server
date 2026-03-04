@@ -196,6 +196,6 @@ export interface ControllerResultTypes {
   };
   // RF region info
   [ControllerCommand.getSupportedRFRegions]: {
-    regions: RFRegion[] | undefined;
+    regions: readonly RFRegion[] | undefined;
   };
 }
