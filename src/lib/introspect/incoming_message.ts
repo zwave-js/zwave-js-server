@@ -8,4 +8,11 @@ export interface IncomingCommandIntrospectCommands extends IncomingCommandIntros
   command: IntrospectCommand.commands;
 }
 
-export type IncomingMessageIntrospect = IncomingCommandIntrospectCommands;
+export interface IncomingCommandIntrospectStates extends IncomingCommandIntrospectBase {
+  command: IntrospectCommand.states;
+  schemaVersion?: number | "all";
+}
+
+export type IncomingMessageIntrospect =
+  | IncomingCommandIntrospectCommands
+  | IncomingCommandIntrospectStates;
