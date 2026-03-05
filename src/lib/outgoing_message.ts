@@ -67,6 +67,8 @@ export interface ServerResultTypes {
   [ServerCommand.getLogConfig]: { config: Partial<LogConfig> };
   [ServerCommand.initialize]: Record<string, never>;
   [ServerCommand.setApiSchema]: Record<string, never>;
+  [ServerCommand.startListeningLogs]: Record<string, never>;
+  [ServerCommand.stopListeningLogs]: Record<string, never>;
 }
 
 export type ResultTypes = ServerResultTypes &
