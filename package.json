@@ -36,9 +36,9 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
     "test": "npm run generate:schema && prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
-    "generate:schema": "ts-json-schema-generator --path src/lib/incoming_message.ts --type IncomingMessage --tsconfig tsconfig.json --no-type-check --out src/lib/generated/incoming_message_schema.json",
+    "generate:schema": "ts-json-schema-generator --path src/lib/incoming_message.ts --type IncomingMessage --tsconfig tsconfig.json --no-type-check --out src/lib/generated/incoming_message_schema.json && node -p \"'export default '+require('fs').readFileSync('src/lib/generated/incoming_message_schema.json','utf-8').trimEnd()+';'\" > src/lib/generated/incoming_message_schema.ts",
     "prebuild": "npm run generate:schema",
-    "build": "tsc -p . && mkdir -p dist-esm/lib/generated && cp src/lib/generated/incoming_message_schema.json dist-esm/lib/generated/",
+    "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node20",
     "prepare": "npm run build",
     "prepublishOnly": "rm -rf dist-* && npm run build"
