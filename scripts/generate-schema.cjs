@@ -1,23 +1,22 @@
-// Usage: node scripts/generate-schema.cjs <source-path> <type-name> <output-base> [...flags]
-// Generates a JSON schema from a TypeScript type, then wraps it as a TS module.
-// Output: <output-base>.json and <output-base>.ts
+// Usage: node scripts/generate-schema.cjs <source-path> <type-name> <output> [...flags]
+// Generates a JSON schema from a TypeScript type.
 // Extra flags are passed through to ts-json-schema-generator.
 const { execFileSync } = require("child_process");
-const { mkdirSync, readFileSync, writeFileSync } = require("fs");
-const { dirname } = require("path");
+const { mkdirSync } = require("fs");
+const { dirname, join } = require("path");
 
-const [sourcePath, typeName, outputBase, ...extraFlags] = process.argv.slice(2);
-if (!sourcePath || !typeName || !outputBase) {
+const [sourcePath, typeName, output, ...extraFlags] = process.argv.slice(2);
+if (!sourcePath || !typeName || !output) {
   console.error(
-    "Usage: node scripts/generate-schema.cjs <source-path> <type-name> <output-base> [...flags]",
+    "Usage: node scripts/generate-schema.cjs <source-path> <type-name> <output> [...flags]",
   );
   process.exit(1);
 }
 
-mkdirSync(dirname(outputBase), { recursive: true });
+mkdirSync(dirname(output), { recursive: true });
 
 execFileSync(
-  "ts-json-schema-generator",
+  join(__dirname, "../node_modules/.bin/ts-json-schema-generator"),
   [
     "--path",
     sourcePath,
@@ -27,11 +26,8 @@ execFileSync(
     "tsconfig.json",
     "--no-type-check",
     "--out",
-    `${outputBase}.json`,
+    output,
     ...extraFlags,
   ],
   { stdio: "inherit" },
 );
-
-const json = readFileSync(`${outputBase}.json`, "utf-8").trimEnd();
-writeFileSync(`${outputBase}.ts`, `export default ${json};\n`);
