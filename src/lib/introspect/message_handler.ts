@@ -1,5 +1,5 @@
 import { UnknownCommandError } from "../error.js";
-import incomingMessageSchema from "../generated/incoming_message_schema.js";
+import incomingMessageSchema from "../../generated/incoming_message_schema.js";
 import { MessageHandler } from "../message_handler.js";
 import { IntrospectCommand } from "./command.js";
 import { IncomingMessageIntrospect } from "./incoming_message.js";
