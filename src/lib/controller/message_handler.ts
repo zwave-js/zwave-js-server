@@ -252,7 +252,7 @@ export class ControllerMessageHandler implements MessageHandler {
       case ControllerCommand.backupNVMRaw: {
         const nvmDataRaw = await this.driver.controller.backupNVMRaw(
           (bytesRead: number, total: number) => {
-            this.clientsController.sendEventToListeningClients({
+            this.client.trySendEvent({
               source: "controller",
               event: "nvm backup progress",
               bytesRead,
@@ -267,7 +267,7 @@ export class ControllerMessageHandler implements MessageHandler {
         await this.driver.controller.restoreNVM(
           nvmData,
           (bytesRead: number, total: number) => {
-            this.clientsController.sendEventToListeningClients({
+            this.client.trySendEvent({
               source: "controller",
               event: "nvm convert progress",
               bytesRead,
@@ -275,7 +275,7 @@ export class ControllerMessageHandler implements MessageHandler {
             });
           },
           (bytesWritten: number, total: number) => {
-            this.clientsController.sendEventToListeningClients({
+            this.client.trySendEvent({
               source: "controller",
               event: "nvm restore progress",
               bytesWritten,

@@ -11,7 +11,7 @@ import {
   guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
-import { Client, ClientsController } from "../server.js";
+import { Client } from "../server.js";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "../state.js";
 import { NodeCommand } from "./command.js";
 import { IncomingMessageNode } from "./incoming_message.js";
@@ -27,7 +27,6 @@ import { MessageHandler } from "../message_handler.js";
 
 export class NodeMessageHandler implements MessageHandler {
   constructor(
-    private clientsController: ClientsController,
     private driver: Driver,
     private client: Client,
   ) {}
@@ -148,7 +147,7 @@ export class NodeMessageHandler implements MessageHandler {
           message.powerlevel,
           message.testFrameCount,
           (acknowledged: number, total: number) => {
-            this.clientsController.sendEventToListeningClients({
+            this.client.trySendEvent({
               source: "node",
               event: "test powerlevel progress",
               nodeId: message.nodeId,
@@ -168,21 +167,26 @@ export class NodeMessageHandler implements MessageHandler {
             lastRating: number,
             lastResult: LifelineHealthCheckResult,
           ) => {
-            const returnEvent: OutgoingEvent = {
-              source: "node",
-              event: "check lifeline health progress",
-              nodeId: message.nodeId,
-              round,
-              totalRounds,
-              lastRating,
-            };
-            this.clientsController.sendEventToListeningClients(returnEvent, {
-              maxSchemaVersion: 30,
-            });
-            this.clientsController.sendEventToListeningClients(
-              { ...returnEvent, lastResult },
-              { minSchemaVersion: 31 },
-            );
+            const event: OutgoingEvent =
+              this.client.schemaVersion >= 31
+                ? {
+                    source: "node",
+                    event: "check lifeline health progress",
+                    nodeId: message.nodeId,
+                    round,
+                    totalRounds,
+                    lastRating,
+                    lastResult,
+                  }
+                : {
+                    source: "node",
+                    event: "check lifeline health progress",
+                    nodeId: message.nodeId,
+                    round,
+                    totalRounds,
+                    lastRating,
+                  };
+            this.client.trySendEvent(event);
           },
         );
         return { summary };
@@ -197,21 +201,26 @@ export class NodeMessageHandler implements MessageHandler {
             lastRating: number,
             lastResult: RouteHealthCheckResult,
           ) => {
-            const returnEvent: OutgoingEvent = {
-              source: "node",
-              event: "check route health progress",
-              nodeId: message.nodeId,
-              round,
-              totalRounds,
-              lastRating,
-            };
-            this.clientsController.sendEventToListeningClients(returnEvent, {
-              maxSchemaVersion: 30,
-            });
-            this.clientsController.sendEventToListeningClients(
-              { ...returnEvent, lastResult },
-              { minSchemaVersion: 31 },
-            );
+            const event: OutgoingEvent =
+              this.client.schemaVersion >= 31
+                ? {
+                    source: "node",
+                    event: "check route health progress",
+                    nodeId: message.nodeId,
+                    round,
+                    totalRounds,
+                    lastRating,
+                    lastResult,
+                  }
+                : {
+                    source: "node",
+                    event: "check route health progress",
+                    nodeId: message.nodeId,
+                    round,
+                    totalRounds,
+                    lastRating,
+                  };
+            this.client.trySendEvent(event);
           },
         );
         return { summary };

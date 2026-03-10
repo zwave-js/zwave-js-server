@@ -99,11 +99,7 @@ export class Client {
         this.driver,
         this,
       ),
-      [Instance.node]: new NodeMessageHandler(
-        this.clientsController,
-        this.driver,
-        this,
-      ),
+      [Instance.node]: new NodeMessageHandler(this.driver, this),
       [Instance.multicast_group]: new MulticastGroupMessageHandler(
         this.driver,
         this,
@@ -306,6 +302,11 @@ export class Client {
 
   sendEvent(event: OutgoingMessages.OutgoingEvent) {
     this.sendData({ type: "event", event });
+  }
+
+  trySendEvent(event: OutgoingMessages.OutgoingEvent) {
+    if (!this.isConnected || !this.receiveEvents) return;
+    this.sendEvent(event);
   }
 
   sendData(data: OutgoingMessages.OutgoingMessage, compress = false) {
