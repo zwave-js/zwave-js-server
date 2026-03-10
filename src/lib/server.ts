@@ -300,13 +300,27 @@ export class Client {
     }
   }
 
-  sendEvent(event: OutgoingMessages.OutgoingEvent) {
+  sendEvent(
+    event: OutgoingMessages.OutgoingEvent,
+    options?: {
+      minSchemaVersion?: number;
+      maxSchemaVersion?: number;
+    },
+  ) {
+    if (this.schemaVersion < (options?.minSchemaVersion ?? 0)) return;
+    if (this.schemaVersion > (options?.maxSchemaVersion ?? Infinity)) return;
     this.sendData({ type: "event", event });
   }
 
-  trySendEvent(event: OutgoingMessages.OutgoingEvent) {
+  trySendEvent(
+    event: OutgoingMessages.OutgoingEvent,
+    options?: {
+      minSchemaVersion?: number;
+      maxSchemaVersion?: number;
+    },
+  ) {
     if (!this.isConnected || !this.receiveEvents) return;
-    this.sendEvent(event);
+    this.sendEvent(event, options);
   }
 
   sendData(data: OutgoingMessages.OutgoingMessage, compress = false) {

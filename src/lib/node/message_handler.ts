@@ -6,9 +6,7 @@ import {
 import {
   CommandClasses,
   ConfigurationMetadata,
-  extractFirmware,
   Firmware,
-  guessFirmwareFileFormat,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
 import { Client } from "../server.js";
@@ -19,6 +17,7 @@ import { NodeResultTypes } from "./outgoing_message.js";
 import {
   firmwareUpdateOutgoingMessage,
   getRawConfigParameterValue,
+  parseAndExtractFirmware,
   setRawConfigParameterValue,
   setValueOutgoingMessage,
 } from "../common.js";
@@ -73,12 +72,12 @@ export class NodeMessageHandler implements MessageHandler {
       }
       case NodeCommand.beginFirmwareUpdate: {
         const firmwareFile = Buffer.from(message.firmwareFile, "base64");
-        const firmware = await extractFirmware(
+        const firmware = await parseAndExtractFirmware(
+          message.firmwareFilename,
           firmwareFile,
-          message.firmwareFileFormat ??
-            guessFirmwareFileFormat(message.firmwareFilename, firmwareFile),
+          message.firmwareFileFormat,
         );
-        // Defer to the target provided in the messaage when available
+        // Defer to the target provided in the message when available
         firmware.firmwareTarget = message.target ?? firmware.firmwareTarget;
         const result = await node.updateFirmware([firmware]);
         return firmwareUpdateOutgoingMessage(result, this.client.schemaVersion);
@@ -87,11 +86,12 @@ export class NodeMessageHandler implements MessageHandler {
         const updates: Firmware[] = [];
         for (const update of message.updates) {
           const file = Buffer.from(update.file, "base64");
-          const firmware = await extractFirmware(
+          const firmware = await parseAndExtractFirmware(
+            update.filename,
             file,
-            update.fileFormat ?? guessFirmwareFileFormat(update.filename, file),
+            update.fileFormat,
           );
-          // Defer to the target provided in the messaage when available
+          // Defer to the target provided in the message when available
           firmware.firmwareTarget =
             update.firmwareTarget ?? firmware.firmwareTarget;
           updates.push(firmware);
@@ -313,7 +313,7 @@ export class NodeMessageHandler implements MessageHandler {
         return { progress };
       }
       case NodeCommand.abortHealthCheck: {
-        await node.abortHealthCheck();
+        node.abortHealthCheck();
         return {};
       }
       case NodeCommand.setDefaultVolume: {
@@ -331,6 +331,38 @@ export class NodeMessageHandler implements MessageHandler {
       case NodeCommand.createDump: {
         const dump = node.createDump();
         return { dump };
+      }
+      case NodeCommand.getSupportedNotificationEvents: {
+        const events = node.getSupportedNotificationEvents();
+        return { events };
+      }
+      // Link reliability check
+      case NodeCommand.checkLinkReliability: {
+        const result = await node.checkLinkReliability({
+          mode: message.mode,
+          interval: message.interval,
+          rounds: message.rounds,
+          onProgress: (progress) => {
+            this.client.trySendEvent(
+              {
+                source: "node",
+                event: "check link reliability progress",
+                nodeId: message.nodeId,
+                progress,
+              },
+              { minSchemaVersion: 47 },
+            );
+          },
+        });
+        return { result };
+      }
+      case NodeCommand.isLinkReliabilityCheckInProgress: {
+        const progress = node.isLinkReliabilityCheckInProgress();
+        return { progress };
+      }
+      case NodeCommand.abortLinkReliabilityCheck: {
+        node.abortLinkReliabilityCheck();
+        return {};
       }
       default: {
         throw new UnknownCommandError(command);

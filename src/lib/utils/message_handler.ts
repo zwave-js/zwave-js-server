@@ -36,7 +36,9 @@ export class UtilsMessageHandler implements MessageHandler {
         return { id };
       }
       case UtilsCommand.buffer2hex: {
-        const hex = buffer2hex(message.buffer, message.uppercase);
+        const raw = message.buffer;
+        const bytes = Array.isArray(raw) ? raw : raw.data;
+        const hex = buffer2hex(Uint8Array.from(bytes), message.uppercase);
         return { hex };
       }
       case UtilsCommand.getEnumMemberName: {

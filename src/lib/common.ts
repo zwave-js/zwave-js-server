@@ -7,6 +7,8 @@ import {
   SetValueStatus,
   ZWaveNode,
 } from "zwave-js";
+import type { GetFirmwareUpdatesOptions } from "zwave-js/Controller";
+import type { Client } from "./server.js";
 import type { ConfigurationCCAPISetOptions } from "@zwave-js/cc";
 import {
   extractFirmware,
@@ -14,6 +16,7 @@ import {
   FirmwareFileFormat,
   guessFirmwareFileFormat,
   MaybeNotKnown,
+  RFRegion,
   SupervisionResult,
   tryUnzipFirmwareFile,
 } from "@zwave-js/core";
@@ -154,4 +157,20 @@ export async function parseAndExtractFirmware(
 ): Promise<Firmware> {
   const parsed = parseFirmwareFile(filename, rawData, explicitFormat);
   return extractFirmware(parsed.rawData, parsed.format);
+}
+
+export function getFirmwareUpdateOptions(
+  message: {
+    apiKey?: string;
+    includePrereleases?: boolean;
+    rfRegion?: RFRegion;
+  },
+  client: Client,
+): GetFirmwareUpdatesOptions {
+  return {
+    apiKey: message.apiKey,
+    additionalUserAgentComponents: client.additionalUserAgentComponents,
+    includePrereleases: message.includePrereleases,
+    rfRegion: message.rfRegion,
+  };
 }
