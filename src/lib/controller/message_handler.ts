@@ -295,14 +295,11 @@ export class ControllerMessageHandler implements MessageHandler {
         await this.driver.controller.restoreNVMRaw(
           nvmData,
           (bytesWritten: number, total: number) => {
-            this.clientsController.clients.forEach((client) => {
-              if (!client.isConnected || !client.receiveEvents) return;
-              client.sendEvent({
-                source: "controller",
-                event: "nvm restore progress",
-                bytesWritten,
-                total,
-              });
+            this.clientsController.sendEventToListeningClients({
+              source: "controller",
+              event: "nvm restore progress",
+              bytesWritten,
+              total,
             });
           },
         );
@@ -628,25 +625,23 @@ export class ControllerMessageHandler implements MessageHandler {
           strategy: message.strategy ?? JoinNetworkStrategy.Default,
           userCallbacks: {
             showDSK: (dsk: string) => {
-              this.clientsController.clients.forEach((client) => {
-                if (!client.isConnected || !client.receiveEvents) return;
-                if (client.schemaVersion < 47) return;
-                client.sendEvent({
+              this.clientsController.sendEventToListeningClients(
+                {
                   source: "controller",
                   event: "joining network show dsk",
                   dsk,
-                });
-              });
+                },
+                { minSchemaVersion: 47 },
+              );
             },
             done: () => {
-              this.clientsController.clients.forEach((client) => {
-                if (!client.isConnected || !client.receiveEvents) return;
-                if (client.schemaVersion < 47) return;
-                client.sendEvent({
+              this.clientsController.sendEventToListeningClients(
+                {
                   source: "controller",
                   event: "joining network done",
-                });
-              });
+                },
+                { minSchemaVersion: 47 },
+              );
             },
           },
         });
