@@ -343,19 +343,15 @@ export class NodeMessageHandler implements MessageHandler {
           interval: message.interval,
           rounds: message.rounds,
           onProgress: (progress) => {
-            this.clientsController.clients.forEach((client) => {
-              // Only send progress events to clients that are connected, listening, and support schema >= 47
-              if (!client.isConnected) return;
-              if (!client.receiveEvents) return;
-              if (typeof client.schemaVersion !== "number") return;
-              if (client.schemaVersion < 47) return;
-              client.sendEvent({
+            this.client.trySendEvent(
+              {
                 source: "node",
                 event: "check link reliability progress",
                 nodeId: message.nodeId,
                 progress,
-              });
-            });
+              },
+              { minSchemaVersion: 47 },
+            );
           },
         });
         return { result };

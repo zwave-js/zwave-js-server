@@ -295,7 +295,7 @@ export class ControllerMessageHandler implements MessageHandler {
         await this.driver.controller.restoreNVMRaw(
           nvmData,
           (bytesWritten: number, total: number) => {
-            this.clientsController.sendEventToListeningClients({
+            this.client.trySendEvent({
               source: "controller",
               event: "nvm restore progress",
               bytesWritten,
