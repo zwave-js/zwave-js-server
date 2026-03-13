@@ -48,6 +48,29 @@ export interface IncomingCommandZnifferSetFrequency extends IncomingCommandZniff
   frequency: number;
 }
 
+// Long Range
+export interface IncomingCommandZnifferGetLRRegions extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getLRRegions;
+}
+
+export interface IncomingCommandZnifferGetCurrentLRChannelConfig extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getCurrentLRChannelConfig;
+}
+
+export interface IncomingCommandZnifferGetSupportedLRChannelConfigs extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.getSupportedLRChannelConfigs;
+}
+
+export interface IncomingCommandZnifferSetLRChannelConfig extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.setLRChannelConfig;
+  channelConfig: number;
+}
+
+export interface IncomingCommandZnifferLoadCaptureFromBuffer extends IncomingCommandZnifferBase {
+  command: ZnifferCommand.loadCaptureFromBuffer;
+  data: string; // base64 encoded
+}
+
 export type IncomingMessageZniffer =
   | IncomingCommandZnifferClearCapturedFrames
   | IncomingCommandZnifferGetCaptureAsZLFBuffer
@@ -58,4 +81,9 @@ export type IncomingMessageZniffer =
   | IncomingCommandZnifferSupportedFrequencies
   | IncomingCommandZnifferCurrentFrequency
   | IncomingCommandZnifferSetFrequency
-  | IncomingCommandZnifferDestroy;
+  | IncomingCommandZnifferDestroy
+  | IncomingCommandZnifferGetLRRegions
+  | IncomingCommandZnifferGetCurrentLRChannelConfig
+  | IncomingCommandZnifferGetSupportedLRChannelConfigs
+  | IncomingCommandZnifferSetLRChannelConfig
+  | IncomingCommandZnifferLoadCaptureFromBuffer;

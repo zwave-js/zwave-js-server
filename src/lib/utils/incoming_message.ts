@@ -1,4 +1,5 @@
 import { RSSI } from "zwave-js";
+import { FirmwareFileFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { UtilsCommand } from "./command.js";
 
@@ -43,6 +44,23 @@ export interface IncomingCommandUtilsRssiToString extends IncomingCommandUtilsBa
   rssi: RSSI;
 }
 
+export interface IncomingCommandUtilsGuessFirmwareFileFormat extends IncomingCommandUtilsBase {
+  command: UtilsCommand.guessFirmwareFileFormat;
+  filename: string;
+  file: string; // base64 encoded
+}
+
+export interface IncomingCommandUtilsTryUnzipFirmwareFile extends IncomingCommandUtilsBase {
+  command: UtilsCommand.tryUnzipFirmwareFile;
+  file: string; // base64 encoded ZIP file
+}
+
+export interface IncomingCommandUtilsExtractFirmware extends IncomingCommandUtilsBase {
+  command: UtilsCommand.extractFirmware;
+  file: string; // base64 encoded firmware file
+  format: FirmwareFileFormat;
+}
+
 export type IncomingMessageUtils =
   | IncomingCommandUtilsParseQRCodeString
   | IncomingCommandUtilsTryParseDSKFromQRCodeString
@@ -50,4 +68,7 @@ export type IncomingMessageUtils =
   | IncomingCommandUtilsFormatId
   | IncomingCommandUtilsBuffer2hex
   | IncomingCommandUtilsGetEnumMemberName
-  | IncomingCommandUtilsRssiToString;
+  | IncomingCommandUtilsRssiToString
+  | IncomingCommandUtilsGuessFirmwareFileFormat
+  | IncomingCommandUtilsTryUnzipFirmwareFile
+  | IncomingCommandUtilsExtractFirmware;
