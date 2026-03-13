@@ -8,3 +8,4 @@ config.json
 *.tgz
 cache
 .claude
+/src/lib/generated/
