@@ -66,17 +66,6 @@ export interface IncomingCommandZnifferSetLRChannelConfig extends IncomingComman
   channelConfig: number;
 }
 
-// File I/O
-export interface IncomingCommandZnifferSaveCaptureToFile extends IncomingCommandZnifferBase {
-  command: ZnifferCommand.saveCaptureToFile;
-  filePath: string;
-}
-
-export interface IncomingCommandZnifferLoadCaptureFromFile extends IncomingCommandZnifferBase {
-  command: ZnifferCommand.loadCaptureFromFile;
-  filePath: string;
-}
-
 export interface IncomingCommandZnifferLoadCaptureFromBuffer extends IncomingCommandZnifferBase {
   command: ZnifferCommand.loadCaptureFromBuffer;
   data: string; // base64 encoded
@@ -97,6 +86,4 @@ export type IncomingMessageZniffer =
   | IncomingCommandZnifferGetCurrentLRChannelConfig
   | IncomingCommandZnifferGetSupportedLRChannelConfigs
   | IncomingCommandZnifferSetLRChannelConfig
-  | IncomingCommandZnifferSaveCaptureToFile
-  | IncomingCommandZnifferLoadCaptureFromFile
   | IncomingCommandZnifferLoadCaptureFromBuffer;

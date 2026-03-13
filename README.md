@@ -1814,34 +1814,6 @@ interface {
 }
 ```
 
-#### [Save capture to file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
-
-Saves the captured frames to a `.zlf` file that can be read by the official Zniffer application.
-
-[compatible with schema version: 47+]
-
-```ts
-interface {
-  messageId: string;
-  command: "zniffer.save_capture_to_file";
-  filePath: string;
-}
-```
-
-#### [Load capture from file](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
-
-Loads previously saved captured frames from a `.zlf` file.
-
-[compatible with schema version: 47+]
-
-```ts
-interface {
-  messageId: string;
-  command: "zniffer.load_capture_from_file";
-  filePath: string;
-}
-```
-
 #### [Load capture from buffer](https://zwave-js.github.io/node-zwave-js/#/api/zniffer?id=capturing-frames)
 
 Loads captured frames from a base64 encoded buffer.

@@ -20,8 +20,5 @@ export interface ZnifferResultTypes {
     channelConfigs: ReadonlyMap<number, string>;
   };
   [ZnifferCommand.setLRChannelConfig]: Record<string, never>;
-  // File I/O
-  [ZnifferCommand.saveCaptureToFile]: Record<string, never>;
-  [ZnifferCommand.loadCaptureFromFile]: Record<string, never>;
   [ZnifferCommand.loadCaptureFromBuffer]: Record<string, never>;
 }
