@@ -10,6 +10,7 @@ import { IncomingMessageEndpoint } from "./endpoint/incoming_message.js";
 import { IncomingMessageUtils } from "./utils/incoming_message.js";
 import { IncomingMessageConfigManager } from "./config_manager/incoming_message.js";
 import { LogContexts } from "./logging.js";
+import { IncomingMessageIntrospect } from "./introspect/incoming_message.js";
 import { IncomingMessageZniffer } from "./zniffer/incoming_message.js";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
@@ -59,6 +60,7 @@ export type IncomingMessage =
   | IncomingMessageUtils
   | IncomingMessageZniffer
   | IncomingMessageConfigManager
+  | IncomingMessageIntrospect
   | IncomingCommandInitialize
   | IncomingCommandStartListeningLogs
   | IncomingCommandStopListeningLogs;

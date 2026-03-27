@@ -35,11 +35,14 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
-    "test": "prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
+    "test": "npm run generate:schema && prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
+    "generate:schema": "ts-json-schema-generator --path src/lib/incoming_message.ts --type IncomingMessage --tsconfig tsconfig.json --out src/lib/generated/incoming_message_schema.json && npm run generate:state-schema",
+    "prebuild": "npm run generate:schema",
     "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node20",
     "prepare": "npm run build",
-    "prepublishOnly": "rm -rf dist-* && npm run build"
+    "prepublishOnly": "rm -rf dist-* && npm run build",
+    "generate:state-schema": "ts-json-schema-generator --path src/lib/introspect/state_schemas.ts --type StateSchemas --tsconfig tsconfig.json --additional-properties --out src/lib/generated/state_schema.json"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -66,6 +69,7 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "semver": "^7.5.4",
+    "ts-json-schema-generator": "^2.4.0",
     "tsx": "^4.19.2",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.46.1",

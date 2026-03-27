@@ -293,7 +293,7 @@ export interface IncomingCommandControllerFirmwareUpdateOTW extends IncomingComm
   fileFormat?: FirmwareFileFormat;
 }
 
-export interface IncomingCommandIsFirmwareUpdateInProgress extends IncomingCommandControllerBase {
+export interface IncomingCommandControllerIsFirmwareUpdateInProgress extends IncomingCommandControllerBase {
   command: ControllerCommand.isFirmwareUpdateInProgress;
 }
 
@@ -600,7 +600,7 @@ export type IncomingMessageController =
   | IncomingCommandControllerBeginOTAFirmwareUpdate
   | IncomingCommandControllerFirmwareUpdateOTA
   | IncomingCommandControllerFirmwareUpdateOTW
-  | IncomingCommandIsFirmwareUpdateInProgress
+  | IncomingCommandControllerIsFirmwareUpdateInProgress
   | IncomingCommandControllerSetMaxLongRangePowerlevel
   | IncomingCommandControllerGetMaxLongRangePowerlevel
   | IncomingCommandControllerSetLongRangeChannel
