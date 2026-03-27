@@ -56,6 +56,24 @@ const runTest = async () => {
       type: "version",
     });
 
+    // Test introspect.commands works before initialize
+    socket.send(
+      JSON.stringify({
+        command: "introspect.commands",
+        messageId: "introspect",
+      }),
+    );
+
+    const introspectResult = (await nextMessage()) as any;
+    assert.strictEqual(introspectResult.type, "result");
+    assert.strictEqual(introspectResult.success, true);
+    assert.strictEqual(introspectResult.messageId, "introspect");
+    assert.ok(introspectResult.result.definitions, "schema has definitions");
+    assert.ok(
+      introspectResult.result.anyOf || introspectResult.result.$ref,
+      "schema has anyOf or $ref at root",
+    );
+
     socket.send(
       JSON.stringify({
         command: "initialize",

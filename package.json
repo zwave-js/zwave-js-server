@@ -35,7 +35,9 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix && prettier -w .",
-    "test": "prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
+    "test": "npm run generate:schema && prettier --check src && tsc --noEmit && npm run lint && tsx src/test/integration.ts",
+    "generate:schema": "node scripts/generate-schema.cjs src/lib/incoming_message.ts IncomingMessage src/generated/incoming_message_schema.json && node scripts/wrap-json-module.cjs src/generated/incoming_message_schema.json src/generated/incoming_message_schema.ts",
+    "prebuild": "npm run generate:schema",
     "build": "tsc -p .",
     "postbuild": "esm2cjs --in dist-esm --out dist-cjs -l error -t node20",
     "prepare": "npm run build",
@@ -66,6 +68,7 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "semver": "^7.5.4",
+    "ts-json-schema-generator": "^2.4.0",
     "tsx": "^4.19.2",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.46.1",
