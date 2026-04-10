@@ -368,6 +368,17 @@ export class EventForwarder {
         nodeId: node.nodeId,
         ...extra,
       });
+    const notifyEndpoint = (endpoint: Endpoint, event: string, args: object) =>
+      this.clientsController.sendEventToListeningClients(
+        {
+          source: "node",
+          event,
+          nodeId: endpoint.nodeId,
+          endpointIndex: endpoint.index,
+          args,
+        },
+        { minSchemaVersion: 48 },
+      );
 
     node.on("ready", (changedNode: ZWaveNode) => {
       this.clientsController.sendEventToListeningClients(
@@ -592,5 +603,23 @@ export class EventForwarder {
     node.on("node info received", (changedNode: ZWaveNode) => {
       notifyNode(changedNode, "node info received");
     });
+
+    {
+      const events: ZWaveNodeEvents[] = [
+        "user added",
+        "user modified",
+        "user deleted",
+        "credential added",
+        "credential modified",
+        "credential deleted",
+        "credential learn progress",
+        "credential learn completed",
+      ];
+      for (const event of events) {
+        node.on(event, (endpoint: Endpoint, args: any) => {
+          notifyEndpoint(endpoint, event, args);
+        });
+      }
+    }
   }
 }
