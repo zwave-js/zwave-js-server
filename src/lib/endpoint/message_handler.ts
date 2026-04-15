@@ -7,12 +7,10 @@ import {
 import { Client } from "../server.js";
 import { dumpNode } from "../state.js";
 import { EndpointCommand } from "./command.js";
-import {
-  IncomingMessageEndpoint,
-  deserializeBufferInArray,
-} from "./incoming_message.js";
+import { IncomingMessageEndpoint } from "./incoming_message.js";
 import { EndpointResultTypes } from "./outgoing_message.js";
 import {
+  deserializeBufferInArray,
   getRawConfigParameterValue,
   setRawConfigParameterValue,
 } from "../common.js";

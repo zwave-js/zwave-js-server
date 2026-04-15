@@ -30,6 +30,45 @@ import {
 } from "./endpoint/incoming_message.js";
 import { InvalidParamsPassedToCommandError } from "./error.js";
 
+export interface BufferObject {
+  type: "Buffer";
+  data: number[];
+}
+
+export function isBufferObject(
+  obj: unknown,
+): obj is { type: "Buffer"; data: number[] } {
+  return (
+    obj instanceof Object &&
+    Object.keys(obj).length === 2 &&
+    "type" in obj &&
+    obj.type === "Buffer" &&
+    "data" in obj &&
+    Array.isArray(obj.data) &&
+    obj.data.every((item) => typeof item === "number")
+  );
+}
+
+export function deserializeBufferInArray(array: unknown[]): unknown[] {
+  // Iterate over all items in array and deserialize any Buffer objects
+  for (let idx = 0; idx < array.length; idx++) {
+    const value = array[idx];
+    if (isBufferObject(value)) {
+      array[idx] = Buffer.from(value.data);
+    }
+  }
+  return array;
+}
+
+export function deserializeBuffer(
+  value: string | BufferObject,
+): string | Uint8Array {
+  if (isBufferObject(value)) {
+    return Buffer.from(value.data);
+  }
+  return value;
+}
+
 export type SetValueResultType =
   | { result: SetValueResult } // schemaVersion >= 29
   | { success: boolean }; // schemaVersion < 29

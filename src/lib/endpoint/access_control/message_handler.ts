@@ -8,7 +8,7 @@ import {
 import { EndpointAccessControlCommand } from "./command.js";
 import { IncomingMessageEndpointAccessControl } from "./incoming_message.js";
 import { EndpointAccessControlResultTypes } from "./outgoing_message.js";
-import { deserializeBuffer } from "../incoming_message.js";
+import { deserializeBuffer } from "../../common.js";
 
 function ensureAccessControl(endpoint: Endpoint): AccessControlAPI {
   const api = endpoint.accessControl;

@@ -1,7 +1,5 @@
-import {
-  IncomingCommandEndpointBase,
-  BufferObject,
-} from "../incoming_message.js";
+import { IncomingCommandEndpointBase } from "../incoming_message.js";
+import { BufferObject } from "../../common.js";
 import { EndpointAccessControlCommand } from "./command.js";
 
 export interface EndpointSetUserOptions {
