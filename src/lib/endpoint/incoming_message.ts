@@ -1,18 +1,45 @@
 import { CommandClasses, ConfigValue, ConfigValueFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { EndpointCommand } from "./command.js";
+import { IncomingMessageEndpointAccessControl } from "./access_control/incoming_message.js";
 
 export interface BufferObject {
   type: "Buffer";
   data: number[];
 }
 
-export interface EndpointSetUserOptions {
-  active?: boolean;
-  userType?: number;
-  userName?: string;
-  credentialRule?: number;
-  expiringTimeoutMinutes?: number;
+export function isBufferObject(
+  obj: unknown,
+): obj is { type: "Buffer"; data: number[] } {
+  return (
+    obj instanceof Object &&
+    Object.keys(obj).length === 2 &&
+    "type" in obj &&
+    obj.type === "Buffer" &&
+    "data" in obj &&
+    Array.isArray(obj.data) &&
+    obj.data.every((item) => typeof item === "number")
+  );
+}
+
+export function deserializeBufferInArray(array: unknown[]): unknown[] {
+  // Iterate over all items in array and deserialize any Buffer objects
+  for (let idx = 0; idx < array.length; idx++) {
+    const value = array[idx];
+    if (isBufferObject(value)) {
+      array[idx] = Buffer.from(value.data);
+    }
+  }
+  return array;
+}
+
+export function deserializeBuffer(
+  value: string | BufferObject,
+): string | Uint8Array {
+  if (isBufferObject(value)) {
+    return Buffer.from(value.data);
+  }
+  return value;
 }
 
 export interface IncomingCommandEndpointBase extends IncomingCommandBase {
@@ -25,107 +52,6 @@ export interface IncomingCommandEndpointInvokeCCAPI extends IncomingCommandEndpo
   commandClass: CommandClasses;
   methodName: string;
   args: unknown[];
-}
-
-export interface IncomingCommandEndpointGetUserCapabilitiesCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getUserCapabilitiesCached;
-}
-
-export interface IncomingCommandEndpointGetCredentialCapabilitiesCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getCredentialCapabilitiesCached;
-}
-
-export interface IncomingCommandEndpointGetUser extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getUser;
-  userId: number;
-}
-
-export interface IncomingCommandEndpointGetUserCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getUserCached;
-  userId: number;
-}
-
-export interface IncomingCommandEndpointGetUsers extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getUsers;
-}
-
-export interface IncomingCommandEndpointGetUsersCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getUsersCached;
-}
-
-export interface IncomingCommandEndpointSetUser extends IncomingCommandEndpointBase {
-  command: EndpointCommand.setUser;
-  userId: number;
-  options: EndpointSetUserOptions;
-}
-
-export interface IncomingCommandEndpointDeleteUser extends IncomingCommandEndpointBase {
-  command: EndpointCommand.deleteUser;
-  userId: number;
-}
-
-export interface IncomingCommandEndpointDeleteAllUsers extends IncomingCommandEndpointBase {
-  command: EndpointCommand.deleteAllUsers;
-}
-
-export interface IncomingCommandEndpointGetCredential extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getCredential;
-  userId: number;
-  credentialType: number;
-  credentialSlot: number;
-}
-
-export interface IncomingCommandEndpointGetCredentialCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getCredentialCached;
-  userId: number;
-  credentialType: number;
-  credentialSlot: number;
-}
-
-export interface IncomingCommandEndpointGetCredentials extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getCredentials;
-  userId: number;
-}
-
-export interface IncomingCommandEndpointGetCredentialsCached extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getCredentialsCached;
-  userId: number;
-}
-
-export interface IncomingCommandEndpointSetCredential extends IncomingCommandEndpointBase {
-  command: EndpointCommand.setCredential;
-  userId: number;
-  credentialType: number;
-  credentialSlot: number;
-  data: string | BufferObject;
-}
-
-export interface IncomingCommandEndpointDeleteCredential extends IncomingCommandEndpointBase {
-  command: EndpointCommand.deleteCredential;
-  userId: number;
-  credentialType: number;
-  credentialSlot: number;
-}
-
-export interface IncomingCommandEndpointStartCredentialLearn extends IncomingCommandEndpointBase {
-  command: EndpointCommand.startCredentialLearn;
-  userId: number;
-  credentialType: number;
-  credentialSlot: number;
-  timeout?: number;
-}
-
-export interface IncomingCommandEndpointCancelCredentialLearn extends IncomingCommandEndpointBase {
-  command: EndpointCommand.cancelCredentialLearn;
-}
-
-export interface IncomingCommandEndpointGetAdminCode extends IncomingCommandEndpointBase {
-  command: EndpointCommand.getAdminCode;
-}
-
-export interface IncomingCommandEndpointSetAdminCode extends IncomingCommandEndpointBase {
-  command: EndpointCommand.setAdminCode;
-  code: string;
 }
 
 export interface IncomingCommandEndpointSupportsCCAPI extends IncomingCommandEndpointBase {
@@ -191,25 +117,6 @@ export interface IncomingCommandEndpointWasCCRemovedViaConfig extends IncomingCo
 
 export type IncomingMessageEndpoint =
   | IncomingCommandEndpointInvokeCCAPI
-  | IncomingCommandEndpointGetUserCapabilitiesCached
-  | IncomingCommandEndpointGetCredentialCapabilitiesCached
-  | IncomingCommandEndpointGetUser
-  | IncomingCommandEndpointGetUserCached
-  | IncomingCommandEndpointGetUsers
-  | IncomingCommandEndpointGetUsersCached
-  | IncomingCommandEndpointSetUser
-  | IncomingCommandEndpointDeleteUser
-  | IncomingCommandEndpointDeleteAllUsers
-  | IncomingCommandEndpointGetCredential
-  | IncomingCommandEndpointGetCredentialCached
-  | IncomingCommandEndpointGetCredentials
-  | IncomingCommandEndpointGetCredentialsCached
-  | IncomingCommandEndpointSetCredential
-  | IncomingCommandEndpointDeleteCredential
-  | IncomingCommandEndpointStartCredentialLearn
-  | IncomingCommandEndpointCancelCredentialLearn
-  | IncomingCommandEndpointGetAdminCode
-  | IncomingCommandEndpointSetAdminCode
   | IncomingCommandEndpointSupportsCCAPI
   | IncomingCommandEndpointSupportsCC
   | IncomingCommandEndpointControlsCC
@@ -221,4 +128,6 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointGetRawConfigParameterValue
   | IncomingCommandEndpointGetCCs
   | IncomingCommandEndpointMaySupportBasicCC
-  | IncomingCommandEndpointWasCCRemovedViaConfig;
+  | IncomingCommandEndpointWasCCRemovedViaConfig
+  // Namespaced endpoint features:
+  | IncomingMessageEndpointAccessControl;

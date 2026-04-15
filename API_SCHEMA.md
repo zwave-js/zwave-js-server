@@ -359,27 +359,28 @@ Base schema.
 
 ## Schema 48
 
-- Added typed endpoint access-control commands:
-  - `endpoint.get_user_capabilities_cached`
-  - `endpoint.get_credential_capabilities_cached`
-  - `endpoint.get_user`
-  - `endpoint.get_user_cached`
-  - `endpoint.get_users`
-  - `endpoint.get_users_cached`
-  - `endpoint.set_user`
-  - `endpoint.delete_user`
-  - `endpoint.delete_all_users`
-  - `endpoint.get_credential`
-  - `endpoint.get_credential_cached`
-  - `endpoint.get_credentials`
-  - `endpoint.get_credentials_cached`
-  - `endpoint.set_credential`
-  - `endpoint.delete_credential`
-  - `endpoint.start_credential_learn`
-  - `endpoint.cancel_credential_learn`
-  - `endpoint.get_admin_code`
-  - `endpoint.set_admin_code`
-- These commands expose the unified user/credential API in zwave-js directly through the server, including User Credential CC and User Code CC fallback behavior handled by zwave-js.
+- Added typed endpoint access-control commands under the `endpoint.access_control.*` namespace:
+  - `endpoint.access_control.is_supported`
+  - `endpoint.access_control.get_user_capabilities_cached`
+  - `endpoint.access_control.get_credential_capabilities_cached`
+  - `endpoint.access_control.get_user`
+  - `endpoint.access_control.get_user_cached`
+  - `endpoint.access_control.get_users`
+  - `endpoint.access_control.get_users_cached`
+  - `endpoint.access_control.set_user`
+  - `endpoint.access_control.delete_user`
+  - `endpoint.access_control.delete_all_users`
+  - `endpoint.access_control.get_credential`
+  - `endpoint.access_control.get_credential_cached`
+  - `endpoint.access_control.get_credentials`
+  - `endpoint.access_control.get_credentials_cached`
+  - `endpoint.access_control.set_credential`
+  - `endpoint.access_control.delete_credential`
+  - `endpoint.access_control.start_credential_learn`
+  - `endpoint.access_control.cancel_credential_learn`
+  - `endpoint.access_control.get_admin_code`
+  - `endpoint.access_control.set_admin_code`
+- These commands expose the unified user/credential API in zwave-js directly through the server, including User Credential CC and User Code CC fallback behavior handled by zwave-js. Applications should call `endpoint.access_control.is_supported` to check whether an endpoint exposes the API before using the other commands.
 - Added node events for unified access control handling:
   - `user added`
   - `user modified`

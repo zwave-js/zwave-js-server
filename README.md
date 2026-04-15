@@ -1297,30 +1297,46 @@ For `Buffer` type arguments, use the following JSON format to represent the argu
 
 [compatible with schema version: 48+]
 
-These commands expose the unified credential management API from Z-Wave JS directly.
-Z-Wave JS automatically handles User Credential CC vs User Code CC fallback where applicable.
+These commands expose the unified credential management API from Z-Wave JS directly
+under the `endpoint.access_control.*` namespace. Z-Wave JS automatically handles
+User Credential CC vs User Code CC fallback where applicable.
+
+Before using any of the other commands, applications should check whether the
+endpoint exposes the unified access control API:
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.is_supported";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+The response contains `supported: boolean`.
 
 Supported commands:
 
-- `endpoint.get_user_capabilities_cached`
-- `endpoint.get_credential_capabilities_cached`
-- `endpoint.get_user`
-- `endpoint.get_user_cached`
-- `endpoint.get_users`
-- `endpoint.get_users_cached`
-- `endpoint.set_user`
-- `endpoint.delete_user`
-- `endpoint.delete_all_users`
-- `endpoint.get_credential`
-- `endpoint.get_credential_cached`
-- `endpoint.get_credentials`
-- `endpoint.get_credentials_cached`
-- `endpoint.set_credential`
-- `endpoint.delete_credential`
-- `endpoint.start_credential_learn`
-- `endpoint.cancel_credential_learn`
-- `endpoint.get_admin_code`
-- `endpoint.set_admin_code`
+- `endpoint.access_control.is_supported`
+- `endpoint.access_control.get_user_capabilities_cached`
+- `endpoint.access_control.get_credential_capabilities_cached`
+- `endpoint.access_control.get_user`
+- `endpoint.access_control.get_user_cached`
+- `endpoint.access_control.get_users`
+- `endpoint.access_control.get_users_cached`
+- `endpoint.access_control.set_user`
+- `endpoint.access_control.delete_user`
+- `endpoint.access_control.delete_all_users`
+- `endpoint.access_control.get_credential`
+- `endpoint.access_control.get_credential_cached`
+- `endpoint.access_control.get_credentials`
+- `endpoint.access_control.get_credentials_cached`
+- `endpoint.access_control.set_credential`
+- `endpoint.access_control.delete_credential`
+- `endpoint.access_control.start_credential_learn`
+- `endpoint.access_control.cancel_credential_learn`
+- `endpoint.access_control.get_admin_code`
+- `endpoint.access_control.set_admin_code`
 
 All commands use the same base arguments:
 
@@ -1338,7 +1354,7 @@ Example: set a credential
 ```ts
 interface {
   messageId: string;
-  command: "endpoint.set_credential";
+  command: "endpoint.access_control.set_credential";
   nodeId: number;
   endpoint?: number;
   userId: number;
@@ -1353,7 +1369,7 @@ Example: create or modify a user
 ```ts
 interface {
   messageId: string;
-  command: "endpoint.set_user";
+  command: "endpoint.access_control.set_user";
   nodeId: number;
   endpoint?: number;
   userId: number;
