@@ -7,9 +7,9 @@ import {
 } from "@zwave-js/core";
 import { EndpointCommand } from "./command.js";
 import { NodeState } from "../state.js";
-import { EndpointAccessControlResultTypes } from "./access_control/outgoing_message.js";
+import { type EndpointAccessControlResultTypes } from "./access_control/outgoing_message.js";
 
-export interface EndpointOwnResultTypes {
+export type EndpointResultTypes = {
   [EndpointCommand.invokeCCAPI]: { response: unknown };
   [EndpointCommand.supportsCCAPI]: { supported: boolean };
   [EndpointCommand.supportsCC]: { supported: boolean };
@@ -27,7 +27,4 @@ export interface EndpointOwnResultTypes {
   };
   [EndpointCommand.maySupportBasicCC]: { maySupport: boolean };
   [EndpointCommand.wasCCRemovedViaConfig]: { removed: boolean };
-}
-
-export type EndpointResultTypes = EndpointOwnResultTypes &
-  EndpointAccessControlResultTypes;
+} & EndpointAccessControlResultTypes;
