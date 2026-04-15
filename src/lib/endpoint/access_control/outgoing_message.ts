@@ -10,10 +10,10 @@ import { EndpointAccessControlCommand } from "./command.js";
 export interface EndpointAccessControlResultTypes {
   [EndpointAccessControlCommand.isSupported]: { supported: boolean };
   [EndpointAccessControlCommand.getUserCapabilitiesCached]: {
-    capabilities?: UserCapabilities;
+    capabilities: UserCapabilities;
   };
   [EndpointAccessControlCommand.getCredentialCapabilitiesCached]: {
-    capabilities?: CredentialCapabilities;
+    capabilities: CredentialCapabilities;
   };
   [EndpointAccessControlCommand.getUser]: { user?: UserData };
   [EndpointAccessControlCommand.getUserCached]: { user?: UserData };
