@@ -57,14 +57,12 @@ export interface IncomingCommandEndpointAccessControlDeleteAllUsers extends Inco
 
 export interface IncomingCommandEndpointAccessControlGetCredential extends IncomingCommandEndpointBase {
   command: EndpointAccessControlCommand.getCredential;
-  userId: number;
   credentialType: number;
   credentialSlot: number;
 }
 
 export interface IncomingCommandEndpointAccessControlGetCredentialCached extends IncomingCommandEndpointBase {
   command: EndpointAccessControlCommand.getCredentialCached;
-  userId: number;
   credentialType: number;
   credentialSlot: number;
 }
@@ -77,6 +75,31 @@ export interface IncomingCommandEndpointAccessControlGetCredentials extends Inco
 export interface IncomingCommandEndpointAccessControlGetCredentialsCached extends IncomingCommandEndpointBase {
   command: EndpointAccessControlCommand.getCredentialsCached;
   userId: number;
+}
+
+export interface IncomingCommandEndpointAccessControlGetCredentialsByType extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.getCredentialsByType;
+  credentialType: number;
+}
+
+export interface IncomingCommandEndpointAccessControlGetCredentialsByTypeCached extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.getCredentialsByTypeCached;
+  credentialType: number;
+}
+
+export interface IncomingCommandEndpointAccessControlGetAllCredentials extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.getAllCredentials;
+}
+
+export interface IncomingCommandEndpointAccessControlGetAllCredentialsCached extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.getAllCredentialsCached;
+}
+
+export interface IncomingCommandEndpointAccessControlAssignCredential extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.assignCredential;
+  credentialType: number;
+  credentialSlot: number;
+  destinationUserId: number;
 }
 
 export interface IncomingCommandEndpointAccessControlSetCredential extends IncomingCommandEndpointBase {
@@ -130,6 +153,11 @@ export type IncomingMessageEndpointAccessControl =
   | IncomingCommandEndpointAccessControlGetCredentialCached
   | IncomingCommandEndpointAccessControlGetCredentials
   | IncomingCommandEndpointAccessControlGetCredentialsCached
+  | IncomingCommandEndpointAccessControlGetCredentialsByType
+  | IncomingCommandEndpointAccessControlGetCredentialsByTypeCached
+  | IncomingCommandEndpointAccessControlGetAllCredentials
+  | IncomingCommandEndpointAccessControlGetAllCredentialsCached
+  | IncomingCommandEndpointAccessControlAssignCredential
   | IncomingCommandEndpointAccessControlSetCredential
   | IncomingCommandEndpointAccessControlDeleteCredential
   | IncomingCommandEndpointAccessControlStartCredentialLearn

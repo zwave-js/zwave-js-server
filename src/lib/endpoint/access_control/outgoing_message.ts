@@ -1,5 +1,6 @@
 import { SupervisionResult } from "@zwave-js/core";
 import {
+  AssignCredentialStatus,
   SetCredentialStatus,
   SetUserStatus,
   type CredentialCapabilities,
@@ -33,6 +34,21 @@ export interface EndpointAccessControlResultTypes {
   };
   [EndpointAccessControlCommand.getCredentialsCached]: {
     credentials: CredentialData[];
+  };
+  [EndpointAccessControlCommand.getCredentialsByType]: {
+    credentials: CredentialData[];
+  };
+  [EndpointAccessControlCommand.getCredentialsByTypeCached]: {
+    credentials: CredentialData[];
+  };
+  [EndpointAccessControlCommand.getAllCredentials]: {
+    credentials: CredentialData[];
+  };
+  [EndpointAccessControlCommand.getAllCredentialsCached]: {
+    credentials: CredentialData[];
+  };
+  [EndpointAccessControlCommand.assignCredential]: {
+    status: AssignCredentialStatus;
   };
   [EndpointAccessControlCommand.setCredential]: { status: SetCredentialStatus };
   [EndpointAccessControlCommand.deleteCredential]: {

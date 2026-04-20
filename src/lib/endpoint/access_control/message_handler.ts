@@ -73,7 +73,6 @@ export async function handleEndpointAccessControlCommand(
     }
     case EndpointAccessControlCommand.getCredential: {
       const credential = await ensureAccessControl(endpoint).getCredential(
-        message.userId,
         message.credentialType as UserCredentialType,
         message.credentialSlot,
       );
@@ -81,23 +80,54 @@ export async function handleEndpointAccessControlCommand(
     }
     case EndpointAccessControlCommand.getCredentialCached: {
       const credential = ensureAccessControl(endpoint).getCredentialCached(
-        message.userId,
         message.credentialType as UserCredentialType,
         message.credentialSlot,
       );
       return { credential };
     }
     case EndpointAccessControlCommand.getCredentials: {
-      const credentials = await ensureAccessControl(endpoint).getCredentials(
-        message.userId,
-      );
+      const credentials = await ensureAccessControl(
+        endpoint,
+      ).getCredentialsForUser(message.userId);
       return { credentials };
     }
     case EndpointAccessControlCommand.getCredentialsCached: {
-      const credentials = ensureAccessControl(endpoint).getCredentialsCached(
-        message.userId,
+      const credentials = ensureAccessControl(
+        endpoint,
+      ).getCredentialsForUserCached(message.userId);
+      return { credentials };
+    }
+    case EndpointAccessControlCommand.getCredentialsByType: {
+      const credentials = await ensureAccessControl(
+        endpoint,
+      ).getCredentialsByType(message.credentialType as UserCredentialType);
+      return { credentials };
+    }
+    case EndpointAccessControlCommand.getCredentialsByTypeCached: {
+      const credentials = ensureAccessControl(
+        endpoint,
+      ).getCredentialsByTypeCached(
+        message.credentialType as UserCredentialType,
       );
       return { credentials };
+    }
+    case EndpointAccessControlCommand.getAllCredentials: {
+      const credentials =
+        await ensureAccessControl(endpoint).getAllCredentials();
+      return { credentials };
+    }
+    case EndpointAccessControlCommand.getAllCredentialsCached: {
+      const credentials =
+        ensureAccessControl(endpoint).getAllCredentialsCached();
+      return { credentials };
+    }
+    case EndpointAccessControlCommand.assignCredential: {
+      const status = await ensureAccessControl(endpoint).assignCredential(
+        message.credentialType as UserCredentialType,
+        message.credentialSlot,
+        message.destinationUserId,
+      );
+      return { status };
     }
     case EndpointAccessControlCommand.setCredential: {
       const status = await ensureAccessControl(endpoint).setCredential(
