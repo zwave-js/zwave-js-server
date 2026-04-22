@@ -1,8 +1,8 @@
 import { SupervisionResult } from "@zwave-js/core";
 import {
-  AssignCredentialStatus,
-  SetCredentialStatus,
-  SetUserStatus,
+  AssignCredentialResult,
+  SetCredentialResult,
+  SetUserResult,
   type CredentialCapabilities,
   type CredentialData,
   type UserCapabilities,
@@ -22,9 +22,9 @@ export interface EndpointAccessControlResultTypes {
   [EndpointAccessControlCommand.getUserCached]: { user?: UserData };
   [EndpointAccessControlCommand.getUsers]: { users: UserData[] };
   [EndpointAccessControlCommand.getUsersCached]: { users: UserData[] };
-  [EndpointAccessControlCommand.setUser]: { status: SetUserStatus };
-  [EndpointAccessControlCommand.deleteUser]: { status: SetUserStatus };
-  [EndpointAccessControlCommand.deleteAllUsers]: { status: SetUserStatus };
+  [EndpointAccessControlCommand.setUser]: { result: SetUserResult };
+  [EndpointAccessControlCommand.deleteUser]: { result: SetUserResult };
+  [EndpointAccessControlCommand.deleteAllUsers]: { result: SetUserResult };
   [EndpointAccessControlCommand.getCredential]: { credential?: CredentialData };
   [EndpointAccessControlCommand.getCredentialCached]: {
     credential?: CredentialData;
@@ -48,11 +48,11 @@ export interface EndpointAccessControlResultTypes {
     credentials: CredentialData[];
   };
   [EndpointAccessControlCommand.assignCredential]: {
-    status: AssignCredentialStatus;
+    result: AssignCredentialResult;
   };
-  [EndpointAccessControlCommand.setCredential]: { status: SetCredentialStatus };
+  [EndpointAccessControlCommand.setCredential]: { result: SetCredentialResult };
   [EndpointAccessControlCommand.deleteCredential]: {
-    status: SetCredentialStatus;
+    result: SetCredentialResult;
   };
   [EndpointAccessControlCommand.startCredentialLearn]: {
     result?: SupervisionResult;

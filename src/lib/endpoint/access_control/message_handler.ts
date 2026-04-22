@@ -55,21 +55,21 @@ export async function handleEndpointAccessControlCommand(
       return { users };
     }
     case EndpointAccessControlCommand.setUser: {
-      const status = await ensureAccessControl(endpoint).setUser(
+      const result = await ensureAccessControl(endpoint).setUser(
         message.userId,
         message.options,
       );
-      return { status };
+      return { result };
     }
     case EndpointAccessControlCommand.deleteUser: {
-      const status = await ensureAccessControl(endpoint).deleteUser(
+      const result = await ensureAccessControl(endpoint).deleteUser(
         message.userId,
       );
-      return { status };
+      return { result };
     }
     case EndpointAccessControlCommand.deleteAllUsers: {
-      const status = await ensureAccessControl(endpoint).deleteAllUsers();
-      return { status };
+      const result = await ensureAccessControl(endpoint).deleteAllUsers();
+      return { result };
     }
     case EndpointAccessControlCommand.getCredential: {
       const credential = await ensureAccessControl(endpoint).getCredential(
@@ -122,29 +122,29 @@ export async function handleEndpointAccessControlCommand(
       return { credentials };
     }
     case EndpointAccessControlCommand.assignCredential: {
-      const status = await ensureAccessControl(endpoint).assignCredential(
+      const result = await ensureAccessControl(endpoint).assignCredential(
         message.credentialType as UserCredentialType,
         message.credentialSlot,
         message.destinationUserId,
       );
-      return { status };
+      return { result };
     }
     case EndpointAccessControlCommand.setCredential: {
-      const status = await ensureAccessControl(endpoint).setCredential(
+      const result = await ensureAccessControl(endpoint).setCredential(
         message.userId,
         message.credentialType as UserCredentialType,
         message.credentialSlot,
         deserializeBuffer(message.data),
       );
-      return { status };
+      return { result };
     }
     case EndpointAccessControlCommand.deleteCredential: {
-      const status = await ensureAccessControl(endpoint).deleteCredential(
+      const result = await ensureAccessControl(endpoint).deleteCredential(
         message.userId,
         message.credentialType as UserCredentialType,
         message.credentialSlot,
       );
-      return { status };
+      return { result };
     }
     case EndpointAccessControlCommand.startCredentialLearn: {
       const result = await ensureAccessControl(endpoint).startCredentialLearn(
