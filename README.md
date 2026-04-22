@@ -1331,12 +1331,23 @@ Supported commands:
 - `endpoint.access_control.get_credential_cached`
 - `endpoint.access_control.get_credentials`
 - `endpoint.access_control.get_credentials_cached`
+- `endpoint.access_control.get_credentials_by_type`
+- `endpoint.access_control.get_credentials_by_type_cached`
+- `endpoint.access_control.get_all_credentials`
+- `endpoint.access_control.get_all_credentials_cached`
+- `endpoint.access_control.assign_credential`
 - `endpoint.access_control.set_credential`
 - `endpoint.access_control.delete_credential`
 - `endpoint.access_control.start_credential_learn`
 - `endpoint.access_control.cancel_credential_learn`
 - `endpoint.access_control.get_admin_code`
 - `endpoint.access_control.set_admin_code`
+
+Mutating commands return a `result` field carrying an enum value:
+
+- `set_user`, `delete_user`, `delete_all_users` → `SetUserResult`
+- `set_credential`, `delete_credential` → `SetCredentialResult`
+- `assign_credential` → `AssignCredentialResult`
 
 All commands use the same base arguments:
 
@@ -1380,6 +1391,20 @@ interface {
     credentialRule?: number;
     expiringTimeoutMinutes?: number;
   };
+}
+```
+
+Example: reassign a credential to a different user
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.assign_credential";
+  nodeId: number;
+  endpoint?: number;
+  credentialType: number;
+  credentialSlot: number;
+  destinationUserId: number;
 }
 ```
 

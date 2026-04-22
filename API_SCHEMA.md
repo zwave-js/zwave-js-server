@@ -374,6 +374,11 @@ Base schema.
   - `endpoint.access_control.get_credential_cached`
   - `endpoint.access_control.get_credentials`
   - `endpoint.access_control.get_credentials_cached`
+  - `endpoint.access_control.get_credentials_by_type`
+  - `endpoint.access_control.get_credentials_by_type_cached`
+  - `endpoint.access_control.get_all_credentials`
+  - `endpoint.access_control.get_all_credentials_cached`
+  - `endpoint.access_control.assign_credential`
   - `endpoint.access_control.set_credential`
   - `endpoint.access_control.delete_credential`
   - `endpoint.access_control.start_credential_learn`
