@@ -64,11 +64,11 @@ export interface IncomingCommandNodeAbortFirmwareUpdate extends IncomingCommandN
   command: NodeCommand.abortFirmwareUpdate;
 }
 
-export interface IncomingCommandGetFirmwareUpdateCapabilities extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetFirmwareUpdateCapabilities extends IncomingCommandNodeBase {
   command: NodeCommand.getFirmwareUpdateCapabilities;
 }
 
-export interface IncomingCommandGetFirmwareUpdateCapabilitiesCached extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetFirmwareUpdateCapabilitiesCached extends IncomingCommandNodeBase {
   command: NodeCommand.getFirmwareUpdateCapabilitiesCached;
 }
 
@@ -105,79 +105,79 @@ export interface IncomingCommandNodePing extends IncomingCommandNodeBase {
   command: NodeCommand.ping;
 }
 
-export interface IncomingCommandHasSecurityClass extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeHasSecurityClass extends IncomingCommandNodeBase {
   command: NodeCommand.hasSecurityClass;
   securityClass: SecurityClass;
 }
 
-export interface IncomingCommandGetHighestSecurityClass extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetHighestSecurityClass extends IncomingCommandNodeBase {
   command: NodeCommand.getHighestSecurityClass;
 }
 
-export interface IncomingCommandTestPowerlevel extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeTestPowerlevel extends IncomingCommandNodeBase {
   command: NodeCommand.testPowerlevel;
   testNodeId: number;
   powerlevel: Powerlevel;
   testFrameCount: number;
 }
 
-export interface IncomingCommandCheckLifelineHealth extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeCheckLifelineHealth extends IncomingCommandNodeBase {
   command: NodeCommand.checkLifelineHealth;
   rounds?: number;
 }
 
-export interface IncomingCommandCheckRouteHealth extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeCheckRouteHealth extends IncomingCommandNodeBase {
   command: NodeCommand.checkRouteHealth;
   targetNodeId: number;
   rounds?: number;
 }
 
-export interface IncomingCommandGetValue extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetValue extends IncomingCommandNodeBase {
   command: NodeCommand.getValue;
   valueId: ValueID;
 }
 
-export interface IncomingCommandGetEndpointCount extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetEndpointCount extends IncomingCommandNodeBase {
   command: NodeCommand.getEndpointCount;
 }
 
-export interface IncomingCommandInterviewCC extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeInterviewCC extends IncomingCommandNodeBase {
   command: NodeCommand.interviewCC;
   commandClass: CommandClasses;
 }
 
-export interface IncomingCommandGetState extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeGetState extends IncomingCommandNodeBase {
   command: NodeCommand.getState;
 }
 
-export interface IncomingCommandSetName extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetName extends IncomingCommandNodeBase {
   command: NodeCommand.setName;
   name: string;
   updateCC?: boolean;
 }
 
-export interface IncomingCommandSetLocation extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetLocation extends IncomingCommandNodeBase {
   command: NodeCommand.setLocation;
   location: string;
   updateCC?: boolean;
 }
 
-export interface IncomingCommandSetKeepAwake extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeSetKeepAwake extends IncomingCommandNodeBase {
   command: NodeCommand.setKeepAwake;
   keepAwake: boolean;
 }
 
-export interface IncomingCommandIsFirmwareUpdateInProgress extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeIsFirmwareUpdateInProgress extends IncomingCommandNodeBase {
   command:
     | NodeCommand.isFirmwareUpdateInProgress
     | NodeCommand.getFirmwareUpdateProgress;
 }
 
-export interface IncomingCommandWaitForWakeup extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeWaitForWakeup extends IncomingCommandNodeBase {
   command: NodeCommand.waitForWakeup;
 }
 
-export interface IncomingCommandInterview extends IncomingCommandNodeBase {
+export interface IncomingCommandNodeInterview extends IncomingCommandNodeBase {
   command: NodeCommand.interview;
 }
 
@@ -261,29 +261,29 @@ export type IncomingMessageNode =
   | IncomingCommandNodeBeginFirmwareUpdate
   | IncomingCommandNodeUpdateFirmware
   | IncomingCommandNodeAbortFirmwareUpdate
-  | IncomingCommandGetFirmwareUpdateCapabilities
-  | IncomingCommandGetFirmwareUpdateCapabilitiesCached
+  | IncomingCommandNodeGetFirmwareUpdateCapabilities
+  | IncomingCommandNodeGetFirmwareUpdateCapabilitiesCached
   | IncomingCommandNodePollValue
   | IncomingCommandNodeSetRawConfigParameterValue
   | IncomingCommandNodeGetRawConfigParameterValue
   | IncomingCommandNodeRefreshValues
   | IncomingCommandNodeRefreshCCValues
   | IncomingCommandNodePing
-  | IncomingCommandHasSecurityClass
-  | IncomingCommandGetHighestSecurityClass
-  | IncomingCommandTestPowerlevel
-  | IncomingCommandCheckLifelineHealth
-  | IncomingCommandCheckRouteHealth
-  | IncomingCommandGetValue
-  | IncomingCommandGetEndpointCount
-  | IncomingCommandInterviewCC
-  | IncomingCommandGetState
-  | IncomingCommandSetName
-  | IncomingCommandSetLocation
-  | IncomingCommandSetKeepAwake
-  | IncomingCommandIsFirmwareUpdateInProgress
-  | IncomingCommandWaitForWakeup
-  | IncomingCommandInterview
+  | IncomingCommandNodeHasSecurityClass
+  | IncomingCommandNodeGetHighestSecurityClass
+  | IncomingCommandNodeTestPowerlevel
+  | IncomingCommandNodeCheckLifelineHealth
+  | IncomingCommandNodeCheckRouteHealth
+  | IncomingCommandNodeGetValue
+  | IncomingCommandNodeGetEndpointCount
+  | IncomingCommandNodeInterviewCC
+  | IncomingCommandNodeGetState
+  | IncomingCommandNodeSetName
+  | IncomingCommandNodeSetLocation
+  | IncomingCommandNodeSetKeepAwake
+  | IncomingCommandNodeIsFirmwareUpdateInProgress
+  | IncomingCommandNodeWaitForWakeup
+  | IncomingCommandNodeInterview
   | IncomingCommandNodeGetValueTimestamp
   | IncomingCommandNodeManuallyIdleNotificationValueMethod1
   | IncomingCommandNodeManuallyIdleNotificationValueMethod2
