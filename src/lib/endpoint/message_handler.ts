@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, Endpoint } from "zwave-js";
 import {
   EndpointNotFoundError,
   NodeNotFoundError,
@@ -16,18 +16,22 @@ import {
 } from "../common.js";
 import { MessageHandler } from "../message_handler.js";
 import { EndpointAccessControlCommand } from "./access_control/command.js";
-import { IncomingMessageEndpointAccessControl } from "./access_control/incoming_message.js";
-import { handleEndpointAccessControlCommand } from "./access_control/message_handler.js";
+import { EndpointAccessControlMessageHandler } from "./access_control/message_handler.js";
 
-function isAccessControlMessage(
-  message: IncomingMessageEndpoint,
-): message is IncomingMessageEndpointAccessControl {
-  return (Object.values(EndpointAccessControlCommand) as string[]).includes(
-    message.command,
-  );
+interface EndpointSubMessageHandler {
+  handle(
+    message: IncomingMessageEndpoint,
+    endpoint: Endpoint,
+  ): Promise<
+    EndpointResultTypes[EndpointCommand | EndpointAccessControlCommand]
+  >;
 }
 
 export class EndpointMessageHandler implements MessageHandler {
+  private subHandlers: Record<string, EndpointSubMessageHandler> = {
+    access_control: new EndpointAccessControlMessageHandler(),
+  };
+
   constructor(
     private driver: Driver,
     private client: Client,
@@ -55,8 +59,9 @@ export class EndpointMessageHandler implements MessageHandler {
       endpoint = node;
     }
 
-    if (isAccessControlMessage(message)) {
-      return handleEndpointAccessControlCommand(message, endpoint);
+    const subHandler = this.subHandlers[message.command.split(".")[1]];
+    if (subHandler) {
+      return subHandler.handle(message, endpoint);
     }
 
     switch (message.command) {
