@@ -4,6 +4,7 @@ export enum Instance {
   controller = "controller",
   driver = "driver",
   endpoint = "endpoint",
+  introspect = "introspect",
   multicast_group = "multicast_group",
   node = "node",
   utils = "utils",
