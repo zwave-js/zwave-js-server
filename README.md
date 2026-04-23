@@ -1293,6 +1293,121 @@ For `Buffer` type arguments, use the following JSON format to represent the argu
 }
 ```
 
+#### Unified Credential Management API (Users/Credentials)
+
+[compatible with schema version: 48+]
+
+These commands expose the unified credential management API from Z-Wave JS directly
+under the `endpoint.access_control.*` namespace. Z-Wave JS automatically handles
+User Credential CC vs User Code CC fallback where applicable.
+
+Before using any of the other commands, applications should check whether the
+endpoint exposes the unified access control API:
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.is_supported";
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+The response contains `supported: boolean`.
+
+Supported commands:
+
+- `endpoint.access_control.is_supported`
+- `endpoint.access_control.get_user_capabilities_cached`
+- `endpoint.access_control.get_credential_capabilities_cached`
+- `endpoint.access_control.get_user`
+- `endpoint.access_control.get_user_cached`
+- `endpoint.access_control.get_users`
+- `endpoint.access_control.get_users_cached`
+- `endpoint.access_control.set_user`
+- `endpoint.access_control.delete_user`
+- `endpoint.access_control.delete_all_users`
+- `endpoint.access_control.get_credential`
+- `endpoint.access_control.get_credential_cached`
+- `endpoint.access_control.get_credentials`
+- `endpoint.access_control.get_credentials_cached`
+- `endpoint.access_control.get_credentials_by_type`
+- `endpoint.access_control.get_credentials_by_type_cached`
+- `endpoint.access_control.get_all_credentials`
+- `endpoint.access_control.get_all_credentials_cached`
+- `endpoint.access_control.assign_credential`
+- `endpoint.access_control.set_credential`
+- `endpoint.access_control.delete_credential`
+- `endpoint.access_control.start_credential_learn`
+- `endpoint.access_control.cancel_credential_learn`
+- `endpoint.access_control.get_admin_code`
+- `endpoint.access_control.set_admin_code`
+
+Mutating commands return a `result` field carrying an enum value:
+
+- `set_user`, `delete_user`, `delete_all_users` → `SetUserResult`
+- `set_credential`, `delete_credential` → `SetCredentialResult`
+- `assign_credential` → `AssignCredentialResult`
+
+All commands use the same base arguments:
+
+```ts
+interface {
+  messageId: string;
+  command: string; // one of the commands above
+  nodeId: number;
+  endpoint?: number;
+}
+```
+
+Example: set a credential
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.set_credential";
+  nodeId: number;
+  endpoint?: number;
+  userId: number;
+  credentialType: number;
+  credentialSlot: number;
+  data: string | { type: "Buffer"; data: number[] };
+}
+```
+
+Example: create or modify a user
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.set_user";
+  nodeId: number;
+  endpoint?: number;
+  userId: number;
+  options: {
+    active?: boolean;
+    userType?: number;
+    userName?: string;
+    credentialRule?: number;
+    expiringTimeoutMinutes?: number;
+  };
+}
+```
+
+Example: reassign a credential to a different user
+
+```ts
+interface {
+  messageId: string;
+  command: "endpoint.access_control.assign_credential";
+  nodeId: number;
+  endpoint?: number;
+  credentialType: number;
+  credentialSlot: number;
+  destinationUserId: number;
+}
+```
+
 #### [Check whether a given Command Classes API is supported by the above method](https://zwave-js.github.io/node-zwave-js/#/api/endpoint?id=supportsccapi)
 
 [compatible with schema version: 7+]
@@ -1917,6 +2032,43 @@ interface {
   }
 }
 ```
+
+#### Access control events
+
+[compatible with schema version: 48+]
+
+The unified access-control events from `zwave-js` are forwarded with endpoint context:
+
+- `user added`
+- `user modified`
+- `user deleted`
+- `credential added`
+- `credential modified`
+- `credential deleted`
+- `credential learn progress`
+- `credential learn completed`
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "node";
+    event: string;
+    nodeId: number;
+    endpointIndex: number;
+    args: Record<string, unknown>;
+  }
+}
+```
+
+Examples for `args`:
+
+- `user added` / `user modified`: `{ userId, active, userType, userName?, credentialRule?, expiringTimeoutMinutes? }`
+- `user deleted`: `{ userId }`
+- `credential added` / `credential modified`: `{ userId, credentialType, credentialSlot, data? }`
+- `credential deleted`: `{ userId, credentialType, credentialSlot }`
+- `credential learn progress`: `{ userId, credentialType, credentialSlot, stepsRemaining, status }`
+- `credential learn completed`: `{ userId, credentialType, credentialSlot, status, success }`
 
 ### `zwave-js-server` Driver Events
 

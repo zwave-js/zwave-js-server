@@ -1,6 +1,7 @@
 import { CommandClasses, ConfigValue, ConfigValueFormat } from "@zwave-js/core";
 import { IncomingCommandBase } from "../incoming_message_base.js";
 import { EndpointCommand } from "./command.js";
+import { IncomingMessageEndpointAccessControl } from "./access_control/incoming_message.js";
 
 export interface IncomingCommandEndpointBase extends IncomingCommandBase {
   nodeId: number;
@@ -88,4 +89,6 @@ export type IncomingMessageEndpoint =
   | IncomingCommandEndpointGetRawConfigParameterValue
   | IncomingCommandEndpointGetCCs
   | IncomingCommandEndpointMaySupportBasicCC
-  | IncomingCommandEndpointWasCCRemovedViaConfig;
+  | IncomingCommandEndpointWasCCRemovedViaConfig
+  // Namespaced endpoint features:
+  | IncomingMessageEndpointAccessControl;

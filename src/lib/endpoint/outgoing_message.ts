@@ -1,14 +1,15 @@
 import {
-  SupervisionResult,
   MaybeNotKnown,
   ConfigValue,
   CommandClasses,
   CommandClassInfo,
+  SupervisionResult,
 } from "@zwave-js/core";
 import { EndpointCommand } from "./command.js";
 import { NodeState } from "../state.js";
+import { type EndpointAccessControlResultTypes } from "./access_control/outgoing_message.js";
 
-export interface EndpointResultTypes {
+export type EndpointResultTypes = {
   [EndpointCommand.invokeCCAPI]: { response: unknown };
   [EndpointCommand.supportsCCAPI]: { supported: boolean };
   [EndpointCommand.supportsCC]: { supported: boolean };
@@ -26,4 +27,4 @@ export interface EndpointResultTypes {
   };
   [EndpointCommand.maySupportBasicCC]: { maySupport: boolean };
   [EndpointCommand.wasCCRemovedViaConfig]: { removed: boolean };
-}
+} & EndpointAccessControlResultTypes;

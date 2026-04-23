@@ -1,4 +1,4 @@
-import { Driver } from "zwave-js";
+import { Driver, Endpoint } from "zwave-js";
 import {
   EndpointNotFoundError,
   NodeNotFoundError,
@@ -10,37 +10,28 @@ import { EndpointCommand } from "./command.js";
 import { IncomingMessageEndpoint } from "./incoming_message.js";
 import { EndpointResultTypes } from "./outgoing_message.js";
 import {
+  deserializeBufferInArray,
   getRawConfigParameterValue,
   setRawConfigParameterValue,
 } from "../common.js";
 import { MessageHandler } from "../message_handler.js";
+import { EndpointAccessControlCommand } from "./access_control/command.js";
+import { EndpointAccessControlMessageHandler } from "./access_control/message_handler.js";
 
-function isBufferObject(
-  obj: unknown,
-): obj is { type: "Buffer"; data: number[] } {
-  return (
-    obj instanceof Object &&
-    Object.keys(obj).length === 2 &&
-    "type" in obj &&
-    obj.type === "Buffer" &&
-    "data" in obj &&
-    Array.isArray(obj.data) &&
-    obj.data.every((item) => typeof item === "number")
-  );
-}
-
-function deserializeBufferInArray(array: unknown[]): unknown[] {
-  // Iterate over all items in array and deserialize any Buffer objects
-  for (let idx = 0; idx < array.length; idx++) {
-    const value = array[idx];
-    if (isBufferObject(value)) {
-      array[idx] = Buffer.from(value.data);
-    }
-  }
-  return array;
+interface EndpointSubMessageHandler {
+  handle(
+    message: IncomingMessageEndpoint,
+    endpoint: Endpoint,
+  ): Promise<
+    EndpointResultTypes[EndpointCommand | EndpointAccessControlCommand]
+  >;
 }
 
 export class EndpointMessageHandler implements MessageHandler {
+  private subHandlers: Record<string, EndpointSubMessageHandler> = {
+    access_control: new EndpointAccessControlMessageHandler(),
+  };
+
   constructor(
     private driver: Driver,
     private client: Client,
@@ -48,7 +39,9 @@ export class EndpointMessageHandler implements MessageHandler {
 
   async handle(
     message: IncomingMessageEndpoint,
-  ): Promise<EndpointResultTypes[EndpointCommand]> {
+  ): Promise<
+    EndpointResultTypes[EndpointCommand | EndpointAccessControlCommand]
+  > {
     const { nodeId, command } = message;
     let endpoint;
 
@@ -64,6 +57,11 @@ export class EndpointMessageHandler implements MessageHandler {
       }
     } else {
       endpoint = node;
+    }
+
+    const subHandler = this.subHandlers[message.command.split(".")[1]];
+    if (subHandler) {
+      return subHandler.handle(message, endpoint);
     }
 
     switch (message.command) {

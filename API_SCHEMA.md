@@ -356,3 +356,43 @@ Base schema.
 - Added zniffer Long Range commands: `get_lr_regions`, `get_current_lr_channel_config`, `get_supported_lr_channel_configs`, `set_lr_channel_config`
 - Added zniffer command: `load_capture_from_buffer`
 - Added utility commands: `guess_firmware_file_format`, `try_unzip_firmware_file`, `extract_firmware`
+
+## Schema 48
+
+- Added typed endpoint access-control commands under the `endpoint.access_control.*` namespace:
+  - `endpoint.access_control.is_supported`
+  - `endpoint.access_control.get_user_capabilities_cached`
+  - `endpoint.access_control.get_credential_capabilities_cached`
+  - `endpoint.access_control.get_user`
+  - `endpoint.access_control.get_user_cached`
+  - `endpoint.access_control.get_users`
+  - `endpoint.access_control.get_users_cached`
+  - `endpoint.access_control.set_user`
+  - `endpoint.access_control.delete_user`
+  - `endpoint.access_control.delete_all_users`
+  - `endpoint.access_control.get_credential`
+  - `endpoint.access_control.get_credential_cached`
+  - `endpoint.access_control.get_credentials`
+  - `endpoint.access_control.get_credentials_cached`
+  - `endpoint.access_control.get_credentials_by_type`
+  - `endpoint.access_control.get_credentials_by_type_cached`
+  - `endpoint.access_control.get_all_credentials`
+  - `endpoint.access_control.get_all_credentials_cached`
+  - `endpoint.access_control.assign_credential`
+  - `endpoint.access_control.set_credential`
+  - `endpoint.access_control.delete_credential`
+  - `endpoint.access_control.start_credential_learn`
+  - `endpoint.access_control.cancel_credential_learn`
+  - `endpoint.access_control.get_admin_code`
+  - `endpoint.access_control.set_admin_code`
+- These commands expose the unified user/credential API in zwave-js directly through the server, including User Credential CC and User Code CC fallback behavior handled by zwave-js. Applications should call `endpoint.access_control.is_supported` to check whether an endpoint exposes the API before using the other commands.
+- Added node events for unified access control handling:
+  - `user added`
+  - `user modified`
+  - `user deleted`
+  - `credential added`
+  - `credential modified`
+  - `credential deleted`
+  - `credential learn progress`
+  - `credential learn completed`
+- These events are forwarded with `nodeId`, `endpointIndex`, and `args`.
