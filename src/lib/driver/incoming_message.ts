@@ -9,87 +9,87 @@ import {
 } from "zwave-js";
 import { LogContexts } from "../logging.js";
 
-interface IncomingCommandGetConfig extends IncomingCommandBase {
+interface IncomingCommandDriverGetConfig extends IncomingCommandBase {
   command: DriverCommand.getConfig;
 }
 
-interface IncomingCommandUpdateLogConfig extends IncomingCommandBase {
+interface IncomingCommandDriverUpdateLogConfig extends IncomingCommandBase {
   command: DriverCommand.updateLogConfig;
   config: Partial<LogConfig>;
 }
 
-interface IncomingCommandGetLogConfig extends IncomingCommandBase {
+interface IncomingCommandDriverGetLogConfig extends IncomingCommandBase {
   command: DriverCommand.getLogConfig;
 }
 
-interface IncomingCommandEnableStatistics extends IncomingCommandBase {
+interface IncomingCommandDriverEnableStatistics extends IncomingCommandBase {
   command: DriverCommand.enableStatistics;
   applicationName: string;
   applicationVersion: string;
 }
 
-interface IncomingCommandDisableStatistics extends IncomingCommandBase {
+interface IncomingCommandDriverDisableStatistics extends IncomingCommandBase {
   command: DriverCommand.disableStatistics;
 }
 
-interface IncomingCommandIsStatisticsEnabled extends IncomingCommandBase {
+interface IncomingCommandDriverIsStatisticsEnabled extends IncomingCommandBase {
   command: DriverCommand.isStatisticsEnabled;
 }
 
-interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
+interface IncomingCommandDriverStartListeningLogs extends IncomingCommandBase {
   command: DriverCommand.startListeningLogs;
   filter?: Partial<LogContexts>;
 }
 
-interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
+interface IncomingCommandDriverStopListeningLogs extends IncomingCommandBase {
   command: DriverCommand.stopListeningLogs;
 }
 
-interface IncomingCommandCheckForConfigUpdates extends IncomingCommandBase {
+interface IncomingCommandDriverCheckForConfigUpdates extends IncomingCommandBase {
   command: DriverCommand.checkForConfigUpdates;
 }
 
-interface IncomingCommandInstallConfigUpdate extends IncomingCommandBase {
+interface IncomingCommandDriverInstallConfigUpdate extends IncomingCommandBase {
   command: DriverCommand.installConfigUpdate;
 }
 
-interface IncomingCommandSetPreferredScales extends IncomingCommandBase {
+interface IncomingCommandDriverSetPreferredScales extends IncomingCommandBase {
   command: DriverCommand.setPreferredScales;
   scales: ZWaveOptions["preferences"]["scales"];
 }
 
-interface IncomingCommandEnableErrorReporting extends IncomingCommandBase {
+interface IncomingCommandDriverEnableErrorReporting extends IncomingCommandBase {
   command: DriverCommand.enableErrorReporting;
 }
 
-interface IncomingCommandSoftReset extends IncomingCommandBase {
+interface IncomingCommandDriverSoftReset extends IncomingCommandBase {
   command: DriverCommand.softReset;
 }
 
-interface IncomingCommandTrySoftReset extends IncomingCommandBase {
+interface IncomingCommandDriverTrySoftReset extends IncomingCommandBase {
   command: DriverCommand.trySoftReset;
 }
 
-interface IncomingCommandHardReset extends IncomingCommandBase {
+interface IncomingCommandDriverHardReset extends IncomingCommandBase {
   command: DriverCommand.hardReset;
 }
 
-interface IncomingCommandShutdown extends IncomingCommandBase {
+interface IncomingCommandDriverShutdown extends IncomingCommandBase {
   command: DriverCommand.shutdown;
 }
 
-interface IncomingCommandUpdateOptions extends IncomingCommandBase {
+interface IncomingCommandDriverUpdateOptions extends IncomingCommandBase {
   command: DriverCommand.updateOptions;
   options: EditableZWaveOptions;
 }
 
-interface IncomingCommandSendTestFrame extends IncomingCommandBase {
+interface IncomingCommandDriverSendTestFrame extends IncomingCommandBase {
   command: DriverCommand.sendTestFrame;
   nodeId: number;
   powerlevel: Powerlevel;
 }
 
-export type IncomingCommandFirmwareUpdateOTW = IncomingCommandBase & {
+export type IncomingCommandDriverFirmwareUpdateOTW = IncomingCommandBase & {
   command: DriverCommand.firmwareUpdateOTW;
 } & (
     | {
@@ -105,31 +105,31 @@ export type IncomingCommandFirmwareUpdateOTW = IncomingCommandBase & {
       }
   );
 
-export interface IncomingCommandIsOTWFirmwareUpdateInProgress extends IncomingCommandBase {
+export interface IncomingCommandDriverIsOTWFirmwareUpdateInProgress extends IncomingCommandBase {
   command: DriverCommand.isOTWFirmwareUpdateInProgress;
 }
 
-interface IncomingCommandSoftResetAndRestart extends IncomingCommandBase {
+interface IncomingCommandDriverSoftResetAndRestart extends IncomingCommandBase {
   command: DriverCommand.softResetAndRestart;
 }
 
-interface IncomingCommandEnterBootloader extends IncomingCommandBase {
+interface IncomingCommandDriverEnterBootloader extends IncomingCommandBase {
   command: DriverCommand.enterBootloader;
 }
 
-interface IncomingCommandLeaveBootloader extends IncomingCommandBase {
+interface IncomingCommandDriverLeaveBootloader extends IncomingCommandBase {
   command: DriverCommand.leaveBootloader;
 }
 
 // CC version queries
-interface IncomingCommandGetSupportedCCVersion extends IncomingCommandBase {
+interface IncomingCommandDriverGetSupportedCCVersion extends IncomingCommandBase {
   command: DriverCommand.getSupportedCCVersion;
   cc: CommandClasses;
   nodeId: number;
   endpointIndex?: number;
 }
 
-interface IncomingCommandGetSafeCCVersion extends IncomingCommandBase {
+interface IncomingCommandDriverGetSafeCCVersion extends IncomingCommandBase {
   command: DriverCommand.getSafeCCVersion;
   cc: CommandClasses;
   nodeId: number;
@@ -137,47 +137,47 @@ interface IncomingCommandGetSafeCCVersion extends IncomingCommandBase {
 }
 
 // User agent
-interface IncomingCommandUpdateUserAgent extends IncomingCommandBase {
+interface IncomingCommandDriverUpdateUserAgent extends IncomingCommandBase {
   command: DriverCommand.updateUserAgent;
   components: Record<string, string | null | undefined>;
 }
 
 // RSSI monitoring
-interface IncomingCommandEnableFrequentRSSIMonitoring extends IncomingCommandBase {
+interface IncomingCommandDriverEnableFrequentRSSIMonitoring extends IncomingCommandBase {
   command: DriverCommand.enableFrequentRSSIMonitoring;
   durationMs: number;
 }
 
-interface IncomingCommandDisableFrequentRSSIMonitoring extends IncomingCommandBase {
+interface IncomingCommandDriverDisableFrequentRSSIMonitoring extends IncomingCommandBase {
   command: DriverCommand.disableFrequentRSSIMonitoring;
 }
 
 export type IncomingMessageDriver =
-  | IncomingCommandGetConfig
-  | IncomingCommandUpdateLogConfig
-  | IncomingCommandGetLogConfig
-  | IncomingCommandDisableStatistics
-  | IncomingCommandEnableStatistics
-  | IncomingCommandIsStatisticsEnabled
-  | IncomingCommandStartListeningLogs
-  | IncomingCommandStopListeningLogs
-  | IncomingCommandCheckForConfigUpdates
-  | IncomingCommandInstallConfigUpdate
-  | IncomingCommandSetPreferredScales
-  | IncomingCommandEnableErrorReporting
-  | IncomingCommandSoftReset
-  | IncomingCommandTrySoftReset
-  | IncomingCommandHardReset
-  | IncomingCommandShutdown
-  | IncomingCommandUpdateOptions
-  | IncomingCommandSendTestFrame
-  | IncomingCommandFirmwareUpdateOTW
-  | IncomingCommandIsOTWFirmwareUpdateInProgress
-  | IncomingCommandSoftResetAndRestart
-  | IncomingCommandEnterBootloader
-  | IncomingCommandLeaveBootloader
-  | IncomingCommandGetSupportedCCVersion
-  | IncomingCommandGetSafeCCVersion
-  | IncomingCommandUpdateUserAgent
-  | IncomingCommandEnableFrequentRSSIMonitoring
-  | IncomingCommandDisableFrequentRSSIMonitoring;
+  | IncomingCommandDriverGetConfig
+  | IncomingCommandDriverUpdateLogConfig
+  | IncomingCommandDriverGetLogConfig
+  | IncomingCommandDriverDisableStatistics
+  | IncomingCommandDriverEnableStatistics
+  | IncomingCommandDriverIsStatisticsEnabled
+  | IncomingCommandDriverStartListeningLogs
+  | IncomingCommandDriverStopListeningLogs
+  | IncomingCommandDriverCheckForConfigUpdates
+  | IncomingCommandDriverInstallConfigUpdate
+  | IncomingCommandDriverSetPreferredScales
+  | IncomingCommandDriverEnableErrorReporting
+  | IncomingCommandDriverSoftReset
+  | IncomingCommandDriverTrySoftReset
+  | IncomingCommandDriverHardReset
+  | IncomingCommandDriverShutdown
+  | IncomingCommandDriverUpdateOptions
+  | IncomingCommandDriverSendTestFrame
+  | IncomingCommandDriverFirmwareUpdateOTW
+  | IncomingCommandDriverIsOTWFirmwareUpdateInProgress
+  | IncomingCommandDriverSoftResetAndRestart
+  | IncomingCommandDriverEnterBootloader
+  | IncomingCommandDriverLeaveBootloader
+  | IncomingCommandDriverGetSupportedCCVersion
+  | IncomingCommandDriverGetSafeCCVersion
+  | IncomingCommandDriverUpdateUserAgent
+  | IncomingCommandDriverEnableFrequentRSSIMonitoring
+  | IncomingCommandDriverDisableFrequentRSSIMonitoring;
