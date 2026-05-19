@@ -74,8 +74,7 @@ const waitForResult = async (
 };
 
 class MockTransport extends Transport {
-  public log(info: unknown, next: () => void): void {
-    void info;
+  public log(_info: unknown, next: () => void): void {
     next();
   }
 }

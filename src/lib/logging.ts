@@ -70,10 +70,10 @@ export const preserveLogTransports = (
   driver: Driver,
   config: Partial<LogConfig>,
 ): Partial<LogConfig> => {
+  if (!("transports" in config)) return config;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { transports, ...updatedConfig } = config;
-  const currentTransports = driver.getLogConfig().transports ?? [];
-  return { ...updatedConfig, transports: [...currentTransports] };
+  const { transports: _, ...rest } = config;
+  return { ...rest, transports: [...(driver.getLogConfig().transports ?? [])] };
 };
 
 class WebSocketLogTransport extends Transport {
