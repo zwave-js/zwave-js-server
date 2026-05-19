@@ -2,6 +2,7 @@ import * as assert from "assert";
 import dns from "node:dns";
 import ws from "ws";
 import type { LogConfig } from "@zwave-js/core";
+import Transport from "winston-transport";
 import { libVersion } from "zwave-js";
 import { ZwavejsServer } from "../lib/server.js";
 import { createMockDriver } from "../mock/index.js";
@@ -71,11 +72,16 @@ const waitForResult = async (
   }
 };
 
+class MockTransport extends Transport {
+  public log(_info: unknown, next: () => void): void {
+    next();
+  }
+}
+
 const runTest = async () => {
   const driver = createMockDriver();
-  const customTransport = {
-    name: "custom",
-  } as unknown as LogConfig["transports"][number];
+  const customTransport =
+    new MockTransport() as LogConfig["transports"][number];
   driver.updateLogConfig({ transports: [customTransport] });
   const server = new ZwavejsServer(driver, { port: PORT });
   await server.start(true);

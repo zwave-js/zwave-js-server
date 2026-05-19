@@ -72,10 +72,7 @@ export const preserveLogTransports = (
 ): Partial<LogConfig> => {
   const updatedConfig = { ...config };
   delete updatedConfig.transports;
-  const currentTransports = driver.getLogConfig().transports;
-  if (currentTransports === undefined) {
-    return updatedConfig;
-  }
+  const currentTransports = driver.getLogConfig().transports ?? [];
   return { ...updatedConfig, transports: [...currentTransports] };
 };
 
