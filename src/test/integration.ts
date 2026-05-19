@@ -43,7 +43,20 @@ const waitForResult = async (
   messageId: string,
 ) => {
   for (;;) {
-    const message = await nextMessage();
+    const message = await Promise.race([
+      nextMessage(),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Timed out while waiting for result message ${messageId}`,
+              ),
+            ),
+          5000,
+        ),
+      ),
+    ]);
     if (
       typeof message === "object" &&
       message !== undefined &&
