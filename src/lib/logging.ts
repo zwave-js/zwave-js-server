@@ -70,8 +70,8 @@ export const preserveLogTransports = (
   driver: Driver,
   config: Partial<LogConfig>,
 ): Partial<LogConfig> => {
-  const updatedConfig = { ...config };
-  delete updatedConfig.transports;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { transports, ...updatedConfig } = config;
   const currentTransports = driver.getLogConfig().transports ?? [];
   return { ...updatedConfig, transports: [...currentTransports] };
 };

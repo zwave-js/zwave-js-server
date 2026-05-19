@@ -13,6 +13,7 @@ const require = createRequire(import.meta.url);
 dns.setDefaultResultOrder("ipv4first");
 
 const PORT = 45001;
+type LogTransport = LogConfig["transports"][number];
 
 const createNextMessage = (socket: ws) => {
   let waitingListener: ((msg: unknown) => void) | undefined;
@@ -73,15 +74,15 @@ const waitForResult = async (
 };
 
 class MockTransport extends Transport {
-  public log(_info: unknown, next: () => void): void {
+  public log(info: unknown, next: () => void): void {
+    void info;
     next();
   }
 }
 
 const runTest = async () => {
   const driver = createMockDriver();
-  const customTransport =
-    new MockTransport() as LogConfig["transports"][number];
+  const customTransport = new MockTransport() as LogTransport;
   driver.updateLogConfig({ transports: [customTransport] });
   const server = new ZwavejsServer(driver, { port: PORT });
   await server.start(true);
