@@ -46,7 +46,8 @@ const waitForResult = async (
     const message = await nextMessage();
     if (
       typeof message === "object" &&
-      message != undefined &&
+      message !== undefined &&
+      message !== null &&
       "type" in message &&
       message.type === "result" &&
       "messageId" in message &&
