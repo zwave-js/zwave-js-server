@@ -18,19 +18,29 @@ class MockDriver extends EventEmitter {
 
   public statisticsEnabled = true;
 
+  private logConfig: Partial<LogConfig> = {
+    enabled: true,
+    level: "debug",
+    transports: [],
+  };
+
   async start() {
     this.emit("driver ready");
   }
 
   public getLogConfig(): Partial<LogConfig> {
     return {
-      enabled: true,
-      level: "debug",
-      transports: [],
+      ...this.logConfig,
+      transports: [...(this.logConfig.transports ?? [])],
     };
   }
 
-  public updateLogConfig(_config: Partial<LogConfig>) {}
+  public updateLogConfig(config: Partial<LogConfig>) {
+    this.logConfig = {
+      ...this.logConfig,
+      ...config,
+    };
+  }
 
   public updateUserAgent(
     _additionalUserAgentComponents?: Record<string, string> | null,

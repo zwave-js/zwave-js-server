@@ -12,6 +12,7 @@ import { IncomingMessageDriver } from "./incoming_message.js";
 import { DriverResultTypes } from "./outgoing_message.js";
 import { dumpDriver, dumpLogConfig } from "../state.js";
 import { MessageHandler } from "../message_handler.js";
+import { preserveLogTransports } from "../logging.js";
 
 export class DriverMessageHandler implements MessageHandler {
   constructor(
@@ -47,7 +48,9 @@ export class DriverMessageHandler implements MessageHandler {
         return { config };
       }
       case DriverCommand.updateLogConfig: {
-        this.driver.updateLogConfig(message.config);
+        this.driver.updateLogConfig(
+          preserveLogTransports(this.driver, message.config),
+        );
         // If the logging event forwarder is enabled, we need to restart
         // it so that it picks up the new config.
         this.clientsController.restartLoggingEventForwarderIfNeeded();

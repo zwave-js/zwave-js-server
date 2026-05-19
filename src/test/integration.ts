@@ -1,6 +1,8 @@
 import * as assert from "assert";
 import dns from "node:dns";
 import ws from "ws";
+import type { LogConfig } from "@zwave-js/core";
+import Transport from "winston-transport";
 import { libVersion } from "zwave-js";
 import { ZwavejsServer } from "../lib/server.js";
 import { createMockDriver } from "../mock/index.js";
@@ -11,6 +13,7 @@ const require = createRequire(import.meta.url);
 dns.setDefaultResultOrder("ipv4first");
 
 const PORT = 45001;
+type LogTransport = LogConfig["transports"][number];
 
 const createNextMessage = (socket: ws) => {
   let waitingListener: ((msg: unknown) => void) | undefined;
@@ -37,8 +40,50 @@ const createNextMessage = (socket: ws) => {
   };
 };
 
+const waitForResult = async (
+  nextMessage: ReturnType<typeof createNextMessage>,
+  messageId: string,
+) => {
+  for (;;) {
+    const message = await Promise.race([
+      nextMessage(),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Timed out while waiting for result message ${messageId}`,
+              ),
+            ),
+          5000,
+        ),
+      ),
+    ]);
+    if (
+      typeof message === "object" &&
+      message !== undefined &&
+      message !== null &&
+      "type" in message &&
+      message.type === "result" &&
+      "messageId" in message &&
+      message.messageId === messageId
+    ) {
+      return message;
+    }
+  }
+};
+
+class MockTransport extends Transport {
+  public log(_info: unknown, next: () => void): void {
+    next();
+  }
+}
+
 const runTest = async () => {
-  const server = new ZwavejsServer(createMockDriver(), { port: PORT });
+  const driver = createMockDriver();
+  const customTransport = new MockTransport() as LogTransport;
+  driver.updateLogConfig({ transports: [customTransport] });
+  const server = new ZwavejsServer(driver, { port: PORT });
   await server.start(true);
   let socket: ws | undefined = undefined;
 
@@ -96,6 +141,80 @@ const runTest = async () => {
         },
       },
     });
+
+    socket.send(
+      JSON.stringify({
+        messageId: "start-listening-logs",
+        command: "driver.start_listening_logs",
+      }),
+    );
+
+    assert.deepEqual(await nextMessage(), {
+      type: "result",
+      success: true,
+      messageId: "start-listening-logs",
+      result: {},
+    });
+
+    assert.equal(
+      driver.getLogConfig().transports?.includes(customTransport),
+      true,
+    );
+    assert.equal(driver.getLogConfig().transports?.length, 2);
+
+    socket.send(
+      JSON.stringify({
+        messageId: "update-log-config",
+        command: "driver.update_log_config",
+        config: {
+          enabled: true,
+          level: "info",
+          transports: [],
+        },
+      }),
+    );
+
+    assert.deepEqual(await nextMessage(), {
+      type: "event",
+      event: {
+        source: "driver",
+        event: "log config updated",
+        config: {
+          enabled: true,
+          level: "info",
+        },
+      },
+    });
+
+    assert.deepEqual(await waitForResult(nextMessage, "update-log-config"), {
+      type: "result",
+      success: true,
+      messageId: "update-log-config",
+      result: {},
+    });
+
+    assert.equal(driver.getLogConfig().level, "info");
+    assert.equal(
+      driver.getLogConfig().transports?.includes(customTransport),
+      true,
+    );
+    assert.equal(driver.getLogConfig().transports?.length, 2);
+
+    socket.send(
+      JSON.stringify({
+        messageId: "stop-listening-logs",
+        command: "driver.stop_listening_logs",
+      }),
+    );
+
+    assert.deepEqual(await nextMessage(), {
+      type: "result",
+      success: true,
+      messageId: "stop-listening-logs",
+      result: {},
+    });
+
+    assert.deepEqual(driver.getLogConfig().transports, [customTransport]);
 
     console.log("Integration tests passed :)");
   } finally {

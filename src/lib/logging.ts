@@ -3,7 +3,7 @@ import { MESSAGE as messageSymbol } from "triple-beam";
 import { ConfigLogContext } from "@zwave-js/config";
 import { NodeLogContext } from "@zwave-js/core";
 import { createDefaultTransportFormat } from "@zwave-js/core/bindings/log/node";
-import type { ZWaveLogInfo } from "@zwave-js/core";
+import type { LogConfig, ZWaveLogInfo } from "@zwave-js/core";
 import { SerialLogContext } from "@zwave-js/serial";
 import { ClientsController, Logger } from "./server.js";
 import { ControllerLogContext, DriverLogContext, Driver } from "zwave-js";
@@ -35,7 +35,7 @@ export class LoggingEventForwarder {
   }
 
   start(filter?: Partial<LogContexts>) {
-    const { transports = [], level } = this.driver.getLogConfig();
+    const { level } = this.driver.getLogConfig();
     // Set the log level before attaching the transport
     this.logger.info("Starting logging event forwarder at " + level + " level");
     this.serverTransport = new WebSocketLogTransport(
@@ -43,15 +43,16 @@ export class LoggingEventForwarder {
       this.clients,
       filter,
     );
+    const transports = [...(this.driver.getLogConfig().transports ?? [])];
     transports.push(this.serverTransport);
     this.driver.updateLogConfig({ transports });
   }
 
   stop() {
     this.logger.info("Stopping logging event forwarder");
-    const transports = this.driver
-      .getLogConfig()
-      .transports.filter((transport) => transport !== this.serverTransport);
+    const transports = (this.driver.getLogConfig().transports ?? []).filter(
+      (transport) => transport !== this.serverTransport,
+    );
     this.driver.updateLogConfig({ transports });
     delete this.serverTransport;
   }
@@ -64,6 +65,16 @@ export class LoggingEventForwarder {
     }
   }
 }
+
+export const preserveLogTransports = (
+  driver: Driver,
+  config: Partial<LogConfig>,
+): Partial<LogConfig> => {
+  if (!("transports" in config)) return config;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { transports: _, ...rest } = config;
+  return { ...rest, transports: [...(driver.getLogConfig().transports ?? [])] };
+};
 
 class WebSocketLogTransport extends Transport {
   public constructor(
