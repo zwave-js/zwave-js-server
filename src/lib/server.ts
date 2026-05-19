@@ -38,7 +38,11 @@ import {
 import { Instance } from "./instance.js";
 import { ServerCommand } from "./command.js";
 import { DriverMessageHandler } from "./driver/message_handler.js";
-import { LogContexts, LoggingEventForwarder } from "./logging.js";
+import {
+  LogContexts,
+  LoggingEventForwarder,
+  preserveLogTransports,
+} from "./logging.js";
 import { BroadcastNodeMessageHandler } from "./broadcast_node/message_handler.js";
 import { MulticastGroupMessageHandler } from "./multicast_group/message_handler.js";
 import { EndpointMessageHandler } from "./endpoint/message_handler.js";
@@ -165,7 +169,9 @@ export class Client {
       }
 
       if (msg.command === ServerCommand.updateLogConfig) {
-        this.driver.updateLogConfig(msg.config);
+        this.driver.updateLogConfig(
+          preserveLogTransports(this.driver, msg.config),
+        );
         this.sendResultSuccess(msg.messageId, {});
         return;
       }
