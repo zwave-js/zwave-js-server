@@ -68,6 +68,20 @@ export class EndpointAccessControlMessageHandler {
         );
         return { result };
       }
+      case EndpointAccessControlCommand.addUser: {
+        const result = await ensureAccessControl(endpoint).addUser(
+          message.userId,
+          message.options,
+          message.credential
+            ? {
+                type: message.credential.credentialType as UserCredentialType,
+                slot: message.credential.credentialSlot,
+                data: deserializeBuffer(message.credential.data),
+              }
+            : undefined,
+        );
+        return { result };
+      }
       case EndpointAccessControlCommand.deleteUser: {
         const result = await ensureAccessControl(endpoint).deleteUser(
           message.userId,

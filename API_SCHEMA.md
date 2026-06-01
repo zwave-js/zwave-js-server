@@ -396,3 +396,7 @@ Base schema.
   - `credential learn progress`
   - `credential learn completed`
 - These events are forwarded with `nodeId`, `endpointIndex`, and `args`.
+
+## Schema 49
+
+- Added the `endpoint.access_control.add_user` command, which creates a new user and optionally writes a credential in the same call.

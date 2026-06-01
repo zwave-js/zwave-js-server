@@ -46,6 +46,19 @@ export interface IncomingCommandEndpointAccessControlSetUser extends IncomingCom
   options: EndpointSetUserOptions;
 }
 
+export interface EndpointAddUserCredential {
+  credentialType: number;
+  credentialSlot: number;
+  data: string | BufferObject;
+}
+
+export interface IncomingCommandEndpointAccessControlAddUser extends IncomingCommandEndpointBase {
+  command: EndpointAccessControlCommand.addUser;
+  userId: number;
+  options: EndpointSetUserOptions;
+  credential?: EndpointAddUserCredential;
+}
+
 export interface IncomingCommandEndpointAccessControlDeleteUser extends IncomingCommandEndpointBase {
   command: EndpointAccessControlCommand.deleteUser;
   userId: number;
@@ -147,6 +160,7 @@ export type IncomingMessageEndpointAccessControl =
   | IncomingCommandEndpointAccessControlGetUsers
   | IncomingCommandEndpointAccessControlGetUsersCached
   | IncomingCommandEndpointAccessControlSetUser
+  | IncomingCommandEndpointAccessControlAddUser
   | IncomingCommandEndpointAccessControlDeleteUser
   | IncomingCommandEndpointAccessControlDeleteAllUsers
   | IncomingCommandEndpointAccessControlGetCredential

@@ -3,6 +3,7 @@ import {
   AssignCredentialResult,
   SetCredentialResult,
   SetUserResult,
+  type AddUserResult,
   type CredentialCapabilities,
   type CredentialData,
   type UserCapabilities,
@@ -23,6 +24,7 @@ export interface EndpointAccessControlResultTypes {
   [EndpointAccessControlCommand.getUsers]: { users: UserData[] };
   [EndpointAccessControlCommand.getUsersCached]: { users: UserData[] };
   [EndpointAccessControlCommand.setUser]: { result: SetUserResult };
+  [EndpointAccessControlCommand.addUser]: { result: AddUserResult };
   [EndpointAccessControlCommand.deleteUser]: { result: SetUserResult };
   [EndpointAccessControlCommand.deleteAllUsers]: { result: SetUserResult };
   [EndpointAccessControlCommand.getCredential]: { credential?: CredentialData };

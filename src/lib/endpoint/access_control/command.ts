@@ -7,6 +7,7 @@ export enum EndpointAccessControlCommand {
   getUsers = "endpoint.access_control.get_users",
   getUsersCached = "endpoint.access_control.get_users_cached",
   setUser = "endpoint.access_control.set_user",
+  addUser = "endpoint.access_control.add_user",
   deleteUser = "endpoint.access_control.delete_user",
   deleteAllUsers = "endpoint.access_control.delete_all_users",
   getCredential = "endpoint.access_control.get_credential",
