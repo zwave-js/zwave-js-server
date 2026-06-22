@@ -400,3 +400,7 @@ Base schema.
 ## Schema 49
 
 - Added the `endpoint.access_control.add_user` command, which creates a new user and optionally writes a credential in the same call.
+
+## Schema 50
+
+- Added the `interview progress` node event
