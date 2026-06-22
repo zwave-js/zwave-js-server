@@ -11,7 +11,12 @@ import {
   ZWaveNodeEvents,
   ZWaveNodeMetadataUpdatedArgs,
 } from "zwave-js";
-import { CommandClasses, ConfigurationMetadata } from "@zwave-js/core";
+import {
+  CommandClasses,
+  ConfigurationMetadata,
+  InterviewProgress,
+  InterviewStage,
+} from "@zwave-js/core";
 import {
   dumpConfigurationMetadata,
   dumpFoundNode,
@@ -418,6 +423,30 @@ export class EventForwarder {
       "interview stage completed",
       (changedNode: ZWaveNode, stageName: string) => {
         notifyNode(changedNode, "interview stage completed", { stageName });
+      },
+    );
+
+    node.on(
+      "interview progress",
+      (changedNode: ZWaveNode, progress: InterviewProgress) => {
+        this.clientsController.sendEventToListeningClients(
+          {
+            source: "node",
+            event: "interview progress",
+            nodeId: changedNode.nodeId,
+            // Forward the stage as its name to stay consistent with the
+            // "interview stage completed" event's `stageName`.
+            stage: InterviewStage[progress.stage],
+            progress: progress.progress,
+            ...(progress.endpoint !== undefined && {
+              endpoint: progress.endpoint,
+            }),
+            ...(progress.commandClass !== undefined && {
+              commandClass: progress.commandClass,
+            }),
+          } satisfies OutgoingEvent,
+          { minSchemaVersion: 50 },
+        );
       },
     );
 
