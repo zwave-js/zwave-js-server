@@ -2,7 +2,12 @@ import {
   Driver,
   LifelineHealthCheckResult,
   RouteHealthCheckResult,
+  SetCredentialResult,
+  SetValueResult,
+  SetValueStatus,
+  ZWaveNode,
 } from "zwave-js";
+import { UserCredentialType, UserIDStatus } from "@zwave-js/cc";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -12,7 +17,10 @@ import { NodeNotFoundError, UnknownCommandError } from "../error.js";
 import { Client } from "../server.js";
 import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "../state.js";
 import { NodeCommand } from "./command.js";
-import { IncomingMessageNode } from "./incoming_message.js";
+import {
+  IncomingCommandNodeSetValue,
+  IncomingMessageNode,
+} from "./incoming_message.js";
 import { NodeResultTypes } from "./outgoing_message.js";
 import {
   firmwareUpdateOutgoingMessage,
@@ -42,11 +50,20 @@ export class NodeMessageHandler implements MessageHandler {
 
     switch (message.command) {
       case NodeCommand.setValue: {
-        const result = await node.setValue(
-          message.valueId,
-          message.value,
-          message.options,
-        );
+        // zwave-js removed `setValue` support for User Code CC user codes,
+        // so route them through the access control API to keep legacy
+        // clients working
+        let result =
+          message.valueId.commandClass === CommandClasses["User Code"]
+            ? await trySetUserCodeValue(node, message)
+            : undefined;
+        if (result === undefined) {
+          result = await node.setValue(
+            message.valueId,
+            message.value,
+            message.options,
+          );
+        }
         return setValueOutgoingMessage(result, this.client.schemaVersion);
       }
       case NodeCommand.refreshInfo: {
@@ -368,5 +385,95 @@ export class NodeMessageHandler implements MessageHandler {
         throw new UnknownCommandError(command);
       }
     }
+  }
+}
+
+/**
+ * Handles a legacy User Code CC `setValue` call via the unified access
+ * control API on a best-effort basis. Returns `undefined` when the value
+ * cannot be routed, in which case the caller should fall back to
+ * `node.setValue`.
+ */
+async function trySetUserCodeValue(
+  node: ZWaveNode,
+  message: IncomingCommandNodeSetValue,
+): Promise<SetValueResult | undefined> {
+  const { endpoint: endpointIndex, property, propertyKey } = message.valueId;
+  const isClear =
+    property === "userIdStatus" && message.value === UserIDStatus.Available;
+  const isSet = property === "userCode" && typeof message.value === "string";
+  if ((!isClear && !isSet) || typeof propertyKey !== "number") {
+    return undefined;
+  }
+
+  const accessControl = node.getEndpoint(endpointIndex ?? 0)?.accessControl;
+  if (accessControl === undefined) {
+    return undefined;
+  }
+
+  // User Code CC devices support exactly one credential type: Password
+  // instead of PINCode when the device allows non-PIN characters
+  const { supportedCredentialTypes } =
+    accessControl.getCredentialCapabilitiesCached();
+  const credentialType = [
+    UserCredentialType.PINCode,
+    UserCredentialType.Password,
+  ].find((type) => supportedCredentialTypes.has(type));
+  if (credentialType === undefined) {
+    return undefined;
+  }
+
+  // For User Code CC devices the credential slot mirrors the user ID
+  return convertSetCredentialResultToSetValueResult(
+    isClear
+      ? await accessControl.deleteCredential(credentialType, propertyKey)
+      : await accessControl.setCredential(
+          propertyKey,
+          credentialType,
+          propertyKey,
+          message.value as string,
+        ),
+  );
+}
+
+function convertSetCredentialResultToSetValueResult(
+  result: SetCredentialResult,
+): SetValueResult {
+  switch (result) {
+    case SetCredentialResult.OK:
+      return { status: SetValueStatus.Success };
+    case SetCredentialResult.Error_AddRejectedLocationOccupied:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The credential slot is already occupied",
+      };
+    case SetCredentialResult.Error_ModifyRejectedLocationEmpty:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The credential slot is empty",
+      };
+    case SetCredentialResult.Error_DuplicateCredential:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "A credential with this value already exists",
+      };
+    case SetCredentialResult.Error_ManufacturerSecurityRules:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The credential violates manufacturer security rules",
+      };
+    case SetCredentialResult.Error_DuplicateAdminPINCode:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The credential duplicates the admin PIN code",
+      };
+    case SetCredentialResult.Error_WrongUserUniqueIdentifier:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The user unique identifier is invalid",
+      };
+    case SetCredentialResult.Error_Unknown:
+    default:
+      return { status: SetValueStatus.Fail };
   }
 }

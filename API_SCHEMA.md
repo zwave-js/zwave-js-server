@@ -404,3 +404,7 @@ Base schema.
 ## Schema 50
 
 - Added the `interview progress` node event
+
+## Schema 51
+
+- `node.set_value` calls that set the `userCode` property, or set `userIdStatus` to `Available`, are now routed through the unified access control API because zwave-js removed `setValue` support for these values. This applies to all schema versions to avoid breaking legacy clients. New clients should use the `endpoint.access_control` commands instead.
