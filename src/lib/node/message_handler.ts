@@ -3,11 +3,17 @@ import {
   LifelineHealthCheckResult,
   RouteHealthCheckResult,
   SetCredentialResult,
+  SetUserResult,
   SetValueResult,
   SetValueStatus,
+  supervisionResultToSetValueResult,
   ZWaveNode,
 } from "zwave-js";
-import { UserCredentialType, UserIDStatus } from "@zwave-js/cc";
+import {
+  UserCredentialType,
+  UserCredentialUserType,
+  UserIDStatus,
+} from "@zwave-js/cc";
 import {
   CommandClasses,
   ConfigurationMetadata,
@@ -399,15 +405,56 @@ async function trySetUserCodeValue(
   message: IncomingCommandNodeSetValue,
 ): Promise<SetValueResult | undefined> {
   const { endpoint: endpointIndex, property, propertyKey } = message.valueId;
-  const isClear =
-    property === "userIdStatus" && message.value === UserIDStatus.Available;
-  const isSet = property === "userCode" && typeof message.value === "string";
-  if ((!isClear && !isSet) || typeof propertyKey !== "number") {
+  const { value } = message;
+  const accessControl = node.getEndpoint(endpointIndex ?? 0)?.accessControl;
+  if (accessControl === undefined) {
     return undefined;
   }
 
-  const accessControl = node.getEndpoint(endpointIndex ?? 0)?.accessControl;
-  if (accessControl === undefined) {
+  // Support devices that were interviewed before the rename to adminCode
+  if (property === "adminCode" || property === "masterCode") {
+    if (typeof value !== "string") {
+      return undefined;
+    }
+    return supervisionResultToSetValueResult(
+      await accessControl.setAdminCode(value),
+    );
+  }
+
+  if (
+    (property !== "userIdStatus" && property !== "userCode") ||
+    typeof propertyKey !== "number"
+  ) {
+    return undefined;
+  }
+
+  if (property === "userIdStatus" && value !== UserIDStatus.Available) {
+    switch (value) {
+      case UserIDStatus.Enabled:
+        return convertSetUserResultToSetValueResult(
+          await accessControl.setUser(propertyKey, { active: true }),
+        );
+      case UserIDStatus.Disabled:
+        return convertSetUserResultToSetValueResult(
+          await accessControl.setUser(propertyKey, { active: false }),
+        );
+      case UserIDStatus.Messaging:
+        return convertSetUserResultToSetValueResult(
+          await accessControl.setUser(propertyKey, {
+            active: true,
+            userType: UserCredentialUserType.NonAccess,
+          }),
+        );
+      default:
+        // Other statuses (e.g. PassageMode) have no access control equivalent
+        return undefined;
+    }
+  }
+
+  // Setting a user code or clearing one (userIdStatus = Available) maps to
+  // the user's single credential
+  const isClear = property === "userIdStatus";
+  if (!isClear && typeof value !== "string") {
     return undefined;
   }
 
@@ -431,9 +478,31 @@ async function trySetUserCodeValue(
           propertyKey,
           credentialType,
           propertyKey,
-          message.value as string,
+          value as string,
         ),
   );
+}
+
+function convertSetUserResultToSetValueResult(
+  result: SetUserResult,
+): SetValueResult {
+  switch (result) {
+    case SetUserResult.OK:
+      return { status: SetValueStatus.Success };
+    case SetUserResult.Error_AddRejectedLocationOccupied:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The user slot is already occupied",
+      };
+    case SetUserResult.Error_ModifyRejectedLocationEmpty:
+      return {
+        status: SetValueStatus.InvalidValue,
+        message: "The user slot is empty",
+      };
+    case SetUserResult.Error_Unknown:
+    default:
+      return { status: SetValueStatus.Fail };
+  }
 }
 
 function convertSetCredentialResultToSetValueResult(
