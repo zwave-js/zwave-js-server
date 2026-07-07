@@ -489,6 +489,18 @@ async function trySetUserCodeValue(
   if (typeof value !== "string" && !(value instanceof Uint8Array)) {
     return undefined;
   }
+  // Setting a code on an unoccupied slot must create the user together with
+  // the credential
+  if (accessControl.getUserCached(propertyKey) === undefined) {
+    const result = await accessControl.addUser(
+      propertyKey,
+      {},
+      { type: credentialType, slot: propertyKey, data: value },
+    );
+    return result.credential !== undefined
+      ? convertSetCredentialResultToSetValueResult(result.credential)
+      : convertSetUserResultToSetValueResult(result.user);
+  }
   return convertSetCredentialResultToSetValueResult(
     await accessControl.setCredential(
       propertyKey,
