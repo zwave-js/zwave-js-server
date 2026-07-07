@@ -18,6 +18,8 @@ import {
   CommandClasses,
   ConfigurationMetadata,
   Firmware,
+  ZWaveError,
+  ZWaveErrorCodes,
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
 import { Client } from "../server.js";
@@ -429,35 +431,43 @@ async function trySetUserCodeValue(
   }
 
   if (property === "userIdStatus" && value !== UserIDStatus.Available) {
-    switch (value) {
-      case UserIDStatus.Enabled:
-        return convertSetUserResultToSetValueResult(
-          await accessControl.setUser(propertyKey, { active: true }),
-        );
-      case UserIDStatus.Disabled:
-        return convertSetUserResultToSetValueResult(
-          await accessControl.setUser(propertyKey, { active: false }),
-        );
-      case UserIDStatus.Messaging:
-        return convertSetUserResultToSetValueResult(
-          await accessControl.setUser(propertyKey, {
-            active: true,
-            userType: UserCredentialUserType.NonAccess,
-          }),
-        );
-      default:
-        // Other statuses (e.g. PassageMode) have no access control equivalent
-        return undefined;
+    try {
+      switch (value) {
+        case UserIDStatus.Enabled:
+          return convertSetUserResultToSetValueResult(
+            await accessControl.setUser(propertyKey, { active: true }),
+          );
+        case UserIDStatus.Disabled:
+          return convertSetUserResultToSetValueResult(
+            await accessControl.setUser(propertyKey, { active: false }),
+          );
+        case UserIDStatus.Messaging:
+          return convertSetUserResultToSetValueResult(
+            await accessControl.setUser(propertyKey, {
+              active: true,
+              userType: UserCredentialUserType.NonAccess,
+            }),
+          );
+        default:
+          // Other statuses (e.g. PassageMode) have no access control equivalent
+          return undefined;
+      }
+    } catch (error) {
+      // User Code CC devices reject status changes on empty slots because
+      // users and codes must be stored together. Legacy clients expect a
+      // SetValueResult rather than an error response.
+      if (
+        error instanceof ZWaveError &&
+        error.code === ZWaveErrorCodes.Argument_Invalid
+      ) {
+        return { status: SetValueStatus.InvalidValue, message: error.message };
+      }
+      throw error;
     }
   }
 
   // Setting a user code or clearing one (userIdStatus = Available) maps to
-  // the user's single credential
-  const isClear = property === "userIdStatus";
-  if (!isClear && typeof value !== "string") {
-    return undefined;
-  }
-
+  // the user's single credential.
   // User Code CC devices support exactly one credential type: Password
   // instead of PINCode when the device allows non-PIN characters
   const { supportedCredentialTypes } =
@@ -471,15 +481,21 @@ async function trySetUserCodeValue(
   }
 
   // For User Code CC devices the credential slot mirrors the user ID
+  if (property === "userIdStatus") {
+    return convertSetCredentialResultToSetValueResult(
+      await accessControl.deleteCredential(credentialType, propertyKey),
+    );
+  }
+  if (typeof value !== "string" && !(value instanceof Uint8Array)) {
+    return undefined;
+  }
   return convertSetCredentialResultToSetValueResult(
-    isClear
-      ? await accessControl.deleteCredential(credentialType, propertyKey)
-      : await accessControl.setCredential(
-          propertyKey,
-          credentialType,
-          propertyKey,
-          value as string,
-        ),
+    await accessControl.setCredential(
+      propertyKey,
+      credentialType,
+      propertyKey,
+      value,
+    ),
   );
 }
 
