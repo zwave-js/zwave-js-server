@@ -358,10 +358,7 @@ export class ClientsController extends EventEmitter {
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
 
   /**
-   * Outgoing events are queued because building one can be expensive: a `ready`
-   * event dumps the node's full state for every client. `EventEmitter` invokes
-   * listeners inline, so doing that work here would keep the driver from
-   * reading the serial port until it is done.
+   * Queue of outgoing events
    */
   private eventQueue: EventQueue;
 
@@ -471,8 +468,7 @@ export class ClientsController extends EventEmitter {
       maxSchemaVersion?: number;
     },
   ) {
-    // Pick the recipients now, because a client that starts listening later
-    // receives a full state dump and must not then see an older event
+    // Determine recipients ahead of time to avoid a data race when event handling takes long
     const recipients = this.clients.filter(
       (client) =>
         client.isConnected &&
@@ -481,9 +477,7 @@ export class ClientsController extends EventEmitter {
         client.schemaVersion <= (options?.maxSchemaVersion ?? Infinity),
     );
 
-    // One task per client, so an iteration costs a single payload instead of
-    // one per client. The queue is FIFO and these are pushed in the order the
-    // events were emitted, so each client still receives them in that order.
+    // Forward one event per event loop operation - in case the `event()` function does expensive work.
     for (const client of recipients) {
       this.eventQueue.push(() => {
         if (!client.isConnected) return;

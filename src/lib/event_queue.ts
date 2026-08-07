@@ -4,11 +4,6 @@ import { setImmediate as setImmediatePromise } from "node:timers/promises";
  * Runs queued tasks one per event loop iteration, in the order they were
  * pushed. The first task of a burst runs synchronously inside `push`, so a
  * single task costs no extra latency.
- *
- * A bare `setImmediate` per task would not be enough: Node drains the whole
- * immediate queue in a single check phase without polling for I/O in between,
- * so tasks queued during the same tick would still run as one uninterruptible
- * block.
  */
 export class EventQueue {
   private tasks: (() => void)[] = [];
