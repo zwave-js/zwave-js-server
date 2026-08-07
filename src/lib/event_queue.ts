@@ -2,8 +2,7 @@ import { setImmediate as setImmediatePromise } from "node:timers/promises";
 
 /**
  * Runs queued tasks one per event loop iteration, in the order they were
- * pushed. The first task of a burst runs synchronously inside `push`, so a
- * single task costs no extra latency.
+ * pushed. While the queue is idle, a task runs synchronously inside `push`.
  */
 export class EventQueue {
   private tasks: (() => void)[] = [];
@@ -27,9 +26,11 @@ export class EventQueue {
       while ((task = this.tasks.shift())) {
         try {
           task();
-        } catch (error) {
-          this.onError(error as Error);
+        } catch (e) {
+          this.onError(e instanceof Error ? e : new Error(`${e}`));
         }
+        // Yield even after the last task, so tasks pushed during this tick are
+        // deferred instead of running inline
         await setImmediatePromise();
       }
     } finally {
