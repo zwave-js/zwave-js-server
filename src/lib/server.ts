@@ -481,8 +481,8 @@ export class ClientsController extends EventEmitter {
     for (const client of recipients) {
       this.eventQueue.push(() => {
         if (!client.isConnected) return;
-        // Pass the options along, so `sendEvent` re-checks the schema bounds
-        // against the version the client has by now
+        // `sendEvent` re-checks the schema bounds against the version the
+        // client has by now
         client.sendEvent(
           typeof event === "function" ? event(client) : event,
           options,

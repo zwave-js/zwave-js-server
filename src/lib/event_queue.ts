@@ -29,8 +29,8 @@ export class EventQueue {
         } catch (e) {
           this.onError(e instanceof Error ? e : new Error(`${e}`));
         }
-        // Yield even after the last task, so tasks pushed during this tick are
-        // deferred instead of running inline
+        // The last task must yield too, so `draining` stays true for the rest
+        // of this tick
         await setImmediatePromise();
       }
     } finally {
