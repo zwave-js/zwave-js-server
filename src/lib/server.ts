@@ -15,6 +15,7 @@ import {
 import { libVersion } from "zwave-js";
 import { DeferredPromise } from "alcalzone-shared/deferred-promise";
 import { EventForwarder } from "./forward.js";
+import { EventQueue } from "./event_queue.js";
 import type * as OutgoingMessages from "./outgoing_message.js";
 import { IncomingMessage } from "./incoming_message.js";
 import { dumpLogConfig, dumpState } from "./state.js";
@@ -356,12 +357,23 @@ export class ClientsController extends EventEmitter {
   public grantSecurityClassesPromise?: DeferredPromise<InclusionGrant | false>;
   public validateDSKAndEnterPinPromise?: DeferredPromise<string | false>;
 
+  /**
+   * Outgoing events are queued because building one can be expensive: a `ready`
+   * event dumps the node's full state for every client. `EventEmitter` invokes
+   * listeners inline, so doing that work here would keep the driver from
+   * reading the serial port until it is done.
+   */
+  private eventQueue: EventQueue;
+
   constructor(
     public driver: Driver,
     private logger: Logger,
     private remoteController: ZwavejsServerRemoteController,
   ) {
     super();
+    this.eventQueue = new EventQueue((error) =>
+      this.logger.error("Error sending event to clients", error),
+    );
   }
 
   addSocket(socket: WebSocket) {
@@ -459,15 +471,24 @@ export class ClientsController extends EventEmitter {
       maxSchemaVersion?: number;
     },
   ) {
-    for (const client of this.clients) {
-      if (
+    // Pick the recipients now, because a client that starts listening later
+    // receives a full state dump and must not then see an older event
+    const recipients = this.clients.filter(
+      (client) =>
         client.isConnected &&
         client.receiveEvents &&
         client.schemaVersion >= (options?.minSchemaVersion ?? 0) &&
-        client.schemaVersion <= (options?.maxSchemaVersion ?? Infinity)
-      ) {
+        client.schemaVersion <= (options?.maxSchemaVersion ?? Infinity),
+    );
+
+    // One task per client, so an iteration costs a single payload instead of
+    // one per client. The queue is FIFO and these are pushed in the order the
+    // events were emitted, so each client still receives them in that order.
+    for (const client of recipients) {
+      this.eventQueue.push(() => {
+        if (!client.isConnected) return;
         client.sendEvent(typeof event === "function" ? event(client) : event);
-      }
+      });
     }
   }
 
@@ -476,6 +497,7 @@ export class ClientsController extends EventEmitter {
       clearInterval(this.pingInterval);
     }
     this.pingInterval = undefined;
+    this.eventQueue.clear();
     this.clients.forEach((client) => client.disconnect());
     this.clients = [];
     this.cleanupLoggingEventForwarder();

@@ -121,6 +121,8 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node added",
       (node, result) => {
+        // dumpNode can be heavy, so build the node state in a callback just
+        // before the event is sent
         this.clientsController.sendEventToListeningClients(
           (client) =>
             ({
@@ -135,6 +137,8 @@ export class EventForwarder {
     );
 
     this.clientsController.driver.controller.on("node found", (node) => {
+      // dumpFoundNode can be heavy, so build the node state in a callback just
+      // before the event is sent
       this.clientsController.sendEventToListeningClients(
         (client) =>
           ({
@@ -203,6 +207,8 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node removed",
       (node, reason) => {
+        // dumpNode can be heavy, so build the node state in a callback just
+        // before the event is sent
         this.clientsController.sendEventToListeningClients(
           (client) =>
             ({
@@ -386,6 +392,8 @@ export class EventForwarder {
       );
 
     node.on("ready", (changedNode: ZWaveNode) => {
+      // dumpNode can be heavy, so build the node state in a callback just
+      // before the event is sent
       this.clientsController.sendEventToListeningClients(
         (client) =>
           ({
