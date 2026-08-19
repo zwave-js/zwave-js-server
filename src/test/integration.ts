@@ -216,6 +216,31 @@ const runTest = async () => {
 
     assert.deepEqual(driver.getLogConfig().transports, [customTransport]);
 
+    // A client that connects while the driver is not ready is refused, because
+    // the version message we send on connect needs the home ID.
+    const mockDriver = driver as unknown as { ready: boolean };
+    mockDriver.ready = false;
+    const rejectedSocket = new ws(`ws://localhost:${PORT}`);
+    try {
+      const rejectedMessages: unknown[] = [];
+      rejectedSocket.on("message", (data: string) =>
+        rejectedMessages.push(JSON.parse(data)),
+      );
+      const closeCode = await new Promise<number>((resolve, reject) => {
+        rejectedSocket.once("close", resolve);
+        rejectedSocket.once("error", reject);
+        setTimeout(
+          () => reject(new Error("Client was not refused within 5 seconds")),
+          5000,
+        ).unref();
+      });
+      assert.equal(closeCode, 1013);
+      assert.deepEqual(rejectedMessages, []);
+    } finally {
+      rejectedSocket.close();
+      mockDriver.ready = true;
+    }
+
     console.log("Integration tests passed :)");
   } finally {
     if (socket) {

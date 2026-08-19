@@ -374,6 +374,23 @@ export class ClientsController extends EventEmitter {
   }
 
   addSocket(socket: WebSocket) {
+    // Attach this first so that closing the socket below can never emit an
+    // unhandled error event.
+    socket.on("error", (error) => {
+      this.logger.error("Client socket error", error);
+    });
+
+    if (!this.driver.ready) {
+      // The controller is destroyed and re-interviewed in place around e.g. a
+      // hard reset, an NVM restore and a firmware update. Until that completes
+      // the driver cannot serve this client, and sendVersion() below would
+      // either omit the home ID or throw, because driver.controller throws
+      // while the controller is gone. Refuse it, like start() already does.
+      this.logger.info("Rejecting new client, driver is not ready");
+      socket.close(1013, "Driver is not ready");
+      return;
+    }
+
     this.logger.debug("New client");
     const client = new Client(
       socket,
@@ -382,9 +399,6 @@ export class ClientsController extends EventEmitter {
       this.logger,
       this.remoteController,
     );
-    socket.on("error", (error) => {
-      this.logger.error("Client socket error", error);
-    });
     socket.on("close", (code, reason) => {
       this.logger.info("Client disconnected");
       this.logger.debug(`Code ${code}: ${reason}`);
