@@ -381,11 +381,9 @@ export class ClientsController extends EventEmitter {
     });
 
     if (!this.driver.ready) {
-      // The controller is destroyed and re-interviewed in place around e.g. a
-      // hard reset, an NVM restore and a firmware update. Until that completes
-      // the driver cannot serve this client, and sendVersion() below would
-      // either omit the home ID or throw, because driver.controller throws
-      // while the controller is gone. Refuse it, like start() already does.
+      // sendVersion() below reads driver.controller, which omits the home ID
+      // or throws while the controller is gone. start() gates on driver.ready
+      // too, but only once, at startup.
       this.logger.info("Rejecting new client, driver is not ready");
       socket.close(1013, "Driver is not ready");
       return;
