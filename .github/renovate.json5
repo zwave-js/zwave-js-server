@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>zwave-js/renovate-config:library",
+    "github>zwave-js/renovate-config:zwave-js-consumer"
+  ],
+  // Weekly on Monday morning, as with Dependabot before
+  "schedule": ["* 0-5 * * 1"],
+  "packageRules": [
+    {
+      // Raise together with engines.node
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<21"
+    }
+  ]
+}
