@@ -1,9 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>zwave-js/renovate-config:library",
-    "github>zwave-js/renovate-config:zwave-js-consumer"
-  ],
+  "extends": ["github>zwave-js/renovate-config:library"],
   // Weekly on Monday morning, as with Dependabot before
   "schedule": ["* 0-5 * * 1"],
   "packageRules": [
@@ -11,6 +8,12 @@
       // Raise together with engines.node
       "matchPackageNames": ["@types/node"],
       "allowedVersions": "<21"
+    },
+    {
+      // zwave-js is a peer dependency and tracks the minimum supported version.
+      // Bumping it is a deliberate decision, never an automated update.
+      "matchPackageNames": ["zwave-js"],
+      "enabled": false
     }
   ]
 }
