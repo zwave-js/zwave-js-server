@@ -22,6 +22,7 @@ import {
   dumpFoundNode,
   dumpMetadata,
   dumpNode,
+  NodeState,
 } from "./state.js";
 import { ClientsController } from "./server.js";
 import { OutgoingEvent } from "./outgoing_message.js";
@@ -207,30 +208,31 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node removed",
       (node, reason) => {
-        // dumpNode can be heavy, so build the node state in a callback just
-        // before the event is sent
+        const states = new Map<number, NodeState>();
         this.clientsController.sendEventToListeningClients(
-          (client) =>
-            ({
+          (client) => {
+            const schemaVersion = client.schemaVersion;
+            let nodeState = states.get(schemaVersion);
+            if (!nodeState) {
+              nodeState = dumpNode(node, schemaVersion);
+              states.set(schemaVersion, nodeState);
+            }
+            return {
               source: "controller",
               event: "node removed",
-              node: dumpNode(node, client.schemaVersion),
-              replaced: [
-                RemoveNodeReason.Replaced,
-                RemoveNodeReason.ProxyReplaced,
-              ].includes(reason),
-            }) satisfies OutgoingEvent,
-          { maxSchemaVersion: 28 },
-        );
-        this.clientsController.sendEventToListeningClients(
-          (client) =>
-            ({
-              source: "controller",
-              event: "node removed",
-              node: dumpNode(node, client.schemaVersion),
-              reason,
-            }) satisfies OutgoingEvent,
-          { minSchemaVersion: 29 },
+              node: nodeState,
+              ...(schemaVersion <= 28
+                ? {
+                    replaced: [
+                      RemoveNodeReason.Replaced,
+                      RemoveNodeReason.ProxyReplaced,
+                    ].includes(reason),
+                  }
+                : { reason }),
+            };
+          },
+          // Capture the state before the driver deletes or replaces the node
+          { prepareImmediately: true },
         );
       },
     );

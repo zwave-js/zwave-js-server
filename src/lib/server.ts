@@ -368,8 +368,13 @@ export class ClientsController extends EventEmitter {
     private remoteController: ZwavejsServerRemoteController,
   ) {
     super();
-    this.eventQueue = new EventQueue((error) =>
-      this.logger.error("Error sending event to clients", error),
+    this.eventQueue = new EventQueue((error) => this.logEventError(error));
+  }
+
+  private logEventError(error: unknown) {
+    this.logger.error(
+      "Error sending event to clients",
+      error instanceof Error ? error : new Error(`${error}`),
     );
   }
 
@@ -478,6 +483,7 @@ export class ClientsController extends EventEmitter {
     options?: {
       minSchemaVersion?: number;
       maxSchemaVersion?: number;
+      prepareImmediately?: boolean;
     },
   ) {
     // Determine recipients ahead of time to avoid a data race when event handling takes long
@@ -491,10 +497,19 @@ export class ClientsController extends EventEmitter {
 
     // Forward one event per event loop operation - in case the `event()` function does expensive work.
     for (const client of recipients) {
+      let clientEvent = event;
+      if (options?.prepareImmediately && typeof event === "function") {
+        try {
+          clientEvent = event(client);
+        } catch (error) {
+          this.logEventError(error);
+          continue;
+        }
+      }
       this.eventQueue.push(() => {
         if (!client.isConnected) return;
         client.sendEvent(
-          typeof event === "function" ? event(client) : event,
+          typeof clientEvent === "function" ? clientEvent(client) : clientEvent,
           options,
         );
       });
