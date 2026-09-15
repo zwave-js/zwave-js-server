@@ -22,7 +22,6 @@ import {
   dumpFoundNode,
   dumpMetadata,
   dumpNode,
-  NodeState,
 } from "./state.js";
 import { ClientsController } from "./server.js";
 import { OutgoingEvent } from "./outgoing_message.js";
@@ -208,22 +207,13 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node removed",
       (node, reason) => {
-        const states = new Map<number, NodeState>();
-        const getNodeState = (schemaVersion: number): NodeState => {
-          let nodeState = states.get(schemaVersion);
-          if (!nodeState) {
-            nodeState = dumpNode(node, schemaVersion);
-            states.set(schemaVersion, nodeState);
-          }
-          return nodeState;
-        };
         // Capture the state before the driver deletes or replaces the node
         this.clientsController.sendEventToListeningClients(
           (client) =>
             ({
               source: "controller",
               event: "node removed",
-              node: getNodeState(client.schemaVersion),
+              node: dumpNode(node, client.schemaVersion),
               replaced: [
                 RemoveNodeReason.Replaced,
                 RemoveNodeReason.ProxyReplaced,
@@ -236,7 +226,7 @@ export class EventForwarder {
             ({
               source: "controller",
               event: "node removed",
-              node: getNodeState(client.schemaVersion),
+              node: dumpNode(node, client.schemaVersion),
               reason,
             }) satisfies OutgoingEvent,
           { minSchemaVersion: 29, lazy: false },
