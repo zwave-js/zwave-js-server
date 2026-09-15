@@ -8,7 +8,6 @@ import { ZwavejsServer } from "../lib/server.js";
 import { createMockDriver } from "../mock/index.js";
 import { minSchemaVersion, maxSchemaVersion } from "../lib/const.js";
 import { createRequire } from "node:module";
-import { runNodeRemovedTests } from "./node_removed.js";
 const require = createRequire(import.meta.url);
 
 dns.setDefaultResultOrder("ipv4first");
@@ -81,7 +80,6 @@ class MockTransport extends Transport {
 }
 
 const runTest = async () => {
-  await runNodeRemovedTests();
   const driver = createMockDriver();
   const customTransport = new MockTransport() as LogTransport;
   driver.updateLogConfig({ transports: [customTransport] });

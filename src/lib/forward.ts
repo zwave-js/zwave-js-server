@@ -209,30 +209,37 @@ export class EventForwarder {
       "node removed",
       (node, reason) => {
         const states = new Map<number, NodeState>();
+        const getNodeState = (schemaVersion: number): NodeState => {
+          let nodeState = states.get(schemaVersion);
+          if (!nodeState) {
+            nodeState = dumpNode(node, schemaVersion);
+            states.set(schemaVersion, nodeState);
+          }
+          return nodeState;
+        };
+        // Capture the state before the driver deletes or replaces the node
         this.clientsController.sendEventToListeningClients(
-          (client) => {
-            const schemaVersion = client.schemaVersion;
-            let nodeState = states.get(schemaVersion);
-            if (!nodeState) {
-              nodeState = dumpNode(node, schemaVersion);
-              states.set(schemaVersion, nodeState);
-            }
-            return {
+          (client) =>
+            ({
               source: "controller",
               event: "node removed",
-              node: nodeState,
-              ...(schemaVersion <= 28
-                ? {
-                    replaced: [
-                      RemoveNodeReason.Replaced,
-                      RemoveNodeReason.ProxyReplaced,
-                    ].includes(reason),
-                  }
-                : { reason }),
-            };
-          },
-          // Capture the state before the driver deletes or replaces the node
-          { prepareImmediately: true },
+              node: getNodeState(client.schemaVersion),
+              replaced: [
+                RemoveNodeReason.Replaced,
+                RemoveNodeReason.ProxyReplaced,
+              ].includes(reason),
+            }) satisfies OutgoingEvent,
+          { maxSchemaVersion: 28, lazy: false },
+        );
+        this.clientsController.sendEventToListeningClients(
+          (client) =>
+            ({
+              source: "controller",
+              event: "node removed",
+              node: getNodeState(client.schemaVersion),
+              reason,
+            }) satisfies OutgoingEvent,
+          { minSchemaVersion: 29, lazy: false },
         );
       },
     );

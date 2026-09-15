@@ -483,7 +483,7 @@ export class ClientsController extends EventEmitter {
     options?: {
       minSchemaVersion?: number;
       maxSchemaVersion?: number;
-      prepareImmediately?: boolean;
+      lazy?: boolean;
     },
   ) {
     // Determine recipients ahead of time to avoid a data race when event handling takes long
@@ -497,10 +497,10 @@ export class ClientsController extends EventEmitter {
 
     // Forward one event per event loop operation - in case the `event()` function does expensive work.
     for (const client of recipients) {
-      let clientEvent = event;
-      if (options?.prepareImmediately && typeof event === "function") {
+      let eventPayload = event;
+      if (options?.lazy === false && typeof event === "function") {
         try {
-          clientEvent = event(client);
+          eventPayload = event(client);
         } catch (error) {
           this.logEventError(error);
           continue;
@@ -509,7 +509,9 @@ export class ClientsController extends EventEmitter {
       this.eventQueue.push(() => {
         if (!client.isConnected) return;
         client.sendEvent(
-          typeof clientEvent === "function" ? clientEvent(client) : clientEvent,
+          typeof eventPayload === "function"
+            ? eventPayload(client)
+            : eventPayload,
           options,
         );
       });
