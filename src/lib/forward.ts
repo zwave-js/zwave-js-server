@@ -207,8 +207,7 @@ export class EventForwarder {
     this.clientsController.driver.controller.on(
       "node removed",
       (node, reason) => {
-        // dumpNode can be heavy, so build the node state in a callback just
-        // before the event is sent
+        // Capture the state before the driver deletes or replaces the node
         this.clientsController.sendEventToListeningClients(
           (client) =>
             ({
@@ -220,7 +219,7 @@ export class EventForwarder {
                 RemoveNodeReason.ProxyReplaced,
               ].includes(reason),
             }) satisfies OutgoingEvent,
-          { maxSchemaVersion: 28 },
+          { maxSchemaVersion: 28, lazy: false },
         );
         this.clientsController.sendEventToListeningClients(
           (client) =>
@@ -230,7 +229,7 @@ export class EventForwarder {
               node: dumpNode(node, client.schemaVersion),
               reason,
             }) satisfies OutgoingEvent,
-          { minSchemaVersion: 29 },
+          { minSchemaVersion: 29, lazy: false },
         );
       },
     );
