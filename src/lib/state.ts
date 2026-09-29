@@ -3,6 +3,7 @@ import {
   Driver,
   ZWaveNode,
   Endpoint,
+  EndpointGroup,
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
@@ -411,6 +412,17 @@ export interface NodeStateSchema47 extends NodeStateSchema42 {
   dsk?: string; // human-readable DSK string
 }
 
+export interface EndpointGroupState {
+  id: number;
+  label: string;
+  isMainDevice: boolean;
+  endpointIndices: number[];
+}
+
+export interface NodeStateSchema51 extends NodeStateSchema47 {
+  endpointGroups?: EndpointGroupState[];
+}
+
 export type NodeState =
   | NodeStateSchema0
   | NodeStateSchema1
@@ -425,7 +437,8 @@ export type NodeState =
   | NodeStateSchema31
   | NodeStateSchema35
   | NodeStateSchema42
-  | NodeStateSchema47;
+  | NodeStateSchema47
+  | NodeStateSchema51;
 
 export interface FoundNodeStateSchema19 {
   nodeId: number;
@@ -794,8 +807,28 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
   if (node.dsk) {
     node47.dsk = dskToString(node.dsk);
   }
-  return node47;
+  if (schemaVersion < 51) {
+    return node47;
+  }
+
+  const node51 = node47 as NodeStateSchema51;
+  if (node.endpointGroups) {
+    node51.endpointGroups = Array.from(
+      node.endpointGroups.values(),
+      dumpEndpointGroup,
+    );
+  }
+  return node51;
 };
+
+export const dumpEndpointGroup = (
+  group: EndpointGroup,
+): EndpointGroupState => ({
+  id: group.id,
+  label: group.label,
+  isMainDevice: group.isMainDevice,
+  endpointIndices: [...group.endpointIndices],
+});
 
 export const dumpFoundNode = (
   foundNode: FoundNode,
