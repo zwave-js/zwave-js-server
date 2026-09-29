@@ -408,6 +408,4 @@ Base schema.
 ## Schema 51
 
 - Added the `endpointGroups` property to the node state. It lists the endpoint groups defined in the device config file, which semantically group the endpoints of a device, like the individual clamps of a multi-clamp energy meter. Each group contains its `id`, `label`, `isMainDevice` flag and `endpointIndices`.
-- Properties added by newer `zwave-js` versions to objects that are forwarded as-is are now only included for schema 51+:
-  - `endpointGroups` in device configs, both in the node state and in the results of `config_manager.lookup_device` and `config_manager.lookup_device_preserve_conditions`
-  - `endpointLabel` and `endpointGroups` in the result of `node.create_dump`, and `endpointLabel` in its `endpoints`
+- Added the `endpointGroups` property to device configs, both in the node state and in the results of `config_manager.lookup_device` and `config_manager.lookup_device_preserve_conditions`. It is omitted for older schema versions.

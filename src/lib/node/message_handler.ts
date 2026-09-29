@@ -10,12 +10,7 @@ import {
 } from "@zwave-js/core";
 import { NodeNotFoundError, UnknownCommandError } from "../error.js";
 import { Client } from "../server.js";
-import {
-  dumpConfigurationMetadata,
-  dumpMetadata,
-  dumpNode,
-  dumpNodeDump,
-} from "../state.js";
+import { dumpConfigurationMetadata, dumpMetadata, dumpNode } from "../state.js";
 import { NodeCommand } from "./command.js";
 import { IncomingMessageNode } from "./incoming_message.js";
 import { NodeResultTypes } from "./outgoing_message.js";
@@ -334,7 +329,7 @@ export class NodeMessageHandler implements MessageHandler {
         return { changed };
       }
       case NodeCommand.createDump: {
-        const dump = dumpNodeDump(node.createDump(), this.client.schemaVersion);
+        const dump = node.createDump();
         return { dump };
       }
       case NodeCommand.getSupportedNotificationEvents: {

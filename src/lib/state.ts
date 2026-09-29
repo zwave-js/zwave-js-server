@@ -4,7 +4,6 @@ import {
   ZWaveNode,
   Endpoint,
   EndpointGroup,
-  NodeDump,
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
@@ -841,23 +840,6 @@ export const dumpDeviceConfig = <
 ): T => {
   if (!config || schemaVersion >= 51) return config;
   return omit(config, "endpointGroups") as T;
-};
-
-export const dumpNodeDump = (
-  dump: NodeDump,
-  schemaVersion: number,
-): NodeDump => {
-  if (schemaVersion >= 51) return dump;
-  const ret: NodeDump = omit(dump, "endpointLabel", "endpointGroups");
-  if (ret.endpoints) {
-    ret.endpoints = Object.fromEntries(
-      Object.entries(ret.endpoints).map(([index, endpoint]) => [
-        index,
-        omit(endpoint, "endpointLabel"),
-      ]),
-    );
-  }
-  return ret;
 };
 
 export const dumpEndpointGroup = (
