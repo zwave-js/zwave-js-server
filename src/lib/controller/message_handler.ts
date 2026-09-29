@@ -36,7 +36,7 @@ import {
 } from "../common.js";
 import { inclusionUserCallbacks } from "../inclusion_user_callbacks.js";
 import { MessageHandler } from "../message_handler.js";
-import { dumpController } from "../state.js";
+import { dumpController, dumpFirmwareUpdateInfo } from "../state.js";
 
 export class ControllerMessageHandler implements MessageHandler {
   constructor(
@@ -344,10 +344,14 @@ export class ControllerMessageHandler implements MessageHandler {
         };
       }
       case ControllerCommand.getAvailableFirmwareUpdates: {
-        return {
-          updates: await this.driver.controller.getAvailableFirmwareUpdates(
+        const updates =
+          await this.driver.controller.getAvailableFirmwareUpdates(
             message.nodeId,
             getFirmwareUpdateOptions(message, this.client),
+          );
+        return {
+          updates: updates.map((update) =>
+            dumpFirmwareUpdateInfo(update, this.client.schemaVersion),
           ),
         };
       }
@@ -412,9 +416,18 @@ export class ControllerMessageHandler implements MessageHandler {
         return response;
       }
       case ControllerCommand.getAllAvailableFirmwareUpdates: {
-        return {
-          updates: await this.driver.controller.getAllAvailableFirmwareUpdates(
+        const updates =
+          await this.driver.controller.getAllAvailableFirmwareUpdates(
             getFirmwareUpdateOptions(message, this.client),
+          );
+        return {
+          updates: new Map(
+            Array.from(updates, ([nodeId, nodeUpdates]) => [
+              nodeId,
+              nodeUpdates.map((update) =>
+                dumpFirmwareUpdateInfo(update, this.client.schemaVersion),
+              ),
+            ]),
           ),
         };
       }

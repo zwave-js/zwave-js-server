@@ -4,6 +4,8 @@ import {
   ZWaveNode,
   Endpoint,
   EndpointGroup,
+  FirmwareUpdateInfo,
+  NodeDump,
   TranslatedValueID,
   ValueMetadata,
   DeviceClass,
@@ -27,7 +29,7 @@ import {
   RebuildRoutesStatus,
   getEnumMemberName,
 } from "zwave-js";
-import { DeviceConfig } from "@zwave-js/config";
+import { ConditionalDeviceConfig, DeviceConfig } from "@zwave-js/config";
 import {
   type AllowedValue,
   BasicDeviceClass,
@@ -652,7 +654,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     zwavePlusVersion: node.zwavePlusVersion,
     name: node.name,
     location: node.location,
-    deviceConfig: node.deviceConfig,
+    deviceConfig: dumpDeviceConfig(node.deviceConfig, schemaVersion),
     label: node.label,
     endpointCountIsDynamic: node.endpointCountIsDynamic,
     endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
@@ -819,6 +821,55 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     );
   }
   return node51;
+};
+
+// Objects that are forwarded as-is may gain properties in newer zwave-js
+// versions. These must be hidden from clients using an older schema.
+const omit = <T extends object, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Omit<T, K> => {
+  const ret = { ...obj };
+  for (const key of keys) delete ret[key];
+  return ret;
+};
+
+export const dumpDeviceConfig = <
+  T extends DeviceConfig | ConditionalDeviceConfig | undefined,
+>(
+  config: T,
+  schemaVersion: number,
+): T => {
+  if (!config || schemaVersion >= 51) return config;
+  return omit(config, "endpointGroups") as T;
+};
+
+export const dumpNodeDump = (
+  dump: NodeDump,
+  schemaVersion: number,
+): NodeDump => {
+  if (schemaVersion >= 51) return dump;
+  const ret: NodeDump = omit(dump, "endpointLabel", "endpointGroups");
+  if (ret.endpoints) {
+    ret.endpoints = Object.fromEntries(
+      Object.entries(ret.endpoints).map(([index, endpoint]) => [
+        index,
+        omit(endpoint, "endpointLabel"),
+      ]),
+    );
+  }
+  return ret;
+};
+
+export const dumpFirmwareUpdateInfo = (
+  info: FirmwareUpdateInfo,
+  schemaVersion: number,
+): FirmwareUpdateInfo => {
+  if (schemaVersion >= 51) return info;
+  return {
+    ...info,
+    device: omit(info.device, "additionalFirmwareVersions"),
+  };
 };
 
 export const dumpEndpointGroup = (
