@@ -411,4 +411,3 @@ Base schema.
 - Properties added by newer `zwave-js` versions to objects that are forwarded as-is are now only included for schema 51+:
   - `endpointGroups` in device configs, both in the node state and in the results of `config_manager.lookup_device` and `config_manager.lookup_device_preserve_conditions`
   - `endpointLabel` and `endpointGroups` in the result of `node.create_dump`, and `endpointLabel` in its `endpoints`
-  - `device.additionalFirmwareVersions` in the results of `controller.get_available_firmware_updates` and `controller.get_all_available_firmware_updates`

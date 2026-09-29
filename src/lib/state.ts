@@ -4,7 +4,6 @@ import {
   ZWaveNode,
   Endpoint,
   EndpointGroup,
-  FirmwareUpdateInfo,
   NodeDump,
   TranslatedValueID,
   ValueMetadata,
@@ -859,17 +858,6 @@ export const dumpNodeDump = (
     );
   }
   return ret;
-};
-
-export const dumpFirmwareUpdateInfo = (
-  info: FirmwareUpdateInfo,
-  schemaVersion: number,
-): FirmwareUpdateInfo => {
-  if (schemaVersion >= 51) return info;
-  return {
-    ...info,
-    device: omit(info.device, "additionalFirmwareVersions"),
-  };
 };
 
 export const dumpEndpointGroup = (
