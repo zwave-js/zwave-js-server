@@ -27,7 +27,7 @@ import {
   RebuildRoutesStatus,
   getEnumMemberName,
 } from "zwave-js";
-import { ConditionalDeviceConfig, DeviceConfig } from "@zwave-js/config";
+import { DeviceConfig } from "@zwave-js/config";
 import {
   type AllowedValue,
   BasicDeviceClass,
@@ -652,7 +652,7 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     zwavePlusVersion: node.zwavePlusVersion,
     name: node.name,
     location: node.location,
-    deviceConfig: dumpDeviceConfig(node.deviceConfig, schemaVersion),
+    deviceConfig: node.deviceConfig,
     label: node.label,
     endpointCountIsDynamic: node.endpointCountIsDynamic,
     endpointsHaveIdenticalCapabilities: node.endpointsHaveIdenticalCapabilities,
@@ -819,27 +819,6 @@ export const dumpNode = (node: ZWaveNode, schemaVersion: number): NodeState => {
     );
   }
   return node51;
-};
-
-// Objects that are forwarded as-is may gain properties in newer zwave-js
-// versions. These must be hidden from clients using an older schema.
-const omit = <T extends object, K extends keyof T>(
-  obj: T,
-  ...keys: K[]
-): Omit<T, K> => {
-  const ret = { ...obj };
-  for (const key of keys) delete ret[key];
-  return ret;
-};
-
-export const dumpDeviceConfig = <
-  T extends DeviceConfig | ConditionalDeviceConfig | undefined,
->(
-  config: T,
-  schemaVersion: number,
-): T => {
-  if (!config || schemaVersion >= 51) return config;
-  return omit(config, "endpointGroups") as T;
 };
 
 export const dumpEndpointGroup = (

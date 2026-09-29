@@ -4,14 +4,9 @@ import { IncomingMessageConfigManager } from "./incoming_message.js";
 import { ConfigManagerResultTypes } from "./outgoing_message.js";
 import { MessageHandler } from "../message_handler.js";
 import { Driver } from "zwave-js";
-import { Client } from "../server.js";
-import { dumpDeviceConfig } from "../state.js";
 
 export class ConfigManagerMessageHandler implements MessageHandler {
-  constructor(
-    private driver: Driver,
-    private client: Client,
-  ) {}
+  constructor(private driver: Driver) {}
 
   async handle(
     message: IncomingMessageConfigManager,
@@ -26,9 +21,7 @@ export class ConfigManagerMessageHandler implements MessageHandler {
           message.productId,
           message.firmwareVersion,
         );
-        return {
-          config: dumpDeviceConfig(config, this.client.schemaVersion),
-        };
+        return { config };
       }
       case ConfigManagerCommand.loadManufacturers: {
         await this.driver.configManager.loadManufacturers();
@@ -64,9 +57,7 @@ export class ConfigManagerMessageHandler implements MessageHandler {
             message.productId,
             message.firmwareVersion,
           );
-        return {
-          config: dumpDeviceConfig(config, this.client.schemaVersion),
-        };
+        return { config };
       }
       case ConfigManagerCommand.manufacturers: {
         const manufacturers = this.driver.configManager.manufacturers;
