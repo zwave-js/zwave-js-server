@@ -52,7 +52,7 @@
     "zwave-js": "^15.31.0"
   },
   "devDependencies": {
-    "@alcalzone/esm2cjs": "^1.4.0",
+    "@alcalzone/esm2cjs": "^1.4.2",
     "@tsconfig/node20": "^20.1.4",
     "@types/minimist": "^1.2.2",
     "@types/node": "^20.19.35",
