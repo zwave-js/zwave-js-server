@@ -411,4 +411,4 @@ Base schema.
 
 ## Schema 52
 
-- No API changes. Requires `zwave-js` 15.32.3. Clients can start firmware updates on several nodes at once. The driver queues them and transfers firmware to one node at a time.
+- No API changes. This schema serves as a marker that `zwave-js` transfers firmware updates to one node at a time.
