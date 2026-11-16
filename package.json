@@ -60,7 +60,7 @@
     "@types/ws": "^8.5.13",
     "@types/yargs": "^17.0.35",
     "alcalzone-shared": "^5.0.0",
-    "eslint": "^10.0.2",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^4.3.8",
     "lint-staged": "^17.0.8",
