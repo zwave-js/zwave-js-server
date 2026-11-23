@@ -44,7 +44,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@homebridge/ciao": "^1.1.7",
+    "@homebridge/ciao": "^1.4.0",
     "minimist": "^1.2.8",
     "ws": "^8.18.0"
   },
